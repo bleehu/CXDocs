@@ -1,0 +1,4 @@
+*.config
+*.cfg
+*.csv
+old/*
