@@ -9,7 +9,9 @@ def hello():
 
 @app.route("/levelup")
 def levelUp():
-	return render_template('levelup.html')
+	pdb.set_trace()
+	levels = list(range(1,20))
+	return render_template('levelup.html', levels=levels)
 
 if __name__ == "__main__":
     app.run()
