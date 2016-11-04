@@ -17,3 +17,5 @@ Jinja:
 http://jinja.pocoo.org/docs/dev/
 Compound X:
 https://github.com/trowl223/Compound_X/tree/master/play
+for style example, use:
+http://bootswatch.com/cyborg/
