@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, render_template
+import pdb
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -8,7 +9,7 @@ def hello():
 
 @app.route("/levelup")
 def levelUp():
-	return render_template('static/levelup.html', entries=entries)
+	return render_template('levelup.html')
 
 if __name__ == "__main__":
     app.run()
