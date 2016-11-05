@@ -20,6 +20,15 @@ def hello():
 def levelUp():
 	levels = get_levels()
 	return render_template('levelup.html', levels=levels)
+	
+@app.route("/feats")
+def feats():
+	feats = []
+	with open("docs/feats.csv") as csvfile:
+		csv_reader = csv.reader(csvfile, delimiter=',',quotechar='"')
+		for line in csv_reader:
+			feats.append(line)
+	return render_template("feats.html", feats=feats)
 
 if __name__ == "__main__":
     app.run()
