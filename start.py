@@ -31,4 +31,4 @@ def feats():
 	return render_template("feats.html", feats=feats)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host = "192.168.0.186")
