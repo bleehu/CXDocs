@@ -17,6 +17,8 @@
 							{% endfor %}
 						</div>
 					</div>
+				<div class="col-lg-9">
+				<p> We have {{feats | length}} available feats.<p>
 				<table class="table table-striped table-hover">
 					<tbody>
 				{% for feat in feats %}
@@ -28,6 +30,7 @@
 				{% endfor %}
 					</tbody>
 				</table>
+				</div>
 			</div>
 		</div>
 	{% endblock %}

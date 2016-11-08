@@ -37,7 +37,10 @@ def guns():
 def armor():
 	return render_template('armor.html', armors=[])
 
-	
+@app.route("/items")
+def show_items():
+	return render_template('items.html', items=[])
+
 @app.route("/feats")
 def show_feats():
 	feats = get_feats()
