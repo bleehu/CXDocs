@@ -38,7 +38,8 @@ def levelUp():
 	
 @app.route("/guns")
 def guns():
-	return render_template('guns.html', guns=[])
+	guns = get_guns()
+	return render_template('guns.html', guns=guns)
 	
 @app.route("/armor")
 def armor():
