@@ -1,0 +1,91 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Weapon Smithy</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Weapon Smith </h1>
+			</div>
+			<div class="col-lg-8">
+				<form method="POST" action="addgun" class="form-horizontal">
+					<fieldset>
+						<legend>Legend</legend>
+						<div class="form-group">
+						  <label for="inputEmail" class="col-lg-2 control-label">Gun Name</label>
+						  <div class="col-lg-6">
+							<input class="form-control" id="inputEmail" placeholder="Name"  autocomplete="off" type="text" name="gunname">
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label for="gunDamage" class="col-lg-2 control-label">Damage</label>
+						  <div class="col-lg-2">
+							<input class="form-control" id="gunDamage" placeholder="##" type="text" name="gunDamage">
+						  </div>
+						  <label for="range" class="col-lg-2 control-label">Range</label>
+						  <div class="col-lg-2">
+							<input class="form-control" id="range" placeholder="##"  autocomplete="off" type="text" name="range">
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label for="typeSelect" class="col-lg-2 control-label">Type</label>
+						  <div class="col-lg-6">
+							<select class="form-control" id="typeSelect" name="gunType">
+							  <option value="Pistol">Pistol</option>
+							  <option value="SMG">SMG</option>
+							  <option value="Shotgun">Shotgun</option>
+							  <option value="Carbine">Carbine</option>
+							  <option value="Automatic Rifle">Automatic Rifle</option>
+							  <option value="Heavy Weapon">Heavy Weapon</option>
+							  <option value="Long Rifle">Long Rifle</option>
+							  <option value="Bow">Bow</option>
+							</select>
+							<label for="missChnce" class="col-lg-2 control-label">Miss Chance</label>
+							<div class="col-lg-2">
+								<input class="form-control" id="missChnce" placeholder="Miss"  autocomplete="off" type="text" name="toMiss">
+							</div>
+						  </div>
+						</div>
+						<div class="form-group">
+							<label for="clip" class="col-lg-2 control-label">Clip Size</label>
+							<div class="col-lg-2">
+								<input class="form-control" id="clip" placeholder="##" type="text" name="clip"></input>
+							</div>
+							<label for="cost" class="col-lg-2 control-label">Cost</label>
+							<div class="col-lg-2">
+								<input class="form-control" id="cost" placeholder="##" type="text" name="cost"></input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="fx" class="col-lg-2 control-label">Effect</label>
+							<div class="col-lg-8">
+								<textarea id="fx" class="form-control" rows="3" name="effect"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-10">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div class="col-lg-4">
+				<h3>Guns</h3>
+				{% for gun in guns %}
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ gun['name'] }}</h3>
+						</div>
+						<div class="panel-body">
+							{% for key in gun.keys() %}
+								
+							{% endfor %}
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endblock %}
+	
