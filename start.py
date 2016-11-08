@@ -1,5 +1,6 @@
 import csv
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
+import json
 import pdb
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -19,6 +20,12 @@ def get_feats():
 		for line in csv_reader:
 			feats.append(line)
 	return feats
+	
+def get_guns():
+	goons = None
+	with open("docs/guns1.json") as gunfile:
+		goons = json.loads(gunfile.read())
+	return goons
 
 @app.route("/")
 def hello():
@@ -45,6 +52,29 @@ def show_items():
 def show_feats():
 	feats = get_feats()
 	return render_template("feats.html", feats=feats)
+	
+@app.route("/weaponsmith")
+def show_weaponsmith():
+	guns = get_guns()
+	return render_template("weaponsmith.html", guns=guns)
+
+@app.route("/addgun", methods=['POST'])
+def make_gun():
+	gun = {}
+	gun['name'] = request.form['gunname']
+	gun['range'] = request.form['range']
+	gun['damage'] = request.form['gunDamage']
+	gun['type'] = request.form['gunType']
+	gun['clip'] = request.form['clip']
+	gun['toMiss'] = request.form['toMiss']
+	gun['effect'] = request.form['effect']
+	gun['cost'] = request.form['cost']
+	guns = get_guns()
+	guns.append(gun)
+	json_string = json.dumps(guns)
+	with open("docs/guns1.json", 'w') as gunfile:
+		gunfile.write(json_string)
+	return redirect("weaponsmith")
 
 if __name__ == "__main__":
     app.run(host = "localhost")
