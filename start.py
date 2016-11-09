@@ -2,6 +2,7 @@ import csv
 from flask import Flask, render_template, request, redirect
 import json
 import pdb
+import xml.etree.ElementTree
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -48,6 +49,11 @@ def armor():
 @app.route("/items")
 def show_items():
 	return render_template('items.html', items=[])
+
+@app.route("/rules")
+def show_rules():
+	root = xml.etree.ElementTree.parse("docs/rules.xml").getroot()
+	return render_template('rules.html', root=root)
 
 @app.route("/feats")
 def show_feats():

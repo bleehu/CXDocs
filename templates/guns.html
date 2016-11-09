@@ -8,7 +8,7 @@
 			<div class="page-header">
 				<h1> Guns </h1>
 			</div>
-			<div class="col-lg-4">
+			<div class="col-lg-2">
 				<div class="list-group table-of-contents">
 					{% for gun in guns %}
 						<a class="list-group-item" href="#{{ gun['name'] }}panel">{{ gun['name'] }}</a>
@@ -17,18 +17,26 @@
 			</div>
 			<div class="col-lg-6">
 			{% for gun in guns %}
+				{% if gun['type'] == 'SMG' %}
+				<div class="panel panel-success" id="{{gun['name']}}panel">
+				{% elif gun['type'] == 'Carbine' %}
+				<div class="panel panel-warning" id="{{gun['name']}}panel">
+				{% else %}
 				<div class="panel panel-primary" id="{{gun['name']}}panel">
+				{% endif %}
 						<div class="panel-heading">
 							<h3 class="panel-title">{{ gun['name'] }}</h3>
 						</div>
 						<div class="panel-body">
 							<p> {{ gun['effect'] }} </p>
-							<dl>
+							<dl class="col-lg-3 col-md-3 col-sm-4">
 								<dt>Range</dt><dd>{{gun['range']}}m</dd>
 								<dt>Damage</dt><dd>{{gun['damage']}} points</dd>
 								<dt>Miss</dt><dd>{{gun['toMiss']}}%</dd>
+							</dl>
+							<dl class="col-lg-3 col-md-3 col-sm-4">
 								<dt>Clip Size</dt><dd>{{gun['clip']}}rounds</dd>
-								<dt>Class</dt><dd>{{gun['type']}}m</dd>
+								<dt>Class</dt><dd>{{gun['type']}}</dd>
 							</dl>
 						</div>
 					</div>
