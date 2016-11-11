@@ -136,7 +136,6 @@ def make_item():
 @app.route("/armorsmith")
 def show_armorsmith():
 	armor = get_armor()
-	pdb.set_trace()
 	return render_template("armorsmith.html", armor=armor)
 
 @app.route("/addweapon")
