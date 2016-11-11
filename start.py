@@ -1,3 +1,4 @@
+import argparse
 import csv
 from flask import Flask, render_template, request, redirect
 import json
@@ -5,6 +6,12 @@ import pdb
 import xml.etree.ElementTree
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+def get_args():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-i", metavar="###.###.###.###", help="Your local IP address. use ifconfig on linux.")
+	args = parser.parse_args()
+	return args
 
 def get_levels():
 	levels = []
@@ -148,4 +155,8 @@ def make_armor():
 	return render_template("armorsmith", armor=allArmor)
 
 if __name__ == "__main__":
-    app.run(host = "localhost")
+	args = get_args()
+	host = "localhost"
+	if args.i:
+		host = args.i
+    app.run(host = host)
