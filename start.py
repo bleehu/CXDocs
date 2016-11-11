@@ -74,7 +74,8 @@ def show_armor():
 
 @app.route("/items")
 def show_items():
-	return render_template('items.html', items=[])
+	items = get_items()
+	return render_template('items.html', items=items)
 
 @app.route("/rules")
 def show_rules():
