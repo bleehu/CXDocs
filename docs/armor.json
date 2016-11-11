@@ -1,1 +1,1 @@
-[{"type":"Concealed","name":"Runner's Kit","cost":"20","DR":0},{"type":"Recon","name":"Kevlar Vest","cost":"60","DR":10}]
+{"Recon": [{"name": "Kevlar Vest", "damageReduction": "10", "cost": "60", "primaryMags": "3", "coverage": "60", "secondaryMags": "2", "type": "Recon", "description": "Also holds 1 grenade"}], "Concealed": []}

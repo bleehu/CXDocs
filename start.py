@@ -47,11 +47,7 @@ def get_armor():
 	by_type = {}
 	with open("docs/armor.json") as armfile:
 		arms = json.loads(armfile.read())
-		for armor in arms:
-			if armor['type'] not in by_type.keys():
-				by_type[armor['type']] = []
-			by_type[armor['type']].append(armor)
-	return by_type
+	return arms
 
 @app.route("/")
 def hello():
@@ -139,20 +135,28 @@ def show_armorsmith():
 	armor = get_armor()
 	return render_template("armorsmith.html", armor=armor)
 
-@app.route("/addweapon")
+@app.route("/addarmor", methods=['POST'])
 def make_armor():
+	pdb.set_trace()
 	newArmor = {}
 	newArmor['name'] = request.form['name']
-	newArmor['name'] = request.form['name']
-	newArmor['name'] = request.form['name']
-	newArmor['name'] = request.form['name']
-	newArmor['name'] = request.form['name']
-	newArmor['name'] = request.form['name']
+	newArmor['damageReduction'] = request.form['dr']
+	newArmor['type'] = request.form['type']
+	newArmor['primaryMags'] = request.form['prime']
+	newArmor['secondaryMags'] = request.form['secondary']
+	newArmor['coverage'] = request.form['coverage']
+	newArmor['cost'] = request.form['cost']
+	newArmor['description'] = request.form['effect']
 	armor = get_armor()
-	allArmor = []#flatten here
-	for type in armor.keys():
-		allArmor.extend(armor[type])
-	return render_template("armorsmith", armor=allArmor)
+	type = armor[newArmor['type']]
+	if type == None:
+		armor[newArmor['type']] = []
+	armor[newArmor['type']].append(newArmor)
+	json_string = json.dumps(armor)
+	with open("docs/armor.json", 'w') as armorfile:
+		armorfile.write(json_string)
+	pdb.set_trace()
+	return redirect("armorsmith")
 
 if __name__ == "__main__":
 	args = get_args()
