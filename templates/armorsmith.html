@@ -34,6 +34,7 @@
 							<select class="form-control" id="typeSelect" name="type">
 							  <option value="Concealed">Concealed</option>
 							  <option value="Recon">Recon</option>
+							  <option value="Light">Light</option>
 							  <option value="Medium">Medium</option>
 							  <option value="Heavy">Heavy</option>
 							  <option value="Full">Full</option>
@@ -74,6 +75,7 @@
 			<div class="col-lg-4">
 				<h3>Armor</h3>
 				{% for type in armor.keys() %}
+					<h4> {{type}}</h4>
 					{% for peice in armor[type] %}
 					<div class="panel panel-primary">
 						<div class="panel-heading">
