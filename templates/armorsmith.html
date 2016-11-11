@@ -70,18 +70,20 @@
 				</form>
 			</div>
 			<div class="col-lg-4">
-				<h3>Guns</h3>
-				{% for peice in armor %}
+				<h3>Armor</h3>
+				{% for type in armor.keys() %}
+					{% for peice in armor[type] %}
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title">{{ armor['name'] }}</h3>
 						</div>
 						<div class="panel-body">
 							{% for key in peice.keys() %}
-								<p><strong>{{key}}</strong>{{peice[key]}}</p>
+								<p><strong>{{key}}: </strong>{{peice[key]}}</p>
 							{% endfor %}
 						</div>
 					</div>
+					{% endfor %}
 				{% endfor %}
 			</div>
 		</div>
