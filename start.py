@@ -147,8 +147,7 @@ def make_armor():
 	newArmor['cost'] = request.form['cost']
 	newArmor['description'] = request.form['effect']
 	armor = get_armor()
-	type = armor[newArmor['type']]
-	if type == None:
+	if newArmor['type'] not in armor.keys():
 		armor[newArmor['type']] = []
 	armor[newArmor['type']].append(newArmor)
 	json_string = json.dumps(armor)
