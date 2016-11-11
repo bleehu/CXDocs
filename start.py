@@ -97,6 +97,30 @@ def make_gun():
 	with open("docs/guns1.json", 'w') as gunfile:
 		gunfile.write(json_string)
 	return redirect("weaponsmith")
+
+@app.route("/itemsmith")
+def show_itemsmith():
+	items = get_items()
+	return render_template("itemsmith.html", items=items)
+
+@app.route("/additem", methods=['POST'])
+def make_item():
+	item = {}
+	item['name'] = request.form['itemname']
+	item['range'] = request.form['range']
+	item['damage'] = request.form['itemDamage']
+	item['type'] = request.form['itemType']
+	item['clip'] = request.form['clip']
+	item['toMiss'] = request.form['toMiss']
+	item['effect'] = request.form['effect']
+	item['cost'] = request.form['cost']
+	items = get_items()
+	items.append(item)
+	json_string = json.dumps(items)
+	with open("docs/items1.json", 'w') as itemfile:
+		itemfile.write(json_string)
+	return redirect("weaponsmith")
+
 	
 @app.route("/armorsmith")
 def show_armorsmith():
