@@ -1,0 +1,37 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Basic Rules</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Basic Rules </h1>
+			</div>
+			<div class="col-lg-12">
+					<h2> Welcome to Compound X! </h2>
+					<div class="col-lg-3 col-md-3 col-sm-4">
+						<div class="list-group table-of-contents">
+							{% for section in sections %}
+								<a class="list-group-item" href="#{{ section.get('name') }}">{{ section.get('name') }}</a>
+							{% endfor %}
+						</div>
+					</div>
+				<div class="col-lg-9">
+					{% for section in sections %}
+						{% if section.get('name') %}
+						<h2 id="{{section.get('name')}}"> {{section.get('name')}} </h2>
+						{% endif %}
+						{% if section.findall('p') > 0 %}
+							{% for p in section.findall('p') %}
+								<p> {{p.text}} </p>
+							{% endfor %}
+						{% else %}
+						<p> {{ section.text }} </p>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+	

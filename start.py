@@ -28,6 +28,18 @@ def get_guns():
 		goons = json.loads(gunfile.read())
 	return goons
 
+def get_armor():
+	arms = None
+	types = []
+	by_type = {}
+	with open("docs/armor.json") as armfile:
+		arms = json.loads(armfile.read())
+		for armor in arms:
+			if armor['type'] not in by_type.keys():
+				by_type[armor['type']] = []
+			by_type[armor['type']].append(armor)
+	return by_type
+
 @app.route("/")
 def hello():
     return render_template('index.html')
@@ -43,8 +55,9 @@ def guns():
 	return render_template('guns.html', guns=guns)
 	
 @app.route("/armor")
-def armor():
-	return render_template('armor.html', armors=[])
+def show_armor():
+	armor = get_armor()
+	return render_template('armor.html', armors=armor)
 
 @app.route("/items")
 def show_items():
@@ -53,7 +66,9 @@ def show_items():
 @app.route("/rules")
 def show_rules():
 	root = xml.etree.ElementTree.parse("docs/rules.xml").getroot()
-	return render_template('rules.html', root=root)
+	sections = root.findall('section')
+	pdb.set_trace()
+	return render_template('rules.html', sections=sections)
 
 @app.route("/feats")
 def show_feats():
@@ -82,6 +97,27 @@ def make_gun():
 	with open("docs/guns1.json", 'w') as gunfile:
 		gunfile.write(json_string)
 	return redirect("weaponsmith")
+	
+@app.route("/armorsmith")
+def show_armorsmith():
+	armor = get_armor()
+	pdb.set_trace()
+	return render_template("armorsmith.html", armor=armor)
+
+@app.route("/addweapon")
+def make_armor():
+	newArmor = {}
+	newArmor['name'] = request.form['name']
+	newArmor['name'] = request.form['name']
+	newArmor['name'] = request.form['name']
+	newArmor['name'] = request.form['name']
+	newArmor['name'] = request.form['name']
+	newArmor['name'] = request.form['name']
+	armor = get_armor()
+	allArmor = []#flatten here
+	for type in armor.keys():
+		allArmor.extend(armor[type])
+	return render_template("armorsmith", armor=allArmor)
 
 if __name__ == "__main__":
     app.run(host = "localhost")

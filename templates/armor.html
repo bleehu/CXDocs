@@ -8,17 +8,24 @@
 			<div class="page-header">
 				<h1> Armor </h1>
 			</div>
-			<table class="table table-striped table-hover">
-				<tbody>
-			{% for armor in armors %}
-				<tr>
-				{% for data in armor%}
-					<td> {{data}} </td>
+			<div class="col-lg-6">
+			<p>Any reinforced armour, the amount of Damage Reduction is rolled at the time of purchase. A Carbon-Steel Fiber Titanium Reinforced armour plate might be anywhere from 26-35 DR for its lifetime, depending on what you roll when you purchase it. These armours are a bit of a gamble, since they may provide better protection than the next tier up, or they might only provide marginally better protection than the last tier.</p>
+			{% for type in armors.keys() %}
+				<h2> {{ type }} </h2>
+				{% for armor in armors[type]%}
+					<div class="panel panel-primary" id="{{armor['name']}}">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ armor['name'] }}</h3>
+						</div>
+						<div class="panel-body">
+					{% for atb in armor.keys() %}
+						<p> <strong>{{atb}}:</strong> {{armor[atb]}} </p>
+					{% endfor %}
+						</div>
+					</div>
 				{% endfor %}
-				</tr>
 			{% endfor %}
-				</tbody>
-			</table>
+			</div>
 		</div>
 	{% endblock %}
 	
