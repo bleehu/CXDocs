@@ -137,7 +137,6 @@ def show_armorsmith():
 
 @app.route("/addarmor", methods=['POST'])
 def make_armor():
-	pdb.set_trace()
 	newArmor = {}
 	newArmor['name'] = request.form['name']
 	newArmor['damageReduction'] = request.form['dr']
@@ -155,7 +154,6 @@ def make_armor():
 	json_string = json.dumps(armor)
 	with open("docs/armor.json", 'w') as armorfile:
 		armorfile.write(json_string)
-	pdb.set_trace()
 	return redirect("armorsmith")
 
 if __name__ == "__main__":
