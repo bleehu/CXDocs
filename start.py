@@ -122,6 +122,7 @@ def make_item():
 	item['name'] = request.form['itemname']
 	item['type'] = request.form['itemType']
 	item['cost'] = request.form['cost']
+	item['minLevel'] = request.form['minLevel']
 	item['details'] = request.form['details']
 	items = get_items()
 	items.append(item)
