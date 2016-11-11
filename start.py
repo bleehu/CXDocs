@@ -87,7 +87,7 @@ def make_gun():
 	gun['range'] = request.form['range']
 	gun['damage'] = request.form['gunDamage']
 	gun['type'] = request.form['gunType']
-	gun['clip'] = request.form['clip']
+	gun['mag'] = request.form['mag']
 	gun['toMiss'] = request.form['toMiss']
 	gun['effect'] = request.form['effect']
 	gun['cost'] = request.form['cost']
