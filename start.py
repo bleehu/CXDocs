@@ -87,10 +87,12 @@ def make_gun():
 	gun['range'] = request.form['range']
 	gun['damage'] = request.form['gunDamage']
 	gun['type'] = request.form['gunType']
-	gun['clip'] = request.form['clip']
+	gun['mag'] = request.form['mag']
 	gun['toMiss'] = request.form['toMiss']
 	gun['effect'] = request.form['effect']
 	gun['cost'] = request.form['cost']
+	if request.form['manufacturer']:
+		gun['manufacturer'] = request.form['manufacturer']
 	guns = get_guns()
 	guns.append(gun)
 	json_string = json.dumps(guns)
@@ -144,4 +146,4 @@ def make_armor():
 	return render_template("armorsmith", armor=allArmor)
 
 if __name__ == "__main__":
-    app.run(host = "localhost")
+    app.run(host = "10.0.0.186")
