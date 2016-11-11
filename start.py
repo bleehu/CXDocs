@@ -101,6 +101,7 @@ def make_gun():
 	gun['toMiss'] = request.form['toMiss']
 	gun['effect'] = request.form['effect']
 	gun['cost'] = request.form['cost']
+	gun['minLevel'] = request.form['minLevel']
 	if request.form['manufacturer']:
 		gun['manufacturer'] = request.form['manufacturer']
 	guns = get_guns()
@@ -146,6 +147,7 @@ def make_armor():
 	newArmor['coverage'] = request.form['coverage']
 	newArmor['cost'] = request.form['cost']
 	newArmor['description'] = request.form['effect']
+	newArmor['minLevel'] = request.form['minLevel']
 	armor = get_armor()
 	if newArmor['type'] not in armor.keys():
 		armor[newArmor['type']] = []
