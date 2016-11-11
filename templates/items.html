@@ -8,17 +8,35 @@
 			<div class="page-header">
 				<h1> Items </h1>
 			</div>
-			<table class="table table-striped table-hover">
-				<tbody>
+			<div class="col-lg-2">
+				<div class="list-group table-of-contents">
+					{% for item in items %}
+						<a class="list-group-item" href="#{{ item['name'] }}panel">{{ item['name'] }}</a>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-lg-6">
 			{% for item in items %}
-				<tr>
-				{% for data in item%}
-					<td> {{data}} </td>
-				{% endfor %}
-				</tr>
+				{% if item['type'] == 'Wearable' %}
+				<div class="panel panel-success" id="{{item['name']}}panel">
+				{% elif item['type'] == 'Explosives' %}
+				<div class="panel panel-warning" id="{{item['name']}}panel">
+				{% else %}
+				<div class="panel panel-primary" id="{{item['name']}}panel">
+				{% endif %}
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ item['name'] }}</h3>
+						</div>
+						<div class="panel-body">
+							<dl class="col-lg-3 col-md-3 col-sm-4">
+								<dt>Cost</dt><dd>{{item['cost']}}rounds</dd>
+								<dt>Type</dt><dd>{{gun['type']}}</dd>
+							</dl>
+							<p> {{ item['details'] }} </p>
+						</div>
+					</div>
 			{% endfor %}
-				</tbody>
-			</table>
+			</div>
 		</div>
 	{% endblock %}
 	
