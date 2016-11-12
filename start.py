@@ -77,7 +77,6 @@ def show_items():
 def show_rules():
 	root = xml.etree.ElementTree.parse("docs/rules.xml").getroot()
 	sections = root.findall('section')
-	pdb.set_trace()
 	return render_template('rules.html', sections=sections)
 
 @app.route("/feats")

@@ -22,10 +22,20 @@
 						{% if section.get('name') %}
 						<h2 id="{{section.get('name')}}"> {{section.get('name')}} </h2>
 						{% endif %}
-						{% if section.findall('p') > 0 %}
+						{% if section.findall('p') | count > 0 %}
 							{% for p in section.findall('p') %}
 								<p> {{p.text}} </p>
 							{% endfor %}
+							{% if section.findall('subsection')| count > 0 %}
+								{% for subsection in section.findall('subsection')%}
+									{% if subsection.get('name') %}
+									<h3> {{subsection.get('name')}} </h3>
+									{% endif %}
+									{% for p in subsection.findall('p') %}
+										<p> {{p.text}} </p>
+									{% endfor %}
+								{% endfor %}
+							{% endif %}
 						{% else %}
 						<p> {{ section.text }} </p>
 						{% endif %}
