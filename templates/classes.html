@@ -1,0 +1,68 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Classes</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Classes </h1>
+			</div>
+			<div class="col-lg-2">
+				<div class="list-group table-of-contents">
+					{% for class in classes %}
+						<a class="list-group-item" href="#{{ class['name'] }}panel">{{ class['name'] }}</a>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-lg-9">
+			{% for class in classes %}
+				<div class="panel panel-success" id="{{class['name']}}panel">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ class['name'] }}</h3>
+						</div>
+						<div class="panel-body">
+							<p> {{ class['description'] }} </p>
+							<div class="col-lg-3">
+								<div class="list-group">
+									<a href="#" class="list-group-item active warn"> Weapons </a>
+									{% for wep in class['Weapon Proficiencies']%}
+										<a href="#" class="list-group-item">{{wep}}</a>
+									{% endfor %}
+								</div>
+							</div>
+							<div class="col-lg-3">
+								<div class="list-group">
+									<a href="#" class="list-group-item active"> Armor </a>
+									{% for arms in class['Armour Proficiencies']%}
+										<a href="#" class="list-group-item">{{arms}}</a>
+									{% endfor %}
+								</div>
+							</div>
+							<div class="col-lg-3">
+								<img src="static/images/classes/{{class['name']}}.png" 
+									alt="Picture of a {{class['name']}}" />
+							</div>
+							<div class="col-lg-9">
+								<p>Passives:</p>
+								<ul>
+									{% for passive in class['Passives'] %}
+										<li> {{passive}} </li>
+									{% endfor %}
+								</ul>
+							</div>
+							<div class="col-lg-9">
+								<p>Class Feats:</p>
+								<ul>
+									{% for feat in class['Class Feats'] %}
+										<li> {{feat}} </li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</div>
+			{% endfor %}
+			</div>
+		</div>
+	{% endblock %}
+	

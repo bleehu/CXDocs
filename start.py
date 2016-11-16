@@ -79,6 +79,15 @@ def show_rules():
 	sections = root.findall('section')
 	return render_template('rules.html', sections=sections)
 
+@app.route("/classes")
+def show_classes():
+	classless = None
+	with open("docs/classes2.json") as classFile:
+		classString = classFile.read()
+		blob = json.loads(classString)
+		classless = sorted(blob['classes'])
+	return render_template("classes.html", classes = classless)
+
 @app.route("/feats")
 def show_feats():
 	feats = get_feats()
