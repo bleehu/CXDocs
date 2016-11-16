@@ -13,6 +13,14 @@ def get_args():
 	args = parser.parse_args()
 	return args
 
+def get_classes():
+	classless = None
+	with open("docs/classes2.json") as classFile:
+		classString = classFile.read()
+		blob = json.loads(classString)
+		classless = sorted(blob['classes'])
+	return classless
+
 def get_levels():
 	levels = []
 	with open('docs/levels.csv', 'r') as csvfile:
@@ -81,11 +89,7 @@ def show_rules():
 
 @app.route("/classes")
 def show_classes():
-	classless = None
-	with open("docs/classes2.json") as classFile:
-		classString = classFile.read()
-		blob = json.loads(classString)
-		classless = sorted(blob['classes'])
+	classless = get_classes()
 	return render_template("classes.html", classes = classless)
 
 @app.route("/feats")

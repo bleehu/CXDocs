@@ -21,5 +21,30 @@
 	"Passives": ["Gain 5 skill in Anatomy", "Gain 5 skill in Pathology", "Gain 10 skill in medicine",  "Every level, you gain one skill in both of the \"hippocratic\" and \"malpractice\" skill trees", "At the beggining of each encounter, you begin with only half of your full count of nanites, but over the course of the battle, you may gain up to 600 nanites max."],
 	"Weapon Proficiencies": ["Pistols", "Shotguns", "SMGs"],
 	"Armour Proficiencies": ["Concealed", "Recon", "Light", "Medium"],
-	"Class Feats":["Scalpel jockey - You can slice with the best of them, mostly because there really isn''t any competition for \"Best frenzied medic\" in these parts. 50% chance to stabilize an organic who is crashing, or heal 25 health.-->You''ve learned to use more than just your scalpel and some gauze. 75% chance success, or stabilize and heal 25 health, or just heal 50 health."]}
+	"Class Feats":["Scalpel jockey - You can slice with the best of them, mostly because there really isn''t any competition for \"Best frenzied medic\" in these parts. 50% chance to stabilize an organic who is crashing, or heal 25 health.-->You''ve learned to use more than just your scalpel and some gauze. 75% chance success, or stabilize and heal 25 health, or just heal 50 health."]},
+	
+{"name":"Engineer",
+	"description": "You solve problems. For insance, you know how to stop some mean mutha-hubbard from tearin'' you and your team a structurally supurfluous new behind. You know how to fix engines, machines, circuits, you name it. And when you''re not busy fixing what other people broke, you get to work on making new stuff. Which some knucklehead will probably eventually break too.",
+	"passives": ["You gain get 10 skill points in repair", "Every level, you get one Process point in each of the \"repair\" and \"build\" skill trees",  "At the begining of an engagement, you start with only half of your nanites, but you may accrue up to 600 nanites max. You also start with 2 permanent control points, which enable control over any automatons you construct."],
+	"Weapon Proficiencies": ["Pistol", "Carbine and Battle Rifles", "Shotgun"],
+	"Armour Proficiencies": ["Concealed", "Recon", "Light", "Medium"],
+	"Class Feats":[ "A little Controlling - You gain an additional permanant control point-->Control Phreak - You gain an additional permanant control point [max of 5 permanant points]",
+		"Repairman - you gain a 10% chance to stabalize a crashing robotic ally and a +10% to repair checks.-->Overbuilt - Any time you build a construction, you may spend an additional 15 nanites to give that construction 50 additional health."]},
+
+{"name":"Priest",
+	"description": "you''ve lived your life in the deepest recesses of the holonet, and have come out alive, and strong. You can figure out how a security system works, hack into systems, or even hack your allys'' nanites to perform better.",
+	"Passives": ["Gain PC use [HACKING] at 10 OR Knowledge [NANITES] at 10"],
+	"Weapon Proficiencies": ["Pistols", "SMGs"],
+	"Armour Proficiencies": ["Concealed", "Recon", "Light", "Medium"],
+	"Class Feats":["Exploit weakness - You have a basic understanding of networks and computers, and can hack your way into a system with ease, and have accrued many basic hacks onto your thumb drive belt. +20% against Firewalls.-->Your skill and library have grown substantially. +30% against Firewalls, +15% against Info Nodes and Interaction Nodes.", 
+	"Nanite Hacking - You''ve had some cross-training in the medical field, or maybe you just tried plugging a cord into your brain. You know how to communicate with Nanites present in friends and enemies. DC 50 Knowledge [Nanites] grants a +20% to ally''s next roll, or -10% on an opponent. Touch Effect.-->Nanites have almost become second nature to you. DC 50 Knowledge [Nanites] grants a +30% to ally''s next roll, or -15% on an opponent. Knowledge [Nanites] / 2 meters range."]},
+
+{"name":"Pilot",
+	"description": "You have a yearning to test the limits of the vehicles you operate. The boundaries of speed and maneuvering were meant to be broken - by you.",
+	"Passives": ["Gain Piloting skill at 10."],
+	"Weapon Proficiencies": ["Pistols", "Shotguns", "SMGs"],
+	"Armour Proficiencies": ["Concealed", "Recon", "Light", "Medium"],
+	"Class Feats":["Planes, Trains, Automobiles - This is sorta familiar to something you once saw, or rode on. Maybe? Unfamiliar vehicles can be operated [albeit pretty poorly] after you pass a DC 50 check, or take up to 3 actions examining.-->You have flown, operated and driven just about everything there is. Except that. Make a DC 40 check, or take up to 2 actions examining.",
+	"Extensive training <Vehicle> - Your complete knowledge of <vehicle> makes your operation of it seem easy. Add 25 to any check concerning your operation, knowldege, or maintenence of the vehicle.-->You are THE guru accross the holonets for <vehicle>. Add 50 onto a pertinent roll about the vehicle."]}
+
 ]}
