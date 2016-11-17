@@ -1,8 +1,10 @@
 import argparse
+from base64 import b64encode, b64decode
 import csv
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, escape
 import json
 import pdb
+import os
 import xml.etree.ElementTree
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -57,10 +59,38 @@ def get_armor():
 	with open("docs/armor.json") as armfile:
 		arms = json.loads(armfile.read())
 	return arms
+	
+def get_users():
+	all_users = None
+	with open("static/users.enc", "r") as userDoc:
+		decrypted = decode(userDoc.read())
+		all_users = json.loads(decrypted)
+	return all_users
+
+def set_users(set_users_to):
+	if str(type(set_users_to)) != "<type 'dict'>":
+		raise ValueError("Cannot set users to a non-dictionary type")
+	with open("users.enc", "w") as userDoc:
+		encrypted = encode(json.dumps(set_users_to))
+		userDoc.write(encrypted)
+
+def decode(cypher):
+	ascii = b64decode(cypher)
+	plain = ""
+	for char in ascii:
+		plain = plain + chr(ord(char) - 12)
+	return plain
+	
+def encode(cypher):
+	rot12 = ""
+	for char in cypher:
+		rot12 = rot12 + chr(ord(char) + 12)
+	return b64encode(rot12)
 
 @app.route("/")
 def hello():
-    return render_template('index.html')
+	session['X-CSRF'] = "foxtrot"
+	return render_template('index.html', session=session)
 
 @app.route("/levelup")
 def levelUp():
@@ -170,10 +200,40 @@ def make_armor():
 	with open("docs/armor.json", 'w') as armorfile:
 		armorfile.write(json_string)
 	return redirect("armorsmith")
+	
+@app.route("/login", methods=['POST'])
+def login():
+	pdb.set_trace()
+	form = request.form
+	uname = escape(form['uname'])
+	passwerd = escape(form['password'])
+	if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
+		session.pop('X-CSRF', None)
+	else:
+		resp = make_response(render_template("501.html"), 403)
+		return resp
+	users = get_users()
+	if uname in users.keys() and passwerd == users[uname]:
+		session['username'] = uname
+		
+	
+	return redirect("/")
+
+@app.route("/logout", methods=['POST'])
+def logout():
+	form = request.form
+	if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
+		session.pop('username', None)
+	return redirect("/")
+
+@app.errorhandler(500)
+def borked_it(error):
+	return render_template("501.html", error=error)
 
 if __name__ == "__main__":
 	args = get_args()
 	host = "localhost"
 	if args.i:
 		host = args.i
+	app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 	app.run(host = host)
