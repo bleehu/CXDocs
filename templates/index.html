@@ -8,6 +8,40 @@
 			<div class="page-header">
 				<h1> Compound X Players Documentation </h1>
 			</div>
+			<div class="col-lg-4">
+			{% if 'username' in session %}
+				<p>Welcome, {{session['username']}}!</p>
+				<form action="logout" method="post">
+					<div class="form-group">
+						<div class="col-lg-10 col-lg-offset-2">
+							<button type="submit" class="btn btn-primary">Logout</button>
+							<input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
+						</div>
+					</div>
+				</form>
+			{% else %}
+				<form action="login" method="post" class="form-horizontal">
+				<div class="form-group">
+					<label for="uname" class="col-lg-2 control-label">username</label>
+						<div class="col-lg-10">
+							<input class="form-control" id="uname" placeholder="Username" autocomplete="off" type="text" name="uname">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputPassword" class="col-lg-2 control-label">Password</label>
+						<div class="col-lg-10">
+							<input class="form-control" id="inputPassword" placeholder="Password"  autocomplete="off" type="password" name="password">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-10 col-lg-offset-2">
+							<button type="submit" class="btn btn-primary">Login</button>
+						</div>
+					</div>
+						<input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
+				</form>
+			{% endif %}
+			</div>
 			<div class="col-lg-8">
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available interactive pages:</p>
