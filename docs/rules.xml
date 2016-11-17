@@ -99,39 +99,79 @@
 			You can sprint instead of moving, for a +2 movement bonus. However, firing your weapon after doing so will cause you incur a +30% firing penalty. The penalty persists for the Full action you sprint, as well as the action afterwards. You can stack sprinting a number of times equal to half of your Fortitude (rounding in your favor), however for each Action taken sprinting, an Action of recovery (and resulting +30% weapon penalty) must be taken after the sprinting ends.
 			</p>
 		</subsection>
-		Fighting:
+		<subsection name="Fighting">
+		<p>
 		During combat, most weapons are Semi-Auto, meaning that each time you pull the trigger, the gun fires and chambers a new round automatically without firing it. It takes 1 Half-Action to fire a semi-auto weapon in this way. Some guns, such as Shotguns and Bolt-Action sniper rifles require a Full-Action to fire the gun, where the first Half-Action is a trigger pull, and the second Half-Action is the rechambering of the weapon.
+		</p> 
+		<p>
 		To hit, Players must roll a percentile that is over their weapon's % miss stat. On a roll of 90-1 through 90-5, the hit is considered a Critical hit, and deals an extra 10 damage. on a roll of 90-6 through 00-0, the hit is considered an Extra-Critical hit, and deals an extra 20 damage.
+		</p> 
+		<p>
 		When a player is defending against a hit, they roll Percentiles under their armor in order to apply a Damage Reduction, or to apply damage to their Capacitive Sheilds if the player has them.
+		</p> 
+		<p>
 
 		Hip Firing doubles a weapon''s miss chance. It is much smarter to take a half action to Aim, and spend the rest of your shots on firing. Its also a great idea to take a half action at the end of your turn to "hunker," and gain a 75% cover advantage.
-		
-		Using Cover:
+		</p> 
+		</subsection>
+		<subsection name="Using Cover">
+		<p>
 		Chances are, if an enemy can see you in Compund X, they can hit you. Using cover will make it harder to be hit. You will encounter many types of cover while adventuring throughout the galaxy. Many small objects provide only partial cover, either by partially obscuring your silhouette, or by providing slight protection from projectiles. Full cover will do both to a better degree. Debuffs to enemies %Miss are as follows:
+		</p>
+		<p>
 		No Cover: +0%
 		Partial Cover: +25%
 		Full Cover: +50%
 		Hunkering: +75%
-
+		</p>
+		<p>
 		Hunkering costs one half-action, and you cannot fire your weapons. Imagine curling up in a ball, to pose the absolute smallest target possible. Its a free action to de-hunker
+		</p>
+		</subsection>
+		<subsection name="Reloading">
+			<p>
+			When a gun runs out of amunition, the user must pause to reload. "But how long do I gotta be outta the battle?" Great question!
+			</p>
+			<p>
+			Each gun has a "Reload DC," rated based on the skill and brevity of the weapon's reload. For example, an assault rifle, which has a very obvious magazine release button and protruding magazine, has an average DC of 25. More complex weapons, such as high-precision sniper systems or exotic sub-machine guns might have a higher DC, maybe 35. If the Player passes the reload, then the reload time is standard. For Box-Magazine fed Semi- and Fully-Automatic weapons, this is 1 Full Action. Other, more complex weapons will specify their reload time. On a critical Success (anything in the 90-100 range), the reload time is halved (for Bolt-Actions it is reduced to 1 Half-Action). On a failure, the reload time takes double.
+			</p>
+			<p>
 
-		Reloading:
-		When a gun runs out of amunition, the user must pause to reload. "But how long do I gotta be outta the battle?" Great question!
-		Each gun has a "Reload DC," rated based on the skill and brevity of the weapon's reload. For example, an assault rifle, which has a very obvious magazine release button and protruding magazine, has an average DC of 25. More complex weapons, such as high-precision sniper systems or exotic sub-machine guns might have a higher DC, maybe 35. If the Player passes the reload, then the reload time is standard. For Box-Magazine fed Semi- and Fully-Automatic weapons, this is 1 Full Action. Other, more complex weapons will specify their reload time. On a critical Success (anything in the 90-100 range), the reload time is halved (for Bolt-Actions it is reduced to 1 Half-Action). On a failure, the reload time takes double.
-
-		When players take more than 70 damage, they must roll a Shock save at a DC of the damage taken. on fail they pass out. on success they stay conscious. When players fail, they may roll each turn at a DC of 70 to wake up. They continune to roll either for (15 - FORT) turns, or until they pass.
-
-		Conditions:
-		Bleeding - d10 damage per turn. Broken with Medicine Skill check. DC varries. If you have a bleed condition, seek medical aid immediately, You CAN Bleed Out, you have been warned.
-		Burning - 2d10 damage per turn. Broken with a Maneuver Skill Check. DC 40. Every 2 turns, the degree of the burn intensifies
-		Frozen - d10 damage per turn. lasts until a source of heat is applied to the wound, or with Medicine Skill check, DC 50
-		Fear - No actions, except running away form the source of fear, or rolling to defeat fear. DC 50, Shock save.
-		Fear, Greater - No actions, except rolling to defeat fear. DC 75, Shock save.
-		CS Burn - d10/2 damage for 2 turns. + 5 damage against robots.
-		Necrosis - 2d10 +5 damage per turn. Seek medical attention immediately. If left unhealed for more than a day, the infection spreads 1 foot per day. Medicine DC 75, must be rolled.
-		Pinned - Target pinned (hunkered, no movement) for 2 full turns or until they pass a Shock saving throw at DC of 70, whichever is quicker.
-		Plasma Burn - 2d10 damage per turn (stackable: if a target accrues more than one burn counter, then the burn counters are spent 1 per turn until they dissappear.)
-		Poisoned - d10 damage per turn. After 5 turns, some poisons may induce unconsciousness. DC 50, Fortitude. Greater / Lesser posion increases damage (+5/-5) and DC (+25,-10).
+			When players take more than 70 damage, they must roll a Shock save at a DC of the damage taken. on fail they pass out. on success they stay conscious. When players fail, they may roll each turn at a DC of 70 to wake up. They continune to roll either for (15 - FORT) turns, or until they pass.
+			</p>
+		</subsection>
+		<subsection name="Conditions">
+			<p>
+			Bleeding - d10 damage per turn. Broken with Medicine Skill check. DC varries. If you have a bleed condition, seek medical aid immediately, You CAN Bleed Out, you have been warned.
+			</p>
+			<p>
+			Burning - 2d10 damage per turn. Broken with a Maneuver Skill Check. DC 40. Every 2 turns, the degree of the burn intensifies
+			</p>
+			<p>
+			Frozen - d10 damage per turn. lasts until a source of heat is applied to the wound, or with Medicine Skill check, DC 50
+			</p>
+			<p>
+			Fear - No actions, except running away form the source of fear, or rolling to defeat fear. DC 50, Shock save.
+			</p>
+			<p>
+			Fear, Greater - No actions, except rolling to defeat fear. DC 75, Shock save.
+			</p>
+			<p>
+			CS Burn - d10/2 damage for 2 turns. + 5 damage against robots.
+			</p>
+			<p>
+			Necrosis - 2d10 +5 damage per turn. Seek medical attention immediately. If left unhealed for more than a day, the infection spreads 1 foot per day. Medicine DC 75, must be rolled.
+			</p>
+			<p>
+			Pinned - Target pinned (hunkered, no movement) for 2 full turns or until they pass a Shock saving throw at DC of 70, whichever is quicker.
+			</p>
+			<p>
+			Plasma Burn - 2d10 damage per turn (stackable: if a target accrues more than one burn counter, then the burn counters are spent 1 per turn until they dissappear.)
+			</p>
+			<p>
+			Poisoned - d10 damage per turn. After 5 turns, some poisons may induce unconsciousness. DC 50, Fortitude. Greater / Lesser posion increases damage (+5/-5) and DC (+25,-10).
+			</p>
+		</subsection>
 	</section>
 	<section name="Damage Types and Armour types">
 		<p>
