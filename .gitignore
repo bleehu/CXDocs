@@ -1,3 +1,4 @@
 *.config
 *.cfg
 old/*
+static/users.enc
