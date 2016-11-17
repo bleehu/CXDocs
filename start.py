@@ -15,10 +15,11 @@ def get_args():
 
 def get_classes():
 	classless = None
-	with open("docs/classes2.json") as classFile:
+	with open("docs/classes.json") as classFile:
 		classString = classFile.read()
 		blob = json.loads(classString)
-		classless = sorted(blob['classes'])
+		classless = blob['classes']
+		#sort by name
 	return classless
 
 def get_levels():
@@ -39,7 +40,7 @@ def get_feats():
 	
 def get_guns():
 	goons = None
-	with open("docs/guns1.json") as gunfile:
+	with open("docs/guns.json") as gunfile:
 		goons = json.loads(gunfile.read())
 	return goons
 
