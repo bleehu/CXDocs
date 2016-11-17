@@ -229,6 +229,10 @@ def logout():
 @app.errorhandler(500)
 def borked_it(error):
 	return render_template("501.html", error=error)
+	
+@app.errorhandler(404)
+def borked_it(error):
+	return render_template("404.html", error=error)
 
 if __name__ == "__main__":
 	args = get_args()
