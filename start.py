@@ -230,11 +230,12 @@ def make_armor():
 
 @app.route("/racesmith")
 def show_racesmith():
-	race = get_races()
-	return render_template("racesmith.html", race=race, session=session)
+	races = get_races()
+	return render_template("racesmith.html", races=races, session=session)
 
 @app.route("/addrace", methods=['POST'])
 def make_race():
+	pdb.set_trace()
 	newRace = {}
 	newRace['name'] = request.form['name']
 	newRace['society'] = request.form['society']
@@ -244,11 +245,11 @@ def make_race():
 	newRace['size'] = request.form['size']
 	newRace['speed'] = request.form['speed']
 	newRace['mods'] = request.form['mods']
-	newRace['language'] = request.form['language']
+	newRace['languages'] = request.form['languages']
 	newRace['traits'] = request.form['traits']
 	newRace['weaks'] = request.form['weaks']
 	races = get_races()
-	races.append(race)
+	races.append(newRace)
 	json_string = json.dumps(races)
 	with open("docs/races.json", 'w') as racefile:
 		racefile.write(json_string)
