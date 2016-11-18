@@ -100,17 +100,17 @@ def levelUp():
 @app.route("/guns")
 def guns():
 	guns = get_guns()
-	return render_template('guns.html', guns=guns)
+	return render_template('guns.html', guns=guns, session=session)
 	
 @app.route("/armor")
 def show_armor():
 	armor = get_armor()
-	return render_template('armor.html', armors=armor)
+	return render_template('armor.html', armors=armor, session=session)
 
 @app.route("/items")
 def show_items():
 	items = get_items()
-	return render_template('items.html', items=items)
+	return render_template('items.html', items=items, session=session)
 
 @app.route("/rules")
 def show_rules():
@@ -131,7 +131,7 @@ def show_feats():
 @app.route("/weaponsmith")
 def show_weaponsmith():
 	guns = get_guns()
-	return render_template("weaponsmith.html", guns=guns)
+	return render_template("weaponsmith.html", guns=guns, session=session)
 
 @app.route("/addgun", methods=['POST'])
 def make_gun():
@@ -157,7 +157,7 @@ def make_gun():
 @app.route("/itemsmith")
 def show_itemsmith():
 	items = get_items()
-	return render_template("itemsmith.html", items = items)
+	return render_template("itemsmith.html", items = items, session=session)
 
 @app.route("/additem", methods=['POST'])
 def make_item():
@@ -178,7 +178,7 @@ def make_item():
 @app.route("/armorsmith")
 def show_armorsmith():
 	armor = get_armor()
-	return render_template("armorsmith.html", armor=armor)
+	return render_template("armorsmith.html", armor=armor, session=session)
 
 @app.route("/addarmor", methods=['POST'])
 def make_armor():
@@ -203,7 +203,6 @@ def make_armor():
 	
 @app.route("/login", methods=['POST'])
 def login():
-	pdb.set_trace()
 	form = request.form
 	uname = escape(form['uname'])
 	passwerd = escape(form['password'])
