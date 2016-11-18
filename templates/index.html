@@ -1,6 +1,6 @@
 {%extends "layout.html"%}
 	{%block head%}
-		<title>CX Docs - Level Up</title>
+		<title>CX Docs</title>
 		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
 	{% endblock %}
 	{% block body %}
@@ -62,7 +62,7 @@
 						<a class="list-group-item" href="feats">Feats</a>
 					</div>
 				</div>
-				{% if username in session %}
+				{% if 'username' in session %}
 				<!-- TODO: make only available to admins -->
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available Smithies:</p>
