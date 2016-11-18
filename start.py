@@ -227,6 +227,32 @@ def make_armor():
 	with open("docs/armor.json", 'w') as armorfile:
 		armorfile.write(json_string)
 	return redirect("armorsmith")
+
+@app.route("/racesmith")
+def show_racesmith():
+	race = get_races()
+	return render_template("racesmith.html", race=race, session=session)
+
+@app.route("/addrace", methods=['POST'])
+def make_race():
+	newRace = {}
+	newRace['name'] = request.form['name']
+	newRace['society'] = request.form['society']
+	newRace['world'] = request.form['world']
+	newRace['info'] = request.form['info']
+	newRace['type'] = request.form['type']
+	newRace['size'] = request.form['size']
+	newRace['speed'] = request.form['speed']
+	newRace['mods'] = request.form['mods']
+	newRace['language'] = request.form['language']
+	newRace['traits'] = request.form['traits']
+	newRace['weaks'] = request.form['weaks']
+	races = get_races()
+	races.append(race)
+	json_string = json.dumps(races)
+	with open("docs/races.json", 'w') as racefile:
+		racefile.write(json_string)
+	return redirect("racesmith")
 	
 @app.route("/login", methods=['POST'])
 def login():

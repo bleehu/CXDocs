@@ -26,7 +26,9 @@
 							<h3 class="panel-title">{{ race['name'] }}</h3>
 						</div>
 						<div class="panel-body">
-							<p> {{ race['description'] }} </p>
+							<div class="col-lg-3">
+								<dt>Society</dt><dd>{{race['society']}}</dd>
+							</div>
 							<div class="col-lg-3">
 								<dt>Description</dt><dd>{{race['info']}}</dd>
 							</div>
@@ -36,21 +38,24 @@
 								<dt>Speed</dt><dd>{{race['speed']}} m</dd>
 							</dl>
 							<dl class="col-lg-3 col-md-3 col-sm-4">
-								<dt>Homeworld</dt><dd>{{race['planet']}}m</dd>
+								<dt>Homeworld</dt><dd>{{race['world']}}m</dd>
 								<div class="list-group">
 									<a href="#" class="list-group-item active warn">Language</a>
 									{% for language in race['languages']%}
-										<a href="#" class="list-group-item">{{language}}</a>
+										<a href="#" class="list-group-item">{{language}}, </a>
 									{% endfor %}
 								</div>
 								<div class="list-group">
 									<a href="#" class="list-group-item active warn">Racial Abilities</a>
-									{% for ability in race['abilities']%}
-										<a href="#" class="list-group-item">{{ability}}</a>
+									{% for trait in race['traits']%}
+										<a href="#" class="list-group-item">{{trait}}</a>
 									{% endfor %}
 								</div>
 							</dl>
-							<dt>Weaknesses</dt><dd>{{race['weaknesses']}}m</dd>
+							<div class="col-lg-3">
+								<dt>Modifiers</dt><dd>{{race['mods']}}</dd>
+							</div>
+							<dt>Weaknesses</dt><dd>{{race['weaks']}}m</dd>
 							<small><a href="#top">back to top</a></small>
 						</div>
 					</div>
