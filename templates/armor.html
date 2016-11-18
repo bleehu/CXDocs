@@ -13,7 +13,9 @@
 					{% for type in armors %}
 						<a class="list-group-item active" href="#{{type}}"><strong>{{ type }}</strong></a>
 						{% for peice in armors[type] %}
+							{% if peice['minLevel'] < 10 or 'username' in session %}
 							<a class="list-group-item" href="#{{peice['type']}}{{peice['name']}}panel"> {{peice['name']}} </a>
+							{% endif %}
 						{% endfor %}
 					{% endfor %}
 				</div>
@@ -23,7 +25,12 @@
 			{% for type in armors.keys() %}
 				<h2 id="{{type}}"> {{ type }} </h2>
 				{% for armor in armors[type] %}
+					{% if armor['minLevel'] < 10 or 'username' in session %}
+					{% if armor['minLevel'] >= 10 %}
+					<div class="panel panel-success" id="{{armor['type']}}{{armor['name']}}panel">
+					{% else %}
 					<div class="panel panel-primary" id="{{armor['type']}}{{armor['name']}}panel">
+					{% endif %}
 						<div class="panel-heading">
 							<h3 class="panel-title">{{ armor['name'] }}</h3>
 						</div>
@@ -33,6 +40,7 @@
 					{% endfor %}
 						</div>
 					</div>
+					{% endif %}
 				{% endfor %}
 			{% endfor %}
 			</div>

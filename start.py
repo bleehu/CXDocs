@@ -58,6 +58,14 @@ def get_armor():
 	by_type = {}
 	with open("docs/armor.json") as armfile:
 		arms = json.loads(armfile.read())
+	for type in arms:
+		for set in arms[type]:
+			#pdb.set_trace()
+			set['minLevel'] = int(set['minLevel'])
+			set['cost'] = int(set['cost'])
+			set['primaryMags'] = int(set['primaryMags'])
+			set['secondaryMags'] = int(set['secondaryMags'])
+			#set['damageReduction'] = int(set['damageReduction']) +1d10 is screwing it up
 	return arms
 	
 def get_users():
