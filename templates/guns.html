@@ -10,13 +10,16 @@
 			</div>
 			<div class="col-lg-2">
 				<div class="list-group table-of-contents">
-					{% for gun in guns %}
-						<a class="list-group-item" href="#{{ gun['name'] }}panel">{{ gun['name'] }}</a>
+					{% for type in guns.keys() %}
+						<a class="list-group-item" href="#{{ type }}panel">{{ type }}</a>
 					{% endfor %}
 				</div>
 			</div>
 			<div class="col-lg-6">
-			{% for gun in guns %}
+			{% for type in guns %}
+			<h2> {{type}} </h2>
+			<p>There are {{ guns[type] | count }} {{ type }}s to choose from. </p>
+			{% for gun in guns[type] %}
 				{% if gun['type'] == 'SMG' %}
 				<div class="panel panel-success" id="{{gun['name']}}panel">
 				{% elif gun['type'] == 'Carbine' %}
@@ -40,6 +43,7 @@
 							</dl>
 						</div>
 					</div>
+			{% endfor %}
 			{% endfor %}
 			</div>
 		</div>

@@ -44,6 +44,11 @@ def get_guns():
 	goons = None
 	with open("docs/guns.json") as gunfile:
 		goons = json.loads(gunfile.read())
+	for type in goons:
+		for peice in goons[type]:
+			peice['cost'] = int(peice['cost'])
+			peice['damage'] = int(peice['damage'])
+			peice['mag'] = int(peice['mag'])
 	return goons
 
 def get_items():
@@ -106,7 +111,7 @@ def levelUp():
 	return render_template('levelup.html', levels=levels)
 	
 @app.route("/guns")
-def guns():
+def show_guns():
 	guns = get_guns()
 	return render_template('guns.html', guns=guns, session=session)
 	
@@ -156,7 +161,10 @@ def make_gun():
 	if request.form['manufacturer']:
 		gun['manufacturer'] = request.form['manufacturer']
 	guns = get_guns()
-	guns.append(gun)
+	type = gun['type']
+	if type not in guns.keys():
+		guns[type] = []
+	guns[type].append(gun)
 	json_string = json.dumps(guns)
 	with open("docs/guns1.json", 'w') as gunfile:
 		gunfile.write(json_string)
