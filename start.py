@@ -72,6 +72,12 @@ def get_armor():
 			set['secondaryMags'] = int(set['secondaryMags'])
 			#set['damageReduction'] = int(set['damageReduction']) +1d10 is screwing it up
 	return arms
+
+def get_races():
+	races = None
+	with open("docs/races.json") as racefile:
+		races = json.loads(racefile.read())
+	return races
 	
 def get_users():
 	all_users = None
@@ -124,6 +130,11 @@ def show_armor():
 def show_items():
 	items = get_items()
 	return render_template('items.html', items=items, session=session)
+
+@app.route("/races")
+def show_races():
+	races = get_races()
+	return render_template('races.html', races=races)
 
 @app.route("/rules")
 def show_rules():
