@@ -1,5 +1,6 @@
 import argparse
 from base64 import b64encode, b64decode
+import character
 import csv
 from flask import Flask, render_template, request, redirect, session, escape
 from flask_sqlalchemy import SQLAlchemy
@@ -42,16 +43,24 @@ def get_feats():
 			feats.append(line)
 	return feats
 	
-def get_guns():
+def get_guns(session):
 	goons = None
 	with open("docs/guns.json") as gunfile:
 		goons = json.loads(gunfile.read())
 	for type in goons:
+		toRemove = [] #can't remove in first pass or it'll screw up the iterator
 		for peice in goons[type]:
-			peice['cost'] = int(peice['cost'])
-			peice['damage'] = int(peice['damage'])
-			peice['mag'] = int(peice['mag'])
 			peice['minLevel'] = int(peice['minLevel'])
+			if 'username' in session.keys() or peice['minLevel'] < 10: #hide lv 10 content unless logged in
+				peice['cost'] = int(peice['cost'])
+				peice['damage'] = int(peice['damage'])
+				peice['mag'] = int(peice['mag'])
+			else:
+				print "removed %s" % peice['name']
+				toRemove.append(peice)
+		if len(toRemove) > 0:
+			for popper in toRemove:
+				goons[type].remove(popper)
 	return goons
 
 def get_items():
@@ -60,19 +69,26 @@ def get_items():
 		goons = json.loads(itemfile.read())
 	return goons
 
-def get_armor():
+def get_armor(session):
 	arms = None
 	types = []
 	by_type = {}
 	with open("docs/armor.json") as armfile:
 		arms = json.loads(armfile.read())
 	for type in arms:
+		toHide = []
 		for set in arms[type]:
 			set['minLevel'] = int(set['minLevel'])
-			set['cost'] = int(set['cost'])
-			set['primaryMags'] = int(set['primaryMags'])
-			set['secondaryMags'] = int(set['secondaryMags'])
-			#set['damageReduction'] = int(set['damageReduction']) +1d10 is screwing it up
+			if 'username' in session.keys() or set['minLevel'] < 10: #don't serve level 10 gear unless logged in
+				set['cost'] = int(set['cost'])
+				set['primaryMags'] = int(set['primaryMags'])
+				set['secondaryMags'] = int(set['secondaryMags'])
+				#set['damageReduction'] = int(set['damageReduction']) +1d10 is screwing it up
+			else:
+				toHide.append(set)
+		if len(toHide) > 0:
+			for hider in toHide:
+				arms[type].remove(hider)
 	return arms
 
 
@@ -122,7 +138,10 @@ def encode(cypher):
 @app.route("/")
 def hello():
 	session['X-CSRF'] = "foxtrot"
-	return render_template('index.html', session=session)
+	pc = None
+	if 'character' in session.keys():
+		pc = character.from_string(session['character'])
+	return render_template('index.html', session=session, character=pc)
 
 @app.route("/levelup")
 def levelUp():
@@ -131,12 +150,12 @@ def levelUp():
 	
 @app.route("/guns")
 def show_guns():
-	guns = get_guns()
+	guns = get_guns(session)
 	return render_template('guns.html', guns=guns, session=session)
 
 @app.route("/searchguns/<type>")
 def show_gun_type(type):
-	guns = get_guns()
+	guns = get_guns(session)
 	if type in guns.keys():
 		guns = {type:guns[type.lower()]}
 		return render_template('guns.html', guns=guns, session=session)
@@ -145,8 +164,27 @@ def show_gun_type(type):
 	
 @app.route("/armor")
 def show_armor():
-	armor = get_armor()
+	armor = get_armor(session)
 	return render_template('armor.html', armors=armor, session=session)
+
+@app.route("/show/character")
+def show_char_select():
+	if 'username' not in session.keys():
+		return redirect("/")
+	chars = character.get_characters(session)
+	return render_template('character_select.html', characters=chars, session=session)
+
+@app.route("/select/character", methods=['POST'])
+def char_select():
+	if 'username' not in session.keys():
+		return redirect("/")
+	character_blob = character.get_characters(session)
+	select_pk = int(request.form['pk'])
+	pdb.set_trace()
+	for player_character in character_blob['characters']:
+		if player_character.pk == select_pk:
+			session['character'] = str(player_character)
+	return redirect("/show/character")
 
 @app.route("/items")
 def show_items():
@@ -176,7 +214,7 @@ def show_feats():
 	
 @app.route("/weaponsmith")
 def show_weaponsmith():
-	guns = get_guns()
+	guns = get_guns(session)
 	return render_template("weaponsmith.html", guns=guns, session=session)
 
 @app.route("/addgun", methods=['POST'])
@@ -194,7 +232,7 @@ def make_gun():
 	gun['minLevel'] = request.form['minLevel']
 	if request.form['manufacturer']:
 		gun['manufacturer'] = request.form['manufacturer']
-	guns = get_guns()
+	guns = get_guns(session)
 	type = gun['type'].lower()
 	if type not in guns.keys():
 		guns[type] = []
@@ -233,7 +271,7 @@ def make_item():
 	
 @app.route("/armorsmith")
 def show_armorsmith():
-	armor = get_armor()
+	armor = get_armor(session)
 	return render_template("armorsmith.html", armor=armor, session=session)
 
 @app.route("/addarmor", methods=['POST'])
@@ -248,7 +286,7 @@ def make_armor():
 	newArmor['cost'] = request.form['cost']
 	newArmor['description'] = request.form['effect']
 	newArmor['minLevel'] = request.form['minLevel']
-	armor = get_armor()
+	armor = get_armor(session)
 	if newArmor['type'] not in armor.keys():
 		armor[newArmor['type']] = []
 	armor[newArmor['type']].append(newArmor)
@@ -264,7 +302,6 @@ def show_racesmith():
 
 @app.route("/addrace", methods=['POST'])
 def make_race():
-	pdb.set_trace()
 	newRace = {}
 	newRace['name'] = request.form['name']
 	newRace['society'] = request.form['society']

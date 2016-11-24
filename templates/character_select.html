@@ -1,0 +1,65 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Your Characters</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Your Characters </h1>
+			</div>
+			<div class="col-lg-2">
+				<div class="list-group table-of-contents">
+					{% for character in characters['characters'] %}
+						<a class="list-group-item" href="#{{character.name }}panel"> {{character.name}} </a>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-lg-6">
+			{% for character in characters['characters'] %}
+				<h2 id="{{character.name}}panel"> {{character.name}} </h2>
+				<ul>
+					<li><strong>Level:</strong> {{character.level}} </li>
+					<li><strong>Race:</strong> {{character.race}} </li>
+					<li><strong>Class:</strong> {{character.my_class}} </li>
+					<li><strong>Money:</strong> ${{character.money}} </li>
+					<li><strong>Current Mission:</strong> {{character.mission}} </li>
+				</ul>
+				{% if character.feats | count > 0 %}
+					<h4>Feats</h4>
+					<ul>
+						{% for feat in character.feats %}
+							<li> {{feat}} </li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+				{% if character.skills | count > 0 %}
+					<dl>
+						{% for skill in character.skills.keys() %}
+							<dt>{{skill}}</dt><dd>{{character.skills[skill]}}</dd>
+						{% endfor %}
+					</dl>
+				{% endif %}
+				<!--
+				self.pk = 0
+			self.name = "Sam Vaughn"
+			self.level = 1
+			self.money = 0
+			self.mission = "Mercenaries"
+			self.my_class = "Preist"
+			self.race = "Human"
+			self.weapons = []
+			self.armor = []
+			self.items = []
+			self.feats = []
+			self.skills = {}
+			-->
+				<form action="/select/character" method="post">
+					<input type="hidden" name="pk" value="{{character.pk}}"></input>
+					<input type="submit" value="Select Character"/>
+				</form>
+			{% endfor %}
+			</div>
+		</div>
+	{% endblock %}
+	

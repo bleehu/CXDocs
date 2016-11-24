@@ -18,6 +18,11 @@
 							<input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
 						</div>
 					</div>
+					{% if 'character' in session %}
+						<p>Currently have selected character: {{character.name}}</p>
+					{% else %}
+						<p>Would you like to <a href="/show/character">select a character</a>?</p>
+					{% endif%}
 				</form>
 			{% else %}
 				<form action="login" method="post" class="form-horizontal">

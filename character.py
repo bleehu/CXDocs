@@ -1,7 +1,29 @@
+import json
+import pdb
+
+"""Returns a map with a list of character objects in map['characters'] 
+	and the max character's Primary Key in map['max_pk']"""
+def get_characters(session):
+	players_chars = None
+	if 'username' not in session.keys():
+		return None #TODO: raise not_logged_in_Exception
+	uname = session['username']
+	filepath = "users/%s/charfile.json" % uname #TODO: encrypt this
+	with open(filepath, 'r') as charfile:
+		play_string = charfile.read()
+		json_blob = json.loads(play_string)
+		parsed_list = []
+		for charstring in json_blob['characters']:
+			new_character = from_string(charstring)
+			parsed_list.append(new_character)
+		json_blob['characters'] = parsed_list
+		players_chars = json_blob
+	return players_chars
 
 class Character:
 	
 	def __init__(self):
+		self.pk = 0
 		self.name = "Sam Vaughn"
 		self.level = 1
 		self.money = 0
@@ -48,6 +70,8 @@ def from_string(a_string):
 	return newbie
 	
 def parse_list(list_string):
+	if list_string == '[]':
+		return []
 	items = list_string[1:-1].split(',')
 	final = []
 	for item in items:
