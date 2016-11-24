@@ -193,7 +193,6 @@ def make_gun():
 	with open("docs/guns.json", 'w') as gunfile:
 		gunfile.write(json_string)
 		print "Added new gun: %s" % gun['name']
-	pdb.set_trace()
 	return redirect("weaponsmith")
 
 @app.route("/missions")
