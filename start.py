@@ -189,6 +189,7 @@ def make_gun():
 	gun['toMiss'] = request.form['toMiss']
 	gun['effect'] = request.form['effect']
 	gun['cost'] = request.form['cost']
+	gun['magcost'] = request.form['magcost']
 	gun['minLevel'] = request.form['minLevel']
 	if request.form['manufacturer']:
 		gun['manufacturer'] = request.form['manufacturer']
