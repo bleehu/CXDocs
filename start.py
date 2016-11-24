@@ -2,7 +2,9 @@ import argparse
 from base64 import b64encode, b64decode
 import csv
 from flask import Flask, render_template, request, redirect, session, escape
+from flask_sqlalchemy import SQLAlchemy
 import json
+from mission import Mission
 import pdb
 import os
 import xml.etree.ElementTree
@@ -72,6 +74,17 @@ def get_armor():
 			set['secondaryMags'] = int(set['secondaryMags'])
 			#set['damageReduction'] = int(set['damageReduction']) +1d10 is screwing it up
 	return arms
+
+
+#need to run $psql mydb -h localhost -p 5433 first!
+def get_missions():
+	psql_user = "searcher"
+	psql_pass = "allDatSQL"
+	db = SQLAlchemy(app)
+	#mine is listening on 5432 right now
+	psql_port = 5432
+	pdb.set_trace()
+	return []
 
 def get_races():
 	races = None
@@ -177,9 +190,16 @@ def make_gun():
 		guns[type] = []
 	guns[type].append(gun)
 	json_string = json.dumps(guns)
-	with open("docs/guns1.json", 'w') as gunfile:
+	with open("docs/guns.json", 'w') as gunfile:
 		gunfile.write(json_string)
+		print "Added new gun: %s" % gun['name']
+	pdb.set_trace()
 	return redirect("weaponsmith")
+
+@app.route("/missions")
+def show_missions():
+	missions = get_missions()
+	return render_template("missions.html", missions = [])
 
 @app.route("/itemsmith")
 def show_itemsmith():
@@ -293,4 +313,6 @@ if __name__ == "__main__":
 	if args.i:
 		host = args.i
 	app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
+	app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
+	app.config['SQLAlchemy_ECHO'] = True
 	app.run(host = host)

@@ -4,6 +4,7 @@ Compound X rules displayed as web pages. Written in Python, served with Flask an
 to set up, 
 1) $git clone https://github.com/bleehu/CXDocs.git
 2) $sudo pip install flask 
+3) $sudo pip install flask_sqlalchemy
 
 to test, use:
 $python start.py
