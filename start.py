@@ -51,6 +51,7 @@ def get_guns():
 			peice['cost'] = int(peice['cost'])
 			peice['damage'] = int(peice['damage'])
 			peice['mag'] = int(peice['mag'])
+			peice['minLevel'] = int(peice['minLevel'])
 	return goons
 
 def get_items():

@@ -1,4 +1,5 @@
 import json
+import pdb
 
 def man():
 	guns = None
@@ -8,7 +9,11 @@ def man():
 		for type in guns.keys():
 			for peice in guns[type]:
 				#do a manipulation on a every weapon
-				peice["clipcost"] = 35
+				#peice["clipcost"] = 35
+				if 'minLevel' not in peice.keys():
+					print peice['name']
+					pdb.set_trace()
+					peice['level'] = 0
 	if guns != None:
 		jsonFile = open("docs/guns.json", 'w')
 		jsonFile.write(json.dumps(guns))

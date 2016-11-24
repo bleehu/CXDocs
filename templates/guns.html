@@ -11,7 +11,12 @@
 			<div class="col-lg-2">
 				<div class="list-group table-of-contents">
 					{% for type in guns.keys() %}
-						<a class="list-group-item" href="#{{ type }}panel">{{ type }}</a>
+						<a class="list-group-item active" href="#{{ type }}panel">{{ guns[type][0]['type'] }}</a>
+						{% for peice in guns[type] %}
+							{% if session['username'] or peice['minLevel'] < 10 %}
+								<a class="list-group-item" href="#{{ peice['name'] }}panel"> {{peice['name']}} </a>
+							{% endif%}
+						{% endfor %}
 					{% endfor %}
 				</div>
 			</div>
@@ -19,20 +24,19 @@
 			{% for type in guns %}
 			<h2 id="{{type}}panel"> {{guns[type][0]['type']}}s </h2>
 			<p>There are {{ guns[type] | count }} {{ type }}s to choose from. To see only {{type}}s, click <a href="/searchguns/{{type}}">here</a>.</p>
-			{% for gun in guns[type] %}
-				{% if gun['type'] == 'SMG' %}
-				<div class="panel panel-success" id="{{gun['name']}}panel">
-				{% elif gun['type'] == 'Carbine' %}
-				<div class="panel panel-warning" id="{{gun['name']}}panel">
-				{% else %}
-				<div class="panel panel-primary" id="{{gun['name']}}panel">
-				{% endif %}
+				{% for gun in guns[type] %}
+					{% if gun['minLevel'] > 9 %}
+					<div class="panel panel-warning" id="{{gun['name']}}panel">
+					{% else %}
+					<div class="panel panel-primary" id="{{gun['name']}}panel">
+					{% endif %}
 						<div class="panel-heading">
-							<h3 class="panel-title">{{gun['manufacturer']}} {{ gun['name'] }}</h3>
+							<h3 id="{{gun['name']}}panel" class="panel-title">{{gun['manufacturer']}} {{ gun['name'] }}</h3>
 						</div>
 						<div class="panel-body">
 							<p> {{ gun['effect'] }} </p>
 							<dl class="col-lg-3 col-md-3 col-sm-4">
+								<dt>Level</dt><dd>{{gun['minLevel']}}</dd>
 								<dt>Range</dt><dd>{{gun['range']}}m</dd>
 								<dt>Damage</dt><dd>{{gun['damage']}} points</dd>
 								<dt>Miss</dt><dd>{{gun['toMiss']}}%</dd>
@@ -40,10 +44,12 @@
 							<dl class="col-lg-3 col-md-3 col-sm-4">
 								<dt>Mag Size</dt><dd>{{gun['clip']}} rounds</dd>
 								<dt>Class</dt><dd>{{gun['type']}}</dd>
+								<dt>Cost</dt><dd>${{gun['cost']}}</dd>
+								<dt>Cost of mag</dt><dd>${{gun['magcost']}}</dd>
 							</dl>
 						</div>
 					</div>
-			{% endfor %}
+				{% endfor %}
 			{% endfor %}
 			</div>
 		</div>
