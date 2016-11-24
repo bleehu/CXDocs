@@ -67,7 +67,6 @@ def get_armor():
 		arms = json.loads(armfile.read())
 	for type in arms:
 		for set in arms[type]:
-			#pdb.set_trace()
 			set['minLevel'] = int(set['minLevel'])
 			set['cost'] = int(set['cost'])
 			set['primaryMags'] = int(set['primaryMags'])
@@ -133,6 +132,15 @@ def levelUp():
 def show_guns():
 	guns = get_guns()
 	return render_template('guns.html', guns=guns, session=session)
+
+@app.route("/searchguns/<type>")
+def show_gun_type(type):
+	guns = get_guns()
+	if type in guns.keys():
+		guns = {type:guns[type.lower()]}
+		return render_template('guns.html', guns=guns, session=session)
+	else:
+		show_guns()
 	
 @app.route("/armor")
 def show_armor():
@@ -185,7 +193,7 @@ def make_gun():
 	if request.form['manufacturer']:
 		gun['manufacturer'] = request.form['manufacturer']
 	guns = get_guns()
-	type = gun['type']
+	type = gun['type'].lower()
 	if type not in guns.keys():
 		guns[type] = []
 	guns[type].append(gun)

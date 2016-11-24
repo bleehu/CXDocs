@@ -17,8 +17,8 @@
 			</div>
 			<div class="col-lg-6">
 			{% for type in guns %}
-			<h2> {{type}} </h2>
-			<p>There are {{ guns[type] | count }} {{ type }}s to choose from. </p>
+			<h2 id="{{type}}panel"> {{guns[type][0]['type']}}s </h2>
+			<p>There are {{ guns[type] | count }} {{ type }}s to choose from. To see only {{type}}s, click <a href="/searchguns/{{type}}">here</a>.</p>
 			{% for gun in guns[type] %}
 				{% if gun['type'] == 'SMG' %}
 				<div class="panel panel-success" id="{{gun['name']}}panel">
@@ -28,7 +28,7 @@
 				<div class="panel panel-primary" id="{{gun['name']}}panel">
 				{% endif %}
 						<div class="panel-heading">
-							<h3 class="panel-title">{{ gun['name'] }}</h3>
+							<h3 class="panel-title">{{gun['manufacturer']}} {{ gun['name'] }}</h3>
 						</div>
 						<div class="panel-body">
 							<p> {{ gun['effect'] }} </p>
