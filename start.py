@@ -186,6 +186,25 @@ def char_select():
 			session['character'] = str(player_character)
 	return redirect("/show/character")
 
+@app.route("/modify/character/<pk>")
+def char_modify(pk):
+	if 'username' not in session.keys():
+		return redirect("/")
+	to_mod = None
+	char_blob = character.get_characters(session)
+	if int(pk) not in char_blob['pk_list']:
+		return redirect("/show/character")
+	for pc in char_blob['characters']:
+		if pc.pk == int(pk):
+			to_mod = pc
+			return render_template("character_modify.html", session=session, character=to_mod)
+
+@app.route("/mod/character", methods=['POST'])
+def char_mod():
+	if 'username' not in session.keys():
+		return redirect("/")
+	pdb.set_trace()
+
 @app.route("/items")
 def show_items():
 	items = get_items()
@@ -343,6 +362,7 @@ def logout():
 	form = request.form
 	if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
 		session.pop('username', None)
+		session.pop('character', None)
 	return redirect("/")
 
 @app.errorhandler(500)

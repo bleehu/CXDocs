@@ -1,25 +1,6 @@
 import json
 import pdb
 
-"""Returns a map with a list of character objects in map['characters'] 
-	and the max character's Primary Key in map['max_pk']"""
-def get_characters(session):
-	players_chars = None
-	if 'username' not in session.keys():
-		return None #TODO: raise not_logged_in_Exception
-	uname = session['username']
-	filepath = "users/%s/charfile.json" % uname #TODO: encrypt this
-	with open(filepath, 'r') as charfile:
-		play_string = charfile.read()
-		json_blob = json.loads(play_string)
-		parsed_list = []
-		for charstring in json_blob['characters']:
-			new_character = from_string(charstring)
-			parsed_list.append(new_character)
-		json_blob['characters'] = parsed_list
-		players_chars = json_blob
-	return players_chars
-
 class Character:
 	
 	def __init__(self):
@@ -50,7 +31,45 @@ class Character:
 			return -1
 		else:
 			return 0
-	
+
+"""Returns a map with a list of character objects in map['characters']. 
+	Also contains a list of primary keys in map['pk_list']"""
+def get_characters(session):
+	players_chars = None
+	if 'username' not in session.keys():
+		return None #TODO: raise not_logged_in_Exception
+	uname = session['username']
+	filepath = "users/%s/charfile.json" % uname #TODO: encrypt this
+	with open(filepath, 'r') as charfile:
+		play_string = charfile.read()
+		json_blob = json.loads(play_string)
+		parsed_list = []
+		pk_list = []
+		for charstring in json_blob['characters']:
+			new_character = from_string(charstring)
+			parsed_list.append(new_character)
+			pk_list.append(new_character.pk)
+		json_blob['characters'] = parsed_list
+		json_blob['pk_list'] = sorted(pk_list)
+		players_chars = json_blob
+	return players_chars
+
+	""" for characters, use a .json blob with the list
+		of character objects in blob['characters']"""
+def set_characters(session, characters):
+	if 'username' not in session:
+		#TODO: raise exception, 'cause this should NEVER happen
+		return None
+	uname = session['username']
+	filepath = "users/%s/charfile.json" % uname #TODO: encrypt this
+	with open(filepath, 'w') as charfile:
+		play_string = str(characters['characters'])
+		print "this should be a list of stringified characters:"
+		print playstring
+		pdb.set_trace()
+		charfile.write(play_string)
+
+"""given a string created by str(some_Character), returns a character object"""
 def from_string(a_string):
 	if a_string.count('|') != 10:
 		raise ValueError("Not a valid character string, wrong number of pipe characters.")

@@ -1,0 +1,47 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Modify Character</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Modify Character </h1>
+			</div>
+			<div class="col-lg-12">
+				<h2 id="{{character.name}}panel"> {{character.name}} </h2>
+				
+				<!--
+				self.pk = 0
+			self.name = "Sam Vaughn"
+			self.level = 1
+			self.money = 0
+			self.mission = "Mercenaries"
+			self.my_class = "Preist"
+			self.race = "Human"
+			self.weapons = []
+			self.armor = []
+			self.items = []
+			self.feats = []
+			self.skills = {}
+			-->
+				<form action="/mod/character" method="post">
+					<input type="hidden" name="pk" value="{{character.pk}}"></input>
+					<label for="inputEmail" class="col-lg-2 control-label">Name</label>
+					<input class="form-control" type="text" name="new_name" value="{{character.name}}" />
+					<label for="inputEmail" class="col-lg-2 control-label">Level</label>
+					<input class="form-control" type="text" name="new_level" value="{{character.level}}" />
+					<label for="inputEmail" class="col-lg-2 control-label">Money</label>
+					<input class="form-control" type="text" name="new_money" value="{{character.money}}" />
+					<label for="inputEmail" class="col-lg-2 control-label">Mission</label>
+					<input class="form-control" type="text" name="new_mission" value="{{character.mission}}" />
+					<label for="inputEmail" class="col-lg-2 control-label">Class</label>
+					<input class="form-control" type="text" name="new_class" value="{{character.my_class}}" />
+					<label for="inputEmail" class="col-lg-2 control-label">Race</label>
+					<input class="form-control" type="text" name="new_race" value="{{character.race}}" />
+					<input class="form-control" type="submit" value="Update Character"/>
+				</form>
+			</div>
+		</div>
+	{% endblock %}
+	

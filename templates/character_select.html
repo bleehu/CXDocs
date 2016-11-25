@@ -54,9 +54,12 @@
 			self.feats = []
 			self.skills = {}
 			-->
-				<form action="/select/character" method="post">
+				<form class="form-horizontal" action="/select/character" method="post">
 					<input type="hidden" name="pk" value="{{character.pk}}"></input>
-					<input type="submit" value="Select Character"/>
+					<input class="btn btn-primary" type="submit" value="Select Character"/>
+				</form>
+				<form class="form-horizontal" action="/modify/character/{{character.pk}}" method="get">
+					<input class="btn btn-warn" type="submit" value="Modify Character"/>
 				</form>
 			{% endfor %}
 			</div>
