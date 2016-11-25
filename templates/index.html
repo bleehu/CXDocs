@@ -20,6 +20,7 @@
 					</div>
 					{% if 'character' in session %}
 						<p>Currently have selected character: {{character.name}}</p>
+						<p>Would you like to <a href="/show/character">select a different character</a>?</p>
 					{% else %}
 						<p>Would you like to <a href="/show/character">select a character</a>?</p>
 					{% endif%}
