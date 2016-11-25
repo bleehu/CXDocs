@@ -1,0 +1,87 @@
+/*========================================
+ * Armour Additions and Helmets
+ * These additions may be worn with or added to armour.
+ *======================================*/
+    Primary Leg Rig $60
+    +2 primary mag space, not including price for mags.
+
+    Secondary Leg Rig $60
+    +3 secondary mag / 40mm grenade space.
+
+    //Tactical and Combat helmets can hold NVGs, lights, radios, etc.
+    Kevlar Tactical Helmet $380
+    5 DR, 30%
+
+    Carbon-Fiber Tactical Helmet $400
+    10 DR, 30%
+
+    Kevlar Advanced Combat Helmet $430
+    5 DR, 35%
+
+    Carbon-Fiber Advanced Combat Helmet $450
+    10 DR, 35%
+
+    Kevlar Enhanced Combat Helemt $480
+    5 DR, 40%
+
+    Carbon-Fiber Enhanced Combat Helmet $500
+    10 DR, 40%
+
+    Kevlar Flight Helmet $580
+    5 DR, 50%
+    A simple flight helmet. does not provide full seal, but can be paired with air- and space-craft external oxygen systems.
+
+    //Environment helmets provide a full seal
+    Kevlar Environment Helmet $900
+    5 DR, 60%
+
+    Carbon-Fiber Environment Helmet $1000
+    10 DR, 60%
+   
+   
+///////////////////////////////////////////////////////////////////////////
+//Undersuits
+//Various undersuits exist, providing buffs to the wearer. Undersuits are
+//wearable by all classes unless otherwise stated. Undersuits provide a 
+//damage reduction to any hits that miss armour. Additionally any damage
+//which only affect a limb has the suit's DR applied to it. Undersuits
+//count as a full set of clothing, so any clothes worn over them look out
+//of place.
+    //Flightsuits offer basic protection from the elements.
+    //Traditionally come in Tan, Olive Drab, Wolf-Grey, Dark Earth, Black, Camo Patterns, etc.    
+    Polymer-Alloy flightsuit $1500
+    5 DR
+
+    Nano-steel Kevlar flightsuit $1750
+    10 DR
+
+    Carbon-Steel Fiber flightsuit $2000
+    15 DR
+
+    Carbon-Ceramic Fiber flightsuit $2250
+    20 DR
+
+    EOD Ceramic Nano Crystal armour $4000
+    60 DR
+    100%
+    Movement restricted to 3m per Full Action, or your max speed if less than 3. No use of melee, and regular actions take twice as long.
+    8 primary mags, 6 of combined secondary and grenades.
+    Oversuit. cannot be worn with an Undersuit.
+    15 DR all over body.
+
+    //These environment suits are air- and water-tight when combined with an EVA helmet. They are bulky and any DEX skill-checks are at a -10% and movement is reduced in RP.
+    //Traditionally come in white, yellow or red.
+    Polymer-Alloy flightsuit
+    This basic environment suit offers no balistic protection. When shot, the suit will decompress or compress, as necessary.
+
+    Nano-steel Kevlar environment suit $5000
+    10 DR
+    Suit integrity: 5 shots
+
+    Carbon-Steel Fiber environment suit $5500
+    15 DR
+    Suit integrity: 10 shots
+
+    Carbon-Ceramic Fiber environment suit $6000
+    20 DR
+    Suit integrity: 20 shots
