@@ -11,14 +11,16 @@
 			<div class="col-lg-2">
 				<div class="list-group table-of-contents">
 					{% for mission in missions %}
-						<a class="list-group-item active" href="#{{type}}"><strong>{{ mission['name'] }}</strong></a>
+						<a class="list-group-item active" href="#{{type}}"><strong>{{ mission.name }}</strong></a>
 					{% endfor %}
 				</div>
 			</div>
 			<div class="col-lg-6">
-			<p>Any reinforced armour, the amount of Damage Reduction is rolled at the time of purchase. A Carbon-Steel Fiber Titanium Reinforced armour plate might be anywhere from 26-35 DR for its lifetime, depending on what you roll when you purchase it. These armours are a bit of a gamble, since they may provide better protection than the next tier up, or they might only provide marginally better protection than the last tier.</p>
+			<p>The finished missions are listed here.</p>
 			{% for mission in missions %}
-				<h2 id="{{mission['name']}}"> {{ mission['name'] }} </h2>
+				<h2 id="{{ mission.name }}"> {{ mission.name }} </h2>
+				<p><strong>Level: {{ mission.level }} </strong></p>
+				<p> {{ mission.description }} </p>
 				
 			{% endfor %}
 			</div>

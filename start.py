@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, session, escape
 import json
 from mission import Mission
 import pdb
-import psyco2
+import psycopg2
 import os
 import xml.etree.ElementTree
 app = Flask(__name__)
@@ -91,13 +91,20 @@ def get_armor(session):
 				arms[type].remove(hider)
 	return arms
 
-
-#need to run $psql mydb -h localhost -p 5433 first!
 def get_missions():
-	psql_user = "searcher"
-	psql_pass = "allDatSQL"
-	pdb.set_trace()
-	return []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT * FROM missions ORDER BY level;")
+	missions = []
+	results = myCursor.fetchall()
+	for miss in results:
+		pk = int(miss[0])
+		name = miss[1]
+		description = miss[2]
+		level = int(miss[3])
+		new_mission = Mission(pk, name, level, description)
+		missions.append(new_mission)
+	return missions
 
 def get_races():
 	races = None
@@ -262,7 +269,7 @@ def make_gun():
 @app.route("/missions")
 def show_missions():
 	missions = get_missions()
-	return render_template("missions.html", missions = [])
+	return render_template("missions.html", missions = missions)
 
 @app.route("/itemsmith")
 def show_itemsmith():
