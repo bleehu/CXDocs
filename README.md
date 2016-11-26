@@ -5,6 +5,7 @@ to set up,
 1) $git clone https://github.com/bleehu/CXDocs.git
 2) $sudo pip install flask 
 3) $sudo pip install flask_sqlalchemy
+4) $sudo apt-get install python-psycopg2
 
 to test, use:
 $python start.py

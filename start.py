@@ -3,10 +3,10 @@ from base64 import b64encode, b64decode
 import character
 import csv
 from flask import Flask, render_template, request, redirect, session, escape
-from flask_sqlalchemy import SQLAlchemy
 import json
 from mission import Mission
 import pdb
+import psyco2
 import os
 import xml.etree.ElementTree
 app = Flask(__name__)
@@ -96,9 +96,6 @@ def get_armor(session):
 def get_missions():
 	psql_user = "searcher"
 	psql_pass = "allDatSQL"
-	db = SQLAlchemy(app)
-	#mine is listening on 5432 right now
-	psql_port = 5432
 	pdb.set_trace()
 	return []
 
@@ -379,6 +376,6 @@ if __name__ == "__main__":
 	if args.i:
 		host = args.i
 	app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
-	app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
-	app.config['SQLAlchemy_ECHO'] = True
+	#app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
+	#app.config['SQLAlchemy_ECHO'] = True
 	app.run(host = host)
