@@ -106,6 +106,23 @@ def get_missions():
 		missions.append(new_mission)
 	return missions
 
+def get_playercharacters():
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;")
+	pcs = []
+	results = myCursor.fetchall()
+	for pc in results:
+		newPC = {}
+		newPC['name'] = pc[0]
+		newPC['level'] = int(pc[1])
+		newPC['race'] = pc[2]
+		newPC['class'] = pc[3]
+		newPC['displayname'] = pc[4]
+		pcs.append(newPC)
+	return pcs
+
+
 def get_races():
 	races = None
 	with open("docs/races.json") as racefile:
@@ -178,6 +195,12 @@ def show_char_select():
 	chars = character.get_characters(session)
 	return render_template('character_select.html', characters=chars, session=session)
 
+@app.route("/playercharacters")
+def show_player_characters():
+	#SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
+	pcs = get_playercharacters()
+	return render_template("player_characters.html", pcs = pcs)
+	
 @app.route("/select/character", methods=['POST'])
 def char_select():
 	if 'username' not in session.keys():
