@@ -109,7 +109,7 @@ def get_missions():
 def get_playercharacters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;")
+	myCursor.execute("SELECT name, level, race, class, players.displayname FROM characters JOIN players ON characters.owner_fk = players.pk_id ORDER BY displayname, level, name;")
 	pcs = []
 	results = myCursor.fetchall()
 	for pc in results:
@@ -176,6 +176,24 @@ def show_guns():
 
 @app.route("/searchguns/<type>")
 def show_gun_type(type):
+	guns = get_guns(session)
+	if type in guns.keys():
+		guns = {type:guns[type.lower()]}
+		return render_template('guns.html', guns=guns, session=session)
+	else:
+		show_guns()
+
+@app.route("/characterguns")
+def character_guns():
+	if 'username' not in session.keys():
+		return redirect("/")
+	if 'character' not in session.keys():
+		return redirect("/")
+	character_string = session['character']
+	my_character = character.from_string(character_string)
+	classes = get_classes()
+	my_class = classes[my_character.my_class]
+	pdb.set_trace()
 	guns = get_guns(session)
 	if type in guns.keys():
 		guns = {type:guns[type.lower()]}
