@@ -54,14 +54,14 @@ Upgrade, none ,"Roll a number of dice equal to your INT / 5 (round up) + 1 and t
 Unconventinal Warfare:	, Any feat > 9, combat style must primarily use this stat.
 You are trained in the art of combative tossing, or some other obscure fighting technique
 Very Normal, none,"Any time that someone would be suspicious of your actions, they will be less likely to think twice about what you are doing. Increase your Deceive and Speech skills by 10."
-Ward:	, Dex 10 or Level 8 or higher assassin / berserker. +20% to armour when your melee weapon is equipped.
+Ward,none, Dex 10 or Level 8 or higher assassin / berserker. +20% to armour when your melee weapon is equipped.
 Wealthy Sponsor, none ,Gain LUK * Lvl * 750 credits.
 Weapon Training Elective - Carbine,"Cannot be taken by the following classes: Pilot, Assassin, Warlock, Monk, Beserker, Soldier, Priest",Gain access to Carbines/Battle Rifles
 Weapon Training Elective - Shotguns,"Cannot be taken by the following classes: Pilot, Assassin, Warlock, Monk, Beserker, Soldier, Priest",Gain access to Shotguns
 Weapon Training Elective - SMG,"Cannot be taken by the following classes: Pilot, Assassin, Warlock, Monk, Beserker, Soldier, Priest",Gain access to SMGs
 Weapon Familiarization,can be taken once,Remove 15% miss chance from any one weapon model.
 Weapon Skill Tree: Pistoleer,may be taken up to 3 times,+10 damage to pistols.
-Weapon Skill Tree: Shotgun Surgeon, target gets -10% armour. If they do not have armour deal +5 damage.
+Weapon Skill Tree: Shotgun Surgeon,may be taken up to 3 times, target gets -10% armour. If they do not have armour deal +5 damage.
 Weapon Skill Tree: Spray and Pray,may be taken up to 3 times," When using SMGs, plus 1 round fired, +10% miss chance."
 Weapon Skill Tree: Assault and Battery,may be taken up to 3 times, +10m range to assault rifles and carbines.
 Weapon Skill Tree: Sniper:,may be taken up to 3 times, +5 damage and -5% accuracy to Long Rifles
