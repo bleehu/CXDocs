@@ -22,7 +22,7 @@ def get_args():
 
 def check_auth(session):
 	if 'username' not in session.keys():
-		log.error("Anonymous attempt to access character select! user_agent:%s, remoteIP:%s" % (request.user_agent.string, request.remote_addr))
+		log.error("Anonymous attempt to access %s! user_agent:%s, remoteIP:%s" % (request.path, request.user_agent.string, request.remote_addr))
 		return False
 	blacklisted_UA = ['zgrab', 'vas', 'burp']
 	for ua in blacklisted_UA:
@@ -241,7 +241,7 @@ def show_player_characters():
 	
 @app.route("/select/character", methods=['POST'])
 def char_select():
-	if check_auth(session):
+	if not check_auth(session):
 		return redirect("/")
 	character_blob = character.get_characters(session)
 	select_pk = int(request.form['pk'])
@@ -265,7 +265,7 @@ def char_modify(pk):
 
 @app.route("/mod/character", methods=['POST'])
 def char_mod():
-	if 'username' not in session.keys():
+	if not check_auth(session):
 		return redirect("/")
 
 @app.route("/items")
@@ -296,11 +296,15 @@ def show_feats():
 	
 @app.route("/weaponsmith")
 def show_weaponsmith():
+	if not check_auth(session):
+		return redirect("/")
 	guns = get_guns(session)
 	return render_template("weaponsmith.html", guns=guns, session=session)
 
 @app.route("/addgun", methods=['POST'])
 def make_gun():
+	if not check_auth(session):
+		return redirect("/")
 	gun = {}
 	gun['name'] = request.form['gunname']
 	gun['range'] = request.form['range']
@@ -332,11 +336,15 @@ def show_missions():
 
 @app.route("/itemsmith")
 def show_itemsmith():
+	if not check_auth(session):
+		return redirect("/")
 	items = get_items()
 	return render_template("itemsmith.html", items = items, session=session)
 
 @app.route("/additem", methods=['POST'])
 def make_item():
+	if not check_auth(session):
+		return redirect("/")
 	item = {}
 	item['name'] = request.form['itemname']
 	item['type'] = request.form['itemType']
@@ -354,11 +362,15 @@ def make_item():
 	
 @app.route("/armorsmith")
 def show_armorsmith():
+	if not check_auth(session):
+		return redirect("/")
 	armor = get_armor(session)
 	return render_template("armorsmith.html", armor=armor, session=session)
 
 @app.route("/addarmor", methods=['POST'])
 def make_armor():
+	if not check_auth(session):
+		return redirect("/")
 	newArmor = {}
 	newArmor['name'] = request.form['name']
 	newArmor['damageReduction'] = request.form['dr']
@@ -381,11 +393,15 @@ def make_armor():
 
 @app.route("/racesmith")
 def show_racesmith():
+	if not check_auth(session):
+		return redirect("/")
 	races = get_races()
 	return render_template("racesmith.html", races=races, session=session)
 
 @app.route("/addrace", methods=['POST'])
 def make_race():
+	if not check_auth(session):
+		return redirect("/")
 	newRace = {}
 	newRace['name'] = request.form['name']
 	newRace['society'] = request.form['society']
