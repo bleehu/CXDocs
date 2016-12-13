@@ -5,3 +5,4 @@ static/users.enc
 usr/*
 *.pyc
 *.log
+log/*
