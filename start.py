@@ -8,15 +8,27 @@ from mission import Mission
 import pdb
 import psycopg2
 import os
+import logging
 import xml.etree.ElementTree
 app = Flask(__name__)
 app.config.from_object(__name__)
+global log
 
 def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", metavar="###.###.###.###", help="Your local IP address. use ifconfig on linux.")
 	args = parser.parse_args()
 	return args
+
+def check_auth(session):
+	if 'username' not in session.keys():
+		log.error("Anonymous attempt to access character select! user_agent:%s, remoteIP:%s" % (request.user_agent.string, request.remote_addr))
+		return False
+	blacklisted_UA = ['zgrab', 'vas', 'burp']
+	for ua in blacklisted_UA:
+		if ua in request.user_agent.string.lower():
+			return False
+	return True
 
 def get_classes():
 	classless = None
@@ -192,10 +204,18 @@ def character_guns():
 	character_string = session['character']
 	my_character = character.from_string(character_string)
 	classes = get_classes()
-	my_class = classes[my_character.my_class]
-	pdb.set_trace()
+	my_class = None
+	for cc in classes:
+		if my_character.my_class == cc['name']:
+			my_class = cc
+	usable = {}
 	guns = get_guns(session)
-	if type in guns.keys():
+	for gun in guns:
+		if gun['name'] in my_class['Weapon Proficiencies']:
+			if gun['type'] not in usable.keys():
+				usable[gun['type']] = []
+			usable[gun['type']].append(gun)
+	for type in guns.keys():
 		guns = {type:guns[type.lower()]}
 		return render_template('guns.html', guns=guns, session=session)
 	else:
@@ -221,11 +241,10 @@ def show_player_characters():
 	
 @app.route("/select/character", methods=['POST'])
 def char_select():
-	if 'username' not in session.keys():
+	if check_auth(session):
 		return redirect("/")
 	character_blob = character.get_characters(session)
 	select_pk = int(request.form['pk'])
-	pdb.set_trace()
 	for player_character in character_blob['characters']:
 		if player_character.pk == select_pk:
 			session['character'] = str(player_character)
@@ -248,7 +267,6 @@ def char_modify(pk):
 def char_mod():
 	if 'username' not in session.keys():
 		return redirect("/")
-	pdb.set_trace()
 
 @app.route("/items")
 def show_items():
@@ -304,7 +322,7 @@ def make_gun():
 	json_string = json.dumps(guns)
 	with open("docs/guns.json", 'w') as gunfile:
 		gunfile.write(json_string)
-		print "Added new gun: %s" % gun['name']
+	log.info("%s added new gun: %s", (session['username'], gun['name']))
 	return redirect("weaponsmith")
 
 @app.route("/missions")
@@ -330,6 +348,7 @@ def make_item():
 	json_string = json.dumps(items)
 	with open("docs/items1.json", 'w') as itemfile:
 		itemfile.write(json_string)
+	log.info("%s added new race: %s", (session['username'], item['name']))
 	return redirect("itemsmith")
 
 	
@@ -357,6 +376,7 @@ def make_armor():
 	json_string = json.dumps(armor)
 	with open("docs/armor.json", 'w') as armorfile:
 		armorfile.write(json_string)
+	log.info("%s added new armor: %s", (session['username'], newArmor['name']))
 	return redirect("armorsmith")
 
 @app.route("/racesmith")
@@ -383,6 +403,7 @@ def make_race():
 	json_string = json.dumps(races)
 	with open("docs/races.json", 'w') as racefile:
 		racefile.write(json_string)
+	log.info("%s added new race: %s", (session['username'], newRace['name']))
 	return redirect("racesmith")
 	
 @app.route("/login", methods=['POST'])
@@ -394,28 +415,38 @@ def login():
 		session.pop('X-CSRF', None)
 	else:
 		resp = make_response(render_template("501.html"), 403)
+		log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 		return resp
 	users = get_users()
 	if uname in users.keys() and passwerd == users[uname]:
 		session['username'] = uname
-		
-	
+		log.info("%s logged in" % uname)
+	log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, password, request.user_agent.string, request.remote_addr))
 	return redirect("/")
 
 @app.route("/logout", methods=['POST'])
 def logout():
 	form = request.form
 	if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
+		log.info("%s logged out" % session['username'])
 		session.pop('username', None)
 		session.pop('character', None)
 	return redirect("/")
 
 @app.errorhandler(500)
 def borked_it(error):
+	uname = "Anonymous"
+	if 'username' in session.keys():
+		uname = session['username']
+	log.error("%s got a 500 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
 	return render_template("501.html", error=error)
 	
 @app.errorhandler(404)
-def borked_it(error):
+def missed_it(error):
+	uname = "Anonymous"
+	if 'username' in session.keys():
+		uname = session['username']
+	log.warn("%s got a 404 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
 	return render_template("404.html", error=error)
 
 if __name__ == "__main__":
@@ -423,6 +454,11 @@ if __name__ == "__main__":
 	host = "localhost"
 	if args.i:
 		host = args.i
+	local_dir = os.path.dirname(__file__)
+	log_filename = os.path.join(local_dir,"cxDocs.log")
+	logging.basicConfig(filename=log_filename, level=logging.INFO)
+	global log
+	log = logging.getLogger("cxDocs:")
 	app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 	#app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
 	#app.config['SQLAlchemy_ECHO'] = True
