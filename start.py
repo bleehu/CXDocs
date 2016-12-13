@@ -437,7 +437,7 @@ def login():
 	if uname in users.keys() and passwerd == users[uname]:
 		session['username'] = uname
 		log.info("%s logged in" % uname)
-	log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, password, request.user_agent.string, request.remote_addr))
+	log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 	return redirect("/")
 
 @app.route("/logout", methods=['POST'])

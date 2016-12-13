@@ -10,6 +10,16 @@
 			</div>
 			<div class="col-lg-4">
 			{% if 'username' in session %}
+				<div class="list-group table-of-contents">
+				{% if 'character' in session %}
+					<a class="list-group-item"> Currently have selected character: {{character.name}}</a>
+					<a class="list-group-item" href="/show/character">Select a Different Character</a>
+					<a class="list-group-item" href="/characterguns"> Guns For Character</a>
+				{% else %}
+					<a class="list-group-item" href="/show/character">Select a Character</a>
+				{% endif%}
+					<a class="list-group-item" href="/playercharacters"> All Characteres </a>
+				</div>
 				<p>Welcome, {{session['username']}}!</p>
 				<form class="form-group" action="logout" method="post">
 					<div class="form-group">
@@ -19,16 +29,6 @@
 						</div>
 					</div>
 				</form>
-					<div class="list-group table-of-contents">
-					{% if 'character' in session %}
-						<a class="list-group-item"> Currently have selected character: {{character.name}}</a>
-						<a class="list-group-item" href="/show/character">Select a Different Character</a>
-						<a class="list-group-item" href="/characterguns"> Guns For Character</a>
-					{% else %}
-						<a class="list-group-item" href="/show/character">Select a Character</a>
-					{% endif%}
-						<a class="list-group-item" href="/playercharacters"> All Characteres </a>
-					</div>
 			{% else %}
 				<form action="login" method="post" class="form-horizontal">
 				<div class="form-group">
