@@ -209,17 +209,17 @@ def character_guns():
 		if my_character.my_class == cc['name']:
 			my_class = cc
 	usable = {}
+	profs = []
+	for proficiency in my_class['Weapon Proficiencies']:
+		profs.append(proficiency.lower())
 	guns = get_guns(session)
-	for gun in guns:
-		if gun['name'] in my_class['Weapon Proficiencies']:
-			if gun['type'] not in usable.keys():
-				usable[gun['type']] = []
-			usable[gun['type']].append(gun)
 	for type in guns.keys():
-		guns = {type:guns[type.lower()]}
-		return render_template('guns.html', guns=guns, session=session)
-	else:
-		show_guns()
+		if type.lower() + 's' in profs:
+			usable[type.lower()] = []
+			for gun in guns[type]:
+				if gun['minLevel'] <= my_character.level:
+					usable[type].append(gun)
+	return render_template('guns.html', guns=usable, session=session)
 	
 @app.route("/armor")
 def show_armor():
@@ -448,6 +448,14 @@ def logout():
 		session.pop('username', None)
 		session.pop('character', None)
 	return redirect("/")
+
+"""Most legitimate web scrapers check a text file in /robots.txt to see 
+	where they should be allowed to look. This is how google, bing and bindu
+	catalogue pages available to search. By default, we tell these robots to
+	leave us alone."""
+@app.route('/robots.txt')
+def roblocker():
+	return "User-agent: *\nDisallow: /"
 
 @app.errorhandler(500)
 def borked_it(error):

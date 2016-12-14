@@ -9,7 +9,7 @@ class Character:
 		self.level = 1
 		self.money = 0
 		self.mission = "Mercenaries"
-		self.my_class = "Preist"
+		self.my_class = "Priest"
 		self.race = "Human"
 		self.weapons = []
 		self.armor = []
