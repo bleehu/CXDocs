@@ -231,7 +231,9 @@ def show_char_select():
 	if 'username' not in session.keys():
 		return redirect("/")
 	chars = character.get_characters(session)
-	return render_template('character_select.html', characters=chars, session=session)
+	if 'character' in session.keys():
+		pc = character.from_string(session['character'])
+	return render_template('character_select.html', characters=chars, session=session, character=pc)
 
 @app.route("/playercharacters")
 def show_player_characters():

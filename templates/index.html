@@ -14,7 +14,7 @@
 				{% if 'character' in session %}
 					<a class="list-group-item"> Currently have selected character: {{character.name}}</a>
 					<a class="list-group-item" href="/show/character">Select a Different Character</a>
-					<a class="list-group-item" href="/characterguns"> Guns For Character</a>
+					<a class="list-group-item" href="/characterguns"> Guns For {{character.name}}</a>
 				{% else %}
 					<a class="list-group-item" href="/show/character">Select a Character</a>
 				{% endif%}

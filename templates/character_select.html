@@ -16,6 +16,13 @@
 				</div>
 			</div>
 			<div class="col-lg-6">
+				<p>
+				{% if 'character' in session.keys() %}
+				{{ character.name }} is currently selected. 
+				{% else %}
+				You have not selected a character yet. Selecting a character allows access to new pages on the site.
+				{% endif %}
+				</p>
 			{% for character in characters['characters'] %}
 				<h2 id="{{character.name}}panel"> {{character.name}} </h2>
 				<ul>
