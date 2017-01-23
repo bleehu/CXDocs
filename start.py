@@ -17,6 +17,8 @@ global log
 def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", metavar="###.###.###.###", help="Your local IP address. use ifconfig on linux.")
+	parser.add_argument("-u", metavar="PostgresUsername", help="Username for PSQL login profile.")
+	parser.add_argument("-p", metavar="PostgresPassword", help="Password for PSQL login profile.")
 	args = parser.parse_args()
 	return args
 
@@ -29,6 +31,15 @@ def check_auth(session):
 		if ua in request.user_agent.string.lower():
 			return False
 	return True
+
+def sql_escape(dirty):
+	#string.replace(new, old)
+	sani = dirty.replace('*','')
+	sani = sani.replace('=','')
+	sani = sani.replace('>','')
+	sani = sani.replace('<','')
+	sani = sani.replace(';','')
+	return sani
 
 def get_classes():
 	classless = None
@@ -148,6 +159,24 @@ def get_users():
 		all_users = json.loads(decrypted)
 	return all_users
 
+def get_user_postgres(username, password):
+	if args.u != None and args.p != None:
+		#if postgres username and password is set,
+		#use username lookup to check username and password
+		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
+		myCursor = connection.cursor()
+		saniUser = sql_escape(username)
+		#pdb.set_trace()
+		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
+		results = myCursor.fetchall()
+		for result in results:
+			if password == result[4]:
+				log.info('logged in: %s. Password matches.' % saniUser )
+				return result
+		return None
+	else:
+		return None
+	
 def set_users(set_users_to):
 	if str(type(set_users_to)) != "<type 'dict'>":
 		raise ValueError("Cannot set users to a non-dictionary type")
@@ -435,11 +464,14 @@ def login():
 		resp = make_response(render_template("501.html"), 403)
 		log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 		return resp
-	users = get_users()
-	if uname in users.keys() and passwerd == users[uname]:
+	user = get_user_postgres(uname, passwerd)
+	if user != None:
 		session['username'] = uname
+		session['displayname'] = user[2]
+		session['role'] = user[5]
 		log.info("%s logged in" % uname)
-	log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
+	else:
+		log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 	return redirect("/")
 
 @app.route("/logout", methods=['POST'])
