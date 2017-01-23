@@ -166,11 +166,11 @@ def get_user_postgres(username, password):
 		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
 		myCursor = connection.cursor()
 		saniUser = sql_escape(username)
-		pdb.set_trace()
+		#pdb.set_trace()
 		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
-			if password == result[4]:
+			if password == result[3]:
 				log.info('logged in: %s. Password matches.' % saniUser )
 				return result
 		return None
