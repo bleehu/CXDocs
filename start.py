@@ -160,7 +160,7 @@ def get_users():
 	return all_users
 
 def get_user_postgres(username, password):
-	if isset(args.u) and isset(args.p):
+	if args.u != None and args.p != None:
 		#if postgres username and password is set,
 		#use username lookup to check username and password
 		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
