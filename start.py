@@ -170,7 +170,7 @@ def get_user_postgres(username, password):
 		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
-			if password == result[3]:
+			if password == result[4]:
 				log.info('logged in: %s. Password matches.' % saniUser )
 				return result
 		return None
