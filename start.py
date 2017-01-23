@@ -166,6 +166,7 @@ def get_user_postgres(username, password):
 		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
 		myCursor = connection.cursor()
 		saniUser = sql_escape(username)
+		pdb.set_trace()
 		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
@@ -464,7 +465,6 @@ def login():
 		log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 		return resp
 	user = get_user_postgres(uname, passwerd)
-	pdb.set_trace()
 	if user != None:
 		session['username'] = uname
 		session['displayname'] = user[2]
