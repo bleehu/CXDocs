@@ -1,0 +1,49 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - NPC Generator</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+		<script  src="../static/npcgen.js"></script>
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> NPC Generator </h1>
+			</div>
+			<div class="col-lg-6">
+			<p>Click the button to generate new stats.</p>
+				<form >
+					<fieldset>
+						<legend> Ability Scores </legend>
+						Strength:
+						<input id="Strength" value="5"></input><br />
+						Perception:
+						<input id="Perception" value="5"></input><br />
+						Fortitude:
+						<input id="Fortitude" value="5"></input><br />
+						Charisma:
+						<input id="Charisma" value="5"></input><br />
+						Intelligence:
+						<input id="Intelligence" value="5"></input><br />
+						Dexterity:
+						<input id="Dexterity" value="5"></input><br />
+						Luck:
+						<input id="Luck" value="5"></input><br />
+						Luck:
+						<input id="Luck" value="5"></input><br />
+					</feildset>
+					<feildset>
+						<legend> Saving Throws </legend>
+						<p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
+						Shock:
+						<input id="Shock" value="5" disabled></input><br />
+						Will:
+						<input id="Will" value="5" disabled></input><br />
+						Reflex:
+						<input id="Reflex" value="5" disabled></input><br />
+					</feildset>
+					<input type="button" id="RandomButton" value="New NPC"></button>
+				</form>
+			</div>
+		</div>
+	{% endblock %}
+	

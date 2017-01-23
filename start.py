@@ -451,6 +451,10 @@ def logout():
 		session.pop('character', None)
 	return redirect("/")
 
+@app.route("/npcgen", methods=['GET'])
+def npcgen():
+	return render_template("npcgen.html")
+
 """Most legitimate web scrapers check a text file in /robots.txt to see 
 	where they should be allowed to look. This is how google, bing and bindu
 	catalogue pages available to search. By default, we tell these robots to
