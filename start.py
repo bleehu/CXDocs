@@ -172,7 +172,7 @@ def get_user_postgres(username, password):
 		for result in results:
 			if password == result[4]:
 				log.info('logged in: %s. Password matches.' % saniUser )
-				return results
+				return result
 		return None
 	else:
 		return None
