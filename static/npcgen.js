@@ -65,6 +65,30 @@ function updateStats(){
 	nn.value = nanites;
 	speed.value = dexterity;
 	
+	str_mod = document.getElementById("strMod");
+	dex_mod = document.getElementById("dexMod");
+	fort_mod = document.getElementById("fortMod");
+	cha_mod = document.getElementById("chaMod");
+	int_mod = document.getElementById("intMod");
+	per_mod = document.getElementById("perMod");
+	luk_mod = document.getElementById("lukMod");
+	
+	strengthMod = (strength - 5) * 4;
+	perceptionMod = (perception - 5) * 4;
+	fortitudeMod = (fortitude - 5) * 4;
+	charismaMod = (charisma - 5) * 4;
+	dexterityMod = (dexterity - 5) * 4;
+	intelligenceMod = (intelligence - 5) * 4;
+	luckMod = (luck - 5) * 4;
+	
+	str_mod.value = strengthMod;
+	dex_mod.value = dexterityMod;
+	fort_mod.value = fortitudeMod;
+	cha_mod.value = charismaMod;
+	dex_mod.value = dexterityMod;
+	int_mod.value = intelligenceMod;
+	luk_mod.value = luckMod;
+	
 }
 
 function randomNPC(){

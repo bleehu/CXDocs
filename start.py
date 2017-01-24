@@ -1,19 +1,25 @@
-import argparse
+import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
-import character
-import csv
+import character #character is a custom data type that we created to handle character information on the backend.
+import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
+#flask is a python webserver built on Werkzeug. This is what is in charge of our 
+#main web app. It's how we respond to HTTP requests, etc.
 from flask import Flask, render_template, request, redirect, session, escape
-import json
-from mission import Mission
-import pdb
-import psycopg2
-import os
-import logging
-import xml.etree.ElementTree
+import json #sometimes we load or save things in json. This helps with that.
+from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
+import pdb	#Python Debuger is what I use to fix borked code. It should not be called in production EVER!
+#but it's very helpful when being run locally.
+
+import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets us store things in databases
+import os	#we need os to read and write files as well as to make our filepaths relative.
+import logging #When we aren't running locally, we need the server to log what's happening so we can see any
+#intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
+import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 app = Flask(__name__)
 app.config.from_object(__name__)
 global log
 
+"""We call this on startup to get all of the config info from comand line"""
 def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", metavar="###.###.###.###", help="Your local IP address. use ifconfig on linux.")
