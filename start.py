@@ -146,7 +146,7 @@ def get_missions():
 def get_playercharacters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, level, race, class, players.displayname FROM characters JOIN players ON characters.owner_fk = players.pk_id ORDER BY displayname, level, name;")
+	myCursor.execute("SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk_id ORDER BY displayname, level, name;")
 	pcs = []
 	results = myCursor.fetchall()
 	for pc in results:
