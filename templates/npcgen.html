@@ -9,11 +9,12 @@
 			<div class="page-header">
 				<h1> NPC Generator </h1>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-8">
 			<p>Click the button to generate new stats at random. Or Enter Ability Score numbers
 					and the rest of the stats should automatically update to match. You cannot adjust 
 					modifiers directly, and entereing anything that is not an integer will result in an error.</p>
 				<form class="form-horizontal">
+					<div class="col-lg-4">
 					<fieldset>
 						<legend> Ability Scores </legend>
 						Strength:
@@ -33,6 +34,8 @@
 						Total:
 						<input class="form-control" id="TotalStats" value="35"></input> <br />
 					</feildset>
+					</div>
+					<div class="col-lg-4">
 					<feildset>
 						<legend> Attributes </legend>
 						<p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
@@ -43,6 +46,8 @@
 						Speed per full action:
 						<input class="form-control" id="Speed" value="90" disabled></input><br />
 					</feildset>
+					</div>
+					<div class="col-lg-4">
 					<feildset>
 						<legend> Saving Throws </legend>
 						<p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
@@ -53,6 +58,7 @@
 						Reflex:
 						<input class="form-control" id="Reflex" value="5" disabled></input><br />
 					</feildset>
+					</div>
 					<input class="form-control" type="button" id="RandomButton" value="New NPC"></button>
 				</form>
 			</div>
