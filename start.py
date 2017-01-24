@@ -19,7 +19,8 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 global log
 
-"""We call this on startup to get all of the config info from comand line"""
+"""We call this on startup to get all of the config info from comand line. The username/password combination is
+		used to prevent having to store the credentials on the box, so we don't have to defend data at rest."""
 def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", metavar="###.###.###.###", help="Your local IP address. use ifconfig on linux.")
@@ -28,6 +29,8 @@ def get_args():
 	args = parser.parse_args()
 	return args
 
+""" we call this any time someone checks out a page on the site that should be off-limits to someone who
+		hasn't logged in. If they aren't logged in, it returns false, if they are, it returns true."""
 def check_auth(session):
 	if 'username' not in session.keys():
 		log.error("Anonymous attempt to access %s! user_agent:%s, remoteIP:%s" % (request.path, request.user_agent.string, request.remote_addr))
@@ -38,6 +41,8 @@ def check_auth(session):
 			return False
 	return True
 
+""" we use this when we use player input to check postgres for a search. For instance, we don't want 
+           badguys trying to log in with SQL injection - that could lead to damage to login data."""
 def sql_escape(dirty):
 	#string.replace(new, old)
 	sani = dirty.replace('*','')
@@ -47,6 +52,9 @@ def sql_escape(dirty):
 	sani = sani.replace(';','')
 	return sani
 
+"""returns a list of maps where the map represents a class. The value of map['name'] might = 'Soldier' and
+			map['armorProficency'] might be equal to ['recon', 'medium', 'light']. Must have the correct .json
+			file in /docs/ in order to work."""
 def get_classes():
 	classless = None
 	with open("docs/classes.json") as classFile:
@@ -165,6 +173,9 @@ def get_users():
 		all_users = json.loads(decrypted)
 	return all_users
 
+"""connect to user login database if connected to said database. uses psychopg2. 
+			if user not found or if posgres database info not set, returns None. Returns 
+			a tuple with username, displayname, realname and password if login successful."""
 def get_user_postgres(username, password):
 	if args.u != None and args.p != None:
 		#if postgres username and password is set,
@@ -182,7 +193,11 @@ def get_user_postgres(username, password):
 		return None
 	else:
 		return None
-	
+
+""" only used externally to write a sort-of encrypted local file with login info, in case 
+		setting up postgres is too hard. set_users_to should be a dictionary of dictionaries
+		were the first is sorted by username and the second layer of dictionaries holds the 
+		information from the character.py data type."""
 def set_users(set_users_to):
 	if str(type(set_users_to)) != "<type 'dict'>":
 		raise ValueError("Cannot set users to a non-dictionary type")
@@ -203,13 +218,16 @@ def encode(cypher):
 		rot12 = rot12 + chr(ord(char) + 12)
 	return b64encode(rot12)
 
-@app.route("/")
-def hello():
-	session['X-CSRF'] = "foxtrot"
-	pc = None
-	if 'character' in session.keys():
-		pc = character.from_string(session['character'])
-	return render_template('index.html', session=session, character=pc)
+"""handles the display of the main page for the site. """
+@app.route("/")	#tells flask what url to trigger this behavior for. In this case, the main page of the site.
+def hello():			#tells flask what method to use when you hit a particular route. Same as regular python function definition.
+	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
+	pc = None	#player character defaults to None if user isn't logged in.
+	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
+		pc = character.from_string(session['character']) 
+	return render_template('index.html', session=session, character=pc) #the flask method render_template() shows a jinja template 
+	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
+	#dynamically. 
 
 @app.route("/levelup")
 def levelUp():
@@ -501,7 +519,8 @@ def npcgen():
 def roblocker():
 	return "User-agent: *\nDisallow: /"
 
-@app.errorhandler(500)
+""" set generic handlers for common errors."""
+@app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python. 
 def borked_it(error):
 	uname = "Anonymous"
 	if 'username' in session.keys():
@@ -509,7 +528,7 @@ def borked_it(error):
 	log.error("%s got a 500 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
 	return render_template("501.html", error=error)
 	
-@app.errorhandler(404)
+@app.errorhandler(404) # an HTTP 404 Not Found happens if the user searches for a url which doesn't exist. like /fuzzyunicorns
 def missed_it(error):
 	uname = "Anonymous"
 	if 'username' in session.keys():
@@ -519,11 +538,11 @@ def missed_it(error):
 
 if __name__ == "__main__":
 	args = get_args()
-	host = "localhost"
-	if args.i:
+	host = "localhost" #default to local only when running.
+	if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
 		host = args.i
-	local_dir = os.path.dirname(__file__)
-	log_filename = os.path.join(local_dir,"cxDocs.log")
+	local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
+	log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
 	logging.basicConfig(filename=log_filename, level=logging.INFO)
 	global log
 	log = logging.getLogger("cxDocs:")
