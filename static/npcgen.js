@@ -45,9 +45,26 @@ function updateStats(){
 	willsave =  2 * (charisma + fortitude - 6);
 	reflex =  2 * (perception + dexterity - 6);
 	
+	total = strength + perception + dexterity + fortitude + charisma + intelligence + luck;
+	
 	shk.value = shock;
 	ref.value = reflex;
 	will.value = willsave;
+	
+	tot = document.getElementById("TotalStats");
+	tot.value = total;
+	
+	health = 50 + (10 * fortitude);
+	nanites = 50 + (10 * intelligence);
+	
+	hp = document.getElementById("Health");
+	nn = document.getElementById("Nanites");
+	speed = document.getElementById("Speed");
+	
+	hp.value = health;
+	nn.value = nanites;
+	speed.value = dexterity;
+	
 }
 
 function randomNPC(){

@@ -10,7 +10,8 @@
 				<h1> NPC Generator </h1>
 			</div>
 			<div class="col-lg-6">
-			<p>Click the button to generate new stats.</p>
+			<p>Click the button to generate new stats at random. Or Enter Ability Score numbers
+					and the rest of the stats should automatically update to match. </p>
 				<form >
 					<fieldset>
 						<legend> Ability Scores </legend>
@@ -28,8 +29,18 @@
 						<input id="Dexterity" value="5"></input><br />
 						Luck:
 						<input id="Luck" value="5"></input><br />
-						Luck:
-						<input id="Luck" value="5"></input><br />
+						Total:
+						<input id="TotalStats" value="35"></input><br />
+					</feildset>
+					<feildset>
+						<legend> Attributes </legend>
+						<p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
+						Health:
+						<input id="Health" value="90" disabled></input><br />
+						Nanites:
+						<input id="Nanites" value="90" disabled></input><br />
+						Speed per full action:
+						<input id="Speed" value="90" disabled></input><br />
 					</feildset>
 					<feildset>
 						<legend> Saving Throws </legend>
