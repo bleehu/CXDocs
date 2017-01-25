@@ -166,7 +166,9 @@ def get_races():
 		races = json.loads(racefile.read())
 	return races
 	
+"""WARNING!!! DERECATED USE get_user_postgres() instead!"""
 def get_users():
+	print "WARNING! USE OF get_users() is deprecated due to vulnerability of encrypted user file! Please use Postgres instead!"
 	all_users = None
 	with open("static/users.enc", "r") as userDoc:
 		decrypted = decode(userDoc.read())

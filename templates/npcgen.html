@@ -59,8 +59,14 @@
 						<input class="form-control" id="Reflex" value="5" disabled></input><br />
 					</feildset>
 					</div>
-					<input class="form-control" type="button" id="RandomButton" value="New NPC"></button>
+					<input class="form-button" type="button" id="RandomButton" value="New NPC"></input>
+					<input class="form-button" type="button" id="textButton" value="Export to Text" ></input>
 				</form>
+				<div class="row">
+					<div class="col-lg-12">
+						<textarea class="form-control" hidden=true id="exportArea"></textarea>
+					</div>
+				</div>
 			</div>
 		</div>
 	{% endblock %}
