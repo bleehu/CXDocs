@@ -149,16 +149,16 @@ function export_text(){
 	luckMod = (luck - 5) * 4;
 	//end dry
 	export_string = "";
-	export_string += "Health:\t" + health + "\n";
+	export_string += "Health:\t\t" + health + "\n";
 	export_string += "Nanites:\t" + nanites + "\n\n";
 	export_string += "Ability Sores:\n"
-	export_string += "\tStrength:\t" + strength + "\t(" + strengthMod + ")\n";
-	export_string += "\tDexterity:\t" + dexterity + "\t(" + dexterityMod + ")\n";
-	export_string += "\tFortitude:\t" + fortitude + "\t(" + fortitudeMod + ")\n";
-	export_string += "\tPerception:\t" + perception + "\t(" + perceptionMod + ")\n";
-	export_string += "\tCharisma:\t" + charisma + "\t(" + charismaMod + ")\n";
+	export_string += "\tStrength:\t\t" + strength + "\t(" + strengthMod + ")\n";
+	export_string += "\tDexterity:\t\t" + dexterity + "\t(" + dexterityMod + ")\n";
+	export_string += "\tFortitude:\t\t" + fortitude + "\t(" + fortitudeMod + ")\n";
+	export_string += "\tPerception:\t\t" + perception + "\t(" + perceptionMod + ")\n";
+	export_string += "\tCharisma:\t\t" + charisma + "\t(" + charismaMod + ")\n";
 	export_string += "\tIntelligence:\t" + intelligence + "\t(" + intelligenceMod + ")\n";
-	export_string += "\tLuck:\t" + luckMod + "\t(" + luckMod + ")\n";
+	export_string += "\tLuck:\t\t\t" + luck + "\t(" + luckMod + ")\n";
 	export_string += "\nSaving Throws:\n"
 	export_string += "\tShock:\t" + shock + "\n";
 	export_string += "\tWill:\t" + willsave + "\n";
