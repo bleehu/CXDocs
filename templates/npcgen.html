@@ -14,7 +14,7 @@
 					and the rest of the stats should automatically update to match. You cannot adjust 
 					modifiers directly, and entereing anything that is not an integer will result in an error.</p>
 				<form class="form-horizontal">
-					<div class="col=lg-4">
+					<div class="col-lg-4">
 						<fieldset>
 							<legend>Role Information</legend>
 							Name:
@@ -53,22 +53,62 @@
 					<div class="col-lg-4">
 					<fieldset>
 						<legend> Ability Scores </legend>
-						Strength:
-						<input class="form-control" id="Strength" value="5"></input> Mod:<input class="form-control" id="strMod" disabled></input><br />
-						Perception:
-						<input class="form-control" id="Perception" value="5"></input> Mod:<input class="form-control" id="perMod" disabled></input><br />
-						Fortitude:
-						<input class="form-control" id="Fortitude" value="5"></input> Mod:<input class="form-control" id="fortMod" disabled></input><br />
-						Charisma:
-						<input class="form-control" id="Charisma" value="5"></input> Mod:<input class="form-control" id="chaMod" disabled></input><br />
-						Intelligence:
-						<input class="form-control" id="Intelligence" value="5"></input> Mod:<input class="form-control" id="intMod" disabled></input><br />
-						Dexterity:
-						<input class="form-control" id="Dexterity" value="5"></input> Mod:<input class="form-control" id="dexMod" disabled></input><br />
-						Luck:
-						<input class="form-control" id="Luck" value="5"></input> Mod:<input class="form-control" id="lukMod" disabled></input><br />
-						Total:
-						<input class="form-control" id="TotalStats" value="35"></input> <br />
+						<div class="col-lg-6">
+							<label for="Strength">Strength:</label>
+							<input class="form-control" id="Strength" value="5" ></input> 
+						</div>
+						<div class="col-lg-6">
+							<label for="strMod"> Mod: </label>
+							<input class="form-control" id="strMod" disabled ></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="Perception"> Perception:</label>
+							<input class="form-control" id="Perception" value="5" ></input> </div>
+						<div class="col-lg-6">
+							<label for="perMod"> Mod: </label>
+							<input class="form-control" id="perMod" disabled ></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="Fortitude"> Fortitude: </label>
+							<input class="form-control" id="Fortitude" value="5" ></input> </div>
+						<div class="col-lg-6">
+							<label for="fortMod"> Mod: </label>
+							<input class="form-control" id="fortMod" disabled ></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="Charisma">
+							Charisma:
+							</label>
+							<input class="form-control" id="Charisma" value="5" ></input> </div>
+						<div class="col-lg-6">
+							<label for="chaMod"> Mod: </label>
+							<input class="form-control" id="chaMod" disabled ></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="Intelligence"> Intelligence: </label>
+							<input class="form-control" id="Intelligence" value="5" ></input> </div>
+						<div class="col-lg-6">
+							<label for="intMod"> Mod: </label>
+							<input class="form-control" id="intMod" disabled ></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="Dexterity"> Dexterity: </label>
+							<input class="form-control" id="Dexterity" value="5" ></input> </div>
+						<div class="col-lg-6">
+							<label for="dexMod"> Mod: </label>
+							<input class="form-control" id="dexMod" disabled ></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="Luck"> Luck: </label>
+							<input class="form-control" id="Luck" value="5" ></input> </div>
+						<div class="col-lg-6">
+							<label for="lukMod"> Mod: </label>
+							<input class="form-control" id="lukMod" disabled></input><br />
+						</div>
+						<div class="col-lg-6">
+							<label for="TotalStats"> Total: </label>
+							<input class="form-control" id="TotalStats" value="35"></input> <br />
+						</div>
 					</feildset>
 					</div>
 					<div class="col-lg-4">
@@ -80,7 +120,15 @@
 						Nanites:
 						<input class="form-control" id="Nanites" value="90" disabled></input><br />
 						Speed per full action:
-						<input class="form-control" id="Speed" value="90" disabled></input><br />
+						<input class="form-control" id="Speed" value="5" disabled></input><br />
+						Initiative Bonus:
+						<input class="form-control" id="Initiative" value="0"></input><br />
+						Extra Senses:
+						<input class="form-control" id="Senses" value="None"></input><br />
+						Resistances:
+						<input class="form-control" id="Resistances" value="None"></input><br />
+						Weaknesses:
+						<input class="form-control" id="Weaknesses" value="None"></input><br />
 					</feildset>
 					</div>
 					<div class="col-lg-4">
@@ -99,10 +147,10 @@
 						<!-- extra senses, resistances, weakneses-->
 					</div>
 					<div class="col-lg-4">
-						<input class="form-button" type="button" id="RandomButton" value="New NPC"></input>
-						<input class="form-button" type="button" id="textButton" value="Export to Short Text" ></input>
-						<input class="form-button" type="button" id="textLongButton" value="Export to Full Text" disabled=true></input>
-						<input class="form-button" type="button" id="xmlButton" value="Export to XML" disabled=true ></input>
+						<input class="form-button btn btn-primary" type="button" id="RandomButton" value="New NPC"></input>
+						<input class="form-button btn btn-success" type="button" id="textButton" value="Export to Short Text" ></input>
+						<input class="form-button btn " type="button" id="textLongButton" value="Export to Full Text" disabled=true></input>
+						<input class="form-button btn " type="button" id="xmlButton" value="Export to XML" disabled=true ></input>
 					</div>
 				</form>
 				<div class="row">
