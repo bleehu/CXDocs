@@ -23,7 +23,33 @@ window.onload = function(){
 	export_text_button.onclick = export_text;
 	
 }
-	
+
+function get_name(){
+	namebox = document.getElementById("unit_name");
+	unit_name = namebox.value;
+	if (unit_name != ""){
+		return unit_name;
+	} else {
+		alert("Please enter a name for your unit!")
+		namebox.focus();
+		return false;
+	}
+}
+
+function get_level(){
+	levelbox = document.getElementById("unit_level");
+	unit_level = parseInt(levelbox.value);
+	return unit_level;
+}
+
+function get_role(){
+	rolebox = document.getElementById("role");
+	unit_role = rolebox.value;
+	return unit_role;
+}
+
+
+
 function updateStats(){
 	str = document.getElementById("Strength");
 	per = document.getElementById("Perception");
@@ -116,6 +142,14 @@ function randomNPC(){
 function export_text(){
 	exportArea = document.getElementById("exportArea");
 	//dry this up later
+	unit_name = get_name();
+	if (unit_name == false){
+		return false;
+	}
+	
+	unit_level = get_level();
+	unit_role = get_role();
+	
 	str = document.getElementById("Strength");
 	per = document.getElementById("Perception");
 	fort = document.getElementById("Fortitude");
@@ -148,8 +182,9 @@ function export_text(){
 	intelligenceMod = (intelligence - 5) * 4;
 	luckMod = (luck - 5) * 4;
 	//end dry
-	export_string = "";
+	export_string = "\t\t\t" + unit_name + "\n";
 	export_string += "Health:\t\t" + health + "\n";
+	export_string += "Level " + unit_level + " \t\t\t\t\t" + unit_role + " unit\n";
 	export_string += "Nanites:\t" + nanites + "\n\n";
 	export_string += "Ability Sores:\n"
 	export_string += "\tStrength:\t\t" + strength + "\t(" + strengthMod + ")\n";
@@ -163,6 +198,10 @@ function export_text(){
 	export_string += "\tShock:\t" + shock + "\n";
 	export_string += "\tWill:\t" + willsave + "\n";
 	export_string += "\tReflex:\t" + reflex + "\n";
+	export_string += "\n";
+	export_string += "Resistances:\n";
+	export_string += "Weaknesses:\n";
+	export_string += "Extra Senses:\n";
 	
 	exportArea.innerHTML = export_string;
 	exportArea.hidden = false;
