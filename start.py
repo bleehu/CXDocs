@@ -416,7 +416,10 @@ def make_item():
 	log.info("%s added new race: %s", (session['username'], item['name']))
 	return redirect("itemsmith")
 
-	
+@app.route("/monster")
+def show_monsters():
+	return render_template("monsters.html")
+
 @app.route("/armorsmith")
 def show_armorsmith():
 	if not check_auth(session):
