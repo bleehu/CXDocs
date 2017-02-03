@@ -1,0 +1,53 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Bestiary</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Bestiary </h1>
+			</div>
+			<div class="col-lg-2">
+				<div class="list-group table-of-contents">
+					<a class="list-group-item" href="#breacherpanel"> Pirate Breacher </a>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="panel panel-primary" id="{{gun['name']}}panel">
+					<div class="panel-heading">
+						<h3 id="breacherpanel" class="panel-title">Pirate Breacher</h3>
+					</div>
+					<div class="panel-body">
+						<p> A 200lb 6' man holding a crude rusty shotgun walks with a heavy
+							gait. His hair is greasy and wild, and should you get close enough,
+							you smell that he clearly has not showered in days. He wears a 
+							gas mask over his face patched with duct tape, but the soft 
+							"cooh-pah" that it makes in time with his breathing clearly
+							shows that it's functional. </p>
+						<img src="static/images/mosnters/pirate_breacher.png" alt="picture of a breacher">
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Level</dt><dd>5</dd>
+							<dt>Type</dt><dd>Pirate Human</dd>
+							<dt>Role</dt><dd>Tank</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Strength</dt><dd>8 (12)</dd>
+							<dt>Perception</dt><dd>3 (-8)</dd>
+							<dt>Fortitude</dt><dd>10 (20)</dd>
+							<dt>Charisma</dt><dd>2 (-12)</dd>
+							<dt>Intelligence</dt><dd>2 (-12)</dd>
+							<dt>Dexterity</dt><dd>6 (4)</dd>
+							<dt>Luck</dt><dd>2 (-12)</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Shock</dt><dd>12</dd>
+							<dt>Will</dt><dd>12</dd>
+							<dt>Reflex</dt><dd>6</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+	
