@@ -418,6 +418,8 @@ def make_item():
 
 @app.route("/monster")
 def show_monsters():
+	if not check_auth(session):
+		return redirect("/")
 	return render_template("monsters.html")
 
 @app.route("/armorsmith")
@@ -554,4 +556,4 @@ if __name__ == "__main__":
 	app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 	#app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
 	#app.config['SQLAlchemy_ECHO'] = True
-	app.run(host = host)
+	app.run(host = host, threaded=True)

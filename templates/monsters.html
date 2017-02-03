@@ -8,12 +8,15 @@
 			<div class="page-header">
 				<h1> Bestiary </h1>
 			</div>
-			<div class="col-lg-2">
+			<div class="col-lg-2"> <!-- table of contents div -->
 				<div class="list-group table-of-contents">
 					<a class="list-group-item" href="#breacherpanel"> Pirate Breacher </a>
+					<a class="list-group-item" href="#gunslingerpanel"> Pirate Gunslinger </a>
+					<a class="list-group-item" href="#initiatepanel"> Cultist Initiate </a>
 				</div>
-			</div>
-			<div class="col-lg-8">
+			</div>	<!-- end table of contents div -->
+			<div class="col-lg-8" id="monsters">
+				<!-- Breacher -->
 				<div class="panel panel-primary" id="breacherpanel">
 					<div class="panel-heading">
 						<h3 id="breacherheading" class="panel-title">Pirate Breacher</h3>
@@ -76,7 +79,136 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
+				<!-- End Breacher -->
+				<!-- Gunslinger -->
+				<div class="panel panel-primary" id="gunslingerpanel">
+					<div class="panel-heading">
+						<h3 id="breacherheading" class="panel-title">Pirate Gunslinger</h3>
+					</div>
+					<div class="panel-body">
+						<img src="static/images/monsters/pirate_gunslinger.png" alt="picture of a breacher" class="mugshot">
+						<p> A 200lb 6' man holding a crude rusty shotgun walks with a heavy
+							gait. His hair is greasy and wild, and should you get close enough,
+							you smell that he clearly has not showered in days. He wears a 
+							gas mask over his face patched with duct tape, but the soft 
+							"cooh-pah" that it makes in time with his breathing clearly
+							shows that it's functional. </p>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Level</dt><dd>5</dd>
+							<dt>Type</dt><dd>Pirate Human</dd>
+							<dt>Role</dt><dd>Tank</dd>
+							<dt>Health</dt><dd>210</dd>
+							<dt>Nanites</dt><dd>70</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Strength</dt><dd>8 (12)</dd>
+							<dt>Perception</dt><dd>3 (-8)</dd>
+							<dt>Fortitude</dt><dd>10 (20)</dd>
+							<dt>Charisma</dt><dd>2 (-12)</dd>
+							<dt>Intelligence</dt><dd>2 (-12)</dd>
+							<dt>Dexterity</dt><dd>6 (4)</dd>
+							<dt>Luck</dt><dd>2 (-12)</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Shock</dt><dd>12</dd>
+							<dt>Will</dt><dd>12</dd>
+							<dt>Reflex</dt><dd>6</dd>
+						</dl>
+						<div class="col-lg-4 col-md-8">
+							<h4> Weapon </h4>
+							<dl >
+								<dt>Name</dt><dd>Bandit's Blunderbuss</dd>
+								<dt>Range</dt><dd>30m</dd>
+								<dt>Damage</dt><dd>90 @ 3m, 50 @ 10m, 30 @ 20m</dd>
+								<dt>Accuracy</dt><dd>10%</dd>
+								<dt>Capacity</dt><dd>2 Shells</dd>
+							</dl>
+						</div>
+						<div class="col-lg-4 col-md-8">
+							<h4> Armor </h4>
+							<dl>
+								<dt>Name</dt><dd>Pirate Plate</dd>
+								<dt>Coverage</dt><dd>70%</dd>
+								<dt>Damage Reduction</dt><dd>50</dd>
+								<dt>Move Penalty</dt><dd>-1m/action</dd>
+							</dl>
+						</div>
+						<div class="col-lg-8 col-md-8">
+							<h4> Abilities </h4>
+							<p><strong>Reaction Ability: Bulltrue </strong> Once per round, when 
+								an enemy moved into an area that the breacher can see which is within
+								3m and if the breacher has a round still in their shotgun and the
+								weapon is drawn the breacher may interrupt their opponent's turn
+								to fire at that enemy. The enemy then resumes their turn as normal.</p>
+						</div>
+					</div>
+				</div>
+				<!-- End Breacher -->
+				<!-- Breacher -->
+				<div class="panel panel-primary" id="initiatepanel">
+					<div class="panel-heading">
+						<h3 id="breacherheading" class="panel-title">Cultist Initiate</h3>
+					</div>
+					<div class="panel-body">
+						<img src="static/images/monsters/cultist_initiate.png" alt="picture of a breacher" class="mugshot">
+						<p> A 200lb 6' man holding a crude rusty shotgun walks with a heavy
+							gait. His hair is greasy and wild, and should you get close enough,
+							you smell that he clearly has not showered in days. He wears a 
+							gas mask over his face patched with duct tape, but the soft 
+							"cooh-pah" that it makes in time with his breathing clearly
+							shows that it's functional. </p>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Level</dt><dd>5</dd>
+							<dt>Type</dt><dd>Pirate Human</dd>
+							<dt>Role</dt><dd>Tank</dd>
+							<dt>Health</dt><dd>210</dd>
+							<dt>Nanites</dt><dd>70</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Strength</dt><dd>8 (12)</dd>
+							<dt>Perception</dt><dd>3 (-8)</dd>
+							<dt>Fortitude</dt><dd>10 (20)</dd>
+							<dt>Charisma</dt><dd>2 (-12)</dd>
+							<dt>Intelligence</dt><dd>2 (-12)</dd>
+							<dt>Dexterity</dt><dd>6 (4)</dd>
+							<dt>Luck</dt><dd>2 (-12)</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Shock</dt><dd>12</dd>
+							<dt>Will</dt><dd>12</dd>
+							<dt>Reflex</dt><dd>6</dd>
+						</dl>
+						<div class="col-lg-4 col-md-8">
+							<h4> Weapon </h4>
+							<dl >
+								<dt>Name</dt><dd>Bandit's Blunderbuss</dd>
+								<dt>Range</dt><dd>30m</dd>
+								<dt>Damage</dt><dd>90 @ 3m, 50 @ 10m, 30 @ 20m</dd>
+								<dt>Accuracy</dt><dd>10%</dd>
+								<dt>Capacity</dt><dd>2 Shells</dd>
+							</dl>
+						</div>
+						<div class="col-lg-4 col-md-8">
+							<h4> Armor </h4>
+							<dl>
+								<dt>Name</dt><dd>Pirate Plate</dd>
+								<dt>Coverage</dt><dd>70%</dd>
+								<dt>Damage Reduction</dt><dd>50</dd>
+								<dt>Move Penalty</dt><dd>-1m/action</dd>
+							</dl>
+						</div>
+						<div class="col-lg-8 col-md-8">
+							<h4> Abilities </h4>
+							<p><strong>Reaction Ability: Bulltrue </strong> Once per round, when 
+								an enemy moved into an area that the breacher can see which is within
+								3m and if the breacher has a round still in their shotgun and the
+								weapon is drawn the breacher may interrupt their opponent's turn
+								to fire at that enemy. The enemy then resumes their turn as normal.</p>
+						</div>
+					</div>
+				</div>
+				<!-- End Breacher -->
+			</div> <!-- end monsters -->
+		</div><!-- end container -->
 	{% endblock %}
 	
