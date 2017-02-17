@@ -500,8 +500,8 @@ def make_item():
 
 @app.route("/monster")
 def show_monsters():
-	#if not check_auth(session):
-	#	return redirect("/")
+	if not check_auth(session):
+		return redirect("/")
 	munsters = get_monsters()
 	return render_template("monsters.html", monsters = munsters)
 
