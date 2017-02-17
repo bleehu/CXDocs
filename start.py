@@ -93,7 +93,6 @@ def get_guns(session):
 				peice['damage'] = int(peice['damage'])
 				peice['mag'] = int(peice['mag'])
 			else:
-				print "removed %s" % peice['name']
 				toRemove.append(peice)
 		if len(toRemove) > 0:
 			for popper in toRemove:
@@ -159,6 +158,30 @@ def get_playercharacters():
 		pcs.append(newPC)
 	return pcs
 
+def get_monsters():
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description FROM monsters;")
+	monsters = []
+	results = myCursor.fetchall()
+	for mun in results:
+		newmun = {}
+		newmun['name'] = mun[0]
+		newmun['health'] = mun[1]
+		newmun['nanites'] = mun[2]
+		newmun['strength'] = mun[3]
+		newmun['perception'] = mun[4]
+		newmun['fortitude'] = mun[5]
+		newmun['charisma'] = mun[6]
+		newmun['intelligence'] = mun[7]
+		newmun['dexterity'] = mun[8]
+		newmun['luck'] = mun[9]
+		newmun['shock'] = mun[10]
+		newmun['will'] = mun[11]
+		newmun['reflex'] = mun[12]
+		newmun['description'] = mun[13]
+		monsters.append(newmun)
+	return monsters
 
 def get_races():
 	races = None
@@ -418,9 +441,10 @@ def make_item():
 
 @app.route("/monster")
 def show_monsters():
-	if not check_auth(session):
-		return redirect("/")
-	return render_template("monsters.html")
+	#if not check_auth(session):
+	#	return redirect("/")
+	munsters = get_monsters()
+	return render_template("monsters.html", monsters = munsters)
 
 @app.route("/armorsmith")
 def show_armorsmith():
@@ -557,3 +581,59 @@ if __name__ == "__main__":
 	#app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
 	#app.config['SQLAlchemy_ECHO'] = True
 	app.run(host = host, threaded=True)
+	
+	
+	""" 
+	sql commands for initializing monsters database for tracking the beastiary
+	
+	CREATE SEQUENCE monsters_pk_seq NO CYCLE;
+	CREATE TABLE monsters (
+		pk_id int primary key default nextval('monsters_pk_seq'),
+		name text NOT NULL,
+		health int NOT NULL CHECK (health > 0),
+		nanites int NOT NULL CHECK (nanites > 0),
+		strength int NOT NULL CHECK (strength > 0),
+		perception int NOT NULL CHECK (perception > 0),
+		fortitude int NOT NULL CHECK (fortitude > 0),
+		charisma int NOT NULL CHECK (charisma > 0),
+		intelligence int NOT NULL CHECK (intelligence > 0),
+		dexterity int NOT NULL CHECK (dexterity > 0),
+		luck int NOT NULL CHECK (luck > 0),
+		shock int NOT NULL,
+		will int NOT NULL,
+		reflex int NOT NULL,
+		description text,
+		role text
+	);
+	INSERT INTO monsters (name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role) VALUES ('Pirate Breacher', 210, 70, 8,3,10,2,2,6,2,12,12,6, 'A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.', 'Tank' );
+	CREATE TABLE monsters_abilities (
+		pk_id int primary key default nextval('monster_ability_pk_seq'),
+		name text NOT NULL,
+		type text NOT NULL,
+		description text NOT NULL
+	);
+	INSERT INTO monsters_abilities (name, type, description) values ( 'Bulltrue', 'reaction', E'Once per round when an enemy moved into an area that the breacher can see which is within 3m and if the breacher has a round still in their shotgun and the weapon is drawn cher may interrupt their opponent\'s turn to fire at that enemy. The enemy then resumes their turn as normal.');
+	SELECT monsters.name, monsters_abilities.name FROM monsters, monsters_abilities, monster_ability_map WHERE monster_ability_map.fk_monster_id = monsters.pk_id AND monster_ability_map.fk_ability_id = monsters_abilities.pk_id;
+	 CREATE TABLE monsters_armors(
+		pk_id int primary key default nextval('monster_armor_pk_seq'),
+		name text NOT NULL,
+		coverage int NOT NULL CHECK (coverage > -1) CHECK (coverage < 101),
+		damageReduction int NOT NULL CHECK (damageReduction > -1),
+		description TEXT);
+	CREATE TABLE monsters_weapons(
+		pk_id int primary key default nextval('monster_weapon_pk_seq'),
+		name text NOT NULL,
+		range int NOT NULL CHECK (range > -1),
+		damage int NOT NULL CHECK (damage > -1),
+		accuracy int NOT NULL CHECK (accuracy > -101) CHECK (accuracy < 101),
+		capacity int NOT NULL CHECK (capacity > -1),
+		description text);
+	CREATE TABLE monsters_armor_map(
+		pk_id int primary key default nextval('monster_armor_map_pk_seq'),
+		fk_monster_id int references monsters(pk_id),
+		fk_monsters_armors int references monsters_armors(pk_id));
+	CREATE TABLE monsters_weapon_map(
+		pk_id int primary key default nextval('monster_weapon_map_pk_seq'),
+		fk_monster_id int references monsters(pk_id),
+		fk_weapons_id int references monsters_weapons(pk_id));
+	"""

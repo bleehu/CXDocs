@@ -205,7 +205,68 @@
 					</div>
 				</div>
 				<!-- End Initiate -->
+				{% for monster in monsters %}
+				<div class="panel panel-primary" id="{{monster['name']}}panel">
+					<div class="panel-heading">
+						<h3 id="breacherheading" class="panel-title">{{monster['name']}}</h3>
+					</div>
+					<div class="panel-body">
+						<p> {{monster['description']}} </p>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Level</dt><dd>5</dd>
+							<dt>Type</dt><dd>Broke</dd>
+							<dt>Role</dt><dd>Minion</dd>
+							<dt>Health</dt><dd>{{monster['health']}}</dd>
+							<dt>Nanites</dt><dd>{{monster['nanites']}}</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Strength</dt><dd>{{monster['strength']}}	(-8)</dd>
+							<dt>Perception</dt><dd>{{monster['perception']}}	(4)</dd>
+							<dt>Fortitude</dt><dd>{{monster['fortitude']}}	(4)</dd>
+							<dt>Charisma</dt><dd>{{monster['charisma']}} (-12)</dd>
+							<dt>Intelligence</dt><dd>{{monster['intelligence']}}	(16)</dd>
+							<dt>Dexterity</dt><dd>{{monster['dexterity']}}	(0)</dd>
+							<dt>Luck</dt><dd>{{monster['luck']}} (-8)</dd>
+						</dl>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Shock</dt><dd>{{monster['shock']}}</dd>
+							<dt>Will</dt><dd>{{monster['will']}}</dd>
+							<dt>Reflex</dt><dd>{{monster['reflex']}}</dd>
+						</dl>
+					</div> <!-- end panel-body -->
+				</div>
+				{% endfor %}
 			</div> <!-- end monsters -->
+				<div class="row">
+				<h1> Bounty Board </h1>
+					<div class="col-lg-4">
+						<h2> Monster Bounty Board </h2>
+						<p> Here's a short list of the monsters we still need to make and post. If you could put these together and email them to Mike, every DM would really appriciate it! Points are awarded based on how useful a given mob is likely to be in dungeon making and how complex the monster was to create. Points do not have any explicit value, but archDMs will honor a social contract and listen very closely to those from the community who are contributing. Custom monsters will have a score given to them upon website update. (until we find more programmers to automate the bounty system). </p>
+						<ul>
+							<li> A level 1 pleb (DND goblin analogue) -  100 points</li>
+							<li> A level 3 Anti-armor unit -  70 points</li>
+							<li> A level 3 Pirate medic  -  80 points</li>
+							<li> A level 10 standard pleb  -  100 points</li>
+							<li> A level 5 showstopper for random encounters  -  80 points</li>
+						</ul>
+					</div>
+					<div class="col-lg-4">
+						<h2> Hall of Fame </h2>
+						<p> These wonderful Monster Ranglers have designed and posted monsters from the bounty board or from their own imaginations! Thank you SO SO MUCH!!! </p>
+						<ul>
+							<li>Michael Hedges - 120 points</li>
+								<ul>
+									<li> Pirate Breacher - 40</li>
+									<li> Pirate Gunslinger - 30</li>
+									<li> Cultist Initiate - 50</li>
+								</ul>
+							<li> Sarah Slater </li>
+								<ul>
+									<li> Myriads (coming soon) </li>
+								</ul>
+						</ul>
+					</div>
+				</div>
 		</div><!-- end container -->
 	{% endblock %}
 	
