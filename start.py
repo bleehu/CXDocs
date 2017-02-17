@@ -161,11 +161,12 @@ def get_playercharacters():
 def get_monsters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description FROM monsters;")
+	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id FROM monsters;")
 	monsters = []
 	results = myCursor.fetchall()
 	for mun in results:
 		newmun = {}
+		#add new monster's stats. TODO: cast integers to ints
 		newmun['name'] = mun[0]
 		newmun['health'] = mun[1]
 		newmun['nanites'] = mun[2]
@@ -180,8 +181,66 @@ def get_monsters():
 		newmun['will'] = mun[11]
 		newmun['reflex'] = mun[12]
 		newmun['description'] = mun[13]
+		newmun['pk_id'] = mun[14]
+		monster_id = mun[14]
+		
+		#add abilities
+		newmun['abilities'] = get_monster_abilities(monster_id)
+		#add armor
+		newmun['armor'] = get_monsters_armor(monster_id)
+		#add weapons
+		newmun['weapons'] = get_monsters_weapons(monster_id)
 		monsters.append(newmun)
 	return monsters
+
+def get_monster_abilities(monster_id):
+	monster_abilities = []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT monsters_abilities.pk_id, name, type, description FROM monsters_abilities, monsters_ability_map WHERE monsters_ability_map.fk_monster_id = %s;" % monster_id)
+	results = myCursor.fetchall()
+	for line in results:
+		ability = {}
+		ability['pk_id'] = line[0]
+		ability['name'] = line[1]
+		ability['type'] = line[2]
+		ability['description'] = line[3]
+		monster_abilities.append(ability)
+	return monster_abilities
+
+def get_monsters_armor(monster_id):
+	monster_armor = []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT monsters_armors.pk_id, name, coverage, damagereduction, description FROM monsters_armors, monsters_armor_map WHERE monsters_armor_map.fk_monster_id = %s;" % monster_id)
+	results = myCursor.fetchall()
+	for line in results:
+		armor = {}
+		armor['pk_id'] = line[0]
+		armor['name'] = line[1]
+		armor['coverage'] = line[2]
+		armor['damageReduction'] = line[2]
+		armor['description'] = line[4]
+		monster_armor.append(armor)
+	return monster_armor
+
+def get_monsters_weapons(monster_id):
+	monster_weapons = []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT monsters_weapons.pk_id, name, range, damage, accuracy, capacity, description FROM monsters_weapons, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s;" % monster_id)
+	results = myCursor.fetchall()
+	for line in results:
+		weapon = {}
+		weapon['pk_id'] = line[0]
+		weapon['name'] = line[1]
+		weapon['range'] = line[2]
+		weapon['damage'] = line[3]
+		weapon['accuracy'] = line[4]
+		weapon['capacity'] = line[5]
+		weapon['description'] = line[6]
+		monster_weapons.append(weapon)
+	return monster_weapons
 
 def get_races():
 	races = None

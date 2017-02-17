@@ -233,6 +233,37 @@
 							<dt>Will</dt><dd>{{monster['will']}}</dd>
 							<dt>Reflex</dt><dd>{{monster['reflex']}}</dd>
 						</dl>
+						{% for weapon in monster['weapons'] %}
+						<div class="col-lg-4 col-md-8">
+							<h4> Weapon </h4>
+							<dl >
+								<dt>Name</dt><dd>{{weapon['name']}}</dd>
+								<dt>Range</dt><dd>{{weapon['range']}}m</dd>
+								<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
+								<dt>Accuracy</dt><dd>{{weapon['accuracy']}}% to miss</dd>
+								<dt>Description</dt><dd>{{weapon['description']}}% to miss</dd>
+							</dl>
+						</div>
+						{% endfor %}
+						{% for armor in monster['armor'] %}
+						<div class="col-lg-4 col-md-8">
+							<h4> Armor </h4>
+							<dl>
+								<dt>Name</dt><dd>{{armor['name']}}</dd>
+								<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
+								<dt>Damage Reduction</dt><dd>{{armor['damageReduction']}}</dd>
+								<dt>Description</dt><dd>{{armor['description']}}</dd>
+							</dl>
+						</div>
+						{% endfor %}
+						{% for ability in monster['abilities'] %}
+						<div class="col-lg-8 col-md-8">
+							<h4> Ability </h4>
+							<p><strong>{{ability['type']}}: {{ability['name']}} </strong> <br />
+								<strong>Description:</strong>	{{ability['description']}}
+							</p>
+						</div>
+						{% endfor %}
 					</div> <!-- end panel-body -->
 				</div>
 				{% endfor %}
