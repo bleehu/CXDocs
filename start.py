@@ -50,6 +50,8 @@ def sql_escape(dirty):
 	sani = sani.replace('>','')
 	sani = sani.replace('<','')
 	sani = sani.replace(';','')
+	sani = sani.replace("'","''")
+	#sani = sani.replace("\\", "\\") #need a way to sanitize backslashes for escape characters
 	return sani
 
 """returns a list of maps where the map represents a class. The value of map['name'] might = 'Soldier' and
@@ -241,6 +243,40 @@ def get_monsters_weapons(monster_id):
 		weapon['description'] = line[6]
 		monster_weapons.append(weapon)
 	return monster_weapons
+
+def validate_monster(form):
+	expected = set(['name', 'description', 'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', 'reflex', 'will', 'shock', 'health', 'nanites', 'level', 'role'])
+	if expected ^ set(form.keys()) != set([]):
+		return False
+	monster = {}
+	try:
+		monster['health'] = int(form['health'])
+		monster['nanites'] = int(form['nanites'])
+		monster['strength'] = int(form['strength'])
+		monster['perception'] = int(form['perception'])
+		monster['dexterity'] = int(form['dexterity'])
+		monster['fortitude'] = int(form['fortitude'])
+		monster['charisma'] = int(form['charisma'])
+		monster['intelligence'] = int(form['intelligence'])
+		monster['luck'] = int(form['luck'])
+		monster['reflex'] = int(form['reflex'])
+		monster['will'] = int(form['will'])
+		monster['shock'] = int(form['shock'])
+		monster['level'] = int(form['level'])
+		monster['role'] = sql_escape(form['role'])[:30]
+		monster['description'] = sql_escape(form['description'])[:600]
+		monster['name'] = sql_escape(form['name'])[:46]
+	except Exception (e):
+		return False
+	return monster
+
+def insert_monster(monster):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'])
+	myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s' );" % monstring)
+	myCursor.close()
+	connection.commit()
 
 def get_races():
 	races = None
@@ -503,7 +539,23 @@ def show_monsters():
 	if not check_auth(session):
 		return redirect("/")
 	munsters = get_monsters()
-	return render_template("monsters.html", monsters = munsters)
+	return render_template("monsters.html", monsters = munsters, session=session)
+
+@app.route("/monstereditor")
+def show_monster_editor():
+	if not check_auth(session):
+		return redirect("/")
+	return render_template("monster_smith.html", session=session);
+
+@app.route("/newMonster", methods=['POST'])
+def make_monster():
+	if not check_auth(session):
+		return redirect("/")
+	monster = validate_monster(request.form)
+	if not  monster:
+		return redirect("/")
+	insert_monster(monster)
+	return redirect("/monstereditor")
 
 @app.route("/armorsmith")
 def show_armorsmith():
@@ -658,13 +710,14 @@ if __name__ == "__main__":
 		intelligence int NOT NULL CHECK (intelligence > 0),
 		dexterity int NOT NULL CHECK (dexterity > 0),
 		luck int NOT NULL CHECK (luck > 0),
+		level int NOT NULL CHECK (level > -1),
 		shock int NOT NULL,
 		will int NOT NULL,
 		reflex int NOT NULL,
 		description text,
 		role text
 	);
-	INSERT INTO monsters (name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role) VALUES ('Pirate Breacher', 210, 70, 8,3,10,2,2,6,2,12,12,6, 'A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.', 'Tank' );
+	INSERT INTO monsters (name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level) VALUES ('Pirate Breacher', 210, 70, 8,3,10,2,2,6,2,12,12,6, 'A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.', 'Tank', 5);
 	CREATE TABLE monsters_abilities (
 		pk_id int primary key default nextval('monster_ability_pk_seq'),
 		name text NOT NULL,
