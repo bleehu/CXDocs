@@ -103,6 +103,17 @@
 					</div>
 				</form>
 			</div>
+			<div class="col-lg-4">
+				<h2> Existing Monsters </h2>
+				<table class="table table-striped table-hover">
+				{% for monster in monsters %}
+					<tr>
+						<td>{{monster ['name']}}</td>
+						<td>{{monster['health']}} HP</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
 		</div>
 	{% endblock %}
 	

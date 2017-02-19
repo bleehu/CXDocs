@@ -549,7 +549,8 @@ def show_monsters():
 def show_monster_editor():
 	if not check_auth(session):
 		return redirect("/")
-	return render_template("monster_smith.html", session=session);
+	monsters = get_monsters()
+	return render_template("monster_smith.html", session=session, monsters=monsters);
 
 @app.route("/newMonster", methods=['POST'])
 def make_monster():
