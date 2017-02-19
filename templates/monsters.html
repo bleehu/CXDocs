@@ -6,13 +6,16 @@
 	{% block body %}
 		<div class="container">
 			<div class="page-header">
-				<h1> Bestiary </h1>
+				<h1 id="top"> Bestiary </h1>
 			</div>
 			<div class="col-lg-2"> <!-- table of contents div -->
 				<div class="list-group table-of-contents">
 					<a class="list-group-item" href="#breacherpanel"> Pirate Breacher </a>
 					<a class="list-group-item" href="#gunslingerpanel"> Pirate Gunslinger </a>
 					<a class="list-group-item" href="#initiatepanel"> Cultist Initiate </a>
+					{% for monster in monsters %}
+					<a class="list-group-item" href="#{{monster['name']}}panel"> {{monster['name']}} </a>
+					{% endfor %}
 				</div>
 			</div>	<!-- end table of contents div -->
 			<div class="col-lg-8" id="monsters">
@@ -264,6 +267,7 @@
 							</p>
 						</div>
 						{% endfor %}
+						<p><small><a href="#top">back to top</a> </small></p>
 					</div> <!-- end panel-body -->
 				</div>
 				{% endfor %}
