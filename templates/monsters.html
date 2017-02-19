@@ -16,6 +16,8 @@
 					{% for monster in monsters %}
 					<a class="list-group-item" href="#{{monster['name']}}panel"> {{monster['name']}} </a>
 					{% endfor %}
+					<a class="list-group-item list-group-item-primary" href="#bountyboard"> Monster Creation Bounty Board </a>
+					<a class="list-group-item list-group-item-success" href="#halloffame"> Monster Creator Hall of Fame </a>
 				</div>
 			</div>	<!-- end table of contents div -->
 			<div class="col-lg-8" id="monsters">
@@ -275,7 +277,7 @@
 				<div class="row">
 				<h1> Bounty Board </h1>
 					<div class="col-lg-4">
-						<h2> Monster Bounty Board </h2>
+						<h2 id="bountyboard"> Monster Bounty Board </h2>
 						<p> Here's a short list of the monsters we still need to make and post. If you could put these together and email them to Mike, every DM would really appriciate it! Points are awarded based on how useful a given mob is likely to be in dungeon making and how complex the monster was to create. Points do not have any explicit value, but archDMs will honor a social contract and listen very closely to those from the community who are contributing. Custom monsters will have a score given to them upon website update. (until we find more programmers to automate the bounty system). </p>
 						<ul>
 							<li> A level 1 pleb (DND goblin analogue) -  100 points</li>
@@ -286,7 +288,7 @@
 						</ul>
 					</div>
 					<div class="col-lg-4">
-						<h2> Hall of Fame </h2>
+						<h2 id="halloffame"> Hall of Fame </h2>
 						<p> These wonderful Monster Ranglers have designed and posted monsters from the bounty board or from their own imaginations! Thank you SO SO MUCH!!! </p>
 						<ul>
 							<li>Michael Hedges - 120 points</li>
