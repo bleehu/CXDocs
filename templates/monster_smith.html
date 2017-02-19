@@ -110,6 +110,10 @@
 					<tr>
 						<td>{{monster ['name']}}</td>
 						<td>{{monster['health']}} HP</td>
+						<td><form action="deletemonster/{{monster['pk_id']}}" method="POST">
+							<input type="submit" value="Delete" class="form-control"> 
+							</form>
+						</td>
 					</tr>
 				{% endfor %}
 				</table>

@@ -565,6 +565,27 @@ def make_monster():
 	flash('Monster added!');
 	return redirect("/monstereditor")
 
+@app.route("/deletemonster/<pk_id>", methods=['POST'])
+def delete_monster(pk_id):
+	if not check_auth(session):
+		flash("Must be logged in to do that. This incident has been reported.")
+		return redirect("/")
+	monster_id = None
+	try:
+		monster_id = int(pk_id)
+	except Exception(e):
+		flash("error parsing id of monster. Got %s instead of a number" % pk_id)
+		return redirect("/monstereditor")
+	
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
+	myCursor.close()
+	connection.commit()
+	
+	flash('Enemy deleted!')
+	return redirect("/monstereditor")
+
 @app.route("/armorsmith")
 def show_armorsmith():
 	if not check_auth(session):
