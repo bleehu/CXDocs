@@ -4,7 +4,7 @@ import character #character is a custom data type that we created to handle char
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
-from flask import Flask, render_template, request, redirect, session, escape
+from flask import Flask, render_template, request, redirect, session, escape, flash
 import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb	#Python Debuger is what I use to fix borked code. It should not be called in production EVER!
@@ -267,6 +267,10 @@ def validate_monster(form):
 		monster['description'] = sql_escape(form['description'])[:600]
 		monster['name'] = sql_escape(form['name'])[:46]
 	except Exception (e):
+		return False
+	if monster['health'] < 1 or monster['nanites'] < 1 or monster['strength'] < 1 or monster['perception'] < 1 or monster['fortitude'] < 1 or monster['charisma'] < 1 or monster['intelligence'] < 1 or monster['luck'] < 1 or monster['level'] < 1:
+		return False
+	if monster['description'].strip() == '' or monster['name'].strip() == '':
 		return False
 	return monster
 
@@ -550,11 +554,14 @@ def show_monster_editor():
 @app.route("/newMonster", methods=['POST'])
 def make_monster():
 	if not check_auth(session):
+		flash('Must be logged in to see this page');
 		return redirect("/")
 	monster = validate_monster(request.form)
 	if not  monster:
-		return redirect("/")
+		flash('Monster invalid. Could not add');
+		return redirect("/monstereditor")
 	insert_monster(monster)
+	flash('Monster added!');
 	return redirect("/monstereditor")
 
 @app.route("/armorsmith")
@@ -636,8 +643,10 @@ def login():
 		session['displayname'] = user[2]
 		session['role'] = user[5]
 		log.info("%s logged in" % uname)
+		flash('Logged in.')
 	else:
 		log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
+		flash('Failed to log in; username or password incorrect.')
 	return redirect("/")
 
 @app.route("/logout", methods=['POST'])

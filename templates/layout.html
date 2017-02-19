@@ -35,6 +35,23 @@
 			</div>
 		  </div>
 		</div>
+		<div class="container">
+			<!-- Some items are being hidden behind the nav bar. This is a very hackish way of clearing out that space -->
+			<div class="row">.<br />.<br />.</div>
+		</div>
+		<!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+		  <div class="container" id="flashcontainer">
+			{% for message in messages %}
+			<div class="alert alert-dismissible alert-success">
+			  <button type="button" class="close" data-dismiss="alert">&times;</button>
+			  {{ message }}.
+			</div>
+			{% endfor %}
+		</div>
+		  {% endif %}
+		{% endwith %}
 		{%block body%}{%endblock%}
 	</body>
 </body>
