@@ -264,7 +264,7 @@ def validate_monster(form):
 		monster['shock'] = int(form['shock'])
 		monster['level'] = int(form['level'])
 		monster['role'] = sql_escape(form['role'])[:30]
-		monster['description'] = sql_escape(form['description'])[:600]
+		monster['description'] = sql_escape(form['description'])[:3000]
 		monster['name'] = sql_escape(form['name'])[:46]
 	except Exception (e):
 		return False
