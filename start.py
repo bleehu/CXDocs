@@ -210,6 +210,21 @@ def get_monster_abilities(monster_id):
 		monster_abilities.append(ability)
 	return monster_abilities
 
+def get_monster_abilities_all():
+	monster_abilities = []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT pk_id, name, type, description FROM monsters_abilities;")
+	results = myCursor.fetchall()
+	for line in results:
+		ability = {}
+		ability['pk_id'] = line[0]
+		ability['name'] = line[1]
+		ability['type'] = line[2]
+		ability['description'] = line[3]
+		monster_abilities.append(ability)
+	return monster_abilities
+
 def get_monsters_armor(monster_id):
 	monster_armor = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -274,11 +289,34 @@ def validate_monster(form):
 		return False
 	return monster
 
+def validate_monster_ability(form):
+	expected = set(['type', 'description', 'name'])
+	if expected ^ set(form.keys()) != set([]):
+		return False
+	ability = {}
+	try:
+		ability['name'] = sql_escape(form['name'])[:60]
+		ability['type'] = sql_escape(form['type'])[:60]
+		ability['description'] = sql_escape(form['description'])[:3000]
+	except Exception(e):
+		return False
+	if ability['name'].strip() == '' or ability['type'].strip() == '' or ability['description'].strip() == '':
+		return False
+	return ability
+
 def insert_monster(monster):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
 	monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'])
 	myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s' );" % monstring)
+	myCursor.close()
+	connection.commit()
+	
+def insert_monster_ability(ability):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	abstring = (ability['name'], ability['type'], ability['description'])
+	myCursor.execute("INSERT INTO monsters_abilities (name, type, description) VALUES (E'%s', E'%s', E'%s' );" % abstring)
 	myCursor.close()
 	connection.commit()
 
@@ -559,11 +597,25 @@ def make_monster():
 		return redirect("/")
 	monster = validate_monster(request.form)
 	if not  monster:
-		flash('Monster invalid. Could not add');
+		flash('Enemy invalid. Could not add');
 		return redirect("/monstereditor")
 	insert_monster(monster)
-	flash('Monster added!');
+	flash('Enemy added!');
 	return redirect("/monstereditor")
+	
+
+@app.route("/newMonsterAbility", methods = ['POST'])
+def make_monster_ability():
+	if not check_auth(session):
+		flash("Must be logged in to do that.")
+		return redirect("/")
+	ability = validate_monster_ability(request.form)
+	if not ability:
+		flash("New ability not valid. Could not add.")
+		return redirect("/monsterabilityeditor")
+	insert_monster_ability(ability)
+	flash("Enemy Ability Added!")
+	return redirect("/monsterabilityeditor")
 
 @app.route("/deletemonster/<pk_id>", methods=['POST'])
 def delete_monster(pk_id):
@@ -574,7 +626,7 @@ def delete_monster(pk_id):
 	try:
 		monster_id = int(pk_id)
 	except Exception(e):
-		flash("error parsing id of monster. Got %s instead of a number" % pk_id)
+		flash("error parsing id of monster. This incident will be logged.")
 		return redirect("/monstereditor")
 	
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -585,6 +637,35 @@ def delete_monster(pk_id):
 	
 	flash('Enemy deleted!')
 	return redirect("/monstereditor")
+
+@app.route("/deletemonsterability/<pk_id>", methods=['POST'])
+def delete_monster_ability(pk_id):
+	if not check_auth(session):
+		flash("Must be logged in to do that. This incident will be logged.")
+		return redirect("/")
+	monster_ability_id = None
+	try: 
+		monster_ability_id = int(pk_id)
+	except Exception(e):
+		flash("Error Parsing ID of monster. This incident will be logged.")
+		return redirect("/")
+	
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
+	myCursor.close()
+	connection.commit()
+	
+	flash('ability Deleted')
+	return redirect("/monsterabilityeditor")
+
+@app.route("/monsterabilityeditor")
+def show_monster_ability_editor():
+	if not check_auth(session):
+		flash("Must be logged in to do that.")
+		return redirect("/")
+	mAbilities = get_monster_abilities_all()
+	return render_template("monster_ability_smith.html", session=session, abilities=mAbilities)
 
 @app.route("/armorsmith")
 def show_armorsmith():

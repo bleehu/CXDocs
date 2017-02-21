@@ -11,8 +11,11 @@
 			</div>
 			<div class="col-lg-8">
 			<p>Click the button to generate new stats at random. Or Enter Ability Score numbers
-					and the rest of the stats should automatically update to match. You cannot adjust 
-					modifiers directly, and entereing anything that is not an integer will result in an error.</p>
+					and the rest of the stats should automatically update to match. The Total stats number is 
+					not saved; it is just there as a helpful reference. Name and description cannot be blank in order
+					to successfully upload a new NPC. Health, Nanites and attributes cannot be negative. The term monster
+					is sometimes used in the context of these forms as a misnomer for non-player character, especially
+					those which are hostile to players.</p>
 				<form class="form-horizontal" action="/newMonster" method="post">
 					<div class="col-lg-4">
 						<fieldset>
@@ -71,7 +74,7 @@
 					<div class="col-lg-4">
 					<fieldset>
 						<legend> Attributes </legend>
-						<p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
+						<p>These are dynamically generated based on ability scores. </p>
 						Health:
 						<input class="form-control" id="Health" value="90"  name="health"></input><br />
 						Nanites:
