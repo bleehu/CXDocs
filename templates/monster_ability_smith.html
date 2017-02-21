@@ -12,8 +12,7 @@
 			<div class="col-lg-8">
 			<p>More than one enemy may have the same ability assigned to it. For instance, both a Pirate
 				Breacher and a marine shotgunner have the same Bulltrue ability. In addition, an enemy like 
-				a marine shotgunner may have more than one ability. This editor creates the ability card which 
-				can be associated with a particular monster in the <a href="monstereditor">enemy editor</a>.</p>
+				a marine shotgunner may have more than one ability.</p>
 				<form class="form-horizontal" action="/newMonsterAbility" method="post">
 					<div class="col-lg-4">
 						<fieldset>
@@ -57,6 +56,24 @@
 					</tr>
 				{% endfor %}
 				</table>
+			</div>
+			<div class="col-lg-8">
+				<h2> Assign abilities </h2>
+				<p>Once you've created an ability, it must be assigned to one or more enemy. Deleting an ability will 
+					remove that ability from every enemy that has it. </p>
+				<form class="form-horizontal" action="/assignMonsterAbility" method="POST">
+					<select>
+						{% for monster in monsters %}
+						<option value="{{monster['pk_id']}}"> {{monster['name']}} </option>
+						{% endfor %}
+					</select>
+					<select name="ability_id">
+						{% for ability in abilities %}
+						<option value="{{ability['pk_id']}}"> {{ability['name']}} </option>
+						{% endfor %}
+					</select>
+					<input class="form-button btn btn-success" type="submit" value="Give ability to Enemy">
+				</form>
 			</div>
 		</div>
 	{% endblock %}

@@ -472,7 +472,7 @@ def delete_monster(pk_id):
 	
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
+	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s CASCADE;" % monster_id)
 	myCursor.close()
 	connection.commit()
 	
@@ -493,7 +493,7 @@ def delete_monster_ability(pk_id):
 	
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
+	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s CASCADE;" % pk_id)
 	myCursor.close()
 	connection.commit()
 	
@@ -506,7 +506,8 @@ def show_monster_ability_editor():
 		flash("Must be logged in to do that.")
 		return redirect("/")
 	mAbilities = enemies.get_monster_abilities_all()
-	return render_template("monster_ability_smith.html", session=session, abilities=mAbilities)
+	munsters = enemies.get_monsters()
+	return render_template("monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
 
 @app.route("/armorsmith")
 def show_armorsmith():
