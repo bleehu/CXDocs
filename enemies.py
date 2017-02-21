@@ -70,7 +70,7 @@ def get_monsters_armor(monster_id):
 	monster_armor = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT monsters_armors.pk_id, name, coverage, damagereduction, description FROM monsters_armors, monsters_armor_map WHERE monsters_armor_map.fk_monster_id = %s;" % monster_id)
+	myCursor.execute("SELECT monsters_armors.pk_id, name, coverage, damagereduction, description FROM monsters_armors, monsters_armor_map WHERE monsters_armor_map.fk_monster_id = %s AND monsters_armor_map.fk_armor_id = monsters_armors.pk_id;" % monster_id)
 	results = myCursor.fetchall()
 	for line in results:
 		armor = {}
@@ -86,7 +86,7 @@ def get_monsters_weapons(monster_id):
 	monster_weapons = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT monsters_weapons.pk_id, name, range, damage, accuracy, capacity, description FROM monsters_weapons, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s;" % monster_id)
+	myCursor.execute("SELECT monsters_weapons.pk_id, name, range, damage, accuracy, capacity, description FROM monsters_weapons, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = monsters_weapons.pk_id;" % monster_id)
 	results = myCursor.fetchall()
 	for line in results:
 		weapon = {}
@@ -255,5 +255,6 @@ def sql_escape(dirty):
 	GRANT UPDATE on monster_ability_pk_seq TO searcher;
 	GRANT SELECT, INSERT, DELETE on monsters_abilities TO searcher;
 	GRANT UPDATE ON monsters_ability_map TO searcher;
+	GRANT UPDATE ON monster_ability_map_pk_seq TO searcher;
 	GRANT INSERT, DELETE ON monsters_ability_map TO searcher;
 	"""
