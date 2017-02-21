@@ -145,6 +145,21 @@ def validate_monster_ability(form):
 		return False
 	return ability
 
+def validate_monster_ability_map(form):
+	expected = set(['monster_id', 'ability_id'])
+	if expected ^ set(form.keys()) != set([]):
+		return False
+	monster_id = None
+	ability_id = None
+	try:
+		monster_id = int(form['monster_id'])
+		ability_id = int(form['ability_id'])
+	except Exception(e):
+		return False
+	if ability_id < 1 or monster_id < 1:
+		return False
+	return {'monster_id':monster_id, 'ability_id':ability_id}
+
 def insert_monster(monster):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
@@ -161,6 +176,15 @@ def insert_monster_ability(ability):
 	myCursor.close()
 	connection.commit()
 	
+
+def insert_monster_ability_map(mapping):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	mapstring = (mapping['monster_id'], mapping['ability_id'])
+	myCursor.execute("INSERT INTO monsters_ability_map (fk_monster_id, fk_ability_id) VALUES (%s, %s)" % mapstring)
+	myCursor.close()
+	connection.commit()
+
 	""" we use this when we use player input to check postgres for a search. For instance, we don't want 
            badguys trying to log in with SQL injection - that could lead to damage to login data."""
 def sql_escape(dirty):
@@ -230,4 +254,6 @@ def sql_escape(dirty):
 		fk_weapons_id int references monsters_weapons(pk_id));
 	GRANT UPDATE on monster_ability_pk_seq TO searcher;
 	GRANT SELECT, INSERT, DELETE on monsters_abilities TO searcher;
+	GRANT UPDATE ON monsters_ability_map TO searcher;
+	GRANT INSERT, DELETE ON monsters_ability_map TO searcher;
 	"""
