@@ -246,12 +246,12 @@ def sql_escape(dirty):
 		description text);
 	CREATE TABLE monsters_armor_map(
 		pk_id int primary key default nextval('monster_armor_map_pk_seq'),
-		fk_monster_id int references monsters(pk_id),
-		fk_monsters_armors int references monsters_armors(pk_id));
+		fk_monster_id int references monsters(pk_id) ON DELETE CASCADE,
+		fk_monsters_armors int references monsters_armors(pk_id)) ON DELETE CASCADE;
 	CREATE TABLE monsters_weapon_map(
 		pk_id int primary key default nextval('monster_weapon_map_pk_seq'),
-		fk_monster_id int references monsters(pk_id),
-		fk_weapons_id int references monsters_weapons(pk_id));
+		fk_monster_id int references monsters(pk_id) ON DELETE CASCADE,
+		fk_weapons_id int references monsters_weapons(pk_id)) ON DELETE CASCADE;
 	GRANT UPDATE on monster_ability_pk_seq TO searcher;
 	GRANT SELECT, INSERT, DELETE on monsters_abilities TO searcher;
 	GRANT UPDATE ON monsters_ability_map TO searcher;
