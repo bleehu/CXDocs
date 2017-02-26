@@ -463,11 +463,11 @@ def make_monster_ability_mapping():
 	if not check_auth(session):
 		flash("Must be logged in to do that.")
 		return redirect("/")
-	mapping = enemies.insert_monster_ability_map(request.form)
+	mapping = enemies.validate_monster_ability_map(request.form)
 	if not mapping:
 		flash("New mapping not valid. Could not add.")
 		return redirect("/monsterabilityeditor")
-	enemies.insert_monster_ability(ability)
+	enemies.insert_monster_ability_mapping(mapping)
 	flash("Enemy Ability Assigned!")
 	return redirect("/monsterabilityeditor")
 
