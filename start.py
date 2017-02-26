@@ -485,7 +485,7 @@ def delete_monster(pk_id):
 	
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s CASCADE;" % monster_id)
+	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
 	myCursor.close()
 	connection.commit()
 	
@@ -506,7 +506,7 @@ def delete_monster_ability(pk_id):
 	
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s CASCADE;" % pk_id)
+	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
 	connection.commit()
 	
