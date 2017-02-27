@@ -10,9 +10,6 @@
 			</div>
 			<div class="col-lg-2"> <!-- table of contents div -->
 				<div class="list-group table-of-contents">
-					<a class="list-group-item" href="#breacherpanel"> Pirate Breacher </a>
-					<a class="list-group-item" href="#gunslingerpanel"> Pirate Gunslinger </a>
-					<a class="list-group-item" href="#initiatepanel"> Cultist Initiate </a>
 					{% for monster in monsters %}
 					<a class="list-group-item" href="#{{monster['name']}}panel"> {{monster['name']}} </a>
 					{% endfor %}
@@ -21,7 +18,7 @@
 				</div>
 			</div>	<!-- end table of contents div -->
 			<div class="col-lg-8" id="monsters">
-				<!-- Breacher -->
+				<!-- Breacher
 				<div class="panel panel-primary" id="breacherpanel">
 					<div class="panel-heading">
 						<h3 id="breacherheading" class="panel-title">Pirate Breacher</h3>
@@ -85,7 +82,7 @@
 					</div>
 				</div>
 				<!-- End Breacher -->
-				<!-- Gunslinger -->
+				<!-- Gunslinger
 				<div class="panel panel-primary" id="gunslingerpanel">
 					<div class="panel-heading">
 						<h3 id="breacherheading" class="panel-title">Pirate Gunslinger</h3>
@@ -149,7 +146,7 @@
 					</div>
 				</div>
 				<!-- End Breacher -->
-				<!-- Cultist Initiate -->
+				<!-- Cultist Initiate
 				<div class="panel panel-primary" id="initiatepanel">
 					<div class="panel-heading">
 						<h3 id="breacherheading" class="panel-title">Cultist Initiate</h3>
@@ -216,6 +213,7 @@
 						<h3 id="breacherheading" class="panel-title">{{monster['name']}}</h3>
 					</div>
 					<div class="panel-body">
+						<img src="static/images/monsters/bypk_id/{{monster['pk_id']}}.png" alt="picture of a {{monster['name']}}" class="mugshot">
 						<p> {{monster['description']}} </p>
 						<dl class="col-lg-3 col-md-3 col-sm-4">
 							<dt>Level</dt><dd>{{monster['level']}}</dd>
