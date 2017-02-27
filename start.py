@@ -513,7 +513,7 @@ def delete_monster_ability(pk_id):
 	flash('ability Deleted')
 	return redirect("/monsterabilityeditor")
 
-@app.route("/monsterabilites")
+@app.route("/monsterabilities")
 def show_monster_abilities():
 	if not check_auth(session):
 		flash("You must be logged in to see that.")
