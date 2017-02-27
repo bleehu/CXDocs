@@ -513,6 +513,14 @@ def delete_monster_ability(pk_id):
 	flash('ability Deleted')
 	return redirect("/monsterabilityeditor")
 
+@app.route("/monsterabilites")
+def show_monster_abilities():
+	if not check_auth(session):
+		flash("You must be logged in to see that.")
+		return redirect("/")
+	mAbilities = enemies.get_monster_abilities_all()
+	return render_template("monster_abilities.html", abilities=mAbilities)
+
 @app.route("/monsterabilityeditor")
 def show_monster_ability_editor():
 	if not check_auth(session):
