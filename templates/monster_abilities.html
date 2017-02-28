@@ -29,7 +29,8 @@
 							<dt>Author</dt><dd> Not listed </dd>
 						</dl>
 						<div class="col-lg-3 col-md-3 col-sm-6">
-							<a class="form-button btn btn-danger"> Delete Ability </a>
+							<form action="/deletemonsterability/{{ability['pk_id']}}" method="post">
+							<input type="submit" class="form-button btn btn-danger" value="Delete Ability">  </input>
 							<form>
 							<legend> Give power to: </legend>
 							<select name=monster>

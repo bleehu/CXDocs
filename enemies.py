@@ -50,6 +50,14 @@ def get_monster_abilities(monster_id):
 		ability['description'] = line[3]
 		monster_abilities.append(ability)
 	return monster_abilities
+	
+def get_abilitys_monsters(ability_id):
+	abilitys_monsters = []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT monsters_abilities.pk_id, name, type, description FROM monsters_abilities, monsters_ability_map WHERE monsters_ability_map.fk_monster_id = %s AND monsters_ability_map.fk_ability_id = monsters_abilities.pk_id;" % monster_id)
+	results = myCursor.fetchall()
+	return abilitys_monsters
 
 def get_monster_abilities_all():
 	monster_abilities = []
