@@ -28,6 +28,28 @@
 							<dt>Type</dt><dd>{{ability['type']}}</dd>
 							<dt>Author</dt><dd> Not listed </dd>
 						</dl>
+						<div class="col-lg-3 col-md-3 col-sm-6">
+							<a class="form-button btn btn-danger"> Delete Ability </a>
+							<form>
+							<legend> Give power to: </legend>
+							<select name=monster>
+								{% for monster in monsters %}
+								<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+								{% endfor %}
+							</select>
+							<input class="form-button btn btn-success" type="submit" Value="Give">
+							</form>
+							<form>
+							<legend>Take Ability Away From:</legend>
+							<select>
+								{% for monster in monsters %}
+								<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+								{% endfor %}
+							</select>
+							<input class="form-button btn btn-danger" type="submit" Value="Take">
+							</form>
+							
+						</div>
 						<p><small><a href="#top">back to top</a> </small></p>
 					</div> <!-- end panel-body -->
 				</div>
