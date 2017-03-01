@@ -8,68 +8,69 @@
 			<div class="page-header">
 				<h1> Enemy Weapon Editor </h1>
 			</div>
-			<div class="col-lg-8">
+			<div class="col-lg-6">
+			<h2> Create New Enemy Weapon </h2>
 			<p>More than one enemy may have the same weapon assigned to it. For instance, both a Pirate
 				Breacher and a marine shotgunner may have the same shotgun. In addition, an enemy like 
 				a marine shotgunner may have more than one weapon, a knife and a shotgun. </p>
 				<form class="form-horizontal" action="/newMonsterWeapon" method="post">
-					<div class="form-group">
-						  <label for="gunDamage" class="col-lg-2 control-label">Damage</label>
-						  <div class="col-lg-2">
-							<input class="form-control" id="gunDamage" placeholder="##" type="text" name="gunDamage">
-						  </div>
-						  <label for="range" class="col-lg-2 control-label">Range</label>
-						  <div class="col-lg-2">
-							<input class="form-control" id="range" placeholder="##"  autocomplete="off" type="text" name="range">
-						  </div>
-						</div>
+					<fieldset>
 						<div class="form-group">
-						  <label for="typeSelect" class="col-lg-2 control-label">Type</label>
-						  <div class="col-lg-6">
-							<select class="form-control" id="typeSelect" name="gunType">
-							  <option value="Pistol">Pistol</option>
-							  <option value="SMG">SMG</option>
-							  <option value="Shotgun">Shotgun</option>
-							  <option value="Carbine">Carbine</option>
-							  <option value="Automatic Rifle">Automatic Rifle</option>
-							  <option value="Heavy Weapon">Heavy Weapon</option>
-							  <option value="Long Rifle">Long Rifle</option>
-							  <option value="Melee">Melee</option>
-							  <option value="Bow">Bow</option>
-							</select>
-						</div>
-						<div class="form-group">
-							<div class="col-lg-2">
-								<label for="missChnce" class="col-lg-2 control-label">Miss Chance</label>
-								<input class="form-control" id="missChnce" placeholder="Miss" cols="2" autocomplete="off" type="text" name="toMiss">
+							<div class="col-lg-8">
+								<label for="gunName" class="gol-lg-2 control-label"> Name </label>
+								<input id="gunName" class="form-control" name="name" placeholder="name of gun" type="text"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<div class="col-lg-2">
+							<div = class="col-lg-4">
+								<label for="gunDamage" class="col-lg-2 control-label">Damage</label>
+								<input class="form-control" id="gunDamage" placeholder="##" type="text" name="gunDamage">
+							</div>
+							<div class="col-lg-4">
+								<label for="range" class="col-lg-2 control-label">Range</label>
+								<input class="form-control" id="range" placeholder="##"  autocomplete="off" type="text" name="range">
+							</div>
+							<div class="col-lg-4">
+								<label for="missChnce" class="col-lg-2 control-label">Miss Chance</label>
+								<input class="form-control" id="missChnce" placeholder="Miss" cols="2" autocomplete="off" type="text" name="toMiss" />
+							</div>
+							<div class="col-lg-4">
 								<label for="mag" class="col-lg-2 control-label">Mag Size</label>
 								<input class="form-control" id="mag" placeholder="##" type="text" name="mag"></input>
 							</div>
-							<div class="col-lg-2">
+							<div class="col-lg-4">
 								<label for="cost" class="col-lg-2 control-label">Cost</label>
 								<input class="form-control" id="cost" placeholder="##" type="text" name="cost"></input>
+							</div>
+							<div class="col-lg-4">
 								<label for="magcost" class="col-lg-2 control-label">Magazine Cost</label>
 								<input class="form-control" id="magcost" placeholder="##" type="text" name="magcost"></input>
 							</div>
-							<div class="col-lg-2">
+							<div class="col-lg-4">
 								<label for="minLevel" class="col-lg-2 control-label">Min. Level</label>
 								<input class="form-control" id="minLevel" placeholder="##" type="text" name="minLevel"></input>
 							</div>
-					<div class="col-lg-8">
-						<fieldset>
+							<div class="col-lg-4">
+							</div>
+							<div class="col-lg-4">
+								<label for="typeSelect" class="col-lg-2 control-label">Type</label>
+								<select class="form-control" id="typeSelect" name="gunType">
+									<option value="Pistol">Pistol</option>
+									<option value="SMG">SMG</option>
+									<option value="Shotgun">Shotgun</option>
+									<option value="Carbine">Carbine</option>
+									<option value="Automatic Rifle">Automatic Rifle</option>
+									<option value="Heavy Weapon">Heavy Weapon</option>
+									<option value="Long Rifle">Long Rifle</option>
+									<option value="Melee">Melee</option>
+									<option value="Bow">Bow</option>
+								</select>
+							</div>
+						</div>
 						<legend>Description</legend>
 						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
-						</fieldset>
-					</div>
-					<div class="col-lg-4">
-						<fieldset>
-							<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
-						</fieldset>
-					</div>
+						<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
+					</fieldset>
 				</form>
 			</div>
 			<div class="col-lg-4">
@@ -87,7 +88,7 @@
 				{% endfor %}
 				</table>
 			</div>
-			<div class="col-lg-8">
+			<div class="col-lg-4">
 				<h2> Assign Weapons </h2>
 				<p>Once you've created a weapon, it must be assigned to one or more enemy. Deleting an weapon will 
 					take that weapon from every enemy that has it. </p>
@@ -106,5 +107,6 @@
 				</form>
 			</div>
 		</div>
+	</div>
 	{% endblock %}
 	
