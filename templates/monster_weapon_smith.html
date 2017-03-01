@@ -1,0 +1,110 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Enemy Weapon Editor</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Enemy Weapon Editor </h1>
+			</div>
+			<div class="col-lg-8">
+			<p>More than one enemy may have the same weapon assigned to it. For instance, both a Pirate
+				Breacher and a marine shotgunner may have the same shotgun. In addition, an enemy like 
+				a marine shotgunner may have more than one weapon, a knife and a shotgun. </p>
+				<form class="form-horizontal" action="/newMonsterWeapon" method="post">
+					<div class="form-group">
+						  <label for="gunDamage" class="col-lg-2 control-label">Damage</label>
+						  <div class="col-lg-2">
+							<input class="form-control" id="gunDamage" placeholder="##" type="text" name="gunDamage">
+						  </div>
+						  <label for="range" class="col-lg-2 control-label">Range</label>
+						  <div class="col-lg-2">
+							<input class="form-control" id="range" placeholder="##"  autocomplete="off" type="text" name="range">
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label for="typeSelect" class="col-lg-2 control-label">Type</label>
+						  <div class="col-lg-6">
+							<select class="form-control" id="typeSelect" name="gunType">
+							  <option value="Pistol">Pistol</option>
+							  <option value="SMG">SMG</option>
+							  <option value="Shotgun">Shotgun</option>
+							  <option value="Carbine">Carbine</option>
+							  <option value="Automatic Rifle">Automatic Rifle</option>
+							  <option value="Heavy Weapon">Heavy Weapon</option>
+							  <option value="Long Rifle">Long Rifle</option>
+							  <option value="Melee">Melee</option>
+							  <option value="Bow">Bow</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-2">
+								<label for="missChnce" class="col-lg-2 control-label">Miss Chance</label>
+								<input class="form-control" id="missChnce" placeholder="Miss" cols="2" autocomplete="off" type="text" name="toMiss">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-2">
+								<label for="mag" class="col-lg-2 control-label">Mag Size</label>
+								<input class="form-control" id="mag" placeholder="##" type="text" name="mag"></input>
+							</div>
+							<div class="col-lg-2">
+								<label for="cost" class="col-lg-2 control-label">Cost</label>
+								<input class="form-control" id="cost" placeholder="##" type="text" name="cost"></input>
+								<label for="magcost" class="col-lg-2 control-label">Magazine Cost</label>
+								<input class="form-control" id="magcost" placeholder="##" type="text" name="magcost"></input>
+							</div>
+							<div class="col-lg-2">
+								<label for="minLevel" class="col-lg-2 control-label">Min. Level</label>
+								<input class="form-control" id="minLevel" placeholder="##" type="text" name="minLevel"></input>
+							</div>
+					<div class="col-lg-8">
+						<fieldset>
+						<legend>Description</legend>
+						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
+						</fieldset>
+					</div>
+					<div class="col-lg-4">
+						<fieldset>
+							<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+			<div class="col-lg-4">
+				<h2> Existing Weapons </h2>
+				<table class="table table-striped table-hover">
+				{% for weapon in weapons %}
+					<tr>
+						<td>{{weapon['name']}}</td>
+						<td>{{weapon['type']}}</td>
+						<td><form action="deletemonsterweapon/{{weapon['pk_id']}}" method="POST">
+							<input type="submit" value="Delete" class="form-control"> 
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+			<div class="col-lg-8">
+				<h2> Assign Weapons </h2>
+				<p>Once you've created a weapon, it must be assigned to one or more enemy. Deleting an weapon will 
+					take that weapon from every enemy that has it. </p>
+				<form class="form-horizontal" action="/assignMonsterWeapon" method="POST">
+					<select name="monster_id">
+						{% for monster in monsters %}
+						<option value="{{monster['pk_id']}}"> {{monster['name']}} </option>
+						{% endfor %}
+					</select>
+					<select name="ability_id">
+						{% for weapon in weapons %}
+						<option value="{{weapon['pk_id']}}"> {{weapon['name']}} </option>
+						{% endfor %}
+					</select>
+					<input class="form-button btn btn-success" type="submit" value="Give Weapon to Enemy">
+				</form>
+			</div>
+		</div>
+	{% endblock %}
+	

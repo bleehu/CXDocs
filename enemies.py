@@ -90,6 +90,24 @@ def get_monsters_armor(monster_id):
 		monster_armor.append(armor)
 	return monster_armor
 
+def get_monster_weapons_all():
+	monster_weapons = []
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT pk_id, name, range, damage, accuracy, capacity, description FROM monsters_weapons ORDER BY name;")
+	results = myCursor.fetchall()
+	for line in results:
+		weapon = {}
+		weapon['pk_id'] = line[0]
+		weapon['name'] = line[1]
+		weapon['range'] = line[2]
+		weapon['damage'] = line[3]
+		weapon['accuracy'] = line[4]
+		weapon['capacity'] = line[5]
+		weapon['description'] = line[6]
+		monster_weapons.append(weapon)
+	return monster_weapons
+
 def get_monsters_weapons(monster_id):
 	monster_weapons = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")

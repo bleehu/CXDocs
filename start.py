@@ -530,6 +530,15 @@ def show_monster_ability_editor():
 	munsters = enemies.get_monsters()
 	return render_template("monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
 
+@app.route("/monsterweaponeditor")
+def show_monster_weapon_editor():
+	if not check_auth(session):
+		flash("must be logged in to see that.")
+		return redirect("/")
+	mWeps = enemies.get_monster_weapons_all()
+	munsters = enemies.get_monsters()
+	return render_template("monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
+
 @app.route("/armorsmith")
 def show_armorsmith():
 	if not check_auth(session):
