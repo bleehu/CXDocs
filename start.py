@@ -529,6 +529,27 @@ def delete_monster_ability(pk_id):
 	flash('ability Deleted')
 	return redirect("/monsterabilityeditor")
 
+@app.route("/deletemonsterweapon/<pk_id>", methods=['POST'])
+def delete_monster_weapon(pk_id):
+	if not check_auth(session):
+		flash("must be logged in to do that. This incident will be reported.")
+		return redirect("/")
+	monster_weapon_id = None
+	try:
+		monster_weapon_id = int(pk_id)
+	except Exception(e):
+		flash("error parsing ID of monster. This incident will be logged")
+		return redirect("/")
+	
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("DELETE FROM monsters_weapons WHERE pk_id = %s;" % pk_id)
+	myCursor.close()
+	connection.commit()
+	
+	flash('weapon Deleted successfuly!')
+	return redirect("/monsterweaponeditor")
+
 @app.route("/monsterabilities")
 def show_monster_abilities():
 	if not check_auth(session):
@@ -536,6 +557,14 @@ def show_monster_abilities():
 		return redirect("/")
 	mAbilities = enemies.get_monster_abilities_all()
 	return render_template("monster_abilities.html", abilities=mAbilities)
+
+@app.route("/monsterweapons")
+def show_monster_weapons():
+	if not check_auth(session):
+		flash("you must be logged in to see that.")
+		return redirect("/")
+	mWeapons = enemies.get_monster_weapons_all()
+	return render_template("monster_weapons.html", weapons=mWeapons)
 
 @app.route("/monsterabilityeditor")
 def show_monster_ability_editor():

@@ -1,0 +1,68 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Enemy Weapons</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1 id="top"> Enemy Weapons </h1>
+			</div>
+			<div class="col-lg-2"> <!-- table of contents div -->
+				<div class="list-group table-of-contents">
+					{% for weapon in weapons %}
+					<a class="list-group-item" href="#{{weapon['name']}}panel"> {{weapon['name']}} </a>
+					{% endfor %}
+				</div>
+			</div>	<!-- end table of contents div -->
+			<div class="col-lg-8" id="weapons">
+				<p>There are {{weapons | count}} weapons for enemies to choose from.</p>
+				{% for weapon in weapons %}
+				<div class="panel panel-primary" id="{{weapon['name']}}panel">
+					<div class="panel-heading">
+						<h3 id="breacherheading" class="panel-title">{{weapon['name']}}</h3>
+					</div>
+					<div class="panel-body">
+						<p> {{weapon['description']}} </p>
+						<dl class="col-lg-3 col-md-3 col-sm-4">
+							<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
+							<dt>Range</dt><dd>{{weapon['range']}}m </dd>
+							<dt>Accuracy</dt><dd>{{weapon['accuracy']}} %</dd>
+							<dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
+							<dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
+							<dt>Mag Cost</dt><dd>${{weapon['magCost']}}</dd>
+							<dt>Type</dt><dd>{{weapon['type']}}</dd>
+							<dt>Author</dt><dd> {{weapon['author']}} </dd>
+						</dl>
+						<div class="col-lg-3 col-md-3 col-sm-6">
+							<form action="/deletemonsterweapon/{{weapon['pk_id']}}" method="post">
+							<input type="submit" class="form-button btn btn-danger" value="Delete Weapon">  </input>
+							<form>
+							<legend> Give weapon to: </legend>
+							<select name=monster>
+								{% for monster in monsters %}
+								<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+								{% endfor %}
+							</select>
+							<input class="form-button btn btn-success" type="submit" Value="Give">
+							</form>
+							<form>
+							<legend>Take Weapon Away From:</legend>
+							<select>
+								{% for monster in monsters %}
+								<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+								{% endfor %}
+							</select>
+							<input class="form-button btn btn-danger" type="submit" Value="Take">
+							</form>
+							
+						</div>
+						<p> This weapon proudly presented by {{ weapon['author'] }}</p>
+						<p><small><a href="#top">back to top</a> </small></p>
+					</div> <!-- end panel-body -->
+				</div>
+				{% endfor %}
+			</div> <!-- end weapons -->
+		</div><!-- end container -->
+	{% endblock %}
+	

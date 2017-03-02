@@ -1,4 +1,5 @@
 import psycopg2
+import pdb
 
 def get_monsters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -97,7 +98,7 @@ def get_monster_weapons_all():
 	monster_weapons = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT pk_id, name, range, damage, accuracy, capacity, description, author FROM monsters_weapons ORDER BY name;")
+	myCursor.execute("SELECT pk_id, name, range, damage, accuracy, capacity, description, author, type FROM monsters_weapons ORDER BY name;")
 	results = myCursor.fetchall()
 	for line in results:
 		weapon = {}
@@ -109,6 +110,7 @@ def get_monster_weapons_all():
 		weapon['capacity'] = line[5]
 		weapon['description'] = line[6]
 		weapon['author'] = line[7]
+		weapon['type'] = line[8]
 		monster_weapons.append(weapon)
 	return monster_weapons
 
@@ -273,7 +275,7 @@ def insert_monster_weapon(weapon):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
 	wepstring = (weapon['name'], weapon['range'], weapon['damage'], weapon['toMiss'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'])
-	myCursor.execute("INSERT INTO monsters_weapons (name, range, damage, accuracy, capacity, type, description) VALUES (E'%s', %s, %s, %s, %s, E'%s', E'%s', '%s');" % wepstring)
+	myCursor.execute("INSERT INTO monsters_weapons (name, range, damage, accuracy, capacity, type, description, author) VALUES (E'%s', %s, %s, %s, %s, E'%s', E'%s', '%s');" % wepstring)
 	myCursor.close()
 	connection.commit()
 
@@ -289,7 +291,7 @@ def insert_monster_armor(armor):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
 	armorstring = (armor['name'], armor['range'], armor['damage'], armor['accuracy'], armor['capacity'], armor['type'], armor['description'], armor['author'])
-	myCursor.execute("INSERT INTO monsters_armors (name, range, damage, accuracy, capacity, type, description) VALUES (E'%s', %s, %s, %s, %s, E'%s', E'%s', '%s');" % wepstring)
+	myCursor.execute("INSERT INTO monsters_armors (name, range, damage, accuracy, capacity, type, description, author) VALUES (E'%s', %s, %s, %s, %s, E'%s', E'%s', '%s');" % wepstring)
 	myCursor.close()
 	connection.commit()
 
