@@ -483,9 +483,22 @@ def make_monster_ability_mapping():
 	if not mapping:
 		flash("New mapping not valid. Could not add.")
 		return redirect("/monsterabilityeditor")
-	enemies.insert_monster_ability_mapping(mapping)
+	enemies.insert_monster_ability_map(mapping)
 	flash("Enemy Ability Assigned!")
 	return redirect("/monsterabilityeditor")
+
+@app.route("/assignMonsterWeapon", methods=['POST'])
+def make_monster_weapon_mapping():
+	if not check_auth(session):
+		flash("Must be logged in to do that.")
+		return redirect("/")
+	mapping = enemies.validate_monster_weapon_map(request.form)
+	if not mapping:
+		flash("New mapping not valid. Could not add.")
+		return redirect("/")
+	enemies.insert_monster_weapon_map(mapping)
+	flash("Weapon Assigned to Enemy Successfully!")
+	return redirect("/monsterweaponeditor")
 
 @app.route("/deletemonster/<pk_id>", methods=['POST'])
 def delete_monster(pk_id):

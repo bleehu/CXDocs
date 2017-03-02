@@ -283,7 +283,7 @@ def insert_monster_weapon_map(mapping):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
 	mapstring = (mapping['monster_id'], mapping['weapon_id'])
-	myCursor.execute("INSERT INTO monsters_weapon_map (fk_monster_id, fk_weapon_id) VALUES (%s, %s)" % mapstring)
+	myCursor.execute("INSERT INTO monsters_weapon_map (fk_monster_id, fk_weapons_id) VALUES (%s, %s)" % mapstring)
 	myCursor.close()
 	connection.commit()
 
