@@ -1,10 +1,9 @@
-
 import psycopg2
 
 def get_monsters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id FROM monsters ORDER BY name;")
+	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id, author FROM monsters ORDER BY name;")
 	monsters = []
 	results = myCursor.fetchall()
 	for mun in results:
@@ -25,6 +24,7 @@ def get_monsters():
 		newmun['reflex'] = mun[12]
 		newmun['description'] = mun[13]
 		newmun['pk_id'] = mun[14]
+		newmun['author'] = mun[15]
 		monster_id = mun[14]
 		
 		#add abilities
@@ -40,7 +40,7 @@ def get_monster_abilities(monster_id):
 	monster_abilities = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT monsters_abilities.pk_id, name, type, description FROM monsters_abilities, monsters_ability_map WHERE monsters_ability_map.fk_monster_id = %s AND monsters_ability_map.fk_ability_id = monsters_abilities.pk_id;" % monster_id)
+	myCursor.execute("SELECT monsters_abilities.pk_id, name, type, description, author FROM monsters_abilities, monsters_ability_map WHERE monsters_ability_map.fk_monster_id = %s AND monsters_ability_map.fk_ability_id = monsters_abilities.pk_id;" % monster_id)
 	results = myCursor.fetchall()
 	for line in results:
 		ability = {}
@@ -48,6 +48,7 @@ def get_monster_abilities(monster_id):
 		ability['name'] = line[1]
 		ability['type'] = line[2]
 		ability['description'] = line[3]
+		ability['author'] = line[4]
 		monster_abilities.append(ability)
 	return monster_abilities
 	
@@ -63,7 +64,7 @@ def get_monster_abilities_all():
 	monster_abilities = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT pk_id, name, type, description FROM monsters_abilities ORDER BY name;")
+	myCursor.execute("SELECT pk_id, name, type, description, author FROM monsters_abilities ORDER BY name;")
 	results = myCursor.fetchall()
 	for line in results:
 		ability = {}
@@ -71,6 +72,7 @@ def get_monster_abilities_all():
 		ability['name'] = line[1]
 		ability['type'] = line[2]
 		ability['description'] = line[3]
+		ability['author'] = line[4]
 		monster_abilities.append(ability)
 	return monster_abilities
 
@@ -78,7 +80,7 @@ def get_monsters_armor(monster_id):
 	monster_armor = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT monsters_armors.pk_id, name, coverage, damagereduction, description FROM monsters_armors, monsters_armor_map WHERE monsters_armor_map.fk_monster_id = %s AND monsters_armor_map.fk_armor_id = monsters_armors.pk_id ORDER BY name;" % monster_id)
+	myCursor.execute("SELECT monsters_armors.pk_id, name, coverage, damagereduction, description, monsters_armors.author FROM monsters_armors, monsters_armor_map WHERE monsters_armor_map.fk_monster_id = %s AND monsters_armor_map.fk_armor_id = monsters_armors.pk_id ORDER BY name;" % monster_id)
 	results = myCursor.fetchall()
 	for line in results:
 		armor = {}
@@ -87,6 +89,7 @@ def get_monsters_armor(monster_id):
 		armor['coverage'] = line[2]
 		armor['damageReduction'] = line[2]
 		armor['description'] = line[4]
+		armor['author'] = line[5]
 		monster_armor.append(armor)
 	return monster_armor
 
@@ -94,7 +97,7 @@ def get_monster_weapons_all():
 	monster_weapons = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT pk_id, name, range, damage, accuracy, capacity, description FROM monsters_weapons ORDER BY name;")
+	myCursor.execute("SELECT pk_id, name, range, damage, accuracy, capacity, description, author FROM monsters_weapons ORDER BY name;")
 	results = myCursor.fetchall()
 	for line in results:
 		weapon = {}
@@ -105,6 +108,7 @@ def get_monster_weapons_all():
 		weapon['accuracy'] = line[4]
 		weapon['capacity'] = line[5]
 		weapon['description'] = line[6]
+		weapon['author'] = line[7]
 		monster_weapons.append(weapon)
 	return monster_weapons
 
@@ -112,7 +116,7 @@ def get_monsters_weapons(monster_id):
 	monster_weapons = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT monsters_weapons.pk_id, name, range, damage, accuracy, capacity, description FROM monsters_weapons, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = monsters_weapons.pk_id ORDER BY name;" % monster_id)
+	myCursor.execute("SELECT monsters_weapons.pk_id, name, range, damage, accuracy, capacity, description, monsters_weapons.author FROM monsters_weapons, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = monsters_weapons.pk_id ORDER BY name;" % monster_id)
 	results = myCursor.fetchall()
 	for line in results:
 		weapon = {}
@@ -123,10 +127,11 @@ def get_monsters_weapons(monster_id):
 		weapon['accuracy'] = line[4]
 		weapon['capacity'] = line[5]
 		weapon['description'] = line[6]
+		weapon['author'] = line[7]
 		monster_weapons.append(weapon)
 	return monster_weapons
 
-def validate_monster(form):
+def validate_monster(form, user):
 	expected = set(['name', 'description', 'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', 'reflex', 'will', 'shock', 'health', 'nanites', 'level', 'role'])
 	if expected ^ set(form.keys()) != set([]):
 		return False
@@ -148,6 +153,7 @@ def validate_monster(form):
 		monster['role'] = sql_escape(form['role'])[:30]
 		monster['description'] = sql_escape(form['description'])[:3000]
 		monster['name'] = sql_escape(form['name'])[:46]
+		monster['author'] = user
 	except Exception (e):
 		return False
 	if monster['health'] < 1 or monster['nanites'] < 1 or monster['strength'] < 1 or monster['perception'] < 1 or monster['fortitude'] < 1 or monster['charisma'] < 1 or monster['intelligence'] < 1 or monster['luck'] < 1 or monster['level'] < 1:
@@ -156,7 +162,9 @@ def validate_monster(form):
 		return False
 	return monster
 
-def validate_monster_ability(form):
+def validate_monster_ability(form, user):
+	if user == None or user == '':
+		return False
 	expected = set(['type', 'description', 'name'])
 	if expected ^ set(form.keys()) != set([]):
 		return False
@@ -165,6 +173,7 @@ def validate_monster_ability(form):
 		ability['name'] = sql_escape(form['name'])[:60]
 		ability['type'] = sql_escape(form['type'])[:60]
 		ability['description'] = sql_escape(form['description'])[:3000]
+		ability['author'] = user
 	except Exception(e):
 		return False
 	if ability['name'].strip() == '' or ability['type'].strip() == '' or ability['description'].strip() == '':
@@ -185,20 +194,69 @@ def validate_monster_ability_map(form):
 	if ability_id < 1 or monster_id < 1:
 		return False
 	return {'monster_id':monster_id, 'ability_id':ability_id}
+	
+
+def validate_monster_weapon(form, user):
+	if user == None or user == '':
+		return False
+	expected = set(['damage','range','name','description','toMiss','mag', 'cost', 'magCost', 'type'])
+	if expected ^ set(form.keys()) != set([]):
+		return False
+	damage = None
+	range = None
+	name = None
+	description = None
+	accuracy = None
+	capacity = None
+	cost = None
+	type = None
+	magCost = None
+	try:
+		damage = int(form['damage'])
+		range = int(form['range'])
+		name = sql_escape(form['name'])
+		description = sql_escape(form['description'])
+		accuracy = int(form['toMiss'])
+		capacity = int(form['mag'])
+		type = sql_escape(form['type'])
+		cost = int(form['cost'])
+		magCost = int(form['magCost'])
+	except:
+		return False
+	if range < 0 or cost < 0:
+		return False
+	if name == '' or description == '':
+		return False
+	return {'damage':damage,'range':range, 'name':name, 'description':description, 'toMiss':accuracy,'mag': capacity, 'cost':cost, 'magCost':magCost, 'type':type, 'author':user}
+
+def validate_monster_weapon_map(form):
+	expected = set(['monster_id', 'weapon_id'])
+	if expected ^ set(form.keys()) != set([]):
+		return False
+	monster_id = None
+	weapon_id = None
+	try:
+		monster_id = int(form['monster_id'])
+		weapon_id = int(form['weapon_id'])
+	except:
+		return False
+	if monster_id < 1 or weapon_id < 1:
+		return False
+	return {'monster_id': monster_id,'weapon_id':weapon_id}
 
 def insert_monster(monster):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'])
-	myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s' );" % monstring)
+	monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'])
+	myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s');" % monstring)
 	myCursor.close()
 	connection.commit()
 	
 def insert_monster_ability(ability):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	abstring = (ability['name'], ability['type'], ability['description'])
-	myCursor.execute("INSERT INTO monsters_abilities (name, type, description) VALUES (E'%s', E'%s', E'%s' );" % abstring)
+	abstring = (ability['name'], ability['type'], ability['description'], ability['author'])
+	myCursor.execute("INSERT INTO monsters_abilities (name, type, description, author) VALUES (E'%s', E'%s', E'%s', '%s');" % abstring)
 	myCursor.close()
 	connection.commit()
 	
@@ -208,6 +266,38 @@ def insert_monster_ability_map(mapping):
 	myCursor = connection.cursor()
 	mapstring = (mapping['monster_id'], mapping['ability_id'])
 	myCursor.execute("INSERT INTO monsters_ability_map (fk_monster_id, fk_ability_id) VALUES (%s, %s)" % mapstring)
+	myCursor.close()
+	connection.commit()
+
+def insert_monster_weapon(weapon):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	wepstring = (weapon['name'], weapon['range'], weapon['damage'], weapon['toMiss'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'])
+	myCursor.execute("INSERT INTO monsters_weapons (name, range, damage, accuracy, capacity, type, description) VALUES (E'%s', %s, %s, %s, %s, E'%s', E'%s', '%s');" % wepstring)
+	myCursor.close()
+	connection.commit()
+
+def insert_monster_weapon_map(mapping):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	mapstring = (mapping['monster_id'], mapping['weapon_id'])
+	myCursor.execute("INSERT INTO monsters_weapon_map (fk_monster_id, fk_weapon_id) VALUES (%s, %s)" % mapstring)
+	myCursor.close()
+	connection.commit()
+
+def insert_monster_armor(armor):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	armorstring = (armor['name'], armor['range'], armor['damage'], armor['accuracy'], armor['capacity'], armor['type'], armor['description'], armor['author'])
+	myCursor.execute("INSERT INTO monsters_armors (name, range, damage, accuracy, capacity, type, description) VALUES (E'%s', %s, %s, %s, %s, E'%s', E'%s', '%s');" % wepstring)
+	myCursor.close()
+	connection.commit()
+
+def insert_monster_armor_map(mapping):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	mapstring = (mapping['monster_id'], mapping['armor_id'])
+	myCursor.execute("INSERT INTO monsters_armor_map (fk_monster_id, fk_armor_id) VALUES (%s, %s)" % mapstring)
 	myCursor.close()
 	connection.commit()
 
@@ -245,14 +335,16 @@ def sql_escape(dirty):
 		will int NOT NULL,
 		reflex int NOT NULL,
 		description text,
-		role text
+		role text,
+		author text
 	);
 	INSERT INTO monsters (name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level) VALUES ('Pirate Breacher', 210, 70, 8,3,10,2,2,6,2,12,12,6, 'A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.', 'Tank', 5);
 	CREATE TABLE monsters_abilities (
 		pk_id int primary key default nextval('monster_ability_pk_seq'),
 		name text NOT NULL,
 		type text NOT NULL,
-		description text NOT NULL
+		description text NOT NULL,
+		author text
 	);
 	INSERT INTO monsters_abilities (name, type, description) values ( 'Bulltrue', 'reaction', E'Once per round when an enemy moved into an area that the breacher can see which is within 3m and if the breacher has a round still in their shotgun and the weapon is drawn cher may interrupt their opponent\'s turn to fire at that enemy. The enemy then resumes their turn as normal.');
 	SELECT monsters.name, monsters_abilities.name FROM monsters, monsters_abilities, monster_ability_map WHERE monster_ability_map.fk_monster_id = monsters.pk_id AND monster_ability_map.fk_ability_id = monsters_abilities.pk_id;
@@ -261,7 +353,8 @@ def sql_escape(dirty):
 		name text NOT NULL,
 		coverage int NOT NULL CHECK (coverage > -1) CHECK (coverage < 101),
 		damageReduction int NOT NULL CHECK (damageReduction > -1),
-		description TEXT);
+		description TEXT,
+		author text);
 	CREATE TABLE monsters_weapons(
 		pk_id int primary key default nextval('monster_weapon_pk_seq'),
 		name text NOT NULL,
@@ -269,7 +362,8 @@ def sql_escape(dirty):
 		damage int NOT NULL CHECK (damage > -1),
 		accuracy int NOT NULL CHECK (accuracy > -101) CHECK (accuracy < 101),
 		capacity int NOT NULL CHECK (capacity > -1),
-		description text);
+		description text,
+		author text);
 	CREATE TABLE monsters_armor_map(
 		pk_id int primary key default nextval('monster_armor_map_pk_seq'),
 		fk_monster_id int references monsters(pk_id) ON DELETE CASCADE,

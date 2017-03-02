@@ -436,7 +436,8 @@ def make_monster():
 	if not check_auth(session):
 		flash('Must be logged in to see this page');
 		return redirect("/")
-	monster = enemies.validate_monster(request.form)
+	user = session['displayname']
+	monster = enemies.validate_monster(request.form, user)
 	if not  monster:
 		flash('Enemy invalid. Could not add');
 		return redirect("/monstereditor")
@@ -450,13 +451,28 @@ def make_monster_ability():
 	if not check_auth(session):
 		flash("Must be logged in to do that.")
 		return redirect("/")
-	ability = enemies.validate_monster_ability(request.form)
+	user = session['displayname']
+	ability = enemies.validate_monster_ability(request.form, user)
 	if not ability:
 		flash("New ability not valid. Could not add.")
 		return redirect("/monsterabilityeditor")
 	enemies.insert_monster_ability(ability)
 	flash("Enemy Ability Added!")
 	return redirect("/monsterabilityeditor")
+
+@app.route("/newMonsterWeapon", methods = ['POST'])
+def make_monster_weapon():
+	if not check_auth(session):
+		flash("Must be logged in to do that. This incident will be logged.")
+		return redirect("/")
+	user = session['displayname']
+	weapon = enemies.validate_monster_weapon(request.form, user)
+	if not weapon:
+		flash("New Weapon is invalid. Could not add.")
+		return redirect("/monsterweaponeditor")
+	enemies.insert_monster_weapon(weapon)
+	flash("Enemy Weapon Added to Armory!")
+	return redirect("/monsterweaponeditor")
 
 @app.route("/assignMonsterAbility", methods=['POST'])
 def make_monster_ability_mapping():
