@@ -132,6 +132,13 @@ def get_monsters_weapons(monster_id):
 		monster_weapons.append(weapon)
 	return monster_weapons
 
+def get_weapons_monsters(weapon_id):
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("SELECT monsters_weapon_map.pk_id, name FROM monsters, monsters_weapon_map WHERE monsters_weapon_map.fk_weapons_id = %s AND monsters_weapon_map.fk_monster_id = monsters.pk_id;" % weapon_id)
+	results = myCursor.fetchall()
+	return results
+
 def validate_monster(form, user):
 	expected = set(['name', 'description', 'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', 'reflex', 'will', 'shock', 'health', 'nanites', 'level', 'role'])
 	if expected ^ set(form.keys()) != set([]):

@@ -600,6 +600,9 @@ def show_monster_weapons():
 		return redirect("/")
 	mWeapons = enemies.get_monster_weapons_all()
 	munsters = enemies.get_monsters()
+	for weapon in mWeapons:
+		maps = enemies.get_weapons_monsters(weapon['pk_id'])
+		weapon['maps'] = maps
 	return render_template("monster_weapons.html", weapons=mWeapons, monsters=munsters)
 
 @app.route("/monsterabilityeditor")
