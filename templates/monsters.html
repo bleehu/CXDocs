@@ -222,13 +222,13 @@
 							<dt>Nanites</dt><dd>{{monster['nanites']}}</dd>
 						</dl>
 						<dl class="col-lg-3 col-md-3 col-sm-4">
-							<dt>Strength</dt><dd>{{monster['strength']}}	(-8)</dd>
-							<dt>Perception</dt><dd>{{monster['perception']}}	(4)</dd>
-							<dt>Fortitude</dt><dd>{{monster['fortitude']}}	(4)</dd>
-							<dt>Charisma</dt><dd>{{monster['charisma']}} (-12)</dd>
-							<dt>Intelligence</dt><dd>{{monster['intelligence']}}	(16)</dd>
-							<dt>Dexterity</dt><dd>{{monster['dexterity']}}	(0)</dd>
-							<dt>Luck</dt><dd>{{monster['luck']}} (-8)</dd>
+							<dt>Strength</dt><dd>{{monster['strength']}}	({{monster['strmod']}})</dd>
+							<dt>Perception</dt><dd>{{monster['perception']}}	({{monster['permod']}})</dd>
+							<dt>Fortitude</dt><dd>{{monster['fortitude']}}	({{monster['fortmod']}})</dd>
+							<dt>Charisma</dt><dd>{{monster['charisma']}} ({{monster['chamod']}})</dd>
+							<dt>Intelligence</dt><dd>{{monster['intelligence']}}	({{monster['intmod']}})</dd>
+							<dt>Dexterity</dt><dd>{{monster['dexterity']}}	({{monster['dexmod']}})</dd>
+							<dt>Luck</dt><dd>{{monster['luck']}} ({{monster['lukmod']}})</dd>
 						</dl>
 						<dl class="col-lg-3 col-md-3 col-sm-4">
 							<dt>Shock</dt><dd>{{monster['shock']}}</dd>

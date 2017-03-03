@@ -1,4 +1,5 @@
 import psycopg2
+import pdb
 
 def get_monsters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -12,20 +13,28 @@ def get_monsters():
 		newmun['name'] = mun[0]
 		newmun['health'] = mun[1]
 		newmun['nanites'] = mun[2]
-		newmun['strength'] = mun[3]
-		newmun['perception'] = mun[4]
-		newmun['fortitude'] = mun[5]
-		newmun['charisma'] = mun[6]
-		newmun['intelligence'] = mun[7]
-		newmun['dexterity'] = mun[8]
-		newmun['luck'] = mun[9]
-		newmun['shock'] = mun[10]
-		newmun['will'] = mun[11]
-		newmun['reflex'] = mun[12]
+		newmun['strength'] = int(mun[3])
+		newmun['perception'] = int(mun[4])
+		newmun['fortitude'] = int(mun[5])
+		newmun['charisma'] = int(mun[6])
+		newmun['intelligence'] = int(mun[7])
+		newmun['dexterity'] = int(mun[8])
+		newmun['luck'] = int(mun[9])
+		newmun['shock'] = int(mun[10])
+		newmun['will'] = int(mun[11])
+		newmun['reflex'] = int(mun[12])
 		newmun['description'] = mun[13]
-		newmun['pk_id'] = mun[14]
+		newmun['pk_id'] = int(mun[14])
 		newmun['author'] = mun[15]
 		monster_id = mun[14]
+		
+		newmun['strmod'] = (newmun['strength'] - 5) * 4
+		newmun['permod'] = (newmun['perception'] - 5) * 4
+		newmun['fortmod'] = (newmun['fortitude'] - 5) * 4
+		newmun['chamod'] = (newmun['charisma'] - 5) * 4
+		newmun['intmod'] = (newmun['intelligence'] - 5) * 4
+		newmun['dexmod'] = (newmun['dexterity'] - 5) * 4
+		newmun['lukmod'] = (newmun['luck'] - 5) * 4
 		
 		#add abilities
 		newmun['abilities'] = get_monster_abilities(monster_id)
@@ -162,6 +171,14 @@ def validate_monster(form, user):
 		monster['description'] = sql_escape(form['description'])[:3000]
 		monster['name'] = sql_escape(form['name'])[:46]
 		monster['author'] = user
+		
+		monster['strmod'] = (monster['strength'] - 5) * 4
+		monster['permod'] = (monster['perception'] - 5) * 4
+		monster['fortmod'] = (monster['fortitude'] - 5) * 4
+		monster['chamod'] = (monster['charisma'] - 5) * 4
+		monster['intmod'] = (monster['intelligence'] - 5) * 4
+		monster['dexmod'] = (monster['dexterity'] - 5) * 4
+		monster['lukmod'] = (monster['luck'] - 5) * 4
 	except Exception (e):
 		return False
 	if monster['health'] < 1 or monster['nanites'] < 1 or monster['strength'] < 1 or monster['perception'] < 1 or monster['fortitude'] < 1 or monster['charisma'] < 1 or monster['intelligence'] < 1 or monster['luck'] < 1 or monster['level'] < 1:
