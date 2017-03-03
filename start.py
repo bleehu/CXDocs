@@ -563,13 +563,35 @@ def delete_monster_weapon(pk_id):
 	flash('weapon Deleted successfuly!')
 	return redirect("/monsterweaponeditor")
 
+@app.route("/deletemonsterabilitymap", methods=['post'])
+def delete_monster_ability_map():
+	if not check_auth(session):
+		flash("You must be logged in to do that. This incident has been logged.")
+		return redirect("/")
+	flash("Ability taken away successfully")
+	enemies.delete_monster_ability_map(request.form['pk_id'])
+	return redirect("/monsterabilities")
+
+@app.route("/deletemonsterweaponmap", methods=['post'])
+def delete_monster_weapon_map():
+	if not check_auth(session):
+		flash("You must be logged in to do that. This incident has been logged.")
+		return redirect("/")
+	flash("Weapon taken away successfully")
+	enemies.delete_monster_weapon_map(request.form['pk_id'])
+	return redirect("/monsterweapons")
+
 @app.route("/monsterabilities")
 def show_monster_abilities():
 	if not check_auth(session):
 		flash("You must be logged in to see that.")
 		return redirect("/")
 	mAbilities = enemies.get_monster_abilities_all()
-	return render_template("monster_abilities.html", abilities=mAbilities)
+	munsters = enemies.get_monsters()
+	for ability in mAbilities:
+		maps = enemies.get_abilitys_monsters(ability['pk_id'])
+		ability['maps'] = maps
+	return render_template("monster_abilities.html", abilities=mAbilities, monsters=munsters)
 
 @app.route("/monsterweapons")
 def show_monster_weapons():
@@ -577,7 +599,8 @@ def show_monster_weapons():
 		flash("you must be logged in to see that.")
 		return redirect("/")
 	mWeapons = enemies.get_monster_weapons_all()
-	return render_template("monster_weapons.html", weapons=mWeapons)
+	munsters = enemies.get_monsters()
+	return render_template("monster_weapons.html", weapons=mWeapons, monsters=munsters)
 
 @app.route("/monsterabilityeditor")
 def show_monster_ability_editor():

@@ -1,5 +1,4 @@
 import psycopg2
-import pdb
 
 def get_monsters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -57,9 +56,9 @@ def get_abilitys_monsters(ability_id):
 	abilitys_monsters = []
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT monsters_abilities.pk_id, name, type, description FROM monsters_abilities, monsters_ability_map WHERE monsters_ability_map.fk_monster_id = %s AND monsters_ability_map.fk_ability_id = monsters_abilities.pk_id;" % monster_id)
+	myCursor.execute("SELECT monsters_ability_map.pk_id, name FROM monsters, monsters_ability_map WHERE monsters_ability_map.fk_ability_id = %s AND monsters_ability_map.fk_monster_id = monsters.pk_id;" % ability_id)
 	results = myCursor.fetchall()
-	return abilitys_monsters
+	return results
 
 def get_monster_abilities_all():
 	monster_abilities = []
@@ -300,6 +299,34 @@ def insert_monster_armor_map(mapping):
 	myCursor = connection.cursor()
 	mapstring = (mapping['monster_id'], mapping['armor_id'])
 	myCursor.execute("INSERT INTO monsters_armor_map (fk_monster_id, fk_armor_id) VALUES (%s, %s)" % mapstring)
+	myCursor.close()
+	connection.commit()
+
+def delete_monster_ability_map(map_id):
+	del_id = None
+	try:
+		del_id = int(map_id)
+	except:
+		return None
+	if del_id < 1:
+		return None
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("DELETE FROM monsters_ability_map WHERE pk_id = %s;" % del_id)
+	myCursor.close()
+	connection.commit()
+
+def delete_monster_weapon_map(map_id):
+	del_id = None
+	try:
+		del_id = int(map_id)
+	except:
+		return None
+	if del_id < 1:
+		return None
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("DELETE FROM monsters_weapon_map WHERE pk_id = %s;" % del_id)
 	myCursor.close()
 	connection.commit()
 
