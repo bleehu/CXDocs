@@ -352,6 +352,10 @@ def show_feats():
 	feats = get_feats()
 	return render_template("feats.html", feats=feats)
 	
+@app.route("/files")
+def show_files():
+	return render_template("files.html")
+
 @app.route("/weaponsmith")
 def show_weaponsmith():
 	if not check_auth(session):
