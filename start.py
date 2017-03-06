@@ -478,6 +478,20 @@ def make_monster_weapon():
 	flash("Enemy Weapon Added to Armory!")
 	return redirect("/monsterweaponeditor")
 
+@app.route("/newMonsterArmor", methods=['Post'])
+def make_monster_armor():
+	if not check_auth(session):
+		flash("Must be logged in to do that. This incident willbe logged.")
+		return redirect("/")
+	user = session['displayname']
+	armor = enemies.validate_monster_armor(request.form, user)
+	if not armor:
+		flash("New Armor is invalid. Could not add.")
+		return redirect("/monsterarmoreditor")
+	enemies.insert_monster_armor(armor)
+	flash("Enemy Armor Added successfully!")
+	return redirect("/monsterarmoreditor")
+
 @app.route("/assignMonsterAbility", methods=['POST'])
 def make_monster_ability_mapping():
 	if not check_auth(session):
@@ -503,6 +517,19 @@ def make_monster_weapon_mapping():
 	enemies.insert_monster_weapon_map(mapping)
 	flash("Weapon Assigned to Enemy Successfully!")
 	return redirect("/monsterweaponeditor")
+
+@app.route("/assignMonsterArmor", methods=['POST'])
+def make_monster_armor_mapping():
+	if not check_auth(session):
+		flash("Must be logged in to do that.")
+		return redirect("/")
+	mapping = enemies.validate_monster_armor_map(request.form)
+	if not mapping:
+		flash("New armor assignment invalid. Could not add.")
+		return redirect("/")
+	enemies.insert_monster_armor_map(mapping)
+	flash("Armor Assignment successful!")
+	return redirect("/monsterarmoreditor")
 
 @app.route("/deletemonster/<pk_id>", methods=['POST'])
 def delete_monster(pk_id):
@@ -567,6 +594,26 @@ def delete_monster_weapon(pk_id):
 	flash('weapon Deleted successfuly!')
 	return redirect("/monsterweaponeditor")
 
+@app.route("/deletemonsterarmor/<pk_id>", methods=['POST'])
+def delete_monster_armor(pk_id):
+	if not check_auth(session):
+		flash("You must be logged in to do that. This incident will be looged.")
+		return redirect("/")
+	monster_armor_id = None
+	try: 
+		monster_armor_id = int(pk_id)
+	except:
+		flash("error parsing ID of monster. This incident will be logged.")
+		return redirect("/")
+	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	myCursor = connection.cursor()
+	myCursor.execute("DELETE FROM monsters_armors WHERE pk_id = %s;" % pk_id)
+	myCursor.close()
+	connection.commit()
+	
+	flash('armor Deleted successfuly!')
+	return redirect("/monsterarmoreditor")
+
 @app.route("/deletemonsterabilitymap", methods=['post'])
 def delete_monster_ability_map():
 	if not check_auth(session):
@@ -584,6 +631,15 @@ def delete_monster_weapon_map():
 	flash("Weapon taken away successfully")
 	enemies.delete_monster_weapon_map(request.form['pk_id'])
 	return redirect("/monsterweapons")
+
+@app.route("/deletemonsterarmormap", methods=['post'])
+def delete_monster_armor_map():
+	if not check_auth(session):
+		flash("You must be logged in to do that. This incident has been logged.")
+		return redirect("/")
+	flash("Armor taken away successfully")
+	enemies.delete_monster_armor_map(request.form['pk_id'])
+	return redirect("/monsterarmor")
 
 @app.route("/monsterabilities")
 def show_monster_abilities():
@@ -609,6 +665,18 @@ def show_monster_weapons():
 		weapon['maps'] = maps
 	return render_template("monster_weapons.html", weapons=mWeapons, monsters=munsters)
 
+@app.route("/monsterarmor")
+def show_monster_armor():
+	if not check_auth(session):
+		flash("you must be logged in to see that")
+		return redirect("/")
+	mArmor = enemies.get_monster_armor_all()
+	munsters = enemies.get_monsters()
+	for suit in mArmor:
+		maps = enemies.get_armors_monsters(suit['pk_id'])
+		suit['maps'] = maps
+	return render_template("monster_armor.html", armor=mArmor, monsters=munsters)
+
 @app.route("/monsterabilityeditor")
 def show_monster_ability_editor():
 	if not check_auth(session):
@@ -626,6 +694,15 @@ def show_monster_weapon_editor():
 	mWeps = enemies.get_monster_weapons_all()
 	munsters = enemies.get_monsters()
 	return render_template("monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
+
+@app.route("/monsterarmoreditor")
+def show_monster_armor_editor():
+	if not check_auth(session):
+		flash("you must be logged in to see that.")
+		return redirect("/")
+	mArmor = enemies.get_monster_armor_all()
+	munsters = enemies.get_monsters()
+	return render_template("monster_armor_smith.html", session=session, armor=mArmor, monsters=munsters)
 
 @app.route("/armorsmith")
 def show_armorsmith():

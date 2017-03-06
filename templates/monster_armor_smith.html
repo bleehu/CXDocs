@@ -1,0 +1,87 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Enemy Armor Editor</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Enemy Armor Editor </h1>
+			</div>
+			<div class="col-lg-6">
+			<h2> Create New Enemy Armor </h2>
+			<p>More than one enemy may have the same type of armor assigned to it. For instance, both a Pirate
+				Breacher and a marine shotgunner may have the same light armor. In addition, some enemies like 
+				those with power armor may have more than one type of armor. In the case of power armor, the outer layer is discarded when it is destroyed. </p>
+				<form class="form-horizontal" action="/newMonsterArmor" method="post">
+					<fieldset>
+						<div class="form-group">
+							<div class="col-lg-8">
+								<label for="gunName" class="gol-lg-2 control-label"> Name </label>
+								<input id="gunName" class="form-control" name="name" placeholder="name of armor" type="text"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<div = class="col-lg-4">
+								<label for="dr" class="col-lg-2 control-label">Damage Reduction</label>
+								<input class="form-control" id="dr" placeholder="##" type="text" name="damagereduction">
+							</div>
+							<div class="col-lg-4">
+								<label for="coverage" class="col-lg-2 control-label">Coverage</label>
+								<input class="form-control" id="coverage" placeholder="##"  autocomplete="off" type="text" name="coverage">
+							</div>
+							<div class="col-lg-4">
+								<label for="typeSelect" class="col-lg-2 control-label">Type</label>
+								<select class="form-control" id="typeSelect" name="type">
+									<option value="Recon">Recon</option>
+									<option value="Light">Light</option>
+									<option value="Medium">Medium</option>
+									<option value="Heavy">Heavy</option>
+									<option value="Full">Full</option>
+									<option value="Powered">Powered</option>
+								</select>
+							</div>
+						</div>
+						<legend>Description</legend>
+						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
+						<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
+					</fieldset>
+				</form>
+			</div>
+			<div class="col-lg-4">
+				<h2> Existing Armors </h2>
+				<table class="table table-striped table-hover">
+				{% for suit in armor %}
+					<tr>
+						<td>{{suit['name']}}</td>
+						<td>{{suit['type']}}</td>
+						<td><form action="deletemonsterweapon/{{suit['pk_id']}}" method="POST">
+							<input type="submit" value="Delete" class="form-control"> 
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+			<div class="col-lg-4">
+				<h2> Assign Armors </h2>
+				<p>Once you've created a weapon, it must be assigned to one or more enemy. Deleting an weapon will 
+					take that weapon from every enemy that has it. </p>
+				<form class="form-horizontal" action="/assignMonsterArmor" method="POST">
+					<select name="monster_id">
+						{% for monster in monsters %}
+						<option value="{{monster['pk_id']}}"> {{monster['name']}} </option>
+						{% endfor %}
+					</select>
+					<select name="armor_id">
+						{% for suit in armor %}
+						<option value="{{suit['pk_id']}}"> {{suit['name']}} </option>
+						{% endfor %}
+					</select>
+					<input class="form-button btn btn-success" type="submit" value="Give Armor to Enemy">
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+	

@@ -30,7 +30,7 @@
 							<dt>Author</dt><dd> {{suit['author']}} </dd>
 						</dl>
 						<div class="col-lg-3 col-md-3 col-sm-6">
-							<form action="/deletemonstersuit/{{suit['pk_id']}}" method="post">
+							<form action="/deletemonsterarmor/{{suit['pk_id']}}" method="post">
 								<input type="submit" class="form-button btn btn-danger" value="Delete Armor">  </input>
 							</form>
 							<form action="/assignMonsterArmor" method="POST">
@@ -44,7 +44,7 @@
 								<input class="form-button btn btn-success" type="submit" Value="Give">
 							</form>
 							<!-- Remove suit mapping -->
-							<form action="/deletemonstersuitmap" method="POST">
+							<form action="/deletemonsterarmormap" method="POST">
 								<legend>Take Armor Away From:</legend>
 								<select name="pk_id">
 									{% for monster in suit['maps'] %}
