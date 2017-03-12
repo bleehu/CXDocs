@@ -287,6 +287,7 @@ def show_char_select():
 	if 'username' not in session.keys():
 		return redirect("/")
 	chars = character.get_characters(session)
+	pc = None
 	if 'character' in session.keys():
 		pc = character.from_string(session['character'])
 	return render_template('character_select.html', characters=chars, session=session, character=pc)

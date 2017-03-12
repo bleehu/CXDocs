@@ -1,5 +1,5 @@
 import json
-import pdb
+import psycopg2
 
 class Character:
 	
