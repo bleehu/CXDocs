@@ -16,6 +16,8 @@ import os	#we need os to read and write files as well as to make our filepaths r
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 global log
@@ -436,6 +438,13 @@ def show_monster_editor():
 	monsters = enemies.get_monsters()
 	return render_template("monster_smith.html", session=session, monsters=monsters);
 
+@app.route("/monsterpic")
+def show_monster_photographer():
+	if not check_auth(session):
+		return redirect("")
+	monsters = enemies.get_monsters()
+	return render_template("monster_photographer.html", monsters=monsters)
+
 @app.route("/newMonster", methods=['POST'])
 def make_monster():
 	if not check_auth(session):
@@ -449,7 +458,22 @@ def make_monster():
 	enemies.insert_monster(monster)
 	flash('Enemy added!');
 	return redirect("/monstereditor")
-	
+
+@app.route("/newMonsterpic", methods=['POST'])
+def make_monster_pic():
+	if not check_auth(session):
+		flash('You must be logged in to do that. This incident has been logged.')
+		return redirect('/')
+	user = session['displayname']
+	allowed_filetypes = set(['png'])
+	file = request.files['monster_pic']
+	filename = secure_filename(file.filename)
+	if not '.' in filename and filename.split('.')[1].lower() in allowed_filetypes:
+		flash('invalid file. This incident has been logged.')
+		return redirect('/monsterpic')
+	monster_id = int(request.form['monster_id'])
+	file.save(os.path.join("/home/michaelhedges/Desktop/Secret stuff/Don't look in here/flaskr/CXDocs/static/images/monsters/bypk_id","%s.png" % monster_id))
+	return redirect("/monsterpic")
 
 @app.route("/newMonsterAbility", methods = ['POST'])
 def make_monster_ability():
