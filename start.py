@@ -19,6 +19,7 @@ import xml.etree.ElementTree #Sometimes we write or read things in XML. This doe
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # 1024 bytes x 1024 is a MB. Prevents people from uploading 40 GB pictures
 app.config.from_object(__name__)
 global log
 
@@ -468,9 +469,10 @@ def make_monster_pic():
 	allowed_filetypes = set(['png'])
 	file = request.files['monster_pic']
 	filename = secure_filename(file.filename)
-	if not '.' in filename and filename.split('.')[1].lower() in allowed_filetypes:
+	if not ('.' in filename and filename.split('.')[1].lower() in allowed_filetypes):
 		flash('invalid file. This incident has been logged.')
 		return redirect('/monsterpic')
+	pdb.set_trace()
 	monster_id = int(request.form['monster_id'])
 	file.save(os.path.join("/home/michaelhedges/Desktop/Secret stuff/Don't look in here/flaskr/CXDocs/static/images/monsters/bypk_id","%s.png" % monster_id))
 	return redirect("/monsterpic")
