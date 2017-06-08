@@ -114,7 +114,7 @@ def get_monsters_armor(monster_id):
 		armor['pk_id'] = line[0]
 		armor['name'] = line[1]
 		armor['coverage'] = line[2]
-		armor['damageReduction'] = line[2]
+		armor['damageReduction'] = line[3]
 		armor['description'] = line[4]
 		armor['author'] = line[5]
 		monster_armor.append(armor)
