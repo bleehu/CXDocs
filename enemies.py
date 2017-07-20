@@ -335,6 +335,16 @@ def insert_monster(monster):
 	myCursor.close()
 	connection.commit()
 	
+def update_monster(monster, pk_id):
+	private_key = int(pk_id)
+	if private_key > 0:
+		connection = pychopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+		myCursor = connection.cursor()
+		monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'], pk_id)
+		myCursor.execute("UPDATE monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) = (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s') WHERE pk_id=%s;" % monstring)
+		myCursor.close()
+		connection.commit()
+	
 def insert_monster_ability(ability):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
