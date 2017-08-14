@@ -437,8 +437,15 @@ def show_monster_editor():
 	if not check_auth(session):
 		return redirect("/")
 	monsters = enemies.get_monsters()
-	return render_template("monster_smith.html", session=session, monsters=monsters);
+	return render_template("monster_smith.html", session=session, monsters=monsters)
 
+@app.route("/monsterupdate/<pk_id>")
+def show_monster_updater(pk_id):
+	if not check_auth(session):
+		return redirect("/")
+	monsters = enemies.get_monsters()
+	return render_template("monster_update.html", session=session, monsters=monsters)
+	
 @app.route("/monsterpic")
 def show_monster_photographer():
 	if not check_auth(session):
@@ -449,17 +456,31 @@ def show_monster_photographer():
 @app.route("/newMonster", methods=['POST'])
 def make_monster():
 	if not check_auth(session):
-		flash('Must be logged in to see this page');
+		flash('Must be logged in to see this page')
 		return redirect("/")
 	user = session['displayname']
 	monster = enemies.validate_monster(request.form, user)
 	if not  monster:
-		flash('Enemy invalid. Could not add');
+		flash('Enemy invalid. Could not add')
 		return redirect("/monstereditor")
 	enemies.insert_monster(monster)
-	flash('Enemy added!');
+	flash('Enemy added!')
 	return redirect("/monstereditor")
 
+@app.route("/updateMonster/<pk_id>", methods=['POST'])
+def update_monster(pk_id):
+	if not check_auth(session):
+		flash('must be logged in to see this page')
+		return redirect('/')
+	user = session['displayname']
+	monster = enemies.validate_monster(request.form, user)
+	if not monster:
+		flash("Enemy invalid. Could not add.")
+		return redirect("/monsterupdate/%s" % pk_id)
+	enemies.update_monster(monster, pk_id)	
+	flash("Enemy updated!")
+	return redirect("/monster")
+		
 @app.route("/newMonsterpic", methods=['POST'])
 def make_monster_pic():
 	if not check_auth(session):
