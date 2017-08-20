@@ -444,7 +444,15 @@ def show_monster_updater(pk_id):
 	if not check_auth(session):
 		return redirect("/")
 	monsters = enemies.get_monsters()
-	return render_template("monster_update.html", session=session, monsters=monsters)
+	#TODO send updater the current info on the monster to update
+	myMonster = None
+	for monster in monsters:
+		if monster['pk_id'] == int(pk_id):
+			myMonster = monster
+	if myMonster == None:
+		flash('Could not find the enemy you wanted to update!')
+		return redirect('monsters.html')
+	return render_template("monster_update.html", session=session, monsters=monsters, pk_id=pk_id, myMonster=myMonster)
 	
 @app.route("/monsterpic")
 def show_monster_photographer():
