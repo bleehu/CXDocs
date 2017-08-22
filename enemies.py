@@ -4,7 +4,7 @@ import pdb
 def get_monsters():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id, author FROM monsters ORDER BY name;")
+	myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id, author, level, role FROM monsters ORDER BY name;")
 	monsters = []
 	results = myCursor.fetchall()
 	for mun in results:
@@ -35,6 +35,9 @@ def get_monsters():
 		newmun['intmod'] = (newmun['intelligence'] - 5) * 4
 		newmun['dexmod'] = (newmun['dexterity'] - 5) * 4
 		newmun['lukmod'] = (newmun['luck'] - 5) * 4
+		
+		newmun['level'] = int(mun[16])
+		newmun['role'] = mun[17]
 		
 		#add abilities
 		newmun['abilities'] = get_monster_abilities(monster_id)
@@ -205,7 +208,7 @@ def validate_monster(form, user):
 		monster['intmod'] = (monster['intelligence'] - 5) * 4
 		monster['dexmod'] = (monster['dexterity'] - 5) * 4
 		monster['lukmod'] = (monster['luck'] - 5) * 4
-	except Exception (e):
+	except Exception as e:
 		return False
 	if monster['health'] < 1 or monster['nanites'] < 1 or monster['strength'] < 1 or monster['perception'] < 1 or monster['fortitude'] < 1 or monster['charisma'] < 1 or monster['intelligence'] < 1 or monster['luck'] < 1 or monster['level'] < 1:
 		return False
@@ -334,6 +337,16 @@ def insert_monster(monster):
 	myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s');" % monstring)
 	myCursor.close()
 	connection.commit()
+	
+def update_monster(monster, pk_id):
+	private_key = int(pk_id)
+	if private_key > 0:
+		connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+		myCursor = connection.cursor()
+		monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'], pk_id)
+		myCursor.execute("UPDATE monsters SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) = (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s') WHERE pk_id=%s;" % monstring)
+		myCursor.close()
+		connection.commit()
 	
 def insert_monster_ability(ability):
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")

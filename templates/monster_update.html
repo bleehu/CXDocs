@@ -1,0 +1,129 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Enemy Editor</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+		<script  src="../static/npcgen.js"></script>
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Enemy Editor </h1>
+			</div>
+			<div class="col-lg-8">
+			<p>Click the button to generate new stats at random. Or Enter Ability Score numbers
+					and the rest of the stats should automatically update to match. The Total stats number is 
+					not saved; it is just there as a helpful reference. Name and description cannot be blank in order
+					to successfully upload a new NPC. Health, Nanites and attributes cannot be negative. The term monster
+					is sometimes used in the context of these forms as a misnomer for non-player character, especially
+					those which are hostile to players.</p>
+				<form class="form-horizontal" action="/updateMonster/{{pk_id}}" method="post" autocomplete="off">
+					<div class="col-lg-4">
+						<fieldset>
+							<legend>Role Information</legend>
+							Name:
+							<input class="form-control" id="unit_name" name="name" value="{{myMonster['name']}}"><br/>
+							Level:
+							<input class="form-control" id="unit_level" name="level" value="{{myMonster['level']}}"/><br/>
+							Role:
+							<Select name="role" id="role">
+								<option>Infantry</option>
+								<option>Support</option>
+								<option>Healer</option>
+								<option>Leader</option>
+								<option>Brute</option>
+								<option>Artillary</option>
+								<option>Lurker</option>
+								<option>Controler</option>
+								<option>Tank</option>
+								<option>Swarm</option>
+								<option>Minion</option>
+								<option>Anti-Armor</option>
+								<option>Scout</option>
+								<option>Other</option>
+							</select>
+						</fieldset>
+					</div>
+					<div class="col-lg-4">
+					<fieldset>
+						<legend> Ability Scores </legend>
+						<div class="col-lg-6">
+							<label for="Strength">Strength:</label>
+							<input class="form-control" id="Strength" value="{{myMonster['strength']}}" name="strength"></input> 
+						</div>
+						<div class="col-lg-6">
+							<label for="Perception"> Perception:</label>
+							<input class="form-control" id="Perception" value="{{myMonster['perception']}}"  name="perception"></input> </div>
+						<div class="col-lg-6">
+							<label for="Fortitude"> Fortitude: </label>
+							<input class="form-control" id="Fortitude" value="{{myMonster['fortitude']}}"  name="fortitude"></input> </div>
+						<div class="col-lg-6">
+							<label for="Charisma"> Charisma: </label>
+							<input class="form-control" id="Charisma" value="{{myMonster['charisma']}}"  name="charisma"></input> </div>
+						<div class="col-lg-6">
+							<label for="Intelligence"> Intelligence: </label>
+							<input class="form-control" id="Intelligence" value="{{myMonster['intelligence']}}"  name="intelligence"></input> </div>
+						<div class="col-lg-6">
+							<label for="Dexterity"> Dexterity: </label>
+							<input class="form-control" id="Dexterity" value="{{myMonster['dexterity']}}"  name="dexterity"></input> </div>
+						<div class="col-lg-6">
+							<label for="Luck"> Luck: </label>
+							<input class="form-control" id="Luck" value="{{myMonster['luck']}}"  name="luck"></input> </div>
+						<div class="col-lg-6">
+							<label for="TotalStats"> Total: </label>
+							<input class="form-control" id="TotalStats" value="35"></input> <br />
+						</div>
+					</fieldset>
+					</div>
+					<div class="col-lg-4">
+					<fieldset>
+						<legend> Attributes </legend>
+						<p>These are dynamically generated based on ability scores. </p>
+						Health:
+						<input class="form-control" id="Health" value="{{myMonster['health']}}"  name="health"></input><br />
+						Nanites:
+						<input class="form-control" id="Nanites" value="{{myMonster['nanites']}}"  name="nanites"></input><br />
+					</fieldset>
+					</div>
+					<div class="col-lg-4">
+					<fieldset>
+						<legend> Saving Throws </legend>
+						Shock:
+						<input class="form-control" id="Shock" value="{{myMonster['shock']}}" name="shock"></input><br />
+						Will:
+						<input class="form-control" id="Will" value="{{myMonster['will']}}" name="will"></input><br />
+						Reflex:
+						<input class="form-control" id="Reflex" value="{{myMonster['reflex']}}" name="reflex"></input><br />
+					</fieldset>
+					</div>
+					<div class="col-lg-8">
+						<fieldset>
+						<legend>Description</legend>
+						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70">
+{{myMonster['description']}}</textarea> <!-- The spacing is wierd here to make rendering the template look clean in the input -->
+						</fieldset>
+					</div>
+					<div class="col-lg-4">
+						<fieldset>
+							<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+			<div class="col-lg-4">
+				<h2> Existing Monsters </h2>
+				<table class="table table-striped table-hover">
+				{% for monster in monsters %}
+					<tr>
+						<td>{{monster ['name']}}</td>
+						<td>{{monster['health']}} HP</td>
+						<td><form action="deletemonster/{{monster['pk_id']}}" method="POST">
+							<input type="submit" value="Delete" class="form-control"> 
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+		</div>
+	{% endblock %}
+	
