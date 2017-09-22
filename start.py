@@ -432,6 +432,54 @@ def show_monsters():
 	munsters = enemies.get_monsters()
 	return render_template("monsters.html", monsters = munsters, session=session)
 
+@app.route("/monsterstats")
+def show_monsters_stats():
+    if not check_auth(session):
+        return redirect("/")
+    munsters = enemies.get_monsters()
+    abilities = enemies.get_monster_abilities_all()
+    armor = enemies.get_monster_armor_all()
+    weapons = enemies.get_monster_weapons_all()
+    stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters)}
+    stats['armor'] = {'count':len(armor), 'contributors':{}}
+    stats['weapons'] = {'count':len(weapons), 'contributors':{}}
+    stats['abilities'] = {'count':len(abilities), 'contributors': {}}
+    stats['contributors'] = {}
+    for monster in munsters:
+        hasAbs = True
+        hasWep = True
+        hasArm = True
+        if len(monster['abilities']) == 0:
+            stats['noabilities'] += 1
+            hasAbs = False
+        if len(monster['weapons']) == 0:
+            stats['noweapons'] += 1
+            hasWep = False
+        if len(monster['armor']) == 0:
+            stats['noarmor'] += 1
+            hasArm = False
+        if not (hasAbs or hasArm or hasWep):
+            stats['hasnothingcount'] += 1
+        if monster['level'] not in stats['levelcount'].keys():
+            stats['levelcount'][monster['level']] = 1
+        else:
+            stats['levelcount'][monster['level']] += 1
+        if monster['author'] not in stats['contributors'].keys():
+            stats['contributors'][monster['author']] = 1
+        else:
+            stats['contributors'][monster['author']] += 1
+    for weapon in weapons:
+          if weapon['author'] not in stats['weapons']['contributors'].keys():
+            stats['weapons']['contributors'][weapon['author']] = 1
+          else:
+            stats['weapons']['contributors'][monster['author']] += 1
+    for ability in abilities:
+        if ability['author'] not in stats['abilities']['contributors'].keys():
+            stats['abilities']['contributors'][ability['author']] = 1
+        else:
+            stats['abilities']['contributors'][ability['author']] += 1
+    return render_template("monster_meta.html", monsters=munsters, stats=stats, session=session)
+
 @app.route("/monstereditor")
 def show_monster_editor():
 	if not check_auth(session):
