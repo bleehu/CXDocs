@@ -54,6 +54,13 @@
                     <div class="progress-bar progress-bar-danger" style="width:{{stats['hasnothingcount'] / stats['monsters'] * 100}}%">
                     </div>
                 </div>
+                <p>The "naked" enemies are listed below. Enemies which don't have an ability, weapon nor 
+                    any armor. To add an existing ability, go to the <a href="monsterabilities"> enemy abilities </a> page. To add an existing armor to an enemy, go to the <a href="monsterarmor"> enemy outfitters </a> page. Similarly, you can go to the <a href="monterweapons"> enemy aromory </a> page to add existing weapons. </p>
+                    <ul>
+                        {% for monster in stats['nakedMonsters'] %}
+                        <li> {{monster['name']}} </li>
+                        {% endfor %}
+                    </ul>
                 <p><small><a href="#top">back to top</a> </small></p>
             </div>
             <div class-"col-lg-6">
@@ -89,6 +96,15 @@
                 {% endfor %}
                 </table>
                 <p> Abilities </p>
+                <table class="table">
+                {% for contributor in stats['abilities']['contributors'].keys() | sort %}
+                    <tr>
+                        <td> {{contributor}} </td>
+                        <td>  Made {{stats['abilities']['contributors'][contributor]}} Abilities </td>
+                        <td> {{(stats['abilities']['contributors'][contributor] / stats['abilities']['count'] * 100) | round(1, 'floor')}}% </td>
+                    </tr>
+                {% endfor %}
+                </table>
                 <p><small><a href="#top">back to top</a> </small></p>
             </div>
             <div class="col-lg-4">

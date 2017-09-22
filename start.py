@@ -445,6 +445,7 @@ def show_monsters_stats():
     stats['weapons'] = {'count':len(weapons), 'contributors':{}}
     stats['abilities'] = {'count':len(abilities), 'contributors': {}}
     stats['contributors'] = {}
+    stats['nakedMonsters'] = []
     for monster in munsters:
         hasAbs = True
         hasWep = True
@@ -460,6 +461,7 @@ def show_monsters_stats():
             hasArm = False
         if not (hasAbs or hasArm or hasWep):
             stats['hasnothingcount'] += 1
+            stats['nakedMonsters'].append(monster)
         if monster['level'] not in stats['levelcount'].keys():
             stats['levelcount'][monster['level']] = 1
         else:
@@ -478,6 +480,11 @@ def show_monsters_stats():
             stats['abilities']['contributors'][ability['author']] = 1
         else:
             stats['abilities']['contributors'][ability['author']] += 1
+    for suit in armor:
+          if suit['author'] not in stats['armor']['contributors'].keys():
+            stats['armor']['contributors'][suit['author']] = 1
+          else:
+            stats['armor']['contributors'][suit['author']] += 1
     return render_template("monster_meta.html", monsters=munsters, stats=stats, session=session)
 
 @app.route("/monstereditor")
