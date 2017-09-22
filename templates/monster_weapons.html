@@ -13,6 +13,7 @@
 					{% for weapon in weapons %}
 					<a class="list-group-item" href="#{{weapon['name']}}panel"> {{weapon['name']}} </a>
 					{% endfor %}
+                    <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
 				</div>
 			</div>	<!-- end table of contents div -->
 			<div class="col-lg-8" id="weapons">
@@ -30,7 +31,7 @@
 							<dt>Accuracy</dt><dd>{{weapon['accuracy']}} %</dd>
 							<dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
 							<dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
-							<dt>Mag Cost</dt><dd>${{weapon['magCost']}}</dd>
+							<dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
 							<dt>Type</dt><dd>{{weapon['type']}}</dd>
 							<dt>Author</dt><dd> {{weapon['author']}} </dd>
 						</dl>
