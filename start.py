@@ -474,7 +474,7 @@ def show_monsters_stats():
           if weapon['author'] not in stats['weapons']['contributors'].keys():
             stats['weapons']['contributors'][weapon['author']] = 1
           else:
-            stats['weapons']['contributors'][monster['author']] += 1
+            stats['weapons']['contributors'][weapon['author']] += 1
     for ability in abilities:
         if ability['author'] not in stats['abilities']['contributors'].keys():
             stats['abilities']['contributors'][ability['author']] = 1
