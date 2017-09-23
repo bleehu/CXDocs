@@ -480,11 +480,16 @@ def show_monsters_stats():
             stats['abilities']['contributors'][ability['author']] = 1
         else:
             stats['abilities']['contributors'][ability['author']] += 1
+    stats['armor']['types'] = {}
     for suit in armor:
           if suit['author'] not in stats['armor']['contributors'].keys():
             stats['armor']['contributors'][suit['author']] = 1
           else:
             stats['armor']['contributors'][suit['author']] += 1
+          if suit['type'] not in stats['armor']['types'].keys():
+            stats['armor']['types'][ suit['type']] = 1
+          else:
+            stats['armor']['types'][suit['type']] += 1
     return render_template("monster_meta.html", monsters=munsters, stats=stats, session=session)
 
 @app.route("/monstereditor")

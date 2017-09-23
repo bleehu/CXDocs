@@ -314,7 +314,7 @@ def validate_monster_armor(form, user):
         valid_armor['description'] = sql_escape(form['description'])
         valid_armor['coverage'] = int(form['coverage'])
         valid_armor['damagereduction'] = sql_escape(form['damagereduction'])
-        valid_armor['type'] = sql_escape(form['name'])
+        valid_armor['type'] = sql_escape(form['type'])
         valid_armor['author'] = user
         
     except:
