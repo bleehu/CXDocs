@@ -115,6 +115,16 @@
             <div class="col-lg-4">
                 <h2> Enemy Armor </h2>
                 <p> There are {{stats['armor']['count']}} enemy armor varieties registered in the database. </p>
+                <table class="table">
+                    {% for type in stats['armor']['types'].keys() | sort %}
+                    <tr>
+                        <td>{{type}}</td>
+                        <td>{{stats['armor']['types'][type]}} varieties </td>
+                        <td>{{ (stats['armor']['types'][type] / stats['armor']['count'] * 100) | round(1, 'floor') }} %</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                
                 <p><small><a href="#top">back to top</a> </small></p>
             </div>
             <div class="col-lg-4">
