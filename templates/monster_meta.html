@@ -124,7 +124,13 @@
                     </tr>
                     {% endfor %}
                 </table>
-                
+                {% for type in stats['armor']['types'].keys() | sort %}
+                    <p> {{type}} </p>
+                    <div class="progress progress-striped">
+                        <div class="progress-bar progress-bar-info" style="width:{{stats['armor']['types'][type] / stats['armor']['count'] * 50}}%">
+                        </div>
+                    </div>
+                {% endfor %}
                 <p><small><a href="#top">back to top</a> </small></p>
             </div>
             <div class="col-lg-4">
