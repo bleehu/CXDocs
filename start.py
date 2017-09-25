@@ -571,7 +571,6 @@ def make_monster_pic():
 	if not ('.' in filename and filename.split('.')[1].lower() in allowed_filetypes):
 		flash('invalid file. This incident has been logged.')
 		return redirect('/monsterpic')
-	pdb.set_trace()
 	monster_id = int(request.form['monster_id'])
 	file.save(os.path.join("/home/michaelhedges/Desktop/Secret stuff/Don't look in here/flaskr/CXDocs/static/images/monsters/bypk_id","%s.png" % monster_id))
 	return redirect("/monsterpic")

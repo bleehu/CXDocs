@@ -122,7 +122,7 @@
                 {% for type in stats['weapons']['types'].keys() | sort %}
                     <p> {{type}} </p>
                     <div class="progress progress-striped">
-                        <div class="progress-bar progress-bar-info" style="width:{{stats['weapons']['types'][type] / stats['weapons']['count'] * 200}}%">
+                        <div class="progress-bar progress-bar-warning" style="width:{{stats['weapons']['types'][type] / stats['weapons']['count'] * 200}}%">
                         </div>
                     </div>
                 {% endfor %}
@@ -164,7 +164,7 @@
                 {% for type in stats['abilities']['types'].keys() | sort %}
                     <p> {{type}} </p>
                     <div class="progress progress-striped">
-                        <div class="progress-bar progress-bar-info" style="width:{{stats['abilities']['types'][type] / stats['abilities']['count'] * 100}}%">
+                        <div class="progress-bar progress-bar-success" style="width:{{stats['abilities']['types'][type] / stats['abilities']['count'] * 100}}%">
                         </div>
                     </div>
                 {% endfor %}
