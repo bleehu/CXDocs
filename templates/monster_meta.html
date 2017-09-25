@@ -152,6 +152,22 @@
             <div class="col-lg-4">
                 <h2> Enemy Abilities </h2>
                 <p> There are {{stats['abilities']['count']}} enemy abilities registered in the database. </p>
+                <table class="table">
+                    {% for type in stats['abilities']['types'].keys() | sort %}
+                    <tr>
+                        <td>{{type}}</td>
+                        <td>{{stats['abilities']['types'][type]}} Abilities </td>
+                        <td>{{ (stats['abilities']['types'][type] / stats['abilities']['count'] * 100) | round(1, 'floor') }} %</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% for type in stats['abilities']['types'].keys() | sort %}
+                    <p> {{type}} </p>
+                    <div class="progress progress-striped">
+                        <div class="progress-bar progress-bar-info" style="width:{{stats['abilities']['types'][type] / stats['abilities']['count'] * 100}}%">
+                        </div>
+                    </div>
+                {% endfor %}
                 <p><small><a href="#top">back to top</a> </small></p>
             </div>
      </div> 
