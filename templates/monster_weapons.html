@@ -32,9 +32,20 @@
 							<dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
 							<dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
 							<dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
+                            <dt>Reload DC</dt><dd>{{weapon['reload_dc']}}</dd>
+                            <dt>Reflex Modifier</dt><dd>{{weapon['reflex_modifier']}}</dd>
+                            <dt>Move Speed Penalty</dt><dd>{{weapon['move_speed_penalty']}}</dd>
 							<dt>Type</dt><dd>{{weapon['type']}}</dd>
 							<dt>Author</dt><dd> {{weapon['author']}} </dd>
 						</dl>
+                        <dl class="col-lg-3 col-md-3 col-sm-4">
+                            <dt>Range 1</dt><dd>{{weapon['r1']}}</dd>
+                            <dt>Range 2</dt><dd>{{weapon['r2']}}</dd>
+                            <dt>Range 3</dt><dd>{{weapon['r3']}}</dd>
+                            <dt>Accuracy 1</dt><dd>{{weapon['acc1']}}</dd>
+                            <dt>Accuracy 2</dt><dd>{{weapon['acc2']}}</dd>
+                            <dt>Accuracy 3</dt><dd>{{weapon['acc3']}}</dd>
+                        </dl>
 						<div class="col-lg-3 col-md-3 col-sm-6">
 							<form action="/deletemonsterweapon/{{weapon['pk_id']}}" method="post">
 								<input type="submit" class="form-button btn btn-danger" value="Delete Weapon">  </input>
