@@ -1,5 +1,5 @@
 # CXDocs
-Compound X rules displayed as web pages. Written in Python, served with Flask and bootstraped with bootswatch.
+Compound X rules displayed as web pages. Written in Python 2.7, served with Flask and bootstraped with bootswatch.
 
 to set up, 
 1) $git clone https://github.com/bleehu/CXDocs.git

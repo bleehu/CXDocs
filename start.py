@@ -1,6 +1,7 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
 import character #character is a custom data type that we created to handle character information on the backend.
+import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
@@ -572,7 +573,7 @@ def make_monster_pic():
 		flash('invalid file. This incident has been logged.')
 		return redirect('/monsterpic')
 	monster_id = int(request.form['monster_id'])
-	file.save(os.path.join("/home/michaelhedges/Desktop/Secret stuff/Don't look in here/flaskr/CXDocs/static/images/monsters/bypk_id","%s.png" % monster_id))
+	file.save(os.path.join(config.get('Default', 'pics_file_path'),"%s.png" % monster_id))
 	return redirect("/monsterpic")
 
 @app.route("/newMonsterAbility", methods = ['POST'])
@@ -957,17 +958,22 @@ def missed_it(error):
 	return render_template("404.html", error=error)
 
 if __name__ == "__main__":
-	args = get_args()
-	host = "localhost" #default to local only when running.
-	if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
-		host = args.i
-	local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
-	log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
-	logging.basicConfig(filename=log_filename, level=logging.INFO)
-	global log
-	log = logging.getLogger("cxDocs:")
-	app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
-	#app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
-	#app.config['SQLAlchemy_ECHO'] = True
-	app.run(host = host, threaded=True)
+    global config
+    config = ConfigParser.RawConfigParser()
+    config.read('config/cxdocs.cfg')
+    
+    args = get_args()
+    host = "localhost" #default to local only when running.
+    if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
+        host = args.i
+    local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
+    log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
+    logging.basicConfig(filename=log_filename, level=logging.INFO)
+    global log
+    log = logging.getLogger("cxDocs:")
+    app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
+    #app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
+    #app.config['SQLAlchemy_ECHO'] = True
+    
+    app.run(host = host, threaded=True)
 	
