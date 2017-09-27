@@ -562,19 +562,19 @@ def update_monster(pk_id):
 		
 @app.route("/newMonsterpic", methods=['POST'])
 def make_monster_pic():
-	if not check_auth(session):
-		flash('You must be logged in to do that. This incident has been logged.')
-		return redirect('/')
-	user = session['displayname']
-	allowed_filetypes = set(['png'])
-	file = request.files['monster_pic']
-	filename = secure_filename(file.filename)
-	if not ('.' in filename and filename.split('.')[1].lower() in allowed_filetypes):
-		flash('invalid file. This incident has been logged.')
-		return redirect('/monsterpic')
-	monster_id = int(request.form['monster_id'])
-	file.save(os.path.join(config.get('Default', 'pics_file_path'),"%s.png" % monster_id))
-	return redirect("/monsterpic")
+    if not check_auth(session):
+        flash('You must be logged in to do that. This incident has been logged.')
+        return redirect('/')
+    user = session['displayname']
+    allowed_filetypes = set(['png'])
+    file = request.files['monster_pic']
+    filename = secure_filename(file.filename)
+    if not ('.' in filename and filename.split('.')[1].lower() in allowed_filetypes):
+        flash('invalid file. This incident has been logged.')
+        return redirect('/monsterpic')
+    monster_id = int(request.form['monster_id'])
+    file.save(os.path.join(config.get('Enemies', 'pics_file_path'),"%s.png" % monster_id))
+    return redirect("/monsterpic")
 
 @app.route("/newMonsterAbility", methods = ['POST'])
 def make_monster_ability():
@@ -960,7 +960,7 @@ def missed_it(error):
 if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
-    config.read('config/cxdocs.cfg')
+    config.read('config/cxDocs.cfg')
     
     args = get_args()
     host = "localhost" #default to local only when running.
