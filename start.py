@@ -958,12 +958,14 @@ def missed_it(error):
 	return render_template("404.html", error=error)
 
 if __name__ == "__main__":
+    host = "localhost" #default to local only when running.
+    
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
     
+    
     args = get_args()
-    host = "localhost" #default to local only when running.
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
         host = args.i
     local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
