@@ -29,6 +29,23 @@
                 {% endfor %}
                 </table>
             </div>
+            <div class="col-lg-4">
+                <h2> Role Breakdown </h2>
+                <p> While not strictly necessary, having a variety of different roles for enemies to fill should
+                    make it easier for dungeon architects to craft fun and interesting tactical encounters. 
+                    Are we missing a good artillary type enemy? Maybe you've got a good idea to help fill 
+                    that. Do we have a plethora of minions? Maybe use our copious varieties to make a dungeon
+                    with what we already do well, or make an enemy that synergizes well with what we already
+                    have!</p>
+                <table class="table">
+                {% for role in stats['roles'].keys() | sort %}
+                    <tr>
+                        <td>{{role}}</td>
+                        <td> {{ stats['roles'][role] }} type Enemies </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
             <div class="col-lg-6">
                 <h2> Weapons, Abilities and Armor </h2>
                 <p> While not every enemy needs to have armor, weapons and abilities, all of them should at least have 

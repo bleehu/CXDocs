@@ -447,6 +447,7 @@ def show_monsters_stats():
     stats['abilities'] = {'count':len(abilities), 'contributors': {}}
     stats['contributors'] = {}
     stats['nakedMonsters'] = []
+    stats['roles'] = {}
     for monster in munsters:
         hasAbs = True
         hasWep = True
@@ -471,6 +472,10 @@ def show_monsters_stats():
             stats['contributors'][monster['author']] = 1
         else:
             stats['contributors'][monster['author']] += 1
+        if monster['role'] not in stats['roles'].keys():
+            stats['roles'][monster['role']] = 1
+        else:
+            stats['roles'][monster['role']] += 1
     stats['weapons']['types'] = {}
     for weapon in weapons:
           if weapon['type'] not in stats['weapons']['types'].keys():
