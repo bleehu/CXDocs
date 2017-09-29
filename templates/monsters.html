@@ -83,9 +83,11 @@
 							</p>
 						</div>
 						{% endfor %}
-						<p>This enemy proudly presented by {{ monster['author'] }}</p>
-						<p> <small> <a href="monsterupdate/{{monster['pk_id']}}">Update this monster</a></small></p>
-						<p><small><a href="#top">back to top</a> </small></p>
+                        <div class="col-lg-8">
+                            <p>This enemy proudly presented by {{ monster['author'] }}</p>
+                            <p> <a href="monsterupdate/{{monster['pk_id']}}" class="btn btn-warning btn-xs">Update this monster</a></p>
+                            <p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
+                        </div>
 					</div> <!-- end panel-body -->
 				</div>
 				{% endfor %}
