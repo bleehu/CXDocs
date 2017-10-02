@@ -27,6 +27,7 @@
 						<p> {{weapon['description']}} </p>
 						<dl class="col-lg-3 col-md-3 col-sm-4">
 							<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
+                            <dt>Armor Pierce Level</dt><dd>{{weapon['ap_level']}}</dd>
 							<dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
 							<dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
 							<dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
@@ -71,7 +72,7 @@
 						</div>
                         <div class="col-lg-3">
                             <p> This weapon proudly presented by {{ weapon['author'] }}</p>
-                            <p> <a href="" class="btn btn-warning btn-xs"> Update This Weapon </a></p>
+                            <p> <a href="/monsterweaponupdate/{{weapon['pk_id']}}" class="btn btn-warning btn-xs"> Update This Weapon </a></p>
                             <p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
                         </div>
 					</div> <!-- end panel-body -->
