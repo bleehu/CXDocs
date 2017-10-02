@@ -59,6 +59,16 @@ def sql_escape(dirty):
 	#sani = sani.replace("\\", "\\") #need a way to sanitize backslashes for escape characters
 	return sani
 
+def monster_connect():
+	username = "searcher"
+	if config.get('Enemies','enemies_psql_user'):
+		username = config.get('Enemies', 'enemies_psql_user')
+	db = 'mydb'
+	if config.get('Enemies', 'enemies_psql_db'):
+		db = config.get('Enemies', 'enemies_psql_db')
+	connection = psycopg2.connect("dbname=%s user=%s password=allDatSQL" % (db, username))
+	return connection
+
 """returns a list of maps where the map represents a class. The value of map['name'] might = 'Soldier' and
 			map['armorProficency'] might be equal to ['recon', 'medium', 'light']. Must have the correct .json
 			file in /docs/ in order to work."""
@@ -672,10 +682,7 @@ def delete_monster(pk_id):
 	except Exception(e):
 		flash("error parsing id of monster. This incident will be logged.")
 		return redirect("/monstereditor")
-	username = "searcher"
-	if config.get('Enemies','enemies_psql_user'):
-			username = config.get('Enemies', 'enemies_psql_user')
-	connection = psycopg2.connect("dbname=mydb user=%s password=allDatSQL" % username)
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
 	myCursor.close()
@@ -695,8 +702,7 @@ def delete_monster_ability(pk_id):
 	except Exception(e):
 		flash("Error Parsing ID of monster. This incident will be logged.")
 		return redirect("/")
-	
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
@@ -716,8 +722,7 @@ def delete_monster_weapon(pk_id):
 	except Exception(e):
 		flash("error parsing ID of monster. This incident will be logged")
 		return redirect("/")
-	
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters_weapons WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
@@ -737,7 +742,7 @@ def delete_monster_armor(pk_id):
 	except:
 		flash("error parsing ID of monster. This incident will be logged.")
 		return redirect("/")
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters_armors WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
@@ -969,7 +974,7 @@ if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    
+    enemies.set_config(config)
     
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
