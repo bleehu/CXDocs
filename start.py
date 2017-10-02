@@ -190,7 +190,6 @@ def get_user_postgres(username, password):
 		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
 		myCursor = connection.cursor()
 		saniUser = sql_escape(username)
-		#pdb.set_trace()
 		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
@@ -673,8 +672,10 @@ def delete_monster(pk_id):
 	except Exception(e):
 		flash("error parsing id of monster. This incident will be logged.")
 		return redirect("/monstereditor")
-	
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	username = "searcher"
+	if config.get('Enemies','enemies_psql_user'):
+			username = config.get('Enemies', 'enemies_psql_user')
+	connection = psycopg2.connect("dbname=mydb user=%s password=allDatSQL" % username)
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
 	myCursor.close()
