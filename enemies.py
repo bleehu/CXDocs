@@ -391,6 +391,11 @@ def update_monster(monster, pk_id):
         myCursor.execute("UPDATE monsters SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) = (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s') WHERE pk_id=%s;" % monstring)
         myCursor.close()
         connection.commit()
+
+def update_monster_weapon(weapon, pk_id):
+    private_key = int(pk_id)
+    if private_key > 0:
+        
     
 def insert_monster_ability(ability):
     connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
