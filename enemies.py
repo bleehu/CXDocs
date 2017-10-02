@@ -153,7 +153,7 @@ def get_monster_weapons_all():
     monster_weapons = []
     connection = db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate FROM monsters_weapons ORDER BY name;")
+    myCursor.execute("SELECT pk_id, name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level FROM monsters_weapons ORDER BY name;")
     results = myCursor.fetchall()
     for line in results:
         weapon = {}
@@ -176,6 +176,8 @@ def get_monster_weapons_all():
         weapon['move_speed_penalty'] = line[16]
         weapon['reflex_modifier'] = line[17]
         weapon['auto_fire_rate'] = line[18]
+        weapon['cost'] = line[19]
+        weapon['suppression_level'] = line[20]
         monster_weapons.append(weapon)
     return monster_weapons
 
@@ -335,14 +337,14 @@ def validate_monster_weapon(form, user):
         reload_dc = int(form['reload_dc'])
         fire_select = sql_escape(form['fire_select'])
         move_speed_penalty = int(form['move_speed_penalty'])
-        ap_level = sql_escape(form['ap_level'])
+        ap_level = int(form['ap_level'])
     except:
         return False
     if r1 < 0 or cost < 0:
         return False
     if name == '' or description == '':
         return False
-    return {'damage':damage, 'name':name, 'description':description,'mag': capacity, 'cost':cost, 'magCost':magCost, 'type':type, 'author':user, 'r1':r1, 'r2':r2, 'r3':r3, 'acc1':acc1, 'acc2':acc2, 'acc3':acc3, 'fire_rate':fire_rate, 'refmod':ref_mod, 'reload_dc':reload_dc, 'fire_rate':fire_rate, 'move_speed_penalty':move_speed_penalty,'ap_level':ap_level}
+    return {'damage':damage, 'name':name, 'description':description,'mag': capacity, 'cost':cost, 'magCost':magCost, 'type':type, 'author':user, 'r1':r1, 'r2':r2, 'r3':r3, 'acc1':acc1, 'acc2':acc2, 'acc3':acc3, 'fire_rate':fire_rate, 'refmod':ref_mod, 'reload_dc':reload_dc, 'move_speed_penalty':move_speed_penalty,'ap_level':ap_level, 'suppression_level':fire_select}
 
 def validate_monster_weapon_map(form):
     expected = set(['monster_id', 'weapon_id'])
@@ -412,7 +414,13 @@ def update_monster(monster, pk_id):
 def update_monster_weapon(weapon, pk_id):
     private_key = int(pk_id)
     if private_key > 0:
-        
+        connection = db_connection()
+        myCursor = connection.cursor()
+        wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['description'], weapon['author'], weapon['type'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['reload_dc'], weapon['move_speed_penalty'], weapon['refmod'], weapon['fire_rate'], weapon['cost'], weapon['suppression_level'], pk_id)
+        myCursor.execute("UPDATE monsters_weapons SET (name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level) = (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s') WHERE pk_id = %s" % wepstring)
+        myCursor.close()
+        connection.commit()
+
     
 def insert_monster_ability(ability):
     connection = db_connection()
@@ -434,8 +442,8 @@ def insert_monster_ability_map(mapping):
 def insert_monster_weapon(weapon):
     connection = db_connection()
     myCursor = connection.cursor()
-    wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['fire_rate'], weapon['refmod'], weapon['reload_dc'], weapon['move_speed_penalty'])
-    myCursor.execute("INSERT INTO monsters_weapons (name, damage, capacity, type, description, author, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, auto_fire_rate, reflex_modifier, reload_dc, move_speed_penalty) VALUES (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" % wepstring)
+    wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['fire_rate'], weapon['refmod'], weapon['reload_dc'], weapon['move_speed_penalty'], weapon['cost'], weapon['suppression_level'])
+    myCursor.execute("INSERT INTO monsters_weapons (name, damage, capacity, type, description, author, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, auto_fire_rate, reflex_modifier, reload_dc, move_speed_penalty, cost, suppression_level) VALUES (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" % wepstring)
     myCursor.close()
     connection.commit()
 
