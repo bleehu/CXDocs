@@ -185,7 +185,7 @@ def get_monsters_weapons(monster_id):
     monster_weapons = []
     connection = db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT w.pk_id, name, damage, capacity, description, w.author, w.type, w.mag_cost, w.r1, w.r2, w.r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate FROM monsters_weapons AS w, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = w.pk_id ORDER BY name;" % monster_id)
+    myCursor.execute("SELECT w.pk_id, name, damage, capacity, description, w.author, w.type, w.mag_cost, w.r1, w.r2, w.r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost FROM monsters_weapons AS w, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = w.pk_id ORDER BY name;" % monster_id)
     results = myCursor.fetchall()
     for line in results:
         weapon = {}
@@ -208,6 +208,7 @@ def get_monsters_weapons(monster_id):
         weapon['move_speed_penalty'] = line[16]
         weapon['reflex_modifier'] = line[17]
         weapon['auto_fire_rate'] = line[18]
+        weapon['cost'] = line[19]
         monster_weapons.append(weapon)
     return monster_weapons
 
