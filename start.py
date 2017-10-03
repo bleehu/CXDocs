@@ -529,7 +529,6 @@ def show_monster_updater(pk_id):
 	if not check_auth(session):
 		return redirect("/")
 	monsters = enemies.get_monsters()
-	#TODO send updater the current info on the monster to update
 	myMonster = None
 	for monster in monsters:
 		if monster['pk_id'] == int(pk_id):
@@ -539,6 +538,21 @@ def show_monster_updater(pk_id):
 		return redirect('monsters.html')
 	return render_template("monster_update.html", session=session, monsters=monsters, pk_id=pk_id, myMonster=myMonster)
 	
+@app.route("/monsterweaponupdate/<pk_id>")
+def show_monster_weapon_updater(pk_id):
+	if not check_auth(session):
+		return redirect("/")
+	monsters = enemies.get_monsters()
+	weapons = enemies.get_monster_weapons_all()
+	myWeapon = None
+	for weapon in weapons:
+		if weapon['pk_id'] == int(pk_id):
+			myWeapon = weapon
+	if myWeapon == None:
+		flash("Could not find the weapon you wanted to update!")
+		return redirect("/monstersweapons")
+	return render_template("monster_weapon_update.html", session=session, monsters=monsters, weapons=weapons, pk_id=pk_id, myWeapon=myWeapon)
+
 @app.route("/monsterpic")
 def show_monster_photographer():
 	if not check_auth(session):
@@ -574,6 +588,20 @@ def update_monster(pk_id):
 	flash("Enemy updated!")
 	return redirect("/monster")
 		
+@app.route("/updateMonsterWeapon/<pk_id>", methods=['POST'])
+def update_monster_weapon(pk_id):
+	if not check_auth(session):
+		flash("Must be logged in to see this page.")
+		return redirect("/")
+	user = session['displayname']
+	weapon = enemies.validate_monster_weapon(request.form, user)
+	if not weapon:
+		flash("Could not update weapon. Invalid input?")
+		return redirect("/monsterweaponupdate/%s" % pk_id)
+	enemies.update_monster_weapon(weapon, pk_id)
+	flash("Successfully updated enemy weapon!")
+	return redirect("/monsterweapons")
+
 @app.route("/newMonsterpic", methods=['POST'])
 def make_monster_pic():
     if not check_auth(session):
