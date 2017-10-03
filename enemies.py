@@ -444,7 +444,7 @@ def insert_monster_weapon(weapon):
     connection = db_connection()
     myCursor = connection.cursor()
     wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['fire_rate'], weapon['refmod'], weapon['reload_dc'], weapon['move_speed_penalty'], weapon['cost'], weapon['suppression_level'])
-    myCursor.execute("INSERT INTO monsters_weapons (name, damage, capacity, type, description, author, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, auto_fire_rate, reflex_modifier, reload_dc, move_speed_penalty, cost, suppression_level) VALUES (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" % wepstring)
+    myCursor.execute("INSERT INTO monsters_weapons (name, damage, capacity, type, description, author, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, auto_fire_rate, reflex_modifier, reload_dc, move_speed_penalty, cost, suppression_level) VALUES (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s');" % wepstring)
     myCursor.close()
     connection.commit()
 
