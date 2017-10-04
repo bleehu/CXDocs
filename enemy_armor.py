@@ -1,7 +1,7 @@
 import psycopg2
 import pdb
 import security
-import enemies_common()
+import enemies_common
 
 
 def get_monster_armor_all():

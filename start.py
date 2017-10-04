@@ -9,6 +9,7 @@ import enemies
 import enemy_weapons
 import enemy_abilities
 import enemy_armor
+import enemies_common
 
 from flask import Flask, render_template, request, redirect, session, escape, flash
 import json #sometimes we load or save things in json. This helps with that.
@@ -789,7 +790,7 @@ def delete_monster_ability_map():
 		flash("You must be logged in to do that. This incident has been logged.")
 		return redirect("/")
 	flash("Ability taken away successfully")
-	enemies.delete_monster_ability_map(request.form['pk_id'])
+	enemy_abilities.delete_monster_ability_map(request.form['pk_id'])
 	return redirect("/monsterabilities")
 
 @app.route("/deletemonsterweaponmap", methods=['post'])
@@ -798,7 +799,7 @@ def delete_monster_weapon_map():
 		flash("You must be logged in to do that. This incident has been logged.")
 		return redirect("/")
 	flash("Weapon taken away successfully")
-	enemies.delete_monster_weapon_map(request.form['pk_id'])
+	enemy_weapons.delete_monster_weapon_map(request.form['pk_id'])
 	return redirect("/monsterweapons")
 
 @app.route("/deletemonsterarmormap", methods=['post'])
@@ -815,10 +816,10 @@ def show_monster_abilities():
 	if not check_auth(session):
 		flash("You must be logged in to see that.")
 		return redirect("/")
-	mAbilities = enemies.get_monster_abilities_all()
+	mAbilities = enemy_abilities.get_monster_abilities_all()
 	munsters = enemies.get_monsters()
 	for ability in mAbilities:
-		maps = enemies.get_abilitys_monsters(ability['pk_id'])
+		maps = enemy_abilities.get_abilitys_monsters(ability['pk_id'])
 		ability['maps'] = maps
 	return render_template("monster_abilities.html", abilities=mAbilities, monsters=munsters)
 
@@ -851,7 +852,7 @@ def show_monster_ability_editor():
 	if not check_auth(session):
 		flash("Must be logged in to do that.")
 		return redirect("/")
-	mAbilities = enemies.get_monster_abilities_all()
+	mAbilities = enemy_abilities.get_monster_abilities_all()
 	munsters = enemies.get_monsters()
 	return render_template("monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
 
