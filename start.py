@@ -979,6 +979,10 @@ def roblocker():
 def gamelogs():
 	return render_template("gamelogs.html")
 
+@app.route("/monsterweaponshowto")
+def show_monster_weapons_howto():
+	return render_template("monster_weapon_how_to.html")
+
 """ set generic handlers for common errors."""
 @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python. 
 def borked_it(error):
