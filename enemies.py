@@ -4,9 +4,26 @@ import enemy_weapons
 import enemy_abilities
 import enemy_armor
 import security
+import ConfigParser
+
+global config
+
+def set_config(new_config):
+    global config
+    config = new_config
+
+def db_connection():
+    username = "searcher"
+    if config.get('Enemies','enemies_psql_user'):
+            username = config.get('Enemies', 'enemies_psql_user')
+    db = 'mydb'
+    if config.get('Enemies', 'enemies_psql_db'):
+        db = config.get('Enemies', 'enemies_psql_db')
+    connection = psycopg2.connect("dbname=%s user=%s password=allDatSQL" % (db, username))
+    return connection
 
 def get_monsters():
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+    connection = db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id, author, level, role FROM monsters ORDER BY name;")
     monsters = []
@@ -91,8 +108,9 @@ def validate_monster(form, user):
         return False
     return monster
 
+
 def insert_monster(monster):
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+    connection = db_connection()
     myCursor = connection.cursor()
     monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'])
     myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s');" % monstring)
@@ -102,12 +120,23 @@ def insert_monster(monster):
 def update_monster(monster, pk_id):
     private_key = int(pk_id)
     if private_key > 0:
-        connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+        connection = db_connection()
         myCursor = connection.cursor()
         monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'], pk_id)
         myCursor.execute("UPDATE monsters SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) = (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s') WHERE pk_id=%s;" % monstring)
         myCursor.close()
         connection.commit()
+
+def update_monster_weapon(weapon, pk_id):
+    private_key = int(pk_id)
+    if private_key > 0:
+        connection = db_connection()
+        myCursor = connection.cursor()
+        wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['description'], weapon['author'], weapon['type'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['reload_dc'], weapon['move_speed_penalty'], weapon['refmod'], weapon['fire_rate'], weapon['cost'], weapon['suppression_level'], pk_id)
+        myCursor.execute("UPDATE monsters_weapons SET (name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level) = (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s') WHERE pk_id = %s" % wepstring)
+        myCursor.close()
+        connection.commit()
+
     
 """ 
     sql commands for initializing monsters database for tracking the beastiary

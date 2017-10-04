@@ -63,6 +63,16 @@ def sql_escape(dirty):
 	#sani = sani.replace("\\", "\\") #need a way to sanitize backslashes for escape characters
 	return sani
 
+def monster_connect():
+	username = "searcher"
+	if config.get('Enemies','enemies_psql_user'):
+		username = config.get('Enemies', 'enemies_psql_user')
+	db = 'mydb'
+	if config.get('Enemies', 'enemies_psql_db'):
+		db = config.get('Enemies', 'enemies_psql_db')
+	connection = psycopg2.connect("dbname=%s user=%s password=allDatSQL" % (db, username))
+	return connection
+
 """returns a list of maps where the map represents a class. The value of map['name'] might = 'Soldier' and
 			map['armorProficency'] might be equal to ['recon', 'medium', 'light']. Must have the correct .json
 			file in /docs/ in order to work."""
@@ -194,7 +204,6 @@ def get_user_postgres(username, password):
 		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
 		myCursor = connection.cursor()
 		saniUser = sql_escape(username)
-		#pdb.set_trace()
 		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
@@ -524,7 +533,6 @@ def show_monster_updater(pk_id):
 	if not check_auth(session):
 		return redirect("/")
 	monsters = enemies.get_monsters()
-	#TODO send updater the current info on the monster to update
 	myMonster = None
 	for monster in monsters:
 		if monster['pk_id'] == int(pk_id):
@@ -534,6 +542,21 @@ def show_monster_updater(pk_id):
 		return redirect('monsters.html')
 	return render_template("monster_update.html", session=session, monsters=monsters, pk_id=pk_id, myMonster=myMonster)
 	
+@app.route("/monsterweaponupdate/<pk_id>")
+def show_monster_weapon_updater(pk_id):
+	if not check_auth(session):
+		return redirect("/")
+	monsters = enemies.get_monsters()
+	weapons = enemies.get_monster_weapons_all()
+	myWeapon = None
+	for weapon in weapons:
+		if weapon['pk_id'] == int(pk_id):
+			myWeapon = weapon
+	if myWeapon == None:
+		flash("Could not find the weapon you wanted to update!")
+		return redirect("/monstersweapons")
+	return render_template("monster_weapon_update.html", session=session, monsters=monsters, weapons=weapons, pk_id=pk_id, myWeapon=myWeapon)
+
 @app.route("/monsterpic")
 def show_monster_photographer():
 	if not check_auth(session):
@@ -569,6 +592,20 @@ def update_monster(pk_id):
 	flash("Enemy updated!")
 	return redirect("/monster")
 		
+@app.route("/updateMonsterWeapon/<pk_id>", methods=['POST'])
+def update_monster_weapon(pk_id):
+	if not check_auth(session):
+		flash("Must be logged in to see this page.")
+		return redirect("/")
+	user = session['displayname']
+	weapon = enemies.validate_monster_weapon(request.form, user)
+	if not weapon:
+		flash("Could not update weapon. Invalid input?")
+		return redirect("/monsterweaponupdate/%s" % pk_id)
+	enemies.update_monster_weapon(weapon, pk_id)
+	flash("Successfully updated enemy weapon!")
+	return redirect("/monsterweapons")
+
 @app.route("/newMonsterpic", methods=['POST'])
 def make_monster_pic():
     if not check_auth(session):
@@ -677,8 +714,7 @@ def delete_monster(pk_id):
 	except Exception(e):
 		flash("error parsing id of monster. This incident will be logged.")
 		return redirect("/monstereditor")
-	
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
 	myCursor.close()
@@ -698,8 +734,7 @@ def delete_monster_ability(pk_id):
 	except Exception(e):
 		flash("Error Parsing ID of monster. This incident will be logged.")
 		return redirect("/")
-	
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
@@ -719,8 +754,7 @@ def delete_monster_weapon(pk_id):
 	except Exception(e):
 		flash("error parsing ID of monster. This incident will be logged")
 		return redirect("/")
-	
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters_weapons WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
@@ -740,7 +774,7 @@ def delete_monster_armor(pk_id):
 	except:
 		flash("error parsing ID of monster. This incident will be logged.")
 		return redirect("/")
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
+	connection = monster_connect()
 	myCursor = connection.cursor()
 	myCursor.execute("DELETE FROM monsters_armors WHERE pk_id = %s;" % pk_id)
 	myCursor.close()
@@ -949,6 +983,10 @@ def roblocker():
 def gamelogs():
 	return render_template("gamelogs.html")
 
+@app.route("/monsterweaponshowto")
+def show_monster_weapons_howto():
+	return render_template("monster_weapon_how_to.html")
+
 """ set generic handlers for common errors."""
 @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python. 
 def borked_it(error):
@@ -972,7 +1010,7 @@ if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    
+    enemies.set_config(config)
     
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
