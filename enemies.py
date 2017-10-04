@@ -1,5 +1,7 @@
 import psycopg2
 import pdb
+import enemy_weapons
+import security
 
 def get_monsters():
     connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -44,7 +46,7 @@ def get_monsters():
         #add armor
         newmun['armor'] = get_monsters_armor(monster_id)
         #add weapons
-        newmun['weapons'] = get_monsters_weapons(monster_id)
+        newmun['weapons'] = enemy_weapons.get_monsters_weapons(monster_id)
         monsters.append(newmun)
     return monsters
 
@@ -132,73 +134,6 @@ def get_armors_monsters(armor_id):
     return results
     
 
-def get_monster_weapons_all():
-    monster_weapons = []
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate FROM monsters_weapons ORDER BY name;")
-    results = myCursor.fetchall()
-    for line in results:
-        weapon = {}
-        weapon['pk_id'] = line[0]
-        weapon['name'] = line[1]
-        weapon['damage'] = line[2]
-        weapon['capacity'] = line[3]
-        weapon['description'] = line[4]
-        weapon['author'] = line[5]
-        weapon['type'] = line[6]
-        weapon['mag_cost'] = line[7]
-        weapon['r1'] = line[8]
-        weapon['r2'] = line[9]
-        weapon['r3'] = line[10]
-        weapon['acc1'] = line[11]
-        weapon['acc2'] = line[12]
-        weapon['acc3'] = line[13]
-        weapon['ap_level'] = line[14]
-        weapon['reload_dc'] = line[15]
-        weapon['move_speed_penalty'] = line[16]
-        weapon['reflex_modifier'] = line[17]
-        weapon['auto_fire_rate'] = line[18]
-        monster_weapons.append(weapon)
-    return monster_weapons
-
-def get_monsters_weapons(monster_id):
-    monster_weapons = []
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT w.pk_id, name, damage, capacity, description, w.author, w.type, w.mag_cost, w.r1, w.r2, w.r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate FROM monsters_weapons AS w, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = w.pk_id ORDER BY name;" % monster_id)
-    results = myCursor.fetchall()
-    for line in results:
-        weapon = {}
-        weapon['pk_id'] = line[0]
-        weapon['name'] = line[1]
-        weapon['damage'] = line[2]
-        weapon['capacity'] = line[3]
-        weapon['description'] = line[4]
-        weapon['author'] = line[5]
-        weapon['type'] = line[6]
-        weapon['mag_cost'] = line[7]
-        weapon['r1'] = line[8]
-        weapon['r2'] = line[9]
-        weapon['r3'] = line[10]
-        weapon['acc1'] = line[11]
-        weapon['acc2'] = line[12]
-        weapon['acc3'] = line[13]
-        weapon['ap_level'] = line[14]
-        weapon['reload_dc'] = line[15]
-        weapon['move_speed_penalty'] = line[16]
-        weapon['reflex_modifier'] = line[17]
-        weapon['auto_fire_rate'] = line[18]
-        monster_weapons.append(weapon)
-    return monster_weapons
-
-def get_weapons_monsters(weapon_id):
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT monsters_weapon_map.pk_id, name FROM monsters, monsters_weapon_map WHERE monsters_weapon_map.fk_weapons_id = %s AND monsters_weapon_map.fk_monster_id = monsters.pk_id;" % weapon_id)
-    results = myCursor.fetchall()
-    return results
-
 def validate_monster(form, user):
     expected = set(['name', 'description', 'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', 'reflex', 'will', 'shock', 'health', 'nanites', 'level', 'role'])
     if expected ^ set(form.keys()) != set([]):
@@ -218,9 +153,9 @@ def validate_monster(form, user):
         monster['will'] = int(form['will'])
         monster['shock'] = int(form['shock'])
         monster['level'] = int(form['level'])
-        monster['role'] = sql_escape(form['role'])[:30]
-        monster['description'] = sql_escape(form['description'])[:3000]
-        monster['name'] = sql_escape(form['name'])[:46]
+        monster['role'] = security.sql_escape(form['role'])[:30]
+        monster['description'] = security.sql_escape(form['description'])[:3000]
+        monster['name'] = security.sql_escape(form['name'])[:46]
         monster['author'] = user
         
         monster['strmod'] = (monster['strength'] - 5) * 4
@@ -246,9 +181,9 @@ def validate_monster_ability(form, user):
         return False
     ability = {}
     try:
-        ability['name'] = sql_escape(form['name'])[:60]
-        ability['type'] = sql_escape(form['type'])[:60]
-        ability['description'] = sql_escape(form['description'])[:3000]
+        ability['name'] = security.sql_escape(form['name'])[:60]
+        ability['type'] = security.sql_escape(form['type'])[:60]
+        ability['description'] = security.sql_escape(form['description'])[:3000]
         ability['author'] = user
     except Exception(e):
         return False
@@ -270,77 +205,6 @@ def validate_monster_ability_map(form):
     if ability_id < 1 or monster_id < 1:
         return False
     return {'monster_id':monster_id, 'ability_id':ability_id}
-    
-
-def validate_monster_weapon(form, user):
-    if user == None or user == '':
-        return False
-    expected = set(['damage', 'name','description', 'mag', 'cost', 'magCost', 'type', 'ap_level', 'auto_fire_rate', 'range1', 'range2', 'range3', 'accuracy1', 'accuracy2', 'accuracy3', 'refmod', 'reload_dc', 'fire_select', 'move_speed_penalty'])
-    if expected ^ set(form.keys()) != set([]):
-        return False
-    damage = None
-    range = None
-    name = None
-    description = None
-    accuracy = None
-    capacity = None
-    cost = None
-    type = None
-    magCost = None
-    r1 = None
-    r2 = None
-    r3 = None
-    acc1 = None
-    acc2 = None
-    acc3 = None
-    fire_rate = None
-    ref_mod = None
-    reload_dc = None
-    fire_select = None
-    move_speed_penalty = None
-    ap_level = None
-    try:
-        damage = int(form['damage'])
-        name = sql_escape(form['name'])
-        description = sql_escape(form['description'])
-        capacity = int(form['mag'])
-        type = sql_escape(form['type'])
-        cost = int(form['cost'])
-        magCost = int(form['magCost'])
-        r1 = int(form['range1'])
-        r2 = int(form['range2'])
-        r3 = int(form['range3'])
-        acc1 = int(form['accuracy1'])
-        acc2 = int(form['accuracy2'])
-        acc3 = int(form['accuracy3'])
-        fire_rate = int(form['auto_fire_rate'])
-        ref_mod = int(form['refmod'])
-        reload_dc = int(form['reload_dc'])
-        fire_select = sql_escape(form['fire_select'])
-        move_speed_penalty = int(form['move_speed_penalty'])
-        ap_level = sql_escape(form['ap_level'])
-    except:
-        return False
-    if r1 < 0 or cost < 0:
-        return False
-    if name == '' or description == '':
-        return False
-    return {'damage':damage, 'name':name, 'description':description,'mag': capacity, 'cost':cost, 'magCost':magCost, 'type':type, 'author':user, 'r1':r1, 'r2':r2, 'r3':r3, 'acc1':acc1, 'acc2':acc2, 'acc3':acc3, 'fire_rate':fire_rate, 'refmod':ref_mod, 'reload_dc':reload_dc, 'fire_rate':fire_rate, 'move_speed_penalty':move_speed_penalty,'ap_level':ap_level}
-
-def validate_monster_weapon_map(form):
-    expected = set(['monster_id', 'weapon_id'])
-    if expected ^ set(form.keys()) != set([]):
-        return False
-    monster_id = None
-    weapon_id = None
-    try:
-        monster_id = int(form['monster_id'])
-        weapon_id = int(form['weapon_id'])
-    except:
-        return False
-    if monster_id < 1 or weapon_id < 1:
-        return False
-    return {'monster_id': monster_id,'weapon_id':weapon_id}
 
 def validate_monster_armor(form, user):
     if None == user or user == '':
@@ -350,11 +214,11 @@ def validate_monster_armor(form, user):
         return False
     valid_armor = {}
     try:
-        valid_armor['name'] = sql_escape(form['name'])
-        valid_armor['description'] = sql_escape(form['description'])
+        valid_armor['name'] = security.sql_escape(form['name'])
+        valid_armor['description'] = security.sql_escape(form['description'])
         valid_armor['coverage'] = int(form['coverage'])
-        valid_armor['damagereduction'] = sql_escape(form['damagereduction'])
-        valid_armor['type'] = sql_escape(form['type'])
+        valid_armor['damagereduction'] = security.sql_escape(form['damagereduction'])
+        valid_armor['type'] = security.sql_escape(form['type'])
         valid_armor['author'] = user
         
     except:
@@ -409,22 +273,6 @@ def insert_monster_ability_map(mapping):
     myCursor.close()
     connection.commit()
 
-def insert_monster_weapon(weapon):
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-    myCursor = connection.cursor()
-    wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['fire_rate'], weapon['refmod'], weapon['reload_dc'], weapon['move_speed_penalty'])
-    myCursor.execute("INSERT INTO monsters_weapons (name, damage, capacity, type, description, author, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, auto_fire_rate, reflex_modifier, reload_dc, move_speed_penalty) VALUES (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" % wepstring)
-    myCursor.close()
-    connection.commit()
-
-def insert_monster_weapon_map(mapping):
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-    myCursor = connection.cursor()
-    mapstring = (mapping['monster_id'], mapping['weapon_id'])
-    myCursor.execute("INSERT INTO monsters_weapon_map (fk_monster_id, fk_weapons_id) VALUES (%s, %s)" % mapstring)
-    myCursor.close()
-    connection.commit()
-
 def insert_monster_armor(armor):
     connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
     myCursor = connection.cursor()
@@ -455,20 +303,6 @@ def delete_monster_ability_map(map_id):
     myCursor.close()
     connection.commit()
 
-def delete_monster_weapon_map(map_id):
-    del_id = None
-    try:
-        del_id = int(map_id)
-    except:
-        return None
-    if del_id < 1:
-        return None
-    connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-    myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM monsters_weapon_map WHERE pk_id = %s;" % del_id)
-    myCursor.close()
-    connection.commit()
-
 def delete_monster_armor_map(map_id):
     del_id = None
     try:
@@ -482,19 +316,6 @@ def delete_monster_armor_map(map_id):
     myCursor.execute("DELETE FROM monsters_armor_map WHERE pk_id = %s;" % del_id)
     myCursor.close()
     connection.commit()
-
-    """ we use this when we use player input to check postgres for a search. For instance, we don't want 
-           badguys trying to log in with SQL injection - that could lead to damage to login data."""
-def sql_escape(dirty):
-    #string.replace(new, old)
-    sani = dirty.replace('*','')
-    sani = sani.replace('=','')
-    sani = sani.replace('>','')
-    sani = sani.replace('<','')
-    sani = sani.replace(';','')
-    sani = sani.replace("'","''")
-    #sani = sani.replace("\\", "\\") #need a way to sanitize backslashes for escape characters
-    return sani
     
 """ 
     sql commands for initializing monsters database for tracking the beastiary

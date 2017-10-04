@@ -6,6 +6,8 @@ import csv #sometimes we save or read stuff in .csv format. This helps with that
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
 import enemies
+import enemy_weapons
+
 from flask import Flask, render_template, request, redirect, session, escape, flash
 import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
@@ -440,7 +442,7 @@ def show_monsters_stats():
     munsters = enemies.get_monsters()
     abilities = enemies.get_monster_abilities_all()
     armor = enemies.get_monster_armor_all()
-    weapons = enemies.get_monster_weapons_all()
+    weapons = enemy_weapons.get_monster_weapons_all()
     stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters)}
     stats['armor'] = {'count':len(armor), 'contributors':{}}
     stats['weapons'] = {'count':len(weapons), 'contributors':{}}
@@ -601,11 +603,11 @@ def make_monster_weapon():
 		flash("Must be logged in to do that. This incident will be logged.")
 		return redirect("/")
 	user = session['displayname']
-	weapon = enemies.validate_monster_weapon(request.form, user)
+	weapon = enemy_weapons.validate_monster_weapon(request.form, user)
 	if not weapon:
 		flash("New Weapon is invalid. Could not add.")
 		return redirect("/monsterweaponeditor")
-	enemies.insert_monster_weapon(weapon)
+	enemy_weapons.insert_monster_weapon(weapon)
 	flash("Enemy Weapon Added to Armory!")
 	return redirect("/monsterweaponeditor")
 
@@ -641,11 +643,11 @@ def make_monster_weapon_mapping():
 	if not check_auth(session):
 		flash("Must be logged in to do that.")
 		return redirect("/")
-	mapping = enemies.validate_monster_weapon_map(request.form)
+	mapping = enemy_weapons.validate_monster_weapon_map(request.form)
 	if not mapping:
 		flash("New mapping not valid. Could not add.")
 		return redirect("/")
-	enemies.insert_monster_weapon_map(mapping)
+	enemy_weapons.insert_monster_weapon_map(mapping)
 	flash("Weapon Assigned to Enemy Successfully!")
 	return redirect("/monsterweaponeditor")
 
@@ -789,10 +791,10 @@ def show_monster_weapons():
 	if not check_auth(session):
 		flash("you must be logged in to see that.")
 		return redirect("/")
-	mWeapons = enemies.get_monster_weapons_all()
+	mWeapons = enemy_weapons.get_monster_weapons_all()
 	munsters = enemies.get_monsters()
 	for weapon in mWeapons:
-		maps = enemies.get_weapons_monsters(weapon['pk_id'])
+		maps = enemy_weapons.get_weapons_monsters(weapon['pk_id'])
 		weapon['maps'] = maps
 	return render_template("monster_weapons.html", weapons=mWeapons, monsters=munsters)
 
@@ -822,7 +824,7 @@ def show_monster_weapon_editor():
 	if not check_auth(session):
 		flash("must be logged in to see that.")
 		return redirect("/")
-	mWeps = enemies.get_monster_weapons_all()
+	mWeps = enemy_weapons.get_monster_weapons_all()
 	munsters = enemies.get_monsters()
 	return render_template("monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
 
