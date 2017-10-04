@@ -8,6 +8,7 @@ import csv #sometimes we save or read stuff in .csv format. This helps with that
 import enemies
 import enemy_weapons
 import enemy_abilities
+import enemy_armor
 
 from flask import Flask, render_template, request, redirect, session, escape, flash
 import json #sometimes we load or save things in json. This helps with that.
@@ -442,7 +443,7 @@ def show_monsters_stats():
         return redirect("/")
     munsters = enemies.get_monsters()
     abilities = enemy_abilities.get_monster_abilities_all()
-    armor = enemies.get_monster_armor_all()
+    armor = enemy_armor.get_monster_armor_all()
     weapons = enemy_weapons.get_monster_weapons_all()
     stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters)}
     stats['armor'] = {'count':len(armor), 'contributors':{}}
@@ -618,11 +619,11 @@ def make_monster_armor():
 		flash("Must be logged in to do that. This incident willbe logged.")
 		return redirect("/")
 	user = session['displayname']
-	armor = enemies.validate_monster_armor(request.form, user)
+	armor = enemy_armor.validate_monster_armor(request.form, user)
 	if not armor:
 		flash("New Armor is invalid. Could not add.")
 		return redirect("/monsterarmoreditor")
-	enemies.insert_monster_armor(armor)
+	enemy_armor.insert_monster_armor(armor)
 	flash("Enemy Armor Added successfully!")
 	return redirect("/monsterarmoreditor")
 
@@ -657,11 +658,11 @@ def make_monster_armor_mapping():
 	if not check_auth(session):
 		flash("Must be logged in to do that.")
 		return redirect("/")
-	mapping = enemies.validate_monster_armor_map(request.form)
+	mapping = enemy_armor.validate_monster_armor_map(request.form)
 	if not mapping:
 		flash("New armor assignment invalid. Could not add.")
 		return redirect("/")
-	enemies.insert_monster_armor_map(mapping)
+	enemy_armor.insert_monster_armor_map(mapping)
 	flash("Armor Assignment successful!")
 	return redirect("/monsterarmoreditor")
 
@@ -772,7 +773,7 @@ def delete_monster_armor_map():
 		flash("You must be logged in to do that. This incident has been logged.")
 		return redirect("/")
 	flash("Armor taken away successfully")
-	enemies.delete_monster_armor_map(request.form['pk_id'])
+	enemy_armor.delete_monster_armor_map(request.form['pk_id'])
 	return redirect("/monsterarmor")
 
 @app.route("/monsterabilities")
@@ -804,10 +805,10 @@ def show_monster_armor():
 	if not check_auth(session):
 		flash("you must be logged in to see that")
 		return redirect("/")
-	mArmor = enemies.get_monster_armor_all()
+	mArmor = enemy_armor.get_monster_armor_all()
 	munsters = enemies.get_monsters()
 	for suit in mArmor:
-		maps = enemies.get_armors_monsters(suit['pk_id'])
+		maps = enemy_armor.get_armors_monsters(suit['pk_id'])
 		suit['maps'] = maps
 	return render_template("monster_armor.html", armor=mArmor, monsters=munsters)
 
@@ -834,7 +835,7 @@ def show_monster_armor_editor():
 	if not check_auth(session):
 		flash("you must be logged in to see that.")
 		return redirect("/")
-	mArmor = enemies.get_monster_armor_all()
+	mArmor = enemy_armor.get_monster_armor_all()
 	munsters = enemies.get_monsters()
 	return render_template("monster_armor_smith.html", session=session, armor=mArmor, monsters=munsters)
 
