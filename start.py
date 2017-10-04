@@ -1010,7 +1010,7 @@ if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    enemies.set_config(config)
+    enemies_common.set_config(config)
     
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
