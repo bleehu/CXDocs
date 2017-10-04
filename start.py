@@ -7,6 +7,7 @@ import csv #sometimes we save or read stuff in .csv format. This helps with that
 #main web app. It's how we respond to HTTP requests, etc.
 import enemies
 import enemy_weapons
+import enemy_abilities
 
 from flask import Flask, render_template, request, redirect, session, escape, flash
 import json #sometimes we load or save things in json. This helps with that.
@@ -440,7 +441,7 @@ def show_monsters_stats():
     if not check_auth(session):
         return redirect("/")
     munsters = enemies.get_monsters()
-    abilities = enemies.get_monster_abilities_all()
+    abilities = enemy_abilities.get_monster_abilities_all()
     armor = enemies.get_monster_armor_all()
     weapons = enemy_weapons.get_monster_weapons_all()
     stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters)}
@@ -589,11 +590,11 @@ def make_monster_ability():
 		flash("Must be logged in to do that.")
 		return redirect("/")
 	user = session['displayname']
-	ability = enemies.validate_monster_ability(request.form, user)
+	ability = enemy_abilities.validate_monster_ability(request.form, user)
 	if not ability:
 		flash("New ability not valid. Could not add.")
 		return redirect("/monsterabilityeditor")
-	enemies.insert_monster_ability(ability)
+	enemy_abilities.insert_monster_ability(ability)
 	flash("Enemy Ability Added!")
 	return redirect("/monsterabilityeditor")
 
@@ -630,11 +631,11 @@ def make_monster_ability_mapping():
 	if not check_auth(session):
 		flash("Must be logged in to do that.")
 		return redirect("/")
-	mapping = enemies.validate_monster_ability_map(request.form)
+	mapping = enemy_abilities.validate_monster_ability_map(request.form)
 	if not mapping:
 		flash("New mapping not valid. Could not add.")
 		return redirect("/monsterabilityeditor")
-	enemies.insert_monster_ability_map(mapping)
+	enemy_abilities.insert_monster_ability_map(mapping)
 	flash("Enemy Ability Assigned!")
 	return redirect("/monsterabilityeditor")
 

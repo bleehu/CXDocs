@@ -1,6 +1,7 @@
 import psycopg2
 import pdb
 import enemy_weapons
+import enemy_abilities
 import security
 
 def get_monsters():
