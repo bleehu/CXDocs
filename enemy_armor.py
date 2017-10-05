@@ -123,6 +123,16 @@ def delete_monster_armor_map(map_id):
     myCursor.close()
     connection.commit()
 
+def update_monster_armor(valid_armor, pk_id):
+    primary_key = int(pk_id)
+    if primary_key > 0:
+        connection = enemies_common.db_connection()
+        myCursor = connection.cursor()
+        armoString = (valid_armor['name'], valid_armor['coverage'], valid_armor['description'], valid_armor['author'], valid_armor['type'], valid_armor['ap_level'], valid_armor['armor_points'], valid_armor['mags'], valid_armor['cost'], valid_armor['hardpoints'], valid_armor['move_penalty'], pk_id)
+        myCursor.execute("UPDATE monsters_armors SET (name, coverage, description, author, type, ap_level, armor_points, mags, cost, hardpoints, move_penalty) = (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s) WHERE pk_id = %s" % armoString)
+        myCursor.close()
+        connection.commit()
+
     """
 DB migrations:
 mydb=# ALTER TABLE monsters_armors ADD COLUMN ap_level int DEFAULT 0 NOT NULL CHECK (ap_level > -1);

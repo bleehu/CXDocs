@@ -548,7 +548,7 @@ def show_monster_weapon_updater(pk_id):
 	if not check_auth(session):
 		return redirect("/")
 	monsters = enemies.get_monsters()
-	weapons = enemies.get_monster_weapons_all()
+	weapons = enemy_weapons.get_monster_weapons_all()
 	myWeapon = None
 	for weapon in weapons:
 		if weapon['pk_id'] == int(pk_id):
@@ -557,6 +557,21 @@ def show_monster_weapon_updater(pk_id):
 		flash("Could not find the weapon you wanted to update!")
 		return redirect("/monstersweapons")
 	return render_template("monster_weapon_update.html", session=session, monsters=monsters, weapons=weapons, pk_id=pk_id, myWeapon=myWeapon)
+
+@app.route("/monsterarmorupdate/<pk_id>")
+def show_monster_armor_updater(pk_id):
+	if not check_auth(session):
+		return redirect("/")
+	monsters = enemies.get_monsters()
+	armors = enemy_armor.get_monster_armor_all()
+	myArmor = None
+	for armor in armors:
+		if armor['pk_id'] == int(pk_id):
+			myArmor = armor
+	if myArmor == None:
+		flash("Could not find the armor you wanted to update!")
+		return redirect("/monstersarmors")
+	return render_template("monster_armor_update.html", monsters=monsters, session=session, pk_id=pk_id, myArmor=myArmor)
 
 @app.route("/monsterpic")
 def show_monster_photographer():
@@ -599,13 +614,27 @@ def update_monster_weapon(pk_id):
 		flash("Must be logged in to see this page.")
 		return redirect("/")
 	user = session['displayname']
-	weapon = enemies.validate_monster_weapon(request.form, user)
+	weapon = enemy_weapons.validate_monster_weapon(request.form, user)
 	if not weapon:
 		flash("Could not update weapon. Invalid input?")
 		return redirect("/monsterweaponupdate/%s" % pk_id)
 	enemies.update_monster_weapon(weapon, pk_id)
 	flash("Successfully updated enemy weapon!")
 	return redirect("/monsterweapons")
+
+@app.route("/updateMonsterArmor/<pk_id>", methods=['POST'])
+def update_monster_armor(pk_id):
+	if not check_auth(session):
+		flash("Must be logged in to do this.")
+		return redirect("")
+	user = session['displayname']
+	armor = enemy_armor.validate_monster_armor(request.form, user)
+	if not armor:
+		flash("Could not update Armor. Invalid input?")
+		return redirect("monsterarmorupdate/%s" % pk_id)
+	enemy_armor.update_monster_armor(armor, pk_id)
+	flash("Successfully updated enemy Armor!")
+	return redirect("/monsterarmor")
 
 @app.route("/newMonsterpic", methods=['POST'])
 def make_monster_pic():

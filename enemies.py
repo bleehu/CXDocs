@@ -102,8 +102,8 @@ def insert_monster(monster):
     connection.commit()
     
 def update_monster(monster, pk_id):
-    private_key = int(pk_id)
-    if private_key > 0:
+    primary_key = int(pk_id)
+    if primary_key > 0:
         connection = enemies_common.db_connection()
         myCursor = connection.cursor()
         monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'], pk_id)
@@ -112,8 +112,8 @@ def update_monster(monster, pk_id):
         connection.commit()
 
 def update_monster_weapon(weapon, pk_id):
-    private_key = int(pk_id)
-    if private_key > 0:
+    primary_key = int(pk_id)
+    if primary_key > 0:
         connection = enemies_common.db_connection()
         myCursor = connection.cursor()
         wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['description'], weapon['author'], weapon['type'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['reload_dc'], weapon['move_speed_penalty'], weapon['refmod'], weapon['fire_rate'], weapon['cost'], weapon['suppression_level'], pk_id)
