@@ -31,6 +31,26 @@
 								<input class="form-control" id="coverage" placeholder="##"  autocomplete="off" type="text" name="coverage">
 							</div>
 							<div class="col-lg-4">
+								<label for="cost" class="col-lg-2 control-label">Cost</label>
+								<input class="form-control" id="cost" placeholder="##"  autocomplete="off" type="text" name="cost">
+							</div>
+							<div class="col-lg-4">
+								<label for="ap_level" class="col-lg-2 control-label">Armor Pierce Level</label>
+								<input class="form-control" id="ap_level" placeholder="##"  autocomplete="off" type="text" name="ap_level">
+							</div>
+							<div class="col-lg-4">
+								<label for="armor_points" class="col-lg-2 control-label">Armor Points</label>
+								<input class="form-control" id="armor_points" placeholder="##"  autocomplete="off" type="text" name="armor_points">
+							</div>
+							<div class="col-lg-4">
+								<label for="mags" class="col-lg-2 control-label">Mag Space</label>
+								<input class="form-control" id="mags" placeholder="##"  autocomplete="off" type="text" name="mags">
+							</div>
+							<div class="col-lg-4">
+								<label for="move_penalty" class="col-lg-2 control-label">Move Penalty</label>
+								<input class="form-control" id="move_penalty" placeholder="##"  autocomplete="off" type="text" name="move_penalty">
+							</div>
+							<div class="col-lg-4">
 								<label for="typeSelect" class="col-lg-2 control-label">Type</label>
 								<select class="form-control" id="typeSelect" name="type">
 									<option value="Recon">Recon</option>
@@ -42,6 +62,12 @@
 								</select>
 							</div>
 						</div>
+					</fieldset>
+					<fieldset>
+						<legend>Hardpoint Equipment</legend>
+						<textarea class="form-control" type="textarea" name="hardpoints" rows="4" cols="70"></textarea>
+					</fieldset>
+					<fieldset>
 						<legend>Description</legend>
 						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
 						<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>

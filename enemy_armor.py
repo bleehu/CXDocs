@@ -50,7 +50,7 @@ def get_armors_monsters(armor_id):
 def validate_monster_armor(form, user):
     if None == user or user == '':
         return False
-    expected = set(['name', 'description', 'type', 'coverage', 'damagereduction'])
+    expected = set(['name', 'description', 'type', 'coverage', 'ap_level', 'armor_points', 'mags', 'cost', 'hardpoints', 'move_penalty'])
     if expected ^ set(form.keys()) != set([]):
         return False
     valid_armor = {}
@@ -58,10 +58,14 @@ def validate_monster_armor(form, user):
         valid_armor['name'] = security.sql_escape(form['name'])
         valid_armor['description'] = security.sql_escape(form['description'])
         valid_armor['coverage'] = int(form['coverage'])
-        valid_armor['damagereduction'] = security.sql_escape(form['damagereduction'])
         valid_armor['type'] = security.sql_escape(form['type'])
         valid_armor['author'] = user
-        
+        valid_armor['ap_level'] = int(form['ap_level'])
+        valid_armor['armor_points'] = int(form['armor_points']) 
+        valid_armor['mags'] = int(form['mags']) 
+        valid_armor['cost'] = int(form['cost'])
+        valid_armor['hardpoints'] = security.sql_escape(form['hardpoints'])
+        valid_armor['move_penalty'] = int(form['move_penalty'])
     except:
         return False
     return valid_armor
@@ -108,3 +112,15 @@ def delete_monster_armor_map(map_id):
     myCursor.execute("DELETE FROM monsters_armor_map WHERE pk_id = %s;" % del_id)
     myCursor.close()
     connection.commit()
+
+    """
+DB migrations:
+mydb=# ALTER TABLE monsters_armors ADD COLUMN ap_level int DEFAULT 0 NOT NULL CHECK (ap_level > -1);
+ALTER TABLE
+mydb=# ALTER TABLE monsters_armors ADD COLUMN armor_points int DEFAULT 0 NOT NULL CHECK (armor_points > -1);
+ALTER TABLE
+mydb=# ALTER TABLE monsters_armors ADD COLUMN mags int DEFAULT 0 NOT NULL CHECK (mags > -1);
+ALTER TABLE monsters_armors ADD COLUMN cost int DEFAULT 0 NOT NULL CHECK (cost > -1);
+ALTER TABLE monsters_armors ADD COLUMN hardpoints text;
+ALTER TABLE monsters_armors ADD COLUMN move_penalty int DEFAULT 0 NOT NULL CHECK (move_penalty > -1);
+    """
