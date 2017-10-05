@@ -69,10 +69,17 @@
 							<dl>
 								<dt>Name</dt><dd>{{armor['name']}}</dd>
 								<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
-								<dt>Damage Reduction</dt><dd>{{armor['damageReduction']}}</dd>
+								<dt>AP Level</dt><dd>{{armor['ap_level']}}</dd>
+								<dt>Armor Points</dt><dd>{{armor['armor_points']}}</dd>
                                 <dt>Armor Type:</dt><dd>{{armor['type']}}</dd>
-								<dt>Description</dt><dd>{{armor['description']}}</dd>
+								<dt>Mags</dt><dd>{{armor['mags']}}</dd>
+								<dt>Move Penalty</dt><dd>{{armor['move_penalty']}}</dd>
+								<dt>Cost</dt><dd>{{armor['cost']}}</dd>
 							</dl>
+							<h4>Description</h4>
+							<p> {{armor['description']}}</p>
+							<h4>Hardpoint Equipment</h4>
+							<p> {{armor['hardpoints']}} </p>
 						</div>
 						{% endfor %}
 						{% for ability in monster['abilities'] %}
