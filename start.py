@@ -571,7 +571,23 @@ def show_monster_armor_updater(pk_id):
 	if myArmor == None:
 		flash("Could not find the armor you wanted to update!")
 		return redirect("/monstersarmors")
-	return render_template("monster_armor_update.html", monsters=monsters, session=session, pk_id=pk_id, myArmor=myArmor)
+	return render_template("monster_armor_update.html", monsters=monsters, session=session, pk_id=pk_id, myArmor=myArmor, armors=armors)
+
+@app.route("/monsterabilityupdate/<pk_id>")
+def show_monster_ability_updater(pk_id):
+	if not check_auth(session):
+		flash("You must be logged in to update abilities!")
+		return redirect("/")
+	monsters = enemies.get_monsters()
+	abilities = enemy_abilities.get_monster_abilities_all()
+	myAbility = None
+	for ability in abilities:
+		if ability['pk_id'] == int(pk_id):
+			myAbility = ability
+	if myAbility == None:
+		flash("Could not find that ability!")
+		return redirect("/monsterabilities")
+	return render_template("monster_ability_update.html", monsters=monsters, session=session, pk_id=pk_id, myAbility=myAbility, abilities=abilities)
 
 @app.route("/monsterpic")
 def show_monster_photographer():
@@ -626,7 +642,7 @@ def update_monster_weapon(pk_id):
 def update_monster_armor(pk_id):
 	if not check_auth(session):
 		flash("Must be logged in to do this.")
-		return redirect("")
+		return redirect("/")
 	user = session['displayname']
 	armor = enemy_armor.validate_monster_armor(request.form, user)
 	if not armor:
@@ -635,6 +651,20 @@ def update_monster_armor(pk_id):
 	enemy_armor.update_monster_armor(armor, pk_id)
 	flash("Successfully updated enemy Armor!")
 	return redirect("/monsterarmor")
+
+@app.route("/updateMonsterAbility/<pk_id>", methods=['POST'])
+def update_monster_ability(pk_id):
+	if not check_auth(session):
+		flash("Must be logged in to do that!")
+		return redirect("/")
+	user = session['displayname']
+	ability = enemy_abilities.validate_monster_ability(request.form, user)
+	if not ability:
+		flash("Could not update ability. Invalid input?")
+		return redirect("monsterabilityupdate/%s" % pk_id)
+	enemy_abilities.update_monster_ability(ability, pk_id)
+	flash("Successfully updated enemy Ability!")
+	return redirect("/monsterabilities")
 
 @app.route("/newMonsterpic", methods=['POST'])
 def make_monster_pic():
