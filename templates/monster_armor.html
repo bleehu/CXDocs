@@ -27,8 +27,12 @@
 						<p> {{suit['description']}} </p>
 						<dl class="col-lg-3 col-md-3 col-sm-4">
 							<dt>Coverage</dt><dd>{{suit['coverage']}} %</dd>
-							<dt>DR</dt><dd>{{suit['damagereduction']}}</dd>
+							<dt>AP Level</dt><dd>{{suit['ap_level']}}</dd>
+							<dt>Armor Points</dt><dd>{{suit['armor_points']}} Points</dd>
 							<dt>Type:</dt><dd>{{suit['type']}}</dd>
+							<dt>Mags</dt><dd>{{suit['mags']}}</dd>
+							<dt>Move Penalty</dt><dd>{{suit['ap_level']}} m/action</dd>
+							<dt>Cost</dt><dd>${{suit['cost']}}</dd>
 							<dt>Author</dt><dd> {{suit['author']}} </dd>
 						</dl>
 						<div class="col-lg-3 col-md-3 col-sm-6">
@@ -57,6 +61,7 @@
 							</form>
 						</div>
 						<p> This suit proudly presented by {{ suit['author'] }}</p>
+						<p><a href="/monsterarmorupdate/{{suit['pk_id']}}" class="btn btn-warning btn-xs">Update this Armor</a></p>
 						<p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
 					</div> <!-- end panel-body -->
 				</div>

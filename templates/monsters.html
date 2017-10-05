@@ -53,13 +53,13 @@
 							<h4> Weapon </h4>
 							<dl >
 								<dt>Name</dt><dd>{{weapon['name']}}</dd>
-								<dt>Range</dt><dd>{{weapon['range']}}m</dd>
 								<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
-								<dt>Accuracy</dt><dd>{{weapon['accuracy']}}% to miss</dd>
+								<dt>Range</dt><dd>{{weapon['r1']}}m/{{weapon['r2']}}m/{{weapon['r3']}}m</dd>
+								<dt>Accuracy</dt><dd>{{weapon['acc1']}}/{{weapon['acc2']}}/{{weapon['acc3']}} to miss</dd>
                                 <dt>Type</dt><dd>{{weapon['type']}}</dd>
                                 <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}</dd>
                                 <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
-								<dt>Description</dt><dd>{{weapon['description']}}% to miss</dd>
+								<dt>Description</dt><dd>{{weapon['description']}}</dd>
 							</dl>
 						</div>
 						{% endfor %}
@@ -69,10 +69,17 @@
 							<dl>
 								<dt>Name</dt><dd>{{armor['name']}}</dd>
 								<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
-								<dt>Damage Reduction</dt><dd>{{armor['damageReduction']}}</dd>
+								<dt>AP Level</dt><dd>{{armor['ap_level']}}</dd>
+								<dt>Armor Points</dt><dd>{{armor['armor_points']}}</dd>
                                 <dt>Armor Type:</dt><dd>{{armor['type']}}</dd>
-								<dt>Description</dt><dd>{{armor['description']}}</dd>
+								<dt>Mags</dt><dd>{{armor['mags']}}</dd>
+								<dt>Move Penalty</dt><dd>{{armor['move_penalty']}}</dd>
+								<dt>Cost</dt><dd>{{armor['cost']}}</dd>
 							</dl>
+							<h4>Description</h4>
+							<p> {{armor['description']}}</p>
+							<h4>Hardpoint Equipment</h4>
+							<p> {{armor['hardpoints']}} </p>
 						</div>
 						{% endfor %}
 						{% for ability in monster['abilities'] %}

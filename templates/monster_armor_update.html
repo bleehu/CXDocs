@@ -6,49 +6,50 @@
 	{% block body %}
 		<div class="container">
 			<div class="page-header">
-				<h1> Enemy Armor Editor </h1>
+				<h1> Update Enemy Armor: {{myArmor['name']}} </h1>
 			</div>
 			<div class="col-lg-6">
-			<h2> Create New Enemy Armor </h2>
+			<h2> Update Enemy Armor: {{myArmor['name']}} </h2>
 			<p>More than one enemy may have the same type of armor assigned to it. For instance, both a Pirate
 				Breacher and a marine shotgunner may have the same light armor. In addition, some enemies like 
 				those with power armor may have more than one type of armor. In the case of power armor, the outer layer is discarded when it is destroyed. </p>
-				<form class="form-horizontal" action="/newMonsterArmor" method="post" autocomplete="off">
+				<form class="form-horizontal" action="/updateMonsterArmor/{{pk_id}}" method="post" autocomplete="off">
 					<fieldset>
 						<div class="form-group">
 							<div class="col-lg-8">
 								<label for="gunName" class="gol-lg-2 control-label"> Name </label>
-								<input id="gunName" class="form-control" name="name" placeholder="name of armor" type="text"/>
+								<input id="gunName" class="form-control" name="name" value="{{myArmor['name']}}" type="text"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="col-lg-4">
 								<label for="coverage" class="col-lg-2 control-label">Coverage</label>
-								<input class="form-control" id="coverage" placeholder="##"  autocomplete="off" type="text" name="coverage">
+								<input class="form-control" id="coverage" value="{{myArmor['coverage']}}"  autocomplete="off" type="text" name="coverage">
 							</div>
 							<div class="col-lg-4">
 								<label for="cost" class="col-lg-2 control-label">Cost</label>
-								<input class="form-control" id="cost" placeholder="##"  autocomplete="off" type="text" name="cost">
+								<input class="form-control" id="cost" value="{{myArmor['cost']}}"  autocomplete="off" type="text" name="cost">
 							</div>
 							<div class="col-lg-4">
 								<label for="ap_level" class="col-lg-2 control-label">Armor Pierce Level</label>
-								<input class="form-control" id="ap_level" placeholder="##"  autocomplete="off" type="text" name="ap_level">
+								<input class="form-control" id="ap_level" value="{{myArmor['ap_level']}}"  autocomplete="off" type="text" name="ap_level">
 							</div>
 							<div class="col-lg-4">
 								<label for="armor_points" class="col-lg-2 control-label">Armor Points</label>
-								<input class="form-control" id="armor_points" placeholder="##"  autocomplete="off" type="text" name="armor_points">
+								<input class="form-control" id="armor_points" value="{{myArmor['armor_points']}}"  autocomplete="off" type="text" name="armor_points">
 							</div>
 							<div class="col-lg-4">
 								<label for="mags" class="col-lg-2 control-label">Mag Space</label>
-								<input class="form-control" id="mags" placeholder="##"  autocomplete="off" type="text" name="mags">
+								<input class="form-control" id="mags" value="{{myArmor['mags']}}"  autocomplete="off" type="text" name="mags">
 							</div>
 							<div class="col-lg-4">
 								<label for="move_penalty" class="col-lg-2 control-label">Move Penalty</label>
-								<input class="form-control" id="move_penalty" placeholder="##"  autocomplete="off" type="text" name="move_penalty">
+								<input class="form-control" id="move_penalty" value="{{myArmor['move_penalty']}}"  autocomplete="off" type="text" name="move_penalty">
 							</div>
 							<div class="col-lg-4">
 								<label for="typeSelect" class="col-lg-2 control-label">Type</label>
 								<select class="form-control" id="typeSelect" name="type">
+									<option value="{{myArmor['type']}}">{{myArmor['type']}}</option>
 									<option value="Recon">Recon</option>
 									<option value="Light">Light</option>
 									<option value="Medium">Medium</option>
@@ -61,11 +62,11 @@
 					</fieldset>
 					<fieldset>
 						<legend>Hardpoint Equipment</legend>
-						<textarea class="form-control" type="textarea" name="hardpoints" rows="4" cols="70"></textarea>
+						<textarea class="form-control" type="textarea" name="hardpoints" rows="4" cols="70">{{myArmor['hardpoints']}}</textarea>
 					</fieldset>
 					<fieldset>
 						<legend>Description</legend>
-						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
+						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70">{{myArmor['description']}}</textarea>
 						<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
 					</fieldset>
 				</form>
