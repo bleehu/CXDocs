@@ -1,0 +1,81 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Enemy Ability Editor</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+		<script  src="../static/npcgen.js"></script>
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Enemy Ability Editor: {{myAbility['name']}} </h1>
+			</div>
+			<div class="col-lg-8">
+			<p>More than one enemy may have the same ability assigned to it. For instance, both a Pirate
+				Breacher and a marine shotgunner have the same Bulltrue ability. In addition, an enemy like 
+				a marine shotgunner may have more than one ability.</p>
+				<form class="form-horizontal" action="/updateMonsterAbility/{{pk_id}}" method="post" autocomplete="off">
+					<div class="col-lg-4">
+						<fieldset>
+							<legend>Identifiers</legend>
+							Name:
+							<input class="form-control" id="unit_name" value="{{myAbility['name']}}" name="name"><br/>
+							Type:
+							<Select name="type" id="type">
+								<option>{{myAbility['type']}}</option>
+								<option>Passive</option>
+								<option>Action</option>
+								<option>Reaction</option>
+								<option>On Death</option>
+								<option>Other</option>
+							</select>
+						</fieldset>
+					</div>
+					<div class="col-lg-8">
+						<fieldset>
+						<legend>Description</legend>
+						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70">{{myAbility['description']}}</textarea>
+						</fieldset>
+					</div>
+					<div class="col-lg-4">
+						<fieldset>
+							<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+			<div class="col-lg-4">
+				<h2> Existing Abilities </h2>
+				<table class="table table-striped table-hover">
+				{% for ability in abilities %}
+					<tr>
+						<td>{{ability ['name']}}</td>
+						<td>{{ability['type']}}</td>
+						<td><form action="deletemonsterability/{{ability['pk_id']}}" method="POST">
+							<input type="submit" value="Delete" class="form-control"> 
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+			<div class="col-lg-8">
+				<h2> Assign abilities </h2>
+				<p>Once you've created an ability, it must be assigned to one or more enemy. Deleting an ability will 
+					remove that ability from every enemy that has it. </p>
+				<form class="form-horizontal" action="/assignMonsterAbility" method="POST">
+					<select name="monster_id">
+						{% for monster in monsters %}
+						<option value="{{monster['pk_id']}}"> {{monster['name']}} </option>
+						{% endfor %}
+					</select>
+					<select name="ability_id">
+						{% for ability in abilities %}
+						<option value="{{ability['pk_id']}}"> {{ability['name']}} </option>
+						{% endfor %}
+					</select>
+					<input class="form-button btn btn-success" type="submit" value="Give ability to Enemy">
+				</form>
+			</div>
+		</div>
+	{% endblock %}
+	

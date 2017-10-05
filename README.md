@@ -17,9 +17,15 @@ to find your local ip address on linux, use ifconfig.
 to find your local ip address on windows, use ipconfig in bash
 
 For WWW use:
-No F---ing way. It's not even close to being secure or ready yet. Don't go there.
-When we *are* ready, use an apache server and make sure to configure 
-it for HTTPS using openssl TLS 1.2 minimum. Also check to see if nginx is free.
+CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are still some improvements that should be made in order to keep it safe. 
+
+## Setting up postgres for bestiary
+On Ubuntu 16.04, you will need Postgres 9.5 (which should be already installed).
+You will need to configure postres to accept CXDocs to login with a username and password. To do this, you'll need to edit /etc/postgresql/9.5/main/pg_hba.conf and add something like 
+`local mydb searcher password`
+to the file. 
+Before CXDocs is able to log in, you will need to also create the appropriate user on your particular database and declare it's password. Details on how to do that here:
+`https://www.postgresql.org/docs/9.5/static/auth-methods.html#AUTH-PASSWORD`
 
 # Documentation
 To add to this project, check out these links:

@@ -132,16 +132,3 @@ def update_monster_armor(valid_armor, pk_id):
         myCursor.execute("UPDATE monsters_armors SET (name, coverage, description, author, type, ap_level, armor_points, mags, cost, hardpoints, move_penalty) = (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s) WHERE pk_id = %s" % armoString)
         myCursor.close()
         connection.commit()
-
-    """
-DB migrations:
-mydb=# ALTER TABLE monsters_armors ADD COLUMN ap_level int DEFAULT 0 NOT NULL CHECK (ap_level > -1);
-ALTER TABLE
-mydb=# ALTER TABLE monsters_armors ADD COLUMN armor_points int DEFAULT 0 NOT NULL CHECK (armor_points > -1);
-ALTER TABLE
-mydb=# ALTER TABLE monsters_armors ADD COLUMN mags int DEFAULT 0 NOT NULL CHECK (mags > -1);
-ALTER TABLE monsters_armors ADD COLUMN cost int DEFAULT 0 NOT NULL CHECK (cost > -1);
-ALTER TABLE monsters_armors ADD COLUMN hardpoints text;
-ALTER TABLE monsters_armors ADD COLUMN move_penalty int DEFAULT 0 NOT NULL CHECK (move_penalty > -1);
-ALTER TABLE monsters_armors DROP COLUMN damagereduction;
-    """
