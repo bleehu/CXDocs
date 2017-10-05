@@ -97,7 +97,7 @@ def insert_monster_armor(armor):
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
     armorstring = (armor['name'], armor['coverage'], armor['type'], armor['description'], armor['author'], armor['ap_level'], armor['armor_points'], armor['mags'], armor['cost'], armor['hardpoints'], armor['move_penalty'])
-    myCursor.execute("INSERT INTO monsters_armors (name, coverage, type, description, author) VALUES (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s);" % armorstring)
+    myCursor.execute("INSERT INTO monsters_armors (name, coverage, type, description, author, ap_level, armor_points, mags, cost, hardpoints, move_penalty) VALUES (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s);" % armorstring)
     myCursor.close()
     connection.commit()
 
