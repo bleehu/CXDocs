@@ -105,13 +105,3 @@ def delete_monster_ability_map(map_id):
     myCursor.execute("DELETE FROM monsters_ability_map WHERE pk_id = %s;" % del_id)
     myCursor.close()
     connection.commit()
-
-def update_monster_ability(valid_ability, pk_id):
-    primary_key = int(pk_id)
-    if primary_key > 0:
-        connection = enemies_common.db_connection()
-        myCursor = connection.cursor()
-        abilString = (valid_ability['name'], valid_ability['type'], valid_ability['description'], valid_ability['author'], pk_id)
-        myCursor.execute("UPDATE monsters_abilities SET (name, type, description, author) = (E'%s', E'%s', E'%s', E'%s') WHERE pk_id = %s" % abilString)
-        myCursor.close()
-        connection.commit()
