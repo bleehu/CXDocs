@@ -1,13 +1,18 @@
 {%extends "layout.html"%}
 	{%block head%}
+		<!-- This line changes the words in the tab in the browser -->
 		<title>CX Docs</title>
+		<!-- This line links to the Cascading Style Sheet (CSS) which dictates the color, alignment and style of the page. -->
 		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+		<!-- This line links to the javascript file which handles the loading of the news panels. -->
+		<script  src="../static/news.js"></script>
 	{% endblock %}
 	{% block body %}
 		<div class="container">
 			<div class="page-header">
 				<h1> Compound X Players Documentation </h1>
 			</div>
+			<div class="row">
 			<div class="col-lg-4">
 			{% if 'username' in session %}
 				<div class="list-group table-of-contents">
@@ -52,6 +57,8 @@
 				</form>
 			{% endif %}
 			</div>
+		</div>
+		<div class="row">
 			<div class="col-lg-8">
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available interactive pages:</p>
@@ -98,17 +105,28 @@
 						<a class="list-group-item" href="armorsmith">Armor Smithy</a>
 						<a class="list-group-item" href="weaponsmith">Weapon Smithy</a>
 						<a class="list-group-item" href="itemsmith">Item Smithy</a>
-						<!--<a class="list-group-item" href="monster">Enemy Armor/Weapon Editor </a>-->
 					</div>
 				</div>
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available Help Pages:</p>
 					<div class="list-group table-of-contents">
 						<a class="list-group-item" href="monsterweaponshowto">How to: Enemy Weapons</a>
-						<!--<a class="list-group-item" href="monster">Enemy Armor/Weapon Editor </a>-->
 					</div>
 				</div>
 				{% endif %}
+				</div>
+			</div>
+			<div class="row">
+				<h2> Development News </h2>
+				<div class="col-lg-5 col-md-6" id="cxNewsDiv">
+					<h3> Compound X Rules </h3>
+					<p> Loading... </p>
+				</div>
+				<div class="col-lg-5 col-md-6" id="doxNewsDiv">
+					<h3> CX Docs </h3>
+					<p> Loading... </p>
+				</div>
+			</div>
 			</div>
 		</div>
 	{% endblock %}
