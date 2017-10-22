@@ -607,6 +607,7 @@ def make_monster():
 		flash('Enemy invalid. Could not add')
 		return redirect("/monstereditor")
 	enemies.insert_monster(monster)
+	log.info('User %s created monster: %s.', user, monster.name)
 	flash('Enemy added!')
 	return redirect("/monstereditor")
 
@@ -621,6 +622,7 @@ def update_monster(pk_id):
 		flash("Enemy invalid. Could not add.")
 		return redirect("/monsterupdate/%s" % pk_id)
 	enemies.update_monster(monster, pk_id)	
+	log.info('User %s updated monster: %s.', user, monster.name)
 	flash("Enemy updated!")
 	return redirect("/monster")
 		
@@ -635,6 +637,7 @@ def update_monster_weapon(pk_id):
 		flash("Could not update weapon. Invalid input?")
 		return redirect("/monsterweaponupdate/%s" % pk_id)
 	enemies.update_monster_weapon(weapon, pk_id)
+	log.info('User %s updated enemy weapon: %s.', user, weapon.name)
 	flash("Successfully updated enemy weapon!")
 	return redirect("/monsterweapons")
 
@@ -649,6 +652,7 @@ def update_monster_armor(pk_id):
 		flash("Could not update Armor. Invalid input?")
 		return redirect("monsterarmorupdate/%s" % pk_id)
 	enemy_armor.update_monster_armor(armor, pk_id)
+	log.info('User %s updated enemy Armor: %s', user, armor.name)
 	flash("Successfully updated enemy Armor!")
 	return redirect("/monsterarmor")
 
@@ -663,6 +667,7 @@ def update_monster_ability(pk_id):
 		flash("Could not update ability. Invalid input?")
 		return redirect("monsterabilityupdate/%s" % pk_id)
 	enemy_abilities.update_monster_ability(ability, pk_id)
+	log.info('User %s updated enemy Ability: %s', user, ability.name)
 	flash("Successfully updated enemy Ability!")
 	return redirect("/monsterabilities")
 
@@ -693,6 +698,7 @@ def make_monster_ability():
 		flash("New ability not valid. Could not add.")
 		return redirect("/monsterabilityeditor")
 	enemy_abilities.insert_monster_ability(ability)
+	log.info('User %s created enemy Ability: %s.', user, ability.name)
 	flash("Enemy Ability Added!")
 	return redirect("/monsterabilityeditor")
 
@@ -707,6 +713,7 @@ def make_monster_weapon():
 		flash("New Weapon is invalid. Could not add.")
 		return redirect("/monsterweaponeditor")
 	enemy_weapons.insert_monster_weapon(weapon)
+	log.info('User %s created enemy Weapon: %s.', user, weapon.name)
 	flash("Enemy Weapon Added to Armory!")
 	return redirect("/monsterweaponeditor")
 
@@ -721,6 +728,7 @@ def make_monster_armor():
 		flash("New Armor is invalid. Could not add.")
 		return redirect("/monsterarmoreditor")
 	enemy_armor.insert_monster_armor(armor)
+	log.info('User %s created enemy Armor: %s', user, armor.name)
 	flash("Enemy Armor Added successfully!")
 	return redirect("/monsterarmoreditor")
 
