@@ -32,6 +32,10 @@ class Character:
 		else:
 			return 0
 
+def validate_character(form, user):
+	
+	return newCharacter
+
 """Returns a map with a list of character objects in map['characters']. 
 	Also contains a list of primary keys in map['pk_list']"""
 def get_characters(session):
