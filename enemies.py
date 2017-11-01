@@ -143,6 +143,7 @@ def update_monster_weapon(weapon, pk_id):
         reflex int NOT NULL,
         description text,
         role text,
+        created_at timestamp NOT NULL DEFAULT now(),
         author text
     );
     INSERT INTO monsters (name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level) VALUES ('Pirate Breacher', 210, 70, 8,3,10,2,2,6,2,12,12,6, 'A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.', 'Tank', 5);
@@ -151,6 +152,7 @@ def update_monster_weapon(weapon, pk_id):
         name text NOT NULL,
         type text NOT NULL,
         description text NOT NULL,
+        created_at timestamp NOT NULL DEFAULT now(),
         author text
     );
     INSERT INTO monsters_abilities (name, type, description) values ( 'Bulltrue', 'reaction', E'Once per round when an enemy moved into an area that the breacher can see which is within 3m and if the breacher has a round still in their shotgun and the weapon is drawn cher may interrupt their opponent\'s turn to fire at that enemy. The enemy then resumes their turn as normal.');
@@ -172,6 +174,7 @@ def update_monster_weapon(weapon, pk_id):
         capacity int NOT NULL CHECK (capacity > -1),
         description text,
         mag_cost int CHECK (mag_cost > -1),
+        created_at timestamp NOT NULL DEFAULT now(),
         author text);
     CREATE TABLE monsters_armor_map(
         pk_id int primary key default nextval('monster_armor_map_pk_seq'),
