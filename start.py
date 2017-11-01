@@ -203,7 +203,7 @@ def get_user_postgres(username, password):
 """ only used externally to write a sort-of encrypted local file with login info, in case 
 		setting up postgres is too hard. set_users_to should be a dictionary of dictionaries
 		were the first is sorted by username and the second layer of dictionaries holds the 
-		information from the character.py data type."""
+		information from the characters.py data type."""
 def set_users(set_users_to):
 	if str(type(set_users_to)) != "<type 'dict'>":
 		raise ValueError("Cannot set users to a non-dictionary type")
@@ -230,7 +230,7 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
-		pc = character.from_string(session['character']) 
+		pc = characters.get_character(session['character']) 
 	return render_template('index.html', session=session, character=pc) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
@@ -289,16 +289,16 @@ def show_armor():
 def show_char_select():
 	if 'username' not in session.keys():
 		return redirect("/")
-	chars = character.get_characters(session)
+	chars = characters.get_characters()
 	pc = None
 	if 'character' in session.keys():
-		pc = character.from_string(session['character'])
+		pc = characters.get_character(pk_id)
 	return render_template('character_select.html', characters=chars, session=session, character=pc)
 
 @app.route("/playercharacters")
 def show_player_characters():
 	#SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
-	pcs = character.get_characters()
+	pcs = characters.get_characters()
 	return render_template("player_characters.html", pcs = pcs)
 	
 @app.route("/select/character", methods=['POST'])

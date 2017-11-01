@@ -8,8 +8,8 @@ def get_characters():
     myCursor = connection.cursor()
     myCursor.execute("SELECT name, health, nanites, \
         strength, perception, fortitude, charisma, intelligence, dexterity, luck, \
-        shock, will, reflex, description, race, class, \
-        owner, money, created_at FROM characters ORDER BY level;")
+        level, shock, will, reflex, description, race, class, \
+        fk_owner_id, money, created_at FROM characters ORDER BY level;")
     characters = []
     results = myCursor.fetchall()
     for line in results:
@@ -167,12 +167,12 @@ def update_character(character, pk_id):
         race text NOT NULL,
         class text NOT NULL,
         fk_owner_id int references users(pk_id) ON DELETE CASCADE,
-        int money default 0,
+        money int default 0,
         created_at timestamp NOT NULL DEFAULT now()
     );
 INSERT INTO characters (fk_owner_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, level, shock, will, reflex, race, class) VALUES
 (1, 'test', 100, 110, 8, 5, 6, 7, 8, 6, 2, 1, 12, 12, 12, 'Human', 'Gunslinger');
 
-
+GRANT SELECT ON characters TO searcher;
 
     """
