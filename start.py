@@ -1,6 +1,7 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
-import character #character is a custom data type that we created to handle character information on the backend.
+import characters #character is a custom data type that we created to handle character information on the backend.
+import characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
@@ -164,22 +165,6 @@ def get_missions():
 		missions.append(new_mission)
 	return missions
 
-def get_playercharacters():
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.fk_owner = users.pk_id ORDER BY displayname, level, name;")
-	pcs = []
-	results = myCursor.fetchall()
-	for pc in results:
-		newPC = {}
-		newPC['name'] = pc[0]
-		newPC['level'] = int(pc[1])
-		newPC['race'] = pc[2]
-		newPC['class'] = pc[3]
-		newPC['displayname'] = pc[4]
-		pcs.append(newPC)
-	return pcs
-
 def get_races():
 	races = None
 	with open("docs/races.json") as racefile:
@@ -218,7 +203,7 @@ def get_user_postgres(username, password):
 """ only used externally to write a sort-of encrypted local file with login info, in case 
 		setting up postgres is too hard. set_users_to should be a dictionary of dictionaries
 		were the first is sorted by username and the second layer of dictionaries holds the 
-		information from the character.py data type."""
+		information from the characters.py data type."""
 def set_users(set_users_to):
 	if str(type(set_users_to)) != "<type 'dict'>":
 		raise ValueError("Cannot set users to a non-dictionary type")
@@ -245,7 +230,7 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
-		pc = character.from_string(session['character']) 
+		pc = characters.get_character(session['character']) 
 	return render_template('index.html', session=session, character=pc) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
@@ -304,16 +289,16 @@ def show_armor():
 def show_char_select():
 	if 'username' not in session.keys():
 		return redirect("/")
-	chars = character.get_characters(session)
+	chars = characters.get_characters()
 	pc = None
 	if 'character' in session.keys():
-		pc = character.from_string(session['character'])
+		pc = characters.get_character(pk_id)
 	return render_template('character_select.html', characters=chars, session=session, character=pc)
 
 @app.route("/playercharacters")
 def show_player_characters():
 	#SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
-	pcs = get_playercharacters()
+	pcs = characters.get_characters()
 	return render_template("player_characters.html", pcs = pcs)
 	
 @app.route("/select/character", methods=['POST'])
@@ -1079,6 +1064,7 @@ if __name__ == "__main__":
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
     enemies_common.set_config(config)
+    characters_common.set_config(config)
     
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
