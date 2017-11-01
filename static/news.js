@@ -11,12 +11,12 @@
 
         var cxUpdateRequest = new XMLHttpRequest();
         cxUpdateRequest.onreadystatechange = gitNews;
-        cxUpdateRequest.open("GET", "http://api.github.com/repos/trowl223/compound_x/commits?since=" + startString, true);
+        cxUpdateRequest.open("GET", "https://api.github.com/repos/trowl223/compound_x/commits?since=" + startString, true);
         cxUpdateRequest.send();
 
         var doxUpdateRequest = new XMLHttpRequest();
         doxUpdateRequest.onreadystatechange = doxNews;
-        doxUpdateRequest.open("GET", "http://api.github.com/repos/bleehu/CXDocs/commits?since=" + startString, true);
+        doxUpdateRequest.open("GET", "https://api.github.com/repos/bleehu/CXDocs/commits?since=" + startString, true);
         doxUpdateRequest.send();
 
     }
