@@ -6,7 +6,10 @@ import security
 def get_characters():
 	connection = characters_common.db_connection()
 	myCursor = connection.cursor()
-    myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, race, class, owner, money, created_at FROM characters ORDER BY level;")
+    myCursor.execute("SELECT name, health, nanites, \
+    	strength, perception, fortitude, charisma, intelligence, dexterity, luck, \
+    	shock, will, reflex, description, race, class, \
+    	owner, money, created_at FROM characters ORDER BY level;")
     characters = []
     results = myCursor.fetchall()
     for line in results:
@@ -36,7 +39,9 @@ def get_characters():
 
 def validate_character(form, user):
 	#check to make sure nobody is tampering with the web form.
-	expected = set(['name', 'description', 'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', 'reflex', 'will', 'shock', 'health', 'nanites', 'race', 'class'])
+	expected = set(['name', 'description', \
+		'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', \
+		'reflex', 'will', 'shock', 'health', 'nanites', 'race', 'class'])
     if expected ^ set(form.keys()) != set([]):
         return False
     character = {}
