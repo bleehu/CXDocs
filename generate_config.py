@@ -7,6 +7,7 @@ if not os.path.exists('config'):
 config = ConfigParser.RawConfigParser()
 
 config.add_section('Enemies')
+config.add_section('Characters')
 config.set('Enemies', 'pics_file_path', os.path.abspath('static/images/monsters/bypk_id'))
 config.set('Enemies', 'enemies_psql_user', 'searcher')
 config.set('Enemies', 'enemies_psql_db', 'mydb')
