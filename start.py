@@ -1,6 +1,7 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
-import character #character is a custom data type that we created to handle character information on the backend.
+import characters #character is a custom data type that we created to handle character information on the backend.
+import characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
@@ -164,22 +165,6 @@ def get_missions():
 		missions.append(new_mission)
 	return missions
 
-def get_playercharacters():
-	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-	myCursor = connection.cursor()
-	myCursor.execute("SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.fk_owner = users.pk_id ORDER BY displayname, level, name;")
-	pcs = []
-	results = myCursor.fetchall()
-	for pc in results:
-		newPC = {}
-		newPC['name'] = pc[0]
-		newPC['level'] = int(pc[1])
-		newPC['race'] = pc[2]
-		newPC['class'] = pc[3]
-		newPC['displayname'] = pc[4]
-		pcs.append(newPC)
-	return pcs
-
 def get_races():
 	races = None
 	with open("docs/races.json") as racefile:
@@ -313,7 +298,7 @@ def show_char_select():
 @app.route("/playercharacters")
 def show_player_characters():
 	#SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
-	pcs = get_playercharacters()
+	pcs = character.get_characters()
 	return render_template("player_characters.html", pcs = pcs)
 	
 @app.route("/select/character", methods=['POST'])
@@ -1071,6 +1056,7 @@ if __name__ == "__main__":
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
     enemies_common.set_config(config)
+    characters_common.set_config(config)
     
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
