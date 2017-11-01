@@ -14,7 +14,7 @@ def get_monsters():
     results = myCursor.fetchall()
     for mun in results:
         newmun = {}
-        #add new monster's stats. TODO: cast integers to ints
+        #add new monster's stats.
         newmun['name'] = mun[0]
         newmun['health'] = mun[1]
         newmun['nanites'] = mun[2]
@@ -124,8 +124,7 @@ def update_monster_weapon(weapon, pk_id):
     
 """ 
     sql commands for initializing monsters database for tracking the beastiary
-    
-    CREATE SEQUENCE monsters_pk_seq NO CYCLE;
+    CREATE SEQUENCE monsters_pk_seq NO CYCLE;    
     CREATE TABLE monsters (
         pk_id int primary key default nextval('monsters_pk_seq'),
         name text NOT NULL,
