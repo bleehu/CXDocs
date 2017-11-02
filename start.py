@@ -138,7 +138,7 @@ def get_armor(session):
 		toHide = []
 		for set in arms[type]:
 			for k, v in set.items():
-				if v = ''
+				if v = '':
 					v = '0'
 			set['minLevel'] = int(set['minLevel'])
 			if 'username' in session.keys() or set['minLevel'] < 10: #don't serve level 10 gear unless logged in
