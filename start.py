@@ -137,7 +137,6 @@ def get_armor(session):
 	for kind in arms:
 		toHide = []
 		for ageis in arms[kind]:
-			pdb.set_trace()
 			for k, v in ageis.items():
 				if v == '':
 					ageis[k] = '0'
