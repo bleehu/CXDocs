@@ -134,23 +134,24 @@ def get_armor(session):
 	by_type = {}
 	with open("docs/armor.json") as armfile:
 		arms = json.loads(armfile.read())
-	for type in arms:
+	for kind in arms:
 		toHide = []
-		for set in arms[type]:
-			for k, v in set.items():
+		for ageis in arms[kind]:
+			pdb.set_trace()
+			for k, v in ageis.items():
 				if v == '':
-					v = '0'
-			set['minLevel'] = int(set['minLevel'])
-			if 'username' in session.keys() or set['minLevel'] < 10: #don't serve level 10 gear unless logged in
-				set['cost'] = int(set['cost'])
-				set['primaryMags'] = int(set['primaryMags'])
-				set['secondaryMags'] = int(set['secondaryMags'])
-				#set['damageReduction'] = int(set['damageReduction']) +1d10 is screwing it up
+					ageis[k] = '0'
+			ageis['minLevel'] = int(ageis['minLevel'])
+			if 'username' in session.keys() or ageis['minLevel'] < 10: #don't serve level 10 gear unless logged in
+				ageis['cost'] = int(ageis['cost'])
+				ageis['primaryMags'] = int(ageis['primaryMags'])
+				ageis['secondaryMags'] = int(ageis['secondaryMags'])
+				#ageis['damageReduction'] = int(ageis['damageReduction']) +1d10 is screwing it up
 			else:
-				toHide.append(set)
+				toHide.append(ageis)
 		if len(toHide) > 0:
 			for hider in toHide:
-				arms[type].remove(hider)
+				arms[kind].remove(hider)
 	return arms
 
 def get_missions():
