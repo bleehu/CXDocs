@@ -30,7 +30,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- Name: race; Type: TYPE; Schema: public; Owner: init
+-- Name: race; Type: TYPE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TYPE race AS ENUM (
@@ -42,7 +42,7 @@ CREATE TYPE race AS ENUM (
 );
 
 
-ALTER TYPE race OWNER TO init;
+ALTER TYPE race OWNER TO michaelhedges;
 
 --
 -- Name: role; Type: TYPE; Schema: public; Owner: init
@@ -122,7 +122,7 @@ CREATE TABLE armors (
 ALTER TABLE armors OWNER TO init;
 
 --
--- Name: monsters_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monsters_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monsters_pk_seq
@@ -133,10 +133,10 @@ CREATE SEQUENCE monsters_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monsters_pk_seq OWNER TO init;
+ALTER TABLE monsters_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: characters; Type: TABLE; Schema: public; Owner: init
+-- Name: characters; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE characters (
@@ -174,7 +174,7 @@ CREATE TABLE characters (
 );
 
 
-ALTER TABLE characters OWNER TO init;
+ALTER TABLE characters OWNER TO michaelhedges;
 
 --
 -- Name: characters_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
@@ -219,6 +219,35 @@ CREATE TABLE events (
 ALTER TABLE events OWNER TO init;
 
 --
+-- Name: login_log_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
+--
+
+CREATE SEQUENCE login_log_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE login_log_seq OWNER TO michaelhedges;
+
+--
+-- Name: login_audit_log; Type: TABLE; Schema: public; Owner: michaelhedges
+--
+
+CREATE TABLE login_audit_log (
+    pk_id integer DEFAULT nextval('login_log_seq'::regclass) NOT NULL,
+    username text NOT NULL,
+    password text NOT NULL,
+    ip_address text NOT NULL,
+    log_time timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE login_audit_log OWNER TO michaelhedges;
+
+--
 -- Name: missions_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
 --
 
@@ -247,7 +276,7 @@ CREATE TABLE missions (
 ALTER TABLE missions OWNER TO init;
 
 --
--- Name: monster_ability_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monster_ability_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monster_ability_map_pk_seq
@@ -258,10 +287,10 @@ CREATE SEQUENCE monster_ability_map_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monster_ability_map_pk_seq OWNER TO init;
+ALTER TABLE monster_ability_map_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: monster_ability_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monster_ability_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monster_ability_pk_seq
@@ -272,10 +301,10 @@ CREATE SEQUENCE monster_ability_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monster_ability_pk_seq OWNER TO init;
+ALTER TABLE monster_ability_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: monster_armor_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monster_armor_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monster_armor_map_pk_seq
@@ -286,10 +315,10 @@ CREATE SEQUENCE monster_armor_map_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monster_armor_map_pk_seq OWNER TO init;
+ALTER TABLE monster_armor_map_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: monster_armor_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monster_armor_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monster_armor_pk_seq
@@ -300,10 +329,10 @@ CREATE SEQUENCE monster_armor_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monster_armor_pk_seq OWNER TO init;
+ALTER TABLE monster_armor_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: monster_weapon_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monster_weapon_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monster_weapon_map_pk_seq
@@ -314,10 +343,10 @@ CREATE SEQUENCE monster_weapon_map_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monster_weapon_map_pk_seq OWNER TO init;
+ALTER TABLE monster_weapon_map_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: monster_weapon_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: monster_weapon_pk_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE monster_weapon_pk_seq
@@ -328,10 +357,10 @@ CREATE SEQUENCE monster_weapon_pk_seq
     CACHE 1;
 
 
-ALTER TABLE monster_weapon_pk_seq OWNER TO init;
+ALTER TABLE monster_weapon_pk_seq OWNER TO michaelhedges;
 
 --
--- Name: monsters; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters (
@@ -367,10 +396,10 @@ CREATE TABLE monsters (
 );
 
 
-ALTER TABLE monsters OWNER TO init;
+ALTER TABLE monsters OWNER TO michaelhedges;
 
 --
--- Name: monsters_abilities; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters_abilities; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters_abilities (
@@ -383,10 +412,10 @@ CREATE TABLE monsters_abilities (
 );
 
 
-ALTER TABLE monsters_abilities OWNER TO init;
+ALTER TABLE monsters_abilities OWNER TO michaelhedges;
 
 --
--- Name: monsters_ability_map; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters_ability_map; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters_ability_map (
@@ -396,10 +425,10 @@ CREATE TABLE monsters_ability_map (
 );
 
 
-ALTER TABLE monsters_ability_map OWNER TO init;
+ALTER TABLE monsters_ability_map OWNER TO michaelhedges;
 
 --
--- Name: monsters_armor_map; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters_armor_map; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters_armor_map (
@@ -409,10 +438,10 @@ CREATE TABLE monsters_armor_map (
 );
 
 
-ALTER TABLE monsters_armor_map OWNER TO init;
+ALTER TABLE monsters_armor_map OWNER TO michaelhedges;
 
 --
--- Name: monsters_armors; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters_armors; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters_armors (
@@ -438,10 +467,10 @@ CREATE TABLE monsters_armors (
 );
 
 
-ALTER TABLE monsters_armors OWNER TO init;
+ALTER TABLE monsters_armors OWNER TO michaelhedges;
 
 --
--- Name: monsters_weapon_map; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters_weapon_map; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters_weapon_map (
@@ -451,10 +480,10 @@ CREATE TABLE monsters_weapon_map (
 );
 
 
-ALTER TABLE monsters_weapon_map OWNER TO init;
+ALTER TABLE monsters_weapon_map OWNER TO michaelhedges;
 
 --
--- Name: monsters_weapons; Type: TABLE; Schema: public; Owner: init
+-- Name: monsters_weapons; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE monsters_weapons (
@@ -496,7 +525,7 @@ CREATE TABLE monsters_weapons (
 );
 
 
-ALTER TABLE monsters_weapons OWNER TO init;
+ALTER TABLE monsters_weapons OWNER TO michaelhedges;
 
 --
 -- Name: players_pk_seq; Type: SEQUENCE; Schema: public; Owner: init
@@ -513,7 +542,7 @@ CREATE SEQUENCE players_pk_seq
 ALTER TABLE players_pk_seq OWNER TO init;
 
 --
--- Name: skills_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: init
+-- Name: skills_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: michaelhedges
 --
 
 CREATE SEQUENCE skills_pk_id_seq
@@ -524,10 +553,10 @@ CREATE SEQUENCE skills_pk_id_seq
     CACHE 1;
 
 
-ALTER TABLE skills_pk_id_seq OWNER TO init;
+ALTER TABLE skills_pk_id_seq OWNER TO michaelhedges;
 
 --
--- Name: skills; Type: TABLE; Schema: public; Owner: init
+-- Name: skills; Type: TABLE; Schema: public; Owner: michaelhedges
 --
 
 CREATE TABLE skills (
@@ -538,7 +567,7 @@ CREATE TABLE skills (
 );
 
 
-ALTER TABLE skills OWNER TO init;
+ALTER TABLE skills OWNER TO michaelhedges;
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: init
@@ -652,7 +681,7 @@ SELECT pg_catalog.setval('armors_pk_seq', 1, false);
 
 
 --
--- Data for Name: characters; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: characters; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY characters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, level, shock, will, reflex, description, race, class, fk_owner_id, created_at, money) FROM stdin;
@@ -683,6 +712,13 @@ SELECT pg_catalog.setval('events_pk_seq', 1, false);
 
 
 --
+-- Name: login_log_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
+--
+
+SELECT pg_catalog.setval('login_log_seq', 9, true);
+
+
+--
 -- Data for Name: missions; Type: TABLE DATA; Schema: public; Owner: init
 --
 
@@ -703,49 +739,49 @@ SELECT pg_catalog.setval('missions_pk_seq', 7, true);
 
 
 --
--- Name: monster_ability_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monster_ability_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monster_ability_map_pk_seq', 43, true);
 
 
 --
--- Name: monster_ability_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monster_ability_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monster_ability_pk_seq', 33, true);
 
 
 --
--- Name: monster_armor_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monster_armor_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monster_armor_map_pk_seq', 25, true);
 
 
 --
--- Name: monster_armor_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monster_armor_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monster_armor_pk_seq', 15, true);
 
 
 --
--- Name: monster_weapon_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monster_weapon_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monster_weapon_map_pk_seq', 24, true);
 
 
 --
--- Name: monster_weapon_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monster_weapon_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monster_weapon_pk_seq', 30, true);
 
 
 --
--- Data for Name: monsters; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level, author, created_at) FROM stdin;
@@ -777,7 +813,7 @@ COPY monsters (pk_id, name, health, nanites, strength, perception, fortitude, ch
 
 
 --
--- Data for Name: monsters_abilities; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters_abilities; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters_abilities (pk_id, name, type, description, author, created_at) FROM stdin;
@@ -807,7 +843,7 @@ COPY monsters_abilities (pk_id, name, type, description, author, created_at) FRO
 
 
 --
--- Data for Name: monsters_ability_map; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters_ability_map; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters_ability_map (pk_id, fk_monster_id, fk_ability_id) FROM stdin;
@@ -845,7 +881,7 @@ COPY monsters_ability_map (pk_id, fk_monster_id, fk_ability_id) FROM stdin;
 
 
 --
--- Data for Name: monsters_armor_map; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters_armor_map; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters_armor_map (pk_id, fk_monster_id, fk_armor_id) FROM stdin;
@@ -868,7 +904,7 @@ COPY monsters_armor_map (pk_id, fk_monster_id, fk_armor_id) FROM stdin;
 
 
 --
--- Data for Name: monsters_armors; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters_armors; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters_armors (pk_id, name, coverage, description, author, type, ap_level, armor_points, mags, cost, hardpoints, move_penalty) FROM stdin;
@@ -885,14 +921,14 @@ COPY monsters_armors (pk_id, name, coverage, description, author, type, ap_level
 
 
 --
--- Name: monsters_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: monsters_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('monsters_pk_seq', 47, true);
 
 
 --
--- Data for Name: monsters_weapon_map; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters_weapon_map; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin;
@@ -919,7 +955,7 @@ COPY monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin;
 
 
 --
--- Data for Name: monsters_weapons; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: monsters_weapons; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY monsters_weapons (pk_id, name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level, created_at) FROM stdin;
@@ -950,7 +986,7 @@ SELECT pg_catalog.setval('players_pk_seq', 11, true);
 
 
 --
--- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: init
+-- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: michaelhedges
 --
 
 COPY skills (pk_id, fk_owner, name, value) FROM stdin;
@@ -959,11 +995,10 @@ COPY skills (pk_id, fk_owner, name, value) FROM stdin;
 
 
 --
--- Name: skills_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: init
+-- Name: skills_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelhedges
 --
 
 SELECT pg_catalog.setval('skills_pk_id_seq', 1, true);
-
 
 --
 -- Data for Name: weapon_attachments; Type: TABLE DATA; Schema: public; Owner: init
@@ -1018,7 +1053,7 @@ ALTER TABLE ONLY armors
 
 
 --
--- Name: characters_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: characters_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY characters
@@ -1034,6 +1069,14 @@ ALTER TABLE ONLY events
 
 
 --
+-- Name: login_audit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
+--
+
+ALTER TABLE ONLY login_audit_log
+    ADD CONSTRAINT login_audit_log_pkey PRIMARY KEY (pk_id);
+
+
+--
 -- Name: missions_pkey; Type: CONSTRAINT; Schema: public; Owner: init
 --
 
@@ -1042,7 +1085,7 @@ ALTER TABLE ONLY missions
 
 
 --
--- Name: monsters_abilities_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_abilities_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_abilities
@@ -1050,7 +1093,7 @@ ALTER TABLE ONLY monsters_abilities
 
 
 --
--- Name: monsters_ability_map_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_ability_map_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_ability_map
@@ -1058,7 +1101,7 @@ ALTER TABLE ONLY monsters_ability_map
 
 
 --
--- Name: monsters_armor_map_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_armor_map_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_armor_map
@@ -1066,7 +1109,7 @@ ALTER TABLE ONLY monsters_armor_map
 
 
 --
--- Name: monsters_armors_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_armors_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_armors
@@ -1074,7 +1117,7 @@ ALTER TABLE ONLY monsters_armors
 
 
 --
--- Name: monsters_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters
@@ -1082,7 +1125,7 @@ ALTER TABLE ONLY monsters
 
 
 --
--- Name: monsters_weapon_map_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_weapon_map_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_weapon_map
@@ -1090,7 +1133,7 @@ ALTER TABLE ONLY monsters_weapon_map
 
 
 --
--- Name: monsters_weapons_pkey; Type: CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_weapons_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_weapons
@@ -1130,7 +1173,7 @@ ALTER TABLE ONLY armor_attachments
 
 
 --
--- Name: characters_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: characters_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY characters
@@ -1146,7 +1189,7 @@ ALTER TABLE ONLY events
 
 
 --
--- Name: monsters_ability_map_fk_ability_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_ability_map_fk_ability_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_ability_map
@@ -1154,7 +1197,7 @@ ALTER TABLE ONLY monsters_ability_map
 
 
 --
--- Name: monsters_ability_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_ability_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_ability_map
@@ -1162,7 +1205,7 @@ ALTER TABLE ONLY monsters_ability_map
 
 
 --
--- Name: monsters_armor_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_armor_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_armor_map
@@ -1170,7 +1213,7 @@ ALTER TABLE ONLY monsters_armor_map
 
 
 --
--- Name: monsters_armor_map_fk_monsters_armors_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_armor_map_fk_monsters_armors_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_armor_map
@@ -1178,7 +1221,7 @@ ALTER TABLE ONLY monsters_armor_map
 
 
 --
--- Name: monsters_weapon_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_weapon_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_weapon_map
@@ -1186,7 +1229,7 @@ ALTER TABLE ONLY monsters_weapon_map
 
 
 --
--- Name: monsters_weapon_map_fk_weaponsr_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: init
+-- Name: monsters_weapon_map_fk_weaponsr_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: michaelhedges
 --
 
 ALTER TABLE ONLY monsters_weapon_map
@@ -1232,22 +1275,22 @@ GRANT SELECT ON TABLE armors TO searcher;
 
 
 --
--- Name: monsters_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monsters_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monsters_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monsters_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monsters_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monsters_pk_seq TO michaelhedges;
 GRANT USAGE ON SEQUENCE monsters_pk_seq TO searcher;
 
 
 --
--- Name: characters; Type: ACL; Schema: public; Owner: init
+-- Name: characters; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE characters FROM PUBLIC;
-REVOKE ALL ON TABLE characters FROM init;
-GRANT ALL ON TABLE characters TO init;
+REVOKE ALL ON TABLE characters FROM michaelhedges;
+GRANT ALL ON TABLE characters TO michaelhedges;
 GRANT SELECT ON TABLE characters TO searcher;
 
 
@@ -1262,6 +1305,26 @@ GRANT SELECT ON TABLE events TO searcher;
 
 
 --
+-- Name: login_log_seq; Type: ACL; Schema: public; Owner: michaelhedges
+--
+
+REVOKE ALL ON SEQUENCE login_log_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE login_log_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE login_log_seq TO michaelhedges;
+GRANT UPDATE ON SEQUENCE login_log_seq TO validator;
+
+
+--
+-- Name: login_audit_log; Type: ACL; Schema: public; Owner: michaelhedges
+--
+
+REVOKE ALL ON TABLE login_audit_log FROM PUBLIC;
+REVOKE ALL ON TABLE login_audit_log FROM michaelhedges;
+GRANT ALL ON TABLE login_audit_log TO michaelhedges;
+GRANT ALL ON TABLE login_audit_log TO validator;
+
+
+--
 -- Name: missions; Type: ACL; Schema: public; Owner: init
 --
 
@@ -1272,132 +1335,132 @@ GRANT SELECT ON TABLE missions TO searcher;
 
 
 --
--- Name: monster_ability_map_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monster_ability_map_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monster_ability_map_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monster_ability_map_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monster_ability_map_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monster_ability_map_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monster_ability_map_pk_seq TO michaelhedges;
 GRANT UPDATE ON SEQUENCE monster_ability_map_pk_seq TO searcher;
 
 
 --
--- Name: monster_ability_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monster_ability_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monster_ability_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monster_ability_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monster_ability_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monster_ability_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monster_ability_pk_seq TO michaelhedges;
 GRANT UPDATE ON SEQUENCE monster_ability_pk_seq TO searcher;
 
 
 --
--- Name: monster_armor_map_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monster_armor_map_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monster_armor_map_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monster_armor_map_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monster_armor_map_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monster_armor_map_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monster_armor_map_pk_seq TO michaelhedges;
 GRANT UPDATE ON SEQUENCE monster_armor_map_pk_seq TO searcher;
 
 
 --
--- Name: monster_armor_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monster_armor_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monster_armor_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monster_armor_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monster_armor_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monster_armor_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monster_armor_pk_seq TO michaelhedges;
 GRANT UPDATE ON SEQUENCE monster_armor_pk_seq TO searcher;
 
 
 --
--- Name: monster_weapon_map_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monster_weapon_map_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monster_weapon_map_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monster_weapon_map_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monster_weapon_map_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monster_weapon_map_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monster_weapon_map_pk_seq TO michaelhedges;
 GRANT UPDATE ON SEQUENCE monster_weapon_map_pk_seq TO searcher;
 
 
 --
--- Name: monster_weapon_pk_seq; Type: ACL; Schema: public; Owner: init
+-- Name: monster_weapon_pk_seq; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON SEQUENCE monster_weapon_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE monster_weapon_pk_seq FROM init;
-GRANT ALL ON SEQUENCE monster_weapon_pk_seq TO init;
+REVOKE ALL ON SEQUENCE monster_weapon_pk_seq FROM michaelhedges;
+GRANT ALL ON SEQUENCE monster_weapon_pk_seq TO michaelhedges;
 GRANT UPDATE ON SEQUENCE monster_weapon_pk_seq TO searcher;
 
 
 --
--- Name: monsters; Type: ACL; Schema: public; Owner: init
+-- Name: monsters; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters FROM PUBLIC;
-REVOKE ALL ON TABLE monsters FROM init;
-GRANT ALL ON TABLE monsters TO init;
+REVOKE ALL ON TABLE monsters FROM michaelhedges;
+GRANT ALL ON TABLE monsters TO michaelhedges;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE monsters TO searcher;
 
 
 --
--- Name: monsters_abilities; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_abilities; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters_abilities FROM PUBLIC;
-REVOKE ALL ON TABLE monsters_abilities FROM init;
-GRANT ALL ON TABLE monsters_abilities TO init;
+REVOKE ALL ON TABLE monsters_abilities FROM michaelhedges;
+GRANT ALL ON TABLE monsters_abilities TO michaelhedges;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE monsters_abilities TO searcher;
 
 
 --
--- Name: monsters_ability_map; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_ability_map; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters_ability_map FROM PUBLIC;
-REVOKE ALL ON TABLE monsters_ability_map FROM init;
-GRANT ALL ON TABLE monsters_ability_map TO init;
+REVOKE ALL ON TABLE monsters_ability_map FROM michaelhedges;
+GRANT ALL ON TABLE monsters_ability_map TO michaelhedges;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE monsters_ability_map TO searcher;
 
 
 --
--- Name: monsters_armor_map; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_armor_map; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters_armor_map FROM PUBLIC;
-REVOKE ALL ON TABLE monsters_armor_map FROM init;
-GRANT ALL ON TABLE monsters_armor_map TO init;
+REVOKE ALL ON TABLE monsters_armor_map FROM michaelhedges;
+GRANT ALL ON TABLE monsters_armor_map TO michaelhedges;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE monsters_armor_map TO searcher;
 
 
 --
--- Name: monsters_armors; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_armors; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters_armors FROM PUBLIC;
-REVOKE ALL ON TABLE monsters_armors FROM init;
-GRANT ALL ON TABLE monsters_armors TO init;
+REVOKE ALL ON TABLE monsters_armors FROM michaelhedges;
+GRANT ALL ON TABLE monsters_armors TO michaelhedges;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE monsters_armors TO searcher;
 
 
 --
--- Name: monsters_weapon_map; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_weapon_map; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters_weapon_map FROM PUBLIC;
-REVOKE ALL ON TABLE monsters_weapon_map FROM init;
-GRANT ALL ON TABLE monsters_weapon_map TO init;
+REVOKE ALL ON TABLE monsters_weapon_map FROM michaelhedges;
+GRANT ALL ON TABLE monsters_weapon_map TO michaelhedges;
 GRANT SELECT,INSERT,DELETE ON TABLE monsters_weapon_map TO searcher;
 
 
 --
--- Name: monsters_weapons; Type: ACL; Schema: public; Owner: init
+-- Name: monsters_weapons; Type: ACL; Schema: public; Owner: michaelhedges
 --
 
 REVOKE ALL ON TABLE monsters_weapons FROM PUBLIC;
-REVOKE ALL ON TABLE monsters_weapons FROM init;
-GRANT ALL ON TABLE monsters_weapons TO init;
+REVOKE ALL ON TABLE monsters_weapons FROM michaelhedges;
+GRANT ALL ON TABLE monsters_weapons TO michaelhedges;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE monsters_weapons TO searcher;
 
 
