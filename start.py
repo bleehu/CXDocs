@@ -22,6 +22,7 @@ import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets 
 import os	#we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
+import security #our custom code that handles common security tasks like SQL sanitization
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 
@@ -51,19 +52,6 @@ def check_auth(session):
 		if ua in request.user_agent.string.lower():
 			return False
 	return True
-
-""" we use this when we use player input to check postgres for a search. For instance, we don't want 
-           badguys trying to log in with SQL injection - that could lead to damage to login data."""
-def sql_escape(dirty):
-	#string.replace(new, old)
-	sani = dirty.replace('*','')
-	sani = sani.replace('=','')
-	sani = sani.replace('>','')
-	sani = sani.replace('<','')
-	sani = sani.replace(';','')
-	sani = sani.replace("'","''")
-	#sani = sani.replace("\\", "\\") #need a way to sanitize backslashes for escape characters
-	return sani
 
 def monster_connect():
 	username = "searcher"
@@ -173,26 +161,28 @@ def get_races():
 	with open("docs/races.json") as racefile:
 		races = json.loads(racefile.read())
 	return races
-	
-"""WARNING!!! DERECATED USE get_user_postgres() instead!"""
-def get_users():
-	print "WARNING! USE OF get_users() is deprecated due to vulnerability of encrypted user file! Please use Postgres instead!"
-	all_users = None
-	with open("static/users.enc", "r") as userDoc:
-		decrypted = decode(userDoc.read())
-		all_users = json.loads(decrypted)
-	return all_users
 
-"""connect to user login database if connected to said database. uses psychopg2. 
-			if user not found or if posgres database info not set, returns None. Returns 
-			a tuple with username, displayname, realname and password if login successful."""
-def get_user_postgres(username, password):
+"""connect to user login database if said database is set up. uses psychopg2. 
+			if user is not found or if posgres database info is not set, returns None. Returns 
+			a tuple with username, displayname, realname and password if login is successful."""
+def get_user_postgres(username, password, remoteIP):
 	if args.u != None and args.p != None:
 		#if postgres username and password is set,
 		#use username lookup to check username and password
 		connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
 		myCursor = connection.cursor()
-		saniUser = sql_escape(username)
+		#log the current attempt
+		saniUser = security.sql_escape(username)
+		saniPass = security.sql_escape(password)
+		myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) VALUES ('%s', '%s', '%s');" \
+			% (saniUser, saniPass, remoteIP))
+		connection.commit()
+		#check the number of attempts in the last half hour
+		myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s';" % remoteIP)
+		logins = myCursor.fetchall()
+		if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
+			log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
+			return None 
 		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
@@ -202,30 +192,6 @@ def get_user_postgres(username, password):
 		return None
 	else:
 		return None
-
-""" only used externally to write a sort-of encrypted local file with login info, in case 
-		setting up postgres is too hard. set_users_to should be a dictionary of dictionaries
-		were the first is sorted by username and the second layer of dictionaries holds the 
-		information from the characters.py data type."""
-def set_users(set_users_to):
-	if str(type(set_users_to)) != "<type 'dict'>":
-		raise ValueError("Cannot set users to a non-dictionary type")
-	with open("users.enc", "w") as userDoc:
-		encrypted = encode(json.dumps(set_users_to))
-		userDoc.write(encrypted)
-
-def decode(cypher):
-	ascii = b64decode(cypher)
-	plain = ""
-	for char in ascii:
-		plain = plain + chr(ord(char) - 12)
-	return plain
-	
-def encode(cypher):
-	rot12 = ""
-	for char in cypher:
-		rot12 = rot12 + chr(ord(char) + 12)
-	return b64encode(rot12)
 
 """handles the display of the main page for the site. """
 @app.route("/")	#tells flask what url to trigger this behavior for. In this case, the main page of the site.
@@ -1002,7 +968,7 @@ def login():
 		resp = make_response(render_template("501.html"), 403)
 		log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 		return resp
-	user = get_user_postgres(uname, passwerd)
+	user = get_user_postgres(uname, passwerd, request.remote_addr)
 	if user != None:
 		session['username'] = uname
 		session['displayname'] = user[2]
@@ -1083,3 +1049,15 @@ if __name__ == "__main__":
     
     app.run(host = host, threaded=True)
 	
+"""
+CREATE SEQUENCE login_log_seq NO CYCLE; 
+CREATE TABLE login_audit_log (
+	pk_id int PRIMARY KEY DEFAULT nextval('login_log_seq'),
+    username text NOT NULL,
+    password text NOT NULL,
+    ip_address text NOT NULL,
+    log_time timestamp DEFAULT now()
+);
+GRANT UPDATE ON login_log_seq TO validator;
+GRANT ALL ON login_audit_log TO validator;
+"""
