@@ -32,6 +32,8 @@ Before CXDocs is able to log in, you will need to also create the appropriate us
 Windows doesn't come with postgres standard. It's almost like they didn't expect you to run a webserver off of your office box. 
 To download Postgres, go here: https://www.postgresql.org/download/windows/
 Not really sure how to set the database up after that, but we'll work on it!
+###On both
+Once you have postgres installed and configured to let you log in, use the default database config from /config/default_db.db using the pg_restore command
 
 # Documentation
 To add to this project, check out these links:
