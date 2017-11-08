@@ -20,12 +20,18 @@ For WWW use:
 CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are still some improvements that should be made in order to keep it safe. 
 
 ## Setting up postgres for bestiary
-On Ubuntu 16.04, you will need Postgres 9.5 (which should be already installed).
+you will need Postgres 9.5.x 
+###On Ubuntu 16.04  
+Postgres should be already installed. To check, try typing into the console: psql --version
 You will need to configure postres to accept CXDocs to login with a username and password. To do this, you'll need to edit /etc/postgresql/9.5/main/pg_hba.conf and add something like 
 `local mydb searcher password`
 to the file. 
 Before CXDocs is able to log in, you will need to also create the appropriate user on your particular database and declare it's password. Details on how to do that here:
 `https://www.postgresql.org/docs/9.5/static/auth-methods.html#AUTH-PASSWORD`
+###On Windows
+Windows doesn't come with postgres standard. It's almost like they didn't expect you to run a webserver off of your office box. 
+To download Postgres, go here: https://www.postgresql.org/download/windows/
+Not really sure how to set the database up after that, but we'll work on it!
 
 # Documentation
 To add to this project, check out these links:
