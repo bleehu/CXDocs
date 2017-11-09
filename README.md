@@ -27,7 +27,7 @@ CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are s
 ##Setting up configs
 Compound X comes with a handy little script for generating appropriate config files that help it do things like save pictures for the monster bestiary, etc. Generating a config is as easy as running 
 `$python generate_config.py`
-That should 
+That should write a file in /config/cxDocs.cfg which will have useful options set which are detailed in /config/Readme.md
 
 ## Setting up postgres for bestiary
 you will need Postgres 9.5.x 
