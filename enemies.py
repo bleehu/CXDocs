@@ -116,8 +116,26 @@ def update_monster_weapon(weapon, pk_id):
     if primary_key > 0:
         connection = enemies_common.db_connection()
         myCursor = connection.cursor()
-        wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['description'], weapon['author'], weapon['type'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['reload_dc'], weapon['move_speed_penalty'], weapon['refmod'], weapon['fire_rate'], weapon['cost'], weapon['suppression_level'], pk_id)
-        myCursor.execute("UPDATE monsters_weapons SET (name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level) = (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s') WHERE pk_id = %s" % wepstring)
+        wepstring = (weapon['name'], weapon['damage'], \
+            weapon['mag'], weapon['description'], \
+            weapon['author'], weapon['type'], \
+            weapon['magCost'], \
+            weapon['r1'], weapon['r2'], weapon['r3'], \
+            weapon['acc1'], weapon['acc2'], weapon['acc3'], \
+            weapon['ap_level'], weapon['reload_dc'], \
+            weapon['move_speed_penalty'], weapon['refmod'], \
+            weapon['fire_rate'], weapon['cost'], \
+            weapon['suppression_level'], pk_id)
+        myCursor.execute("UPDATE monsters_weapons \
+            SET (name, damage, capacity, description, \
+            author, type, mag_cost, \
+            r1, r2, r3, acc1, acc2, acc3, \
+            ap_level, reload_dc, move_speed_penalty, \
+            reflex_modifier, auto_fire_rate, \
+            cost, suppression_level) = \
+            (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, \
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s') \
+            WHERE pk_id = %s" % wepstring)
         myCursor.close()
         connection.commit()
 
