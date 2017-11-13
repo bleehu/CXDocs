@@ -8,7 +8,11 @@ def get_monster_weapons_all():
     monster_weapons = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, name, damage, capacity, description, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate FROM monsters_weapons ORDER BY name;")
+    myCursor.execute("SELECT pk_id, name, damage, capacity, description, \
+        author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, \
+        reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate,\
+        cost, suppression_level \
+        FROM monsters_weapons ORDER BY name;")
     results = myCursor.fetchall()
     for line in results:
         weapon = {}
@@ -31,6 +35,8 @@ def get_monster_weapons_all():
         weapon['move_speed_penalty'] = line[16]
         weapon['reflex_modifier'] = line[17]
         weapon['auto_fire_rate'] = line[18]
+        weapon['cost'] = line[19]
+        weapon['suppression_level'] = line[20]
         monster_weapons.append(weapon)
     return monster_weapons
 
@@ -38,7 +44,14 @@ def get_monsters_weapons(monster_id):
     monster_weapons = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT w.pk_id, name, damage, capacity, description, w.author, w.type, w.mag_cost, w.r1, w.r2, w.r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate FROM monsters_weapons AS w, monsters_weapon_map WHERE monsters_weapon_map.fk_monster_id = %s AND monsters_weapon_map.fk_weapons_id = w.pk_id ORDER BY name;" % monster_id)
+    myCursor.execute("SELECT w.pk_id, name, damage, capacity, \
+        description, w.author, w.type, w.mag_cost, w.r1, w.r2, w.r3, \
+        acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, \
+        reflex_modifier, auto_fire_rate, w.cost, suppression_level \
+        FROM monsters_weapons AS w, monsters_weapon_map \
+        WHERE monsters_weapon_map.fk_monster_id = %s \
+        AND monsters_weapon_map.fk_weapons_id = w.pk_id \
+        ORDER BY name;" % monster_id)
     results = myCursor.fetchall()
     for line in results:
         weapon = {}
@@ -61,6 +74,8 @@ def get_monsters_weapons(monster_id):
         weapon['move_speed_penalty'] = line[16]
         weapon['reflex_modifier'] = line[17]
         weapon['auto_fire_rate'] = line[18]
+        weapon['cost'] = line[19]
+        weapon['suppression_level'] = line[20]
         monster_weapons.append(weapon)
     return monster_weapons
 
@@ -75,7 +90,14 @@ def get_weapons_monsters(weapon_id):
 def validate_monster_weapon(form, user):
     if user == None or user == '':
         return False
-    expected = set(['damage', 'name','description', 'mag', 'cost', 'magCost', 'type', 'ap_level', 'auto_fire_rate', 'range1', 'range2', 'range3', 'accuracy1', 'accuracy2', 'accuracy3', 'refmod', 'reload_dc', 'fire_select', 'move_speed_penalty'])
+    expected = set(['damage', 'name',\
+        'description', 'mag', 'cost', \
+        'magCost', 'type', 'ap_level', \
+        'auto_fire_rate', 'range1', \
+        'range2', 'range3', 'accuracy1', \
+        'accuracy2', 'accuracy3', \
+        'refmod', 'reload_dc', \
+        'fire_select', 'move_speed_penalty'])
     if expected ^ set(form.keys()) != set([]):
         return False
     damage = None
@@ -125,7 +147,16 @@ def validate_monster_weapon(form, user):
         return False
     if name == '' or description == '':
         return False
-    return {'damage':damage, 'name':name, 'description':description,'mag': capacity, 'cost':cost, 'magCost':magCost, 'type':type, 'author':user, 'r1':r1, 'r2':r2, 'r3':r3, 'acc1':acc1, 'acc2':acc2, 'acc3':acc3, 'fire_rate':fire_rate, 'refmod':ref_mod, 'reload_dc':reload_dc, 'fire_rate':fire_rate, 'move_speed_penalty':move_speed_penalty,'ap_level':ap_level}
+    return {'damage':damage, 'name':name, \
+    'description':description,'mag': capacity, \
+    'cost':cost, 'magCost':magCost, \
+    'type':type, 'author':user, \
+    'r1':r1, 'r2':r2, 'r3':r3, \
+    'acc1':acc1, 'acc2':acc2, 'acc3':acc3, \
+    'fire_rate':fire_rate, 'refmod':ref_mod, \
+    'reload_dc':reload_dc, 'suppression_level':fire_select, \
+    'move_speed_penalty':move_speed_penalty, \
+    'ap_level':ap_level}
 
 def validate_monster_weapon_map(form):
     expected = set(['monster_id', 'weapon_id'])
@@ -145,8 +176,23 @@ def validate_monster_weapon_map(form):
 def insert_monster_weapon(weapon):
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    wepstring = (weapon['name'], weapon['damage'], weapon['mag'], weapon['type'], weapon['description'], weapon['author'], weapon['magCost'], weapon['r1'], weapon['r2'], weapon['r3'], weapon['acc1'], weapon['acc2'], weapon['acc3'], weapon['ap_level'], weapon['fire_rate'], weapon['refmod'], weapon['reload_dc'], weapon['move_speed_penalty'])
-    myCursor.execute("INSERT INTO monsters_weapons (name, damage, capacity, type, description, author, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, auto_fire_rate, reflex_modifier, reload_dc, move_speed_penalty) VALUES (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" % wepstring)
+    wepstring = (weapon['name'], weapon['damage'], \
+        weapon['mag'], weapon['type'], weapon['description'], \
+        weapon['author'], weapon['magCost'], weapon['cost'], \
+        weapon['r1'], weapon['r2'], weapon['r3'], \
+        weapon['acc1'], weapon['acc2'], weapon['acc3'], \
+        weapon['ap_level'], weapon['fire_rate'], \
+        weapon['refmod'], weapon['reload_dc'], \
+        weapon['move_speed_penalty'], weapon['suppression_level'])
+    myCursor.execute("INSERT INTO monsters_weapons (name, \
+        damage, capacity, type, description, \
+        author, mag_cost, cost, \
+        r1, r2, r3, acc1, acc2, acc3, \
+        ap_level, auto_fire_rate, \
+        reflex_modifier, reload_dc, \
+        move_speed_penalty, suppression_level) VALUES \
+        (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, \
+        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s');" % wepstring)
     myCursor.close()
     connection.commit()
 
