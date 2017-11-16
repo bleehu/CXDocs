@@ -14,7 +14,9 @@ app.config.from_object(__name__)
 def welcome():
     return hello()
 
-
+@app.route("/levelup")
+def test_levelup():
+    return start.levelup()
 
 
 # the main method. This is where the calling starts.
