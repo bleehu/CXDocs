@@ -4,14 +4,14 @@ import characters #character is a custom data type that we created to handle cha
 import characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
-#flask is a python webserver built on Werkzeug. This is what is in charge of our 
-#main web app. It's how we respond to HTTP requests, etc.
+#these imports are for python files we wrote ourselves. 
 import enemies
 import enemy_weapons
 import enemy_abilities
 import enemy_armor
 import enemies_common
-
+#flask is a python webserver built on Werkzeug. This is what is in charge of our 
+#main web app. It's how we respond to HTTP requests, etc.
 from flask import Flask, render_template, request, redirect, session, escape, flash
 import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
