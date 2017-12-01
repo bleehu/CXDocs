@@ -23,7 +23,7 @@ def parse(filepath):
                     index = append_paragraph(lines, index, tokens)
                 elif lines[index].strip() == '==============================': # if the next line is a Heading
                     append_Heading(lines, index, tokens)
-                    index = index + 1 # skip the second line of equals sings
+                    index = index + 1 # skip the second line of equals signs
                 elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
                     append_subHeading(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '==' and lines[index].strip()[-2:] == '==':
