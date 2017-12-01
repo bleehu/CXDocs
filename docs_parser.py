@@ -81,8 +81,8 @@ def append_unordered_list(lines, index, tokens):
 def append_definition_list(lines, index, tokens):
     new_list = {'type':'dl', 'content':[]}
     while lines[index].count(':') == 1:
-        (term, defniition) = lines[index].split(':')
-        new_list['content'].append((term, defniition))
+        (term, definition) = lines[index].split(':')
+        new_list['content'].append((term, definition))
         index = index + 1
     tokens.append(new_list)
     return index
