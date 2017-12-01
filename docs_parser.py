@@ -66,6 +66,7 @@ def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip().encode('ascii')}
     index = index + 1
     while index < len(lines) and lines[index].strip() != '':
+        lines[index].encode('ascii')
         new_paragraph['content'] = '%s %s' % (new_paragraph['content'], lines[index].strip())
         index = index + 1
     tokens.append(new_paragraph)
