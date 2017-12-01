@@ -11,35 +11,26 @@ def get_args():
 
 def parse(filepath):
     tokens = []
-    paragraph_flag = False
-    last_Element = None
     with open(filepath) as docfile:
         index = 0
         lines = docfile.readlines()
         while index < len(lines):
             #decide which kind of token we are looking at
             if lines[index].strip() == '': #if the next line is blank
-                if last_Element == None: #if there's no current element and we get a blank line
-                    pass
-                elif last_Element['type'] == 'p':
-                    paragraph_flag = False
-                    tokens.append(last_Element)
-                    last_Element = None
+                pass
             elif lines[index][0:4] == '    ' or lines[index][0] == '\t': #if the next line is an indented paragraph
-                paragraph_flag = True
-                new_paragraph = {'type':'p','content':lines[index].strip()}
-                index = index + 1
-                while index < len(lines) and lines[index].strip() != '':
-                    new_paragraph['content'] = new_paragraph['content'] + ' ' + lines[index].strip()
-                    index = index + 1
-                tokens.append(new_paragraph)
+                index = append_paragraph(lines, index, tokens)
             elif lines[index].strip() == '==============================': # if the next line is a Heading
                 append_Heading(lines, index, tokens)
-                index = index + 1
+                index = index + 1 # skip the second line of equals sings
             elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
                 append_subHeading(lines, index, tokens)
             elif lines[index].strip()[0:2] == '==' and lines[index].strip()[-2:] == '==':
                 append_Section(lines, index, tokens)
+            elif lines[index].strip()[-1] == ':':
+                append_subsection(lines, index, tokens)
+            elif lines[index].strip()[0:2] == '* ':
+                index = append_unordered_list(lines, index, tokens)
             else: #if we have no idea what it is
                 #dump text as normal
                 new_token = {'type':'unknown', 'content':lines[index]}
@@ -60,11 +51,26 @@ def append_Section(lines, index, tokens):
     new_token = {'type':'h3', 'content':lines[index].strip()[2:-3]}
     tokens.append(new_token)
 
-
 def append_subsection(lines, index, tokens):
     new_token = {'type':'h4', 'content':lines[index][0:-1]}
     tokens.append(new_token)
 
+def append_paragraph(lines, index, tokens):
+    new_paragraph = {'type':'p','content':lines[index].strip()}
+    index = index + 1
+    while index < len(lines) and lines[index].strip() != '':
+        new_paragraph['content'] = new_paragraph['content'] + ' ' + lines[index].strip()
+        index = index + 1
+    tokens.append(new_paragraph)
+    return index
+
+def append_unordered_list(lines, index, tokens):
+    new_list = {'type': 'ul', 'content':[]}
+    while lines[index][0:2] == '* ':
+        new_list['content'].append(lines[index][2:])
+        index = index + 1 
+    tokens.append(new_list)
+    return index
 
 if __name__ == "__main__":
     args = get_args()

@@ -10,9 +10,17 @@
 			</div>
 			<div class="col-lg-6">
 			{% for element in elements %}
-				<{{element['type']}}>
-				{{element['content']}}
-				</{{element['type']}}>
+				{% if element['type'] == 'ul' or element['type'] == 'ol' %}
+					<{{ element['type'] }}>
+						{% for lineitem in element['content'] %}
+							<li> {{lineitem}} </li>
+						{% endfor %}
+					</{{ element['type'] }}>
+				{% else %}
+					<{{element['type']}}>
+						{{element['content']}}
+					</{{element['type']}}>
+				{% endif %}
 			{% endfor %}
 			</div>
 		</div>
