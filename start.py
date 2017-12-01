@@ -5,6 +5,8 @@ import characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves. 
+import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
+
 import enemies
 import enemy_weapons
 import enemy_abilities
@@ -253,6 +255,36 @@ def character_guns():
 def show_armor():
 	armor = get_armor(session)
 	return render_template('armor.html', armors=armor, session=session)
+
+@app.route("/docs/classes")
+def docs_classes():
+	if config.has_section('Parser') and config.has_option('Parser', 'classes_filepath'):
+		class_filepath = config.get('Parser', 'classes_filepath')
+		tokens = docs_parser.parse(class_filepath)
+		return render_template("parser.html", elements = tokens)
+	else:
+		flash("That feature isn't configured.")
+		return redirect("index.html")
+
+@app.route("/docs/races")
+def docs_races():
+	if config.has_section('Parser') and config.has_option('Parser', 'races_filepath'):
+		class_filepath = config.get('Parser', 'races_filepath')
+		tokens = docs_parser.parse(class_filepath)
+		return render_template("parser.html", elements = tokens)
+	else:
+		flash("That feature isn't configured.")
+		return redirect("index.html")
+
+@app.route("/docs/items")
+def docs_items():
+	if config.has_section('Parser') and config.has_option('Parser', 'items_filepath'):
+		class_filepath = config.get('Parser', 'items_filepath')
+		tokens = docs_parser.parse(class_filepath)
+		return render_template("parser.html", elements = tokens)
+	else:
+		flash("That feature isn't configured.")
+		return redirect("index.html")
 
 @app.route("/show/character")
 def show_char_select():
