@@ -209,9 +209,44 @@ def get_user_postgres(username, password, remoteIP):
 def hello():			#tells flask what method to use when you hit a particular route. Same as regular python function definition.
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
+	docs = None
+	if config.has_section('Parser'):
+		docs = []
+		if config.has_option('Parser', 'basic_rules_filepath'):
+			docs.append(('Basic Rules','/docs/basic'))
+
+		if config.has_option('Parser', 'races_filepath'):
+			docs.append(('Races','/docs/races'))
+
+		if config.has_option('Parser', 'classes_filepath'):
+			docs.append(('Classes','/docs/classes'))
+
+		if config.has_option('Parser', 'feats_filepath'):
+			docs.append(('Feats','/docs/feats'))
+
+		if config.has_option('Parser', 'weapon_attachments_filepath'):
+			docs.append(('Weapon Attachments','/docs/weaponAttachments'))
+
+		if config.has_option('Parser', 'armor_filepath'):
+			docs.append(('Races','/docs/armor'))
+
+		if config.has_option('Parser', 'skills_filepath'):
+			docs.append(('Skill','/docs/skills'))
+
+		if config.has_option('Parser', 'items_filepath'):
+			docs.append(('Items','/docs/items'))
+
+		if config.has_option('Parser', 'races_filepath'):
+			docs.append(('Races','/docs/races'))
+
+		if config.has_option('Parser', 'Engineer_filepath'):
+			docs.append(('Engineer Processes','/docs/engineers'))
+
+		if config.has_option('Parser', 'Medic_filepath'):
+			docs.append(('Medic Procedures','/docs/medics'))
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
 		pc = characters.get_character(session['character']) 
-	return render_template('index.html', session=session, character=pc) #the flask method render_template() shows a jinja template 
+	return render_template('index.html', session=session, character=pc, docs=docs) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
 
