@@ -40,6 +40,7 @@ def parse(filepath):
                     tokens.append(new_token)
             except Exception(error):
                 error_token = {'type':'error', 'content':'There was an error: %s' % error.message}
+                tokens.append(error_token)
             index = index + 1 
     return tokens
 
@@ -64,7 +65,7 @@ def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip()}
     index = index + 1
     while index < len(lines) and lines[index].strip() != '':
-        new_paragraph['content'] = '%s %s' * (new_paragraph['content'], lines[index].strip())
+        new_paragraph['content'] = '%s %s' % (new_paragraph['content'], lines[index].strip())
         index = index + 1
     tokens.append(new_paragraph)
     return index
