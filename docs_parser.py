@@ -22,8 +22,7 @@ def parse(filepath):
                 elif lines[index][0:4] == '    ' or lines[index][0] == '\t': #if the next line is an indented paragraph
                     index = append_paragraph(lines, index, tokens)
                 elif lines[index].strip() == '==============================': # if the next line is a Heading
-                    append_Heading(lines, index, tokens)
-                    index = index + 1 # skip the second line of equals signs
+                    index = append_Heading(lines, index, tokens)
                 elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
                     append_subHeading(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '==' and lines[index].strip()[-2:] == '==':
@@ -48,6 +47,7 @@ def append_Heading(lines, index, tokens):
     index = index + 1
     new_token = {'type':'h1', 'content':lines[index]}
     tokens.append(new_token)
+    return index + 1
 
 def append_subHeading(lines, index, tokens):
     new_token = {'type':'h2', 'content':lines[index].strip()[5:-5]}

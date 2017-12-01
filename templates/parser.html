@@ -12,7 +12,9 @@
 				<div class="list-group table-of-contents">
 					{% for element in elements %}
 						{% if element['type'] == 'h1' %}
-						<a class="list-group-item list-group-item-primary" href="#{{ element['content'] }}">{{ element['content'] }}</a>
+						<a class="list-group-item list-group-item-active" href="#{{ element['content'] }}">{{ element['content'] }}</a>
+						{% elif element['type'] == 'h2' %}
+						<a class="list-group-item"> {{element['content']}} </a>
 						{% endif %}
 					{% endfor %}
 				</div>
