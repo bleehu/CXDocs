@@ -32,6 +32,8 @@ def parse(filepath):
                     append_subsection(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '* ' or lines[index][0:2] =='- ':
                     index = append_unordered_list(lines, index, tokens)
+                elif lines[index].count(':') == 1 and lines[index + 1].count(':') == 1:
+                    index = append_definition_list(lines, index, tokens)
                 else: #if we have no idea what it is
                     #dump text as normal
                     new_token = {'type':'unknown', 'content':lines[index]}
@@ -62,7 +64,7 @@ def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip()}
     index = index + 1
     while index < len(lines) and lines[index].strip() != '':
-        new_paragraph['content'] = new_paragraph['content'] + ' ' + lines[index].strip()
+        new_paragraph['content'] = '%s %s' * (new_paragraph['content'], lines[index].strip())
         index = index + 1
     tokens.append(new_paragraph)
     return index
@@ -72,6 +74,15 @@ def append_unordered_list(lines, index, tokens):
     while lines[index][0:2] == '* ' or lines[index][0:2] == '- ':
         new_list['content'].append(lines[index][2:])
         index = index + 1 
+    tokens.append(new_list)
+    return index
+
+def append_definition_list(lines, index, tokens):
+    new_list = {'type':'dl', 'content':[]}
+    while lines[index].count(':') == 1:
+        (term, defniition) = lines[index].split(':')
+        new_list['content'].append((term, defniition))
+        index = index + 1
     tokens.append(new_list)
     return index
 

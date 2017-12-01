@@ -16,6 +16,12 @@
 							<li> {{lineitem}} </li>
 						{% endfor %}
 					</{{ element['type'] }}>
+				{% elif element['type'] == 'dl' %}
+					<dl>
+						{% for deff in element['content'] %}
+							<dt>{{ deff[0] }}</dt> <dd>{{ deff[1] }}</dd>
+						{% endfor %}
+					</dl>
 				{% else %}
 					<{{element['type']}}>
 						{{element['content']}}
