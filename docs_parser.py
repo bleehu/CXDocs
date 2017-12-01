@@ -22,8 +22,7 @@ def parse(filepath):
                 elif lines[index][0:4] == '    ' or lines[index][0] == '\t': #if the next line is an indented paragraph
                     index = append_paragraph(lines, index, tokens)
                 elif lines[index].strip() == '==============================': # if the next line is a Heading
-                    append_Heading(lines, index, tokens)
-                    index = index + 1 # skip the second line of equals sings
+                    index = append_Heading(lines, index, tokens)
                 elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
                     append_subHeading(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '==' and lines[index].strip()[-2:] == '==':
@@ -32,12 +31,15 @@ def parse(filepath):
                     append_subsection(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '* ' or lines[index][0:2] =='- ':
                     index = append_unordered_list(lines, index, tokens)
+                elif lines[index].count(':') == 1 and lines[index + 1].count(':') == 1:
+                    index = append_definition_list(lines, index, tokens)
                 else: #if we have no idea what it is
                     #dump text as normal
                     new_token = {'type':'unknown', 'content':lines[index]}
                     tokens.append(new_token)
             except Exception(error):
                 error_token = {'type':'error', 'content':'There was an error: %s' % error.message}
+                tokens.append(error_token)
             index = index + 1 
     return tokens
 
@@ -45,6 +47,7 @@ def append_Heading(lines, index, tokens):
     index = index + 1
     new_token = {'type':'h1', 'content':lines[index]}
     tokens.append(new_token)
+    return index + 1
 
 def append_subHeading(lines, index, tokens):
     new_token = {'type':'h2', 'content':lines[index].strip()[5:-5]}
@@ -62,7 +65,7 @@ def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip()}
     index = index + 1
     while index < len(lines) and lines[index].strip() != '':
-        new_paragraph['content'] = new_paragraph['content'] + ' ' + lines[index].strip()
+        new_paragraph['content'] = '%s %s' % (new_paragraph['content'], lines[index].strip())
         index = index + 1
     tokens.append(new_paragraph)
     return index
@@ -72,6 +75,15 @@ def append_unordered_list(lines, index, tokens):
     while lines[index][0:2] == '* ' or lines[index][0:2] == '- ':
         new_list['content'].append(lines[index][2:])
         index = index + 1 
+    tokens.append(new_list)
+    return index
+
+def append_definition_list(lines, index, tokens):
+    new_list = {'type':'dl', 'content':[]}
+    while lines[index].count(':') == 1:
+        (term, definition) = lines[index].split(':')
+        new_list['content'].append((term, definition))
+        index = index + 1
     tokens.append(new_list)
     return index
 
