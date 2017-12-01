@@ -164,6 +164,15 @@ def get_races():
 		races = json.loads(racefile.read())
 	return races
 
+def parser_page(config_option):
+	if config.has_section('Parser') and config.has_option('Parser', config_option):
+		rule_filepath = config.get('Parser', config_option)
+		tokens = docs_parser.parse(rule_filepath)
+		return render_template("parser.html", elements = tokens)
+	else:
+		flash("That feature isn't configured.")
+		return redirect("/")
+
 """connect to user login database if said database is set up. uses psychopg2. 
 			if user is not found or if posgres database info is not set, returns None. Returns 
 			a tuple with username, displayname, realname and password if login is successful."""
@@ -256,35 +265,49 @@ def show_armor():
 	armor = get_armor(session)
 	return render_template('armor.html', armors=armor, session=session)
 
+#begin parser pages
+
 @app.route("/docs/classes")
 def docs_classes():
-	if config.has_section('Parser') and config.has_option('Parser', 'classes_filepath'):
-		class_filepath = config.get('Parser', 'classes_filepath')
-		tokens = docs_parser.parse(class_filepath)
-		return render_template("parser.html", elements = tokens)
-	else:
-		flash("That feature isn't configured.")
-		return redirect("index.html")
+	return parser_page('classes_filepath')
 
 @app.route("/docs/races")
 def docs_races():
-	if config.has_section('Parser') and config.has_option('Parser', 'races_filepath'):
-		class_filepath = config.get('Parser', 'races_filepath')
-		tokens = docs_parser.parse(class_filepath)
-		return render_template("parser.html", elements = tokens)
-	else:
-		flash("That feature isn't configured.")
-		return redirect("index.html")
+	return parser_page('races_filepath')
 
 @app.route("/docs/items")
 def docs_items():
-	if config.has_section('Parser') and config.has_option('Parser', 'items_filepath'):
-		class_filepath = config.get('Parser', 'items_filepath')
-		tokens = docs_parser.parse(class_filepath)
-		return render_template("parser.html", elements = tokens)
-	else:
-		flash("That feature isn't configured.")
-		return redirect("index.html")
+	return parser_page('items_filepath')
+
+@app.route("/docs/feats")
+def docs_feats():
+	return parser_page('feats_filepath')
+
+@app.route("/docs/weaponAttachments")
+def docs_wep_attachments():
+	return parser_page('weapon_attachments_filepath')
+
+@app.route("/docs/armor")
+def docs_armor():
+	return parser_page('armor_filepath')
+
+@app.route("/docs/skills")
+def docs_skills():
+	return parser_page('skills_filepath')
+
+@app.route("/docs/basic")
+def docs_basic():
+	return parser_page('basic_rules_filepath')
+
+@app.route("/docs/medics")
+def docs_medics():
+	return parser_page('Medic_filepath')
+
+@app.route("/docs/engineers")
+def docs_engineers():
+	return parser_page('Engineer_filepath')
+
+#End parser pages
 
 @app.route("/show/character")
 def show_char_select():
