@@ -16,25 +16,28 @@ def parse(filepath):
         lines = docfile.readlines()
         while index < len(lines):
             #decide which kind of token we are looking at
-            if lines[index].strip() == '': #if the next line is blank
-                pass
-            elif lines[index][0:4] == '    ' or lines[index][0] == '\t': #if the next line is an indented paragraph
-                index = append_paragraph(lines, index, tokens)
-            elif lines[index].strip() == '==============================': # if the next line is a Heading
-                append_Heading(lines, index, tokens)
-                index = index + 1 # skip the second line of equals sings
-            elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
-                append_subHeading(lines, index, tokens)
-            elif lines[index].strip()[0:2] == '==' and lines[index].strip()[-2:] == '==':
-                append_Section(lines, index, tokens)
-            elif lines[index].strip()[-1] == ':':
-                append_subsection(lines, index, tokens)
-            elif lines[index].strip()[0:2] == '* ':
-                index = append_unordered_list(lines, index, tokens)
-            else: #if we have no idea what it is
-                #dump text as normal
-                new_token = {'type':'unknown', 'content':lines[index]}
-                tokens.append(new_token)
+            try:
+                if lines[index].strip() == '': #if the next line is blank
+                    pass
+                elif lines[index][0:4] == '    ' or lines[index][0] == '\t': #if the next line is an indented paragraph
+                    index = append_paragraph(lines, index, tokens)
+                elif lines[index].strip() == '==============================': # if the next line is a Heading
+                    append_Heading(lines, index, tokens)
+                    index = index + 1 # skip the second line of equals sings
+                elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
+                    append_subHeading(lines, index, tokens)
+                elif lines[index].strip()[0:2] == '==' and lines[index].strip()[-2:] == '==':
+                    append_Section(lines, index, tokens)
+                elif lines[index].strip()[-1] == ':':
+                    append_subsection(lines, index, tokens)
+                elif lines[index].strip()[0:2] == '* ' or lines[index][0:2] =='- ':
+                    index = append_unordered_list(lines, index, tokens)
+                else: #if we have no idea what it is
+                    #dump text as normal
+                    new_token = {'type':'unknown', 'content':lines[index]}
+                    tokens.append(new_token)
+                except Exception as error:
+                    error_token = {'type':'error', 'content':'There was an error: %s' % error.message}
             index = index + 1 
     return tokens
 
@@ -66,7 +69,7 @@ def append_paragraph(lines, index, tokens):
 
 def append_unordered_list(lines, index, tokens):
     new_list = {'type': 'ul', 'content':[]}
-    while lines[index][0:2] == '* ':
+    while lines[index][0:2] == '* ' or lines[index][0:2] == '- ':
         new_list['content'].append(lines[index][2:])
         index = index + 1 
     tokens.append(new_list)
