@@ -3,6 +3,7 @@ import ConfigParser
 from flask import Flask, render_template, request, redirect, session, escape, flash
 import os
 import pdb
+import docs_parser
 import security
 from start import hello, borked_it, missed_it, get_args
 
@@ -14,7 +15,10 @@ app.config.from_object(__name__)
 def welcome():
     return hello()
 
-
+@app.route("/parser")
+def test_parser():
+    elements = docs_parser.parse("../../Really really don't look in here/Git test/Compound_X/CharacterCreation/02_Classes.txt")
+    return render_template("parser.html", elements = elements)
 
 
 # the main method. This is where the calling starts.

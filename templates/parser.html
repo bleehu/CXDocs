@@ -1,0 +1,28 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Parser</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Parser </h1>
+			</div>
+			<div class="col-lg-6">
+			{% for element in elements %}
+				{% if element['type'] == 'ul' or element['type'] == 'ol' %}
+					<{{ element['type'] }}>
+						{% for lineitem in element['content'] %}
+							<li> {{lineitem}} </li>
+						{% endfor %}
+					</{{ element['type'] }}>
+				{% else %}
+					<{{element['type']}}>
+						{{element['content']}}
+					</{{element['type']}}>
+				{% endif %}
+			{% endfor %}
+			</div>
+		</div>
+	{% endblock %}
+	
