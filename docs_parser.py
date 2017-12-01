@@ -36,8 +36,8 @@ def parse(filepath):
                     #dump text as normal
                     new_token = {'type':'unknown', 'content':lines[index]}
                     tokens.append(new_token)
-                except Exception as error:
-                    error_token = {'type':'error', 'content':'There was an error: %s' % error.message}
+            except Exception(error):
+                error_token = {'type':'error', 'content':'There was an error: %s' % error.message}
             index = index + 1 
     return tokens
 
