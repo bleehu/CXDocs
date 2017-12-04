@@ -5,6 +5,8 @@ import characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves. 
+import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
+
 import enemies
 import enemy_weapons
 import enemy_abilities
@@ -162,6 +164,15 @@ def get_races():
 		races = json.loads(racefile.read())
 	return races
 
+def parser_page(config_option):
+	if config.has_section('Parser') and config.has_option('Parser', config_option):
+		rule_filepath = config.get('Parser', config_option)
+		tokens = docs_parser.parse(rule_filepath)
+		return render_template("parser.html", elements = tokens)
+	else:
+		flash("That feature isn't configured.")
+		return redirect("/")
+
 """connect to user login database if said database is set up. uses psychopg2. 
 			if user is not found or if posgres database info is not set, returns None. Returns 
 			a tuple with username, displayname, realname and password if login is successful."""
@@ -198,9 +209,44 @@ def get_user_postgres(username, password, remoteIP):
 def hello():			#tells flask what method to use when you hit a particular route. Same as regular python function definition.
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
+	docs = None
+	if config.has_section('Parser'):
+		docs = []
+		if config.has_option('Parser', 'basic_rules_filepath'):
+			docs.append(('Basic Rules','/docs/basic'))
+
+		if config.has_option('Parser', 'races_filepath'):
+			docs.append(('Races','/docs/races'))
+
+		if config.has_option('Parser', 'classes_filepath'):
+			docs.append(('Classes','/docs/classes'))
+
+		if config.has_option('Parser', 'feats_filepath'):
+			docs.append(('Feats','/docs/feats'))
+
+		if config.has_option('Parser', 'weapon_attachments_filepath'):
+			docs.append(('Weapon Attachments','/docs/weaponAttachments'))
+
+		if config.has_option('Parser', 'armor_filepath'):
+			docs.append(('Races','/docs/armor'))
+
+		if config.has_option('Parser', 'skills_filepath'):
+			docs.append(('Skill','/docs/skills'))
+
+		if config.has_option('Parser', 'items_filepath'):
+			docs.append(('Items','/docs/items'))
+
+		if config.has_option('Parser', 'races_filepath'):
+			docs.append(('Races','/docs/races'))
+
+		if config.has_option('Parser', 'Engineer_filepath'):
+			docs.append(('Engineer Processes','/docs/engineers'))
+
+		if config.has_option('Parser', 'Medic_filepath'):
+			docs.append(('Medic Procedures','/docs/medics'))
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
 		pc = characters.get_character(session['character']) 
-	return render_template('index.html', session=session, character=pc) #the flask method render_template() shows a jinja template 
+	return render_template('index.html', session=session, character=pc, docs=docs) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
 
@@ -253,6 +299,50 @@ def character_guns():
 def show_armor():
 	armor = get_armor(session)
 	return render_template('armor.html', armors=armor, session=session)
+
+#begin parser pages
+
+@app.route("/docs/classes")
+def docs_classes():
+	return parser_page('classes_filepath')
+
+@app.route("/docs/races")
+def docs_races():
+	return parser_page('races_filepath')
+
+@app.route("/docs/items")
+def docs_items():
+	return parser_page('items_filepath')
+
+@app.route("/docs/feats")
+def docs_feats():
+	return parser_page('feats_filepath')
+
+@app.route("/docs/weaponAttachments")
+def docs_wep_attachments():
+	return parser_page('weapon_attachments_filepath')
+
+@app.route("/docs/armor")
+def docs_armor():
+	return parser_page('armor_filepath')
+
+@app.route("/docs/skills")
+def docs_skills():
+	return parser_page('skills_filepath')
+
+@app.route("/docs/basic")
+def docs_basic():
+	return parser_page('basic_rules_filepath')
+
+@app.route("/docs/medics")
+def docs_medics():
+	return parser_page('Medic_filepath')
+
+@app.route("/docs/engineers")
+def docs_engineers():
+	return parser_page('Engineer_filepath')
+
+#End parser pages
 
 @app.route("/show/character")
 def show_char_select():

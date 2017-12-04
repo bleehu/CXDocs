@@ -1,6 +1,6 @@
 {%extends "layout.html"%}
 	{%block head%}
-		<title>CX Docs - Parser</title>
+		<title>CX Docs - {{ elements[0]['content'] }}</title>
 		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
 	{% endblock %}
 	{% block body %}
@@ -28,11 +28,14 @@
 						{% endfor %}
 					</{{ element['type'] }}>
 				{% elif element['type'] == 'dl' %}
-					<dl>
-						{% for deff in element['content'] %}
-							<dt>{{ deff[0] }}</dt> <dd>{{ deff[1] }}</dd>
-						{% endfor %}
-					</dl>
+					<div class="card border-primary">
+						<dl>
+							{% for deff in element['content'] %}
+								<dt><strong class="text-primary">{{ deff[0] }}</strong></dt> 
+								<dd>{{ deff[1] }}</dd>
+							{% endfor %}
+						</dl>
+					</div>
 				{% elif element['type'] == 'error' %}
 					<p class="text-danger"> {{element['content']}} </p>
 				{% elif element['type'] == 'h1' %}
