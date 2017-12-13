@@ -8,46 +8,52 @@
 			<div class="page-header">
 				<h1> {{ elements[0]['content'] }} </h1>
 			</div>
-			<div class="col-lg-2">
-				<div class="list-group table-of-contents">
-					{% for element in elements %}
-						{% if element['type'] == 'h1' %}
-						<a class="list-group-item list-group-item-active" href="#{{ element['content'] }}">{{ element['content'] }}</a>
-						{% elif element['type'] == 'h2' %}
-						<a class="list-group-item"> {{element['content']}} </a>
-						{% endif %}
-					{% endfor %}
+			<div class="row">
+				<div class="col-lg-2">
+					<div class="list-group table-of-contents">
+						{% for element in elements %}
+							{% if element['type'] == 'h1' %}
+							<a class="list-group-item list-group-item-active" href="#{{ element['content'] }}">{{ element['content'] }}</a>
+							{% elif element['type'] == 'h2' %}
+							<a class="list-group-item"> {{element['content']}} </a>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				<div class="col-lg-6">
+				{% for element in elements %}
+					{% if element['type'] == 'ul' or element['type'] == 'ol' %}
+						<{{ element['type'] }}>
+							{% for lineitem in element['content'] %}
+								<li> {{lineitem}} </li>
+							{% endfor %}
+						</{{ element['type'] }}>
+					{% elif element['type'] == 'dl' %}
+						<div class="card border-primary">
+							<div class="card-body">
+								<dl>
+									{% for deff in element['content'] %}
+										<dt><strong class="text-primary">{{ deff[0] }}</strong></dt> 
+										<dd>{{ deff[1] }}</dd>
+									{% endfor %}
+								</dl>
+							</div>
+						</div>
+					{% elif element['type'] == 'error' %}
+						<p class="text-danger"> {{element['content']}} </p>
+					{% elif element['type'] == 'h1' %}
+						<h1 id="{{element['content']}}" class="text-primary"> {{element['content']}} </h1>
+					{% else %}
+						<{{element['type']}}>
+							{{element['content']}}
+						</{{element['type']}}>
+					{% endif %}
+				{% endfor %}
 				</div>
 			</div>
-			<div class="col-lg-6">
-			{% for element in elements %}
-				{% if element['type'] == 'ul' or element['type'] == 'ol' %}
-					<{{ element['type'] }}>
-						{% for lineitem in element['content'] %}
-							<li> {{lineitem}} </li>
-						{% endfor %}
-					</{{ element['type'] }}>
-				{% elif element['type'] == 'dl' %}
-					<div class="card border-primary">
-						<dl>
-							{% for deff in element['content'] %}
-								<dt><strong class="text-primary">{{ deff[0] }}</strong></dt> 
-								<dd>{{ deff[1] }}</dd>
-							{% endfor %}
-						</dl>
-					</div>
-				{% elif element['type'] == 'error' %}
-					<p class="text-danger"> {{element['content']}} </p>
-				{% elif element['type'] == 'h1' %}
-					<h1 id="{{element['content']}}" class="text-primary"> {{element['content']}} </h1>
-				{% else %}
-					<{{element['type']}}>
-						{{element['content']}}
-					</{{element['type']}}>
-				{% endif %}
-			{% endfor %}
+			<div class="row">
+				<p class="text-muted"><small> This Page Constructed using the CXDocs Parser. </small></p>
 			</div>
-			<p class="text-muted"><small> This Page Constructed using the CXDocs Parser. </small></p>
 		</div>
 	{% endblock %}
 	
