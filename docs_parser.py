@@ -39,7 +39,10 @@ def parse(filepath):
                     new_token = {'type':'unknown', 'content':lines[index]}
                     tokens.append(new_token)
             except Exception as error:
-                error_token = {'type':'error', 'content':'There was an error on line %s: %s' % (index, error.reason)}
+                if 'reason' not in dir(error):
+                    error_token = {'type':'error', 'content':'There was an error on line %s: %s' % (index, error.message)}
+                else:
+                    error_token = {'type':'error', 'content':'There was an error on line %s: %s' % (index, error.reason)}
                 tokens.append(error_token)
             index = index + 1 
     return tokens
@@ -74,7 +77,7 @@ def append_paragraph(lines, index, tokens):
 
 def append_unordered_list(lines, index, tokens):
     new_list = {'type': 'ul', 'content':[]}
-    while lines[index][0:2] == '* ' or lines[index][0:2] == '- ':
+    while index < len(lines) and (lines[index][0:2] == '* ' or lines[index][0:2] == '- '):
         new_list['content'].append(lines[index][2:])
         index = index + 1 
     tokens.append(new_list)
@@ -82,7 +85,7 @@ def append_unordered_list(lines, index, tokens):
 
 def append_definition_list(lines, index, tokens):
     new_list = {'type':'dl', 'content':[]}
-    while lines[index].count(':') == 1:
+    while index < len(lines) and lines[index].count(':') == 1:
         (term, definition) = lines[index].split(':')
         new_list['content'].append((term, definition))
         index = index + 1
