@@ -48,7 +48,7 @@
             panel.classList.add("panel-primary");
             var panelHeading = document.createElement("div");
             panelHeading.classList.add("panel-heading");
-            var title = document.createElement("h3");
+            var title = document.createElement("h4");
             title.classList.add("panel-title");
             var panelContent = document.createElement("div");
             panelContent.classList.add("panel-body");
