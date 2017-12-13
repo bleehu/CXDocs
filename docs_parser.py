@@ -2,6 +2,7 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 import pdb
 
+global new_id
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -9,9 +10,18 @@ def get_args():
     args = parser.parse_args()
     return args
 
+def append_token(tokens, new_token):
+    global new_id
+    new_token['id'] = new_id
+    new_id = new_id + 1
+    tokens.append(new_token)
+
+
 def parse(filepath):
     tokens = []
     with open(filepath) as docfile:
+        global new_id
+        new_id = 0
         index = 0
         lines = docfile.readlines()
         while index < len(lines):
@@ -37,33 +47,33 @@ def parse(filepath):
                 else: #if we have no idea what it is
                     #dump text as normal
                     new_token = {'type':'unknown', 'content':lines[index]}
-                    tokens.append(new_token)
+                    append_token(tokens, new_token)
             except Exception as error:
                 if 'reason' not in dir(error):
                     error_token = {'type':'error', 'content':'There was an error on line %s: %s' % (index, error.message)}
                 else:
                     error_token = {'type':'error', 'content':'There was an error on line %s: %s' % (index, error.reason)}
-                tokens.append(error_token)
+                append_token(tokens, error_token)
             index = index + 1 
     return tokens
 
 def append_Heading(lines, index, tokens):
     index = index + 1
     new_token = {'type':'h1', 'content':lines[index]}
-    tokens.append(new_token)
+    append_token(tokens, new_token)
     return index + 1
 
 def append_subHeading(lines, index, tokens):
     new_token = {'type':'h2', 'content':lines[index].strip()[5:-5]}
-    tokens.append(new_token)
+    append_token(tokens, new_token)
 
 def append_Section(lines, index, tokens):
     new_token = {'type':'h3', 'content':lines[index].strip()[2:-3]}
-    tokens.append(new_token)
+    append_token(tokens, new_token)
 
 def append_subsection(lines, index, tokens):
     new_token = {'type':'h4', 'content':lines[index][0:-1]}
-    tokens.append(new_token)
+    append_token(tokens, new_token)
 
 def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip().encode('ascii')}
@@ -72,7 +82,7 @@ def append_paragraph(lines, index, tokens):
         lines[index].encode('ascii')
         new_paragraph['content'] = '%s %s' % (new_paragraph['content'], lines[index].strip())
         index = index + 1
-    tokens.append(new_paragraph)
+    append_token(tokens, new_paragraph)
     return index
 
 def append_unordered_list(lines, index, tokens):
@@ -80,7 +90,7 @@ def append_unordered_list(lines, index, tokens):
     while index < len(lines) and (lines[index][0:2] == '* ' or lines[index][0:2] == '- '):
         new_list['content'].append(lines[index][2:])
         index = index + 1 
-    tokens.append(new_list)
+    append_token(tokens, new_list)
     return index
 
 def append_definition_list(lines, index, tokens):
@@ -89,7 +99,7 @@ def append_definition_list(lines, index, tokens):
         (term, definition) = lines[index].split(':')
         new_list['content'].append((term, definition))
         index = index + 1
-    tokens.append(new_list)
+    append_token(tokens, new_list)
     return index
 
 if __name__ == "__main__":
