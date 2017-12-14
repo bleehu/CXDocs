@@ -13,16 +13,21 @@
 					<div class="list-group table-of-contents">
 						{% for element in elements %}
 							{% if element['type'] == 'h1' %}
-							<a class="list-group-item list-group-item-active" href="#{{ element['id'] }}">{{ element['content'] }}</a>
+							<a class="list-group-item text-primary" href="#{{ element['id'] }}">
+								{{ element['content'] }}</a>
 							{% elif element['type'] == 'h2' %}
-							<a class="list-group-item list-group-item-action" href="#{{element['id']}}"> {{element['content']}} </a>
+							<a class="list-group-item text-info" href="#{{element['id']}}"> 
+								{{element['content']}} </a>
 							{% elif element['type'] == 'h3' %}
-							<a class="list-group-item" href="#{{element['id']}}"> {{element['content']}} </a>
+							<a class="list-group-item text-white" href="#{{element['id']}}"> 
+								{{element['content']}} 
+							</a>
 							{% endif %}
 						{% endfor %}
 					</div>
 				</div>
-				<div class="col-lg-6">
+				<div class="col-lg-10"> <!-- main column -->
+					<div class="row">
 				{% for element in elements %}
 					{% if element['type'] == 'ul' or element['type'] == 'ol' %}
 						<{{ element['type'] }}>
@@ -43,18 +48,35 @@
 						</div>
 					{% elif element['type'] == 'error' %}
 						<p class="text-danger"> {{element['content']}} </p>
-					{% elif element['type'] == 'h1' or element['type'] == 'h2' or element['type'] == 'h3' %}
-						<{{element['type']}} id="{{element['id']}}" class="text-primary"> 
+					{% elif element['type'] == 'h1' %}
+						{% if element['id'] != 0 %}
+							<p> <small class="text-primary"><a href="#top">back to top</a></small> </p>
+							</div> <!-- put card body ending  -->
+							</div> <!-- put card end first to handle fencepost error -->
+						{% endif %}
+						<h1 id="{{element['id']}}" class="text-primary"> 
 							{{element['content']}} 
-							</{{element['type']}}>
+						</h1>
+						<div class="card border-primary"> <!-- card start after card end to handle fencepost error -->
+							<div class="card-body">
+					{% elif element['type'] == 'h2' %}
+						<div class="card-header">
+						<h2 class="text-info card-title"> {{element['content']}} </h2>
+						</div>
+					{% elif element['type'] == 'h3' %}
+						<h3 id="{{element['id']}}" class="text-primary card-title"> 
+							{{element['content']}} 
+						</h3>
+					{% elif element['type'] == 'p' %}
+						<p class="card-text"> {{element['content']}} </p>
 					{% else %}
 						<{{element['type']}}>
 							{{element['content']}}
 						</{{element['type']}}>
 					{% endif %}
 				{% endfor %}
-				</div>
-			</div>
+				</div> <!-- end content row -->
+			</div> <!-- end main column -->
 			<div class="row">
 				<p class="text-muted"><small> This Page Constructed using the CXDocs Parser. </small></p>
 			</div>

@@ -228,16 +228,13 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 			docs.append(('Weapon Attachments','/docs/weaponAttachments'))
 
 		if config.has_option('Parser', 'armor_filepath'):
-			docs.append(('Races','/docs/armor'))
+			docs.append(('Armor','/docs/armor'))
 
 		if config.has_option('Parser', 'skills_filepath'):
 			docs.append(('Skill','/docs/skills'))
 
 		if config.has_option('Parser', 'items_filepath'):
 			docs.append(('Items','/docs/items'))
-
-		if config.has_option('Parser', 'races_filepath'):
-			docs.append(('Races','/docs/races'))
 
 		if config.has_option('Parser', 'Engineer_filepath'):
 			docs.append(('Engineer Processes','/docs/engineers'))
