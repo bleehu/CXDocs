@@ -5,81 +5,105 @@
 	{% endblock %}
 	{% block body %}
 		<div class="container">
-			<div class="page-header">
-				<h1 id="top"> Enemy Weapons </h1>
-			</div>
-			<div class="col-lg-2"> <!-- table of contents div -->
-				<div class="list-group table-of-contents">
-					{% for weapon in weapons %}
-					<a class="list-group-item" href="#{{weapon['name']}}panel"> {{weapon['name']}} </a>
-					{% endfor %}
-                    <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
-				</div>
-			</div>	<!-- end table of contents div -->
-			<div class="col-lg-8" id="weapons">
-				<p>There are {{weapons | count}} weapons for enemies to choose from.</p>
-				{% for weapon in weapons %}
-				<div class="panel panel-primary" id="{{weapon['name']}}panel">
-					<div class="panel-heading">
-						<h3 id="breacherheading" class="panel-title">{{weapon['name']}}</h3>
-					</div>
-					<div class="panel-body">
-						<p> {{weapon['description']}} </p>
-						<dl class="col-lg-3 col-md-3 col-sm-4">
-							<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
-                            <dt>Armor Pierce Level</dt><dd>{{weapon['ap_level']}}</dd>
-							<dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
-							<dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
-							<dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
-                            <dt>Reload DC</dt><dd>{{weapon['reload_dc']}}</dd>
-                            <dt>Reflex Modifier</dt><dd>{{weapon['reflex_modifier']}}</dd>
-                            <dt>Move Speed Penalty</dt><dd>{{weapon['move_speed_penalty']}}</dd>
-                            <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
-							<dt>Type</dt><dd>{{weapon['type']}}</dd>
-							<dt>Author</dt><dd> {{weapon['author']}} </dd>
-						</dl>
-                        <dl class="col-lg-3 col-md-3 col-sm-4">
-                            <dt>Range 1</dt><dd>{{weapon['r1']}}</dd>
-                            <dt>Range 2</dt><dd>{{weapon['r2']}}</dd>
-                            <dt>Range 3</dt><dd>{{weapon['r3']}}</dd>
-                            <dt>Accuracy 1</dt><dd>{{weapon['acc1']}}</dd>
-                            <dt>Accuracy 2</dt><dd>{{weapon['acc2']}}</dd>
-                            <dt>Accuracy 3</dt><dd>{{weapon['acc3']}}</dd>
-                        </dl>
-						<div class="col-lg-3 col-md-3 col-sm-6">
-							<form action="/deletemonsterweapon/{{weapon['pk_id']}}" method="post">
-								<input type="submit" class="form-button btn btn-danger" value="Delete Weapon">  </input>
-							</form>
-							<form action="/assignMonsterWeapon" method="POST">
-								<legend> Give weapon to: </legend>
-								<select name="monster_id">
-									{% for monster in monsters %}
-									<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
-									{% endfor %}
-								</select>
-								<input type="hidden" name="weapon_id" value="{{weapon['pk_id']}}">
-								<input class="form-button btn btn-success" type="submit" Value="Give">
-							</form>
-							<!-- Remove weapon mapping -->
-							<form action="/deletemonsterweaponmap" method="POST">
-								<legend>Take Weapon Away From:</legend>
-								<select name="pk_id">
-									{% for monster in weapon['maps'] %}
-									<option value="{{monster[0]}}">{{monster[1]}}</option>
-									{% endfor %}
-								</select>
-								<input class="form-button btn btn-danger" type="submit" Value="Take">
-							</form>
-						</div>
-                        <div class="col-lg-3">
-                            <p> This weapon proudly presented by {{ weapon['author'] }}</p>
-                            <p> <a href="/monsterweaponupdate/{{weapon['pk_id']}}" class="btn btn-warning btn-xs"> Update This Weapon </a></p>
-                            <p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
-                        </div>
-					</div> <!-- end panel-body -->
-				</div>
-				{% endfor %}
-			</div> <!-- end weapons -->
+            <div class="row">
+    			<div class="page-header">
+    				<h1 id="top"> Enemy Weapons </h1>
+    			</div>
+            </div>
+            <div class="row">
+    			<div class="col-lg-2"> <!-- table of contents div -->
+    				<div class="list-group table-of-contents">
+    					{% for weapon in weapons %}
+    					<a class="list-group-item" href="#{{weapon['name']}}panel"> {{weapon['name']}} </a>
+    					{% endfor %}
+                        <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
+    				</div>
+    			</div>	<!-- end table of contents div -->
+
+    			<div class="col-lg-10" id="weapons">
+    				<p>There are {{weapons | count}} weapons for enemies to choose from.</p>
+                    <div class="row">
+    				{% for weapon in weapons %}
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+        				<div class="card border-danger" id="{{weapon['name']}}panel">
+        					<div class="card-header">
+        						<h3 id="breacherheading" class="card-title">{{weapon['name']}}</h3>
+        					</div>
+        					<div class="card-body">
+        						<p> {{weapon['description']}} </p>
+                                <div class="row">
+        						<dl class="col-lg-4 col-md-6 col-sm-12">
+        							<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
+                                    <dt>Armor Pierce Level</dt><dd>{{weapon['ap_level']}}</dd>
+                                    <dt>Reflex Modifier</dt><dd>{{weapon['reflex_modifier']}}</dd>
+                                    <dt>Move Speed Penalty</dt><dd>{{weapon['move_speed_penalty']}}</dd>
+                                    <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
+        							<dt>Type</dt><dd>{{weapon['type']}}</dd>
+        						</dl>
+                                <dl class="col-lg-4 col-md-6 col-sm-12">
+                                    <dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
+                                    <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
+                                    <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
+                                    <dt>Reload DC</dt><dd>{{weapon['reload_dc']}}</dd>
+                                </dl>
+                                <dl class="col-lg-4 col-md-6 col-sm-12">
+                                    <dt>Range 1</dt><dd>{{weapon['r1']}}</dd>
+                                    <dt>Range 2</dt><dd>{{weapon['r2']}}</dd>
+                                    <dt>Range 3</dt><dd>{{weapon['r3']}}</dd>
+                                    <dt>Accuracy 1</dt><dd>{{weapon['acc1']}}</dd>
+                                    <dt>Accuracy 2</dt><dd>{{weapon['acc2']}}</dd>
+                                    <dt>Accuracy 3</dt><dd>{{weapon['acc3']}}</dd>
+                                </dl>
+                            </div>
+                            <div class="card-body row">
+        						<div class="col-lg-6 col-md-6 col-sm-12">
+        							<form action="/assignMonsterWeapon" method="POST">
+        								<legend> Give weapon to: </legend>
+        								<select name="monster_id">
+        									{% for monster in monsters %}
+        									<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+        									{% endfor %}
+        								</select>
+        								<input type="hidden" name="weapon_id" value="{{weapon['pk_id']}}">
+        								<input class="form-button btn btn-success" type="submit" Value="Give">
+        							</form>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+        							<!-- Remove weapon mapping -->
+        							<form action="/deletemonsterweaponmap" method="POST">
+        								<legend>Take Weapon Away From:</legend>
+        								<select name="pk_id">
+        									{% for monster in weapon['maps'] %}
+        									<option value="{{monster[0]}}">{{monster[1]}}</option>
+        									{% endfor %}
+        								</select>
+        								<input class="form-button btn btn-danger" type="submit" Value="Take">
+        							</form>
+        						</div>
+                            </div>
+                            <div class="card-body row">
+                                <div class="col-lg-12">
+                                    <a href="/monsterweaponupdate/{{weapon['pk_id']}}" class="btn btn-warning btn-xs"> Update This Weapon </a>
+                                </div>
+                                <div class="col-lg-4">
+                                    <a href="#top" class="btn btn-info btn-xs">back to top</a>
+                                </div>
+                                <div class="col-lg-4">
+                                    <form action="/deletemonsterweapon/{{weapon['pk_id']}}" method="post">
+                                        <input type="submit" class="form-button btn btn-danger" value="Delete Weapon">
+                                    </form>
+                                </div>
+                                <div class="col-lg-12">
+                                    <p> This weapon proudly presented by {{ weapon['author'] }}</p>
+                                </div>
+                            </div> <!-- end panel-body row -->
+        					</div> <!-- end panel-body -->
+        				</div>
+                    </div>
+    				{% endfor %}
+                </div><!-- end weapon row -->
+    			</div> <!-- end weapons -->
+            </div> <!-- end row -->
 		</div><!-- end container -->
 	{% endblock %}
 	
