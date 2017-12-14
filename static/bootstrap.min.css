@@ -19,3 +19,4 @@
 dd{
     color:#dddddd;
 }
+input, select {max-width: 95%}
