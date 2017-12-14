@@ -5,102 +5,128 @@
 	{% endblock %}
 	{% block body %}
 		<div class="container">
-			<div class="page-header">
-				<h1 id="top"> Bestiary </h1>
+			<div class="row">
+				<div class="page-header">
+					<h1 id="top"> Bestiary </h1>
+				</div>
 			</div>
-			<div class="col-lg-2"> <!-- table of contents div -->
-				<div class="list-group table-of-contents">
-					{% for monster in monsters %}
-					<a class="list-group-item" href="#{{monster['name']}}panel"> {{monster['name']}} </a>
-					{% endfor %}
-                    <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
-					<a class="list-group-item list-group-item-primary" href="#bountyboard"> Monster Creation Bounty Board </a>
-					<a class="list-group-item list-group-item-success" href="#halloffame"> Monster Creator Hall of Fame </a>
-				</div>
-			</div>	<!-- end table of contents div -->
-            
-			<div class="col-lg-8" id="monsters">
-				{% for monster in monsters %}
-				<div class="panel panel-primary" id="{{monster['name']}}panel">
-					<div class="panel-heading">
-						<h3 id="breacherheading" class="panel-title">{{monster['name']}}</h3>
+			<div class="row">
+				<div class="col-lg-2"> <!-- table of contents div -->
+					<div class="list-group">
+						{% for monster in monsters %}
+						<a class="list-group-item list-group-item-action" href="#{{monster['name']}}panel"> {{monster['name']}} </a>
+						{% endfor %}
+	                    <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
+						<a class="list-group-item list-group-item-primary" href="#bountyboard"> Monster Creation Bounty Board </a>
+						<a class="list-group-item list-group-item-success" href="#halloffame"> Monster Creator Hall of Fame </a>
 					</div>
-					<div class="panel-body">
-						<img src="static/images/monsters/bypk_id/{{monster['pk_id']}}.png" alt="picture of a {{monster['name']}}" class="mugshot">
-						<p> {{monster['description']}} </p>
-						<dl class="col-lg-3 col-md-3 col-sm-4">
-							<dt>Level</dt><dd>{{monster['level']}}</dd>
-							<dt>Role</dt><dd>{{monster['role']}}</dd>
-							<dt>Health</dt><dd>{{monster['health']}}</dd>
-							<dt>Nanites</dt><dd>{{monster['nanites']}}</dd>
-						</dl>
-						<dl class="col-lg-3 col-md-3 col-sm-4">
-							<dt>Strength</dt><dd>{{monster['strength']}}	({{monster['strmod']}})</dd>
-							<dt>Perception</dt><dd>{{monster['perception']}}	({{monster['permod']}})</dd>
-							<dt>Fortitude</dt><dd>{{monster['fortitude']}}	({{monster['fortmod']}})</dd>
-							<dt>Charisma</dt><dd>{{monster['charisma']}} ({{monster['chamod']}})</dd>
-							<dt>Intelligence</dt><dd>{{monster['intelligence']}}	({{monster['intmod']}})</dd>
-							<dt>Dexterity</dt><dd>{{monster['dexterity']}}	({{monster['dexmod']}})</dd>
-							<dt>Luck</dt><dd>{{monster['luck']}} ({{monster['lukmod']}})</dd>
-						</dl>
-						<dl class="col-lg-3 col-md-3 col-sm-4">
-							<dt>Shock</dt><dd>{{monster['shock']}}</dd>
-							<dt>Will</dt><dd>{{monster['will']}}</dd>
-							<dt>Reflex</dt><dd>{{monster['reflex']}}</dd>
-						</dl>
-						{% for weapon in monster['weapons'] %}
-						<div class="col-lg-4 col-md-8">
-							<h4> Weapon </h4>
-							<dl >
-								<dt>Name</dt><dd>{{weapon['name']}}</dd>
-								<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
-								<dt>Range</dt><dd>{{weapon['r1']}}m/{{weapon['r2']}}m/{{weapon['r3']}}m</dd>
-								<dt>Accuracy</dt><dd>{{weapon['acc1']}}/{{weapon['acc2']}}/{{weapon['acc3']}} to miss</dd>
-                                <dt>Type</dt><dd>{{weapon['type']}}</dd>
-                                <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
-                                <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}</dd>
-                                <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
-								<dt>Description</dt><dd>{{weapon['description']}}</dd>
-							</dl>
+				</div>	<!-- end table of contents div -->
+	            
+				<div class="col-lg-10" id="monsters">
+					{% for monster in monsters %}
+					<div class="card text-white bg-secondary mb-3" id="{{monster['name']}}panel">
+						<div class="card-header">
+							<h3 id="breacherheading" class="card-title">{{monster['name']}}</h3>
+							<img src="static/images/monsters/bypk_id/{{monster['pk_id']}}.png" alt="picture of a {{monster['name']}}" class="mugshot">
 						</div>
-						{% endfor %}
-						{% for armor in monster['armor'] %}
-						<div class="col-lg-4 col-md-8">
-							<h4> Armor </h4>
-							<dl>
-								<dt>Name</dt><dd>{{armor['name']}}</dd>
-								<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
-								<dt>AP Level</dt><dd>{{armor['ap_level']}}</dd>
-								<dt>Armor Points</dt><dd>{{armor['armor_points']}}</dd>
-                                <dt>Armor Type:</dt><dd>{{armor['type']}}</dd>
-								<dt>Mags</dt><dd>{{armor['mags']}}</dd>
-								<dt>Move Penalty</dt><dd>{{armor['move_penalty']}}</dd>
-								<dt>Cost</dt><dd>{{armor['cost']}}</dd>
-							</dl>
-							<h4>Description</h4>
-							<p> {{armor['description']}}</p>
-							<h4>Hardpoint Equipment</h4>
-							<p> {{armor['hardpoints']}} </p>
-						</div>
-						{% endfor %}
-						{% for ability in monster['abilities'] %}
-						<div class="col-lg-8 col-md-8">
-							<h4> Ability </h4>
-							<p><strong>{{ability['type']}}: {{ability['name']}} </strong> <br />
-								<strong>Description:</strong>	{{ability['description']}}
-							</p>
-						</div>
-						{% endfor %}
-                        <div class="col-lg-8">
-                            <p>This enemy proudly presented by {{ monster['author'] }}</p>
-                            <p> <a href="monsterupdate/{{monster['pk_id']}}" class="btn btn-warning btn-xs">Update this monster</a></p>
-                            <p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
-                        </div>
-					</div> <!-- end panel-body -->
-				</div>
-				{% endfor %}
-			</div> <!-- end monsters -->
-				<div class="row">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-lg-3 col-md-4 col-sm-8">
+									<p> {{monster['description']}} </p>
+								</div>
+								<dl class="col-lg-3 col-md-3 col-sm-4">
+									<dt>Level</dt><dd>{{monster['level']}}</dd>
+									<dt>Role</dt><dd>{{monster['role']}}</dd>
+									<dt>Health</dt><dd>{{monster['health']}}</dd>
+									<dt>Nanites</dt><dd>{{monster['nanites']}}</dd>
+								</dl>
+								<dl class="col-lg-3 col-md-3 col-sm-4">
+									<dt>Strength</dt><dd>{{monster['strength']}}	({{monster['strmod']}})</dd>
+									<dt>Perception</dt><dd>{{monster['perception']}}	({{monster['permod']}})</dd>
+									<dt>Fortitude</dt><dd>{{monster['fortitude']}}	({{monster['fortmod']}})</dd>
+									<dt>Charisma</dt><dd>{{monster['charisma']}} ({{monster['chamod']}})</dd>
+									<dt>Intelligence</dt><dd>{{monster['intelligence']}}	({{monster['intmod']}})</dd>
+									<dt>Dexterity</dt><dd>{{monster['dexterity']}}	({{monster['dexmod']}})</dd>
+									<dt>Luck</dt><dd>{{monster['luck']}} ({{monster['lukmod']}})</dd>
+								</dl>
+								<dl class="col-lg-3 col-md-3 col-sm-4">
+									<dt>Shock</dt><dd>{{monster['shock']}}</dd>
+									<dt>Will</dt><dd>{{monster['will']}}</dd>
+									<dt>Reflex</dt><dd>{{monster['reflex']}}</dd>
+								</dl>
+							</div>
+							<div class="row">
+							{% for weapon in monster['weapons'] %}
+								<div class="col-lg-4 col-md-6">
+									<div class="card border-danger mb-3">
+										<div class="card-header">
+											<h4 class="card-title"> {{weapon['name']}} </h4>
+										</div>
+										<div class="card-body text-danger">
+											<dl>
+												<dt class="card-text">Damage</dt><dd>{{weapon['damage']}}</dd>
+												<dt>Range</dt><dd>{{weapon['r1']}}m/{{weapon['r2']}}m/{{weapon['r3']}}m</dd>
+												<dt>Accuracy</dt><dd>{{weapon['acc1']}}/{{weapon['acc2']}}/{{weapon['acc3']}} to miss</dd>
+				                                <dt>Type</dt><dd>{{weapon['type']}}</dd>
+				                                <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
+				                                <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}</dd>
+				                                <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
+												<dt>Description</dt><dd>{{weapon['description']}}</dd>
+											</dl>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+							{% for armor in monster['armor'] %}
+								<div class="col-lg-4 col-md-6">
+									<div class="card border-warning">
+										<div class="card-header">
+											<h4 class="card-title"> {{armor['name']}} </h4>
+										</div>
+										<div class="card-body text-warning">
+											<p class="card-text"> {{armor['description']}}</p>
+											<dl>
+												<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
+												<dt>AP Level</dt><dd>{{armor['ap_level']}}</dd>
+												<dt>Armor Points</dt><dd>{{armor['armor_points']}}</dd>
+				                                <dt>Armor Type:</dt><dd>{{armor['type']}}</dd>
+												<dt>Mags</dt><dd>{{armor['mags']}}</dd>
+												<dt>Move Penalty</dt><dd>{{armor['move_penalty']}}</dd>
+												<dt>Cost</dt><dd>{{armor['cost']}}</dd>
+											</dl>
+											<p><strong> Hardpoint Equipment </strong></p>
+											<p> {{armor['hardpoints']}} </p>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+							{% for ability in monster['abilities'] %}
+								<div class="col-lg-4 col-md-6">
+									<div class="card border-success mb-3">
+										<div class="card-header">
+											<h4 class="card-title"> {{ability['name']}} </h4>
+										</div>
+										<div class="card-body text-white">
+											<p> <strong> Type: {{ability['type']}} </strong> 
+												<br />
+												<strong> Description:</strong>	{{ability['description']}}
+											</p>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+							</div>
+	                        <div class="col-lg-8">
+	                            <p>This enemy proudly presented by {{ monster['author'] }}</p>
+	                            <p> <a href="monsterupdate/{{monster['pk_id']}}" class="btn btn-warning btn-xs">Update this monster</a></p>
+	                            <p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
+	                        </div>
+						</div> <!-- end panel-body -->
+					</div>
+					{% endfor %}
+				</div> <!-- end monsters -->
+			</div>
+			<div class="row">
 				<h1> Bounty Board </h1>
 					<div class="col-lg-4">
 						<h2 id="bountyboard"> Monster Bounty Board </h2>
@@ -128,10 +154,10 @@
 									<li> Pirate Gunslinger - 30</li>
 									<li> Cultist Initiate - 50</li>
 								</ul>
-								</ul>
+							</ul>
 						</ul>
 					</div>
-				</div>
+			</div>
 		</div><!-- end container -->
 	{% endblock %}
 	
