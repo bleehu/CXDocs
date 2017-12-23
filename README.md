@@ -1,14 +1,24 @@
 # CXDocs
 Compound X rules displayed as web pages. Written in Python 2.7, served with Flask and bootstraped with bootswatch.
 
-#set up
-##Python module instalation
-###On Ubuntu 16.04 
+# set up
+## Python module instalation
+### On Ubuntu 16.04 
 1) $git clone https://github.com/bleehu/CXDocs.git
 2) $sudo pip install flask 
 3) $sudo pip install flask_sqlalchemy
 4) $sudo apt-get install python-psycopg2
 
+### On Windows
+1) Install Python https://www.python.org/
+2) Add Python and Python Scripts to Path https://stackoverflow.com/questions/21372637/installing-python-2-7-on-windows-8
+3) Use pip to install flask and psycopg2 (it was added to command prompt with python scripts)
+4) resolve local host and open port 5000 ???
+
+### Helpful hints on windows
+1) Use the windows Command Prompt
+2) cd is change directory, dir is list contents of a directory
+3) use cd /d G:\ to change to g drive if need be
 
 
 to test, use:
