@@ -189,7 +189,7 @@ def get_user_postgres(username, password, remoteIP):
 			% (saniUser, saniPass, remoteIP))
 		connection.commit()
 		#check the number of attempts in the last half hour
-		myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s';" % remoteIP)
+		myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s' AND 'username' LIKE %s;" % (remoteIP,saniUser))
 		logins = myCursor.fetchall()
 		if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
 			log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
