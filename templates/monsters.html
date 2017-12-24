@@ -34,7 +34,9 @@
 						<div class="card-body">
 							<div class="row">
 								<div class="col-lg-3 col-md-4 col-sm-8">
-									<p> {{monster['description']}} </p>
+									{% for paragraph in monster['description']%}
+									<p> {{paragraph}} </p>
+									{% endfor %}
 								</div>
 								<dl class="col-lg-3 col-md-3 col-sm-4">
 									<dt>Level</dt><dd>{{monster['level']}}</dd>
