@@ -4,6 +4,7 @@ import enemy_weapons
 import enemy_abilities
 import enemy_armor
 import enemies_common
+import os
 import security
 
 def get_monsters():
@@ -33,6 +34,8 @@ def get_monsters():
         newmun['author'] = mun[15]
         monster_id = mun[14]
         
+        newmun['has_pic'] = enemies_common.check_has_pic(monster_id)
+
         newmun['strmod'] = (newmun['strength'] - 5) * 4
         newmun['permod'] = (newmun['perception'] - 5) * 4
         newmun['fortmod'] = (newmun['fortitude'] - 5) * 4
@@ -43,6 +46,7 @@ def get_monsters():
         
         newmun['level'] = int(mun[16])
         newmun['role'] = mun[17]
+
         
         #add abilities
         newmun['abilities'] = enemy_abilities.get_monster_abilities(monster_id)
@@ -138,7 +142,6 @@ def update_monster_weapon(weapon, pk_id):
             WHERE pk_id = %s" % wepstring)
         myCursor.close()
         connection.commit()
-
     
 """ 
     sql commands for initializing monsters database for tracking the beastiary

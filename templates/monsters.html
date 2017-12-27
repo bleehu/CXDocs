@@ -27,7 +27,9 @@
 					<div class="card text-white bg-secondary mb-3" id="{{monster['name']}}panel">
 						<div class="card-header">
 							<h3 id="breacherheading" class="card-title">{{monster['name']}}</h3>
+							{% if monster['has_pic'] %}
 							<img src="static/images/monsters/bypk_id/{{monster['pk_id']}}.png" alt="picture of a {{monster['name']}}" class="mugshot">
+							{% endif %}
 						</div>
 						<div class="card-body">
 							<div class="row">
