@@ -6,6 +6,7 @@ dl{
     flex-flow: row wrap;
     justify-content: center;
     align-content: flex-start;
+    max-width: 420px;
 }
 dt{
     flex: 1;

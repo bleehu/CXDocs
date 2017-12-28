@@ -4,7 +4,6 @@ import enemy_weapons
 import enemy_abilities
 import enemy_armor
 import enemies_common
-import os
 import security
 
 def get_monsters():
@@ -29,7 +28,8 @@ def get_monsters():
         newmun['shock'] = int(mun[10])
         newmun['will'] = int(mun[11])
         newmun['reflex'] = int(mun[12])
-        newmun['description'] = mun[13]
+        desc_paragraphs = mun[13].split('\n')
+        newmun['description'] = desc_paragraphs
         newmun['pk_id'] = int(mun[14])
         newmun['author'] = mun[15]
         monster_id = mun[14]
