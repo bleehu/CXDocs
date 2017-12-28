@@ -57,6 +57,8 @@ def check_auth(session):
 	for ua in blacklisted_UA:
 		if ua in request.user_agent.string.lower():
 			return False
+	if 'displayname' in session.keys():
+		guestbook.sign_guestbook(session['displayname'])
 	return True
 
 def monster_connect():
@@ -251,6 +253,11 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	return render_template('index.html', session=session, character=pc, docs=docs, guestbook = gb) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
+
+@app.route("/whoshere")
+def whosHereAPI():
+	gbook = json.dumps(guestbook.get_guestbook())
+	return gbook
 
 @app.route("/levelup")
 def levelUp():
