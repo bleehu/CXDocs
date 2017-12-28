@@ -13,6 +13,8 @@ config.set('Enemies', 'enemies_psql_user', 'searcher')
 config.set('Enemies', 'enemies_psql_db', 'mydb')
 config.set('Characters', 'characters_psql_user', 'searcher')
 config.set('Characters', 'characters_psql_db', 'mydb')
+config.set('WhosHere', 'Seconds_away', 60)
+config.set('WhosHere', 'Seconds_out', 3600)
 
 with open('config/cxDocs.cfg', 'wb') as configfile:
     config.write(configfile)

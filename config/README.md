@@ -30,4 +30,10 @@ basic_rules_filepath: (optional) absolute filepath to the Basic Rules.txt plaint
 
 Engineer_filepath: (optional) absolute filepath to the Engineer Processes.txt plaintext document from the compound_x repo
 
-Medic_filepath: (optional) absolute filepath to the Medic Proceedures.txt plaintext document from the compound_x repo
+Medic_filepath: (optional) absolute filepath to the Medic Procedures.txt plaintext document from the compound_x repo
+
+## WhosHere Section
+
+Seconds_away: Don't forget to capitalize the S! This is how many seconds the 'Who's Here' feature should wait before marking someone as being 'away'
+
+Seconds_out: The number of seconds before the Who's Here function should forget someone had logged in.

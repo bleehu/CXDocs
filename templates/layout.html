@@ -53,6 +53,17 @@
 </body>
 <footer>
 	<div class="container">
+		{% if guestbook %}
+		<div class="row">
+			<div class="col-lg-12">
+				<ul>
+				{% for signature in guestbook.keys() %}
+					<li> {{signature}} : {{guestbook[signature]['status']}} </li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+		{% endif %}
 		<div class="row">
 			<div class="col-lg-12">
 				<small>
