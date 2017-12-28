@@ -9,6 +9,7 @@
         setInterval(askWhosHere, 60000);
         askWhosHere();
         $("#whosHereToggle").click(toggleMenu);
+        $("#whosHereToggle").blur(blurMenu);
         console.log("done initializing who's here function.");
     }
 
@@ -42,5 +43,9 @@
 
     function toggleMenu(){
         $('#whosHereDiv').toggle();
+    }
+
+    function blurMenu(){
+        $('#whosHereDiv').hide();
     }
 })();
