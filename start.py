@@ -15,6 +15,8 @@ import enemies_common
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
 from flask import Flask, render_template, request, redirect, session, escape, flash
+
+import guestbook #our custom guestbook for showing who all is on at once.
 import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb	#Python Debuger is what I use to fix borked code. It should not be called in production EVER!
@@ -32,6 +34,8 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # 1024 bytes x 1024 is a MB. Prevents people from uploading 40 GB pictures
 app.config.from_object(__name__)
 global log
+
+global whos_on
 
 """We call this on startup to get all of the config info from comand line. The username/password combination is
 		used to prevent having to store the credentials on the box, so we don't have to defend data at rest."""
@@ -53,6 +57,8 @@ def check_auth(session):
 	for ua in blacklisted_UA:
 		if ua in request.user_agent.string.lower():
 			return False
+	if 'displayname' in session.keys():
+		guestbook.sign_guestbook(session['displayname'])
 	return True
 
 def monster_connect():
@@ -243,9 +249,15 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 			docs.append(('Medic Procedures','/docs/medics'))
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
 		pc = characters.get_character(session['character']) 
-	return render_template('index.html', session=session, character=pc, docs=docs) #the flask method render_template() shows a jinja template 
+	gb = guestbook.get_guestbook()
+	return render_template('index.html', session=session, character=pc, docs=docs, guestbook = gb) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
+
+@app.route("/whoshere")
+def whosHereAPI():
+	gbook = json.dumps(guestbook.get_guestbook())
+	return gbook
 
 @app.route("/levelup")
 def levelUp():
@@ -1062,6 +1074,7 @@ def login():
 		session['role'] = user[5]
 		log.info("%s logged in" % uname)
 		flash('Logged in.')
+		guestbook.sign_guestbook(user[2])
 	else:
 		log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 		flash('Failed to log in; username or password incorrect.')
@@ -1130,6 +1143,14 @@ if __name__ == "__main__":
     enemies_common.set_config(config)
     characters_common.set_config(config)
     
+    seconds_away = 60
+    seconds_out = 3600
+    if config.has_option('WhosHere', 'Seconds_away'):
+    	seconds_away = config.get('WhosHere', 'Seconds_away')
+    if config.has_option('WhosHere', 'Seconds_out'):
+    	seconds_out = config.get('WhosHere', 'Seconds_out')
+    guestbook.initialize(seconds_away, seconds_out)
+
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
         host = args.i
