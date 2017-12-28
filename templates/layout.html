@@ -4,6 +4,8 @@
 		<meta charset="utf-8">
 		<!-- This line links to the Cascading Style Sheet (CSS) which dictates the color, alignment and style of the page. -->
 		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+        <!-- Since our custom css sheet is lower than the bootstrap, our custom css should override the bootstrap -->
+        <link rel="stylesheet" type="text/css" href="../static/custom.css">
 		{%block head%}{%endblock%}
 	</head>
 	<body>
@@ -33,8 +35,8 @@
 
 			</div>
 		</nav>
-		<!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
 		{% with messages = get_flashed_messages() %}
+        <!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
 		  {% if messages %}
 		  <div class="container" id="flashcontainer">
 			{% for message in messages %}
