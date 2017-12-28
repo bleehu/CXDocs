@@ -4,6 +4,11 @@
 		<meta charset="utf-8">
 		<!-- This line links to the Cascading Style Sheet (CSS) which dictates the color, alignment and style of the page. -->
 		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+        <!-- Since our custom css sheet is lower than the bootstrap, our custom css should override the bootstrap -->
+        <link rel="stylesheet" type="text/css" href="../static/custom.css">
+        <!-- Let's get some jquery! -->
+        <script src="../static/jquery-3.2.1.min.js"></script>
+        <script src="../static/whoshere.js"></script>
 		{%block head%}{%endblock%}
 	</head>
 	<body>
@@ -12,7 +17,7 @@
 			<div class="navbar-collapse" id="navbar-main">
 			  <ul class="navbar-nav mr-auto">
 				<li class="nav-item">
-				  <a class="nav-link" href="https://github.com/trowl223/Compound_X/tree/master/play/PlayerRules">Compound X Game</a>
+				  <a class="nav-link" href="https://github.com/bleehu/Compound_X/tree/play">Compound X Game</a>
 				</li>
 				<li class="nav-item">
 				  <a class="nav-link" href="https://github.com/bleehu/cxdocs/issues">Report an Issue with Docs</a>
@@ -30,11 +35,18 @@
 					<a class="nav-link" href="https://wrapbootstrap.com/?ref=bsw" target="_blank">WrapBootstrap</a>
 				</li>
 			  </ul>
-
+			<li class="nav-item dropdown">
+				<a id="whosHereToggle" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+					<span id="hereCount">Who is Here?</span>
+					<span class="caret"></span>
+				</a>
+			  <div class="dropdown-menu" id="whosHereDiv">
+			  </div>
+			</li>
 			</div>
 		</nav>
-		<!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
 		{% with messages = get_flashed_messages() %}
+        <!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
 		  {% if messages %}
 		  <div class="container" id="flashcontainer">
 			{% for message in messages %}

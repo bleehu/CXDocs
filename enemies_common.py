@@ -1,5 +1,6 @@
 import psycopg2
 import ConfigParser
+import os
 
 global config
 
@@ -16,3 +17,7 @@ def db_connection():
         db = config.get('Enemies', 'enemies_psql_db')
     connection = psycopg2.connect("dbname=%s user=%s password=allDatSQL" % (db, username))
     return connection
+
+def check_has_pic(pk_id):
+    filepath = "%s/%s.png" % (config.get('Enemies', 'pics_file_path'), pk_id)
+    return os.path.exists(filepath)
