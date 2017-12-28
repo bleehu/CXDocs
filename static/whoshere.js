@@ -39,6 +39,8 @@
             divider.classList.add("dropdown-divider");
             whosHereDiv.appendChild(divider);
         }
+        signatureCount = Object.keys(report).length;
+        $('#hereCount').html("There are " + signatureCount + " people on.");
     }
 
     function toggleMenu(){
