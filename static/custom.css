@@ -1,0 +1,21 @@
+.mugshot {
+    max-width: 400px;
+}
+dl{
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-content: flex-start;
+    max-width: 420px;
+}
+dt{
+    flex: 1;
+    flex-basis: 48%;
+}
+
+dd{
+    color:#dddddd;
+    flex: 1;
+    flex-basis: 48%;
+}
+input, select {max-width: 95%}
