@@ -32,9 +32,6 @@
 						</div>
 						<div class="card-body">
 							<div class="row">
-								<div class="col-lg-3 col-md-4 col-sm-8">
-									<p> {{monster['description']}} </p>
-								</div>
 								<dl class="col-lg-3 col-md-3 col-sm-4">
 									<dt>Level</dt><dd>{{monster['level']}}</dd>
 									<dt>Role</dt><dd>{{monster['role']}}</dd>
@@ -57,6 +54,11 @@
 								</dl>
 							</div>
 							<div class="row">
+								<div class="col-lg-9">
+									<p> {{monster['description']}} </p>
+								</div>
+							</div>
+							<div class="row">
 							{% for weapon in monster['weapons'] %}
 								<div class="col-lg-4 col-md-6">
 									<div class="card border-danger mb-3">
@@ -72,8 +74,10 @@
 				                                <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
 				                                <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}</dd>
 				                                <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
-												<dt>Description</dt><dd>{{weapon['description']}}</dd>
 											</dl>
+											<p class="card-text"> 
+												{{ weapon['description'] }}
+											</p>
 										</div>
 									</div>
 								</div>
@@ -85,7 +89,6 @@
 											<h4 class="card-title"> {{armor['name']}} </h4>
 										</div>
 										<div class="card-body text-warning">
-											<p class="card-text"> {{armor['description']}}</p>
 											<dl>
 												<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
 												<dt>AP Level</dt><dd>{{armor['ap_level']}}</dd>
@@ -95,8 +98,9 @@
 												<dt>Move Penalty</dt><dd>{{armor['move_penalty']}}</dd>
 												<dt>Cost</dt><dd>{{armor['cost']}}</dd>
 											</dl>
+											<p class="card-text"> {{armor['description']}}</p>
 											<p><strong> Hardpoint Equipment </strong></p>
-											<p> {{armor['hardpoints']}} </p>
+											<p class="card-text"> {{armor['hardpoints']}} </p>
 										</div>
 									</div>
 								</div>
@@ -109,9 +113,8 @@
 										</div>
 										<div class="card-body text-white">
 											<p> <strong> Type: {{ability['type']}} </strong> 
-												<br />
-												<strong> Description:</strong>	{{ability['description']}}
 											</p>
+											<p class="card-text"> {{ability['description']}} </p>
 										</div>
 									</div>
 								</div>
