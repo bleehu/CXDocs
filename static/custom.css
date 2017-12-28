@@ -1,0 +1,11 @@
+.mugshot {
+    max-width: 400px;
+}
+dt{
+    font-weight: bold;
+}
+
+dd{
+    color:#dddddd;
+}
+input, select {max-width: 95%}
