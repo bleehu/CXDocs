@@ -6,7 +6,7 @@
     function initialize(){
         console.log("Who's here file loaded.");
         //check who's here every minute
-        setInterval(askWhosHere, 60000);
+        setInterval(askWhosHere, 15000);
         askWhosHere();
         $("#whosHereToggle").click(toggleMenu);
         $("#whosHereToggle").blur(blurMenu);

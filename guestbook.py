@@ -1,4 +1,5 @@
 import time
+import pdb
 
 global guestbook
 global initialized
@@ -38,7 +39,7 @@ def get_guestbook():
             return_book[signature] = {}
             new_book[signature]['time'] = guestbook[signature]['time']
             return_book[signature]['time'] = guestbook[signature]['time']
-            if difference < away:
+            if int(difference) < int(away):
                 new_book[signature]['status'] = 'in'
                 return_book[signature]['status'] = 'in'
             else:
