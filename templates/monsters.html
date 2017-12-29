@@ -1,6 +1,7 @@
 {%extends "layout.html"%}
 	{%block head%}
 		<title>CX Docs - Bestiary</title>
+		<script type="text/javascript" src="../static/monster.js"></script>
 	{% endblock %}
 	{% block body %}
 		<div class="container">
@@ -63,11 +64,11 @@
 							<div class="row">
 							{% for weapon in monster['weapons'] %}
 								<div class="col-lg-4 col-md-6">
-									<div class="card border-danger mb-3">
+									<div class="card border-danger mb-3 inspectable">
 										<div class="card-header">
 											<h4 class="card-title"> {{weapon['name']}} </h4>
 										</div>
-										<div class="card-body text-danger">
+										<div class="card-body text-danger collapse" aria-expanded="false">
 											<dl>
 												<dt class="card-text">Damage</dt><dd>{{weapon['damage']}}</dd>
 												<dt>Range</dt><dd>{{weapon['r1']}}m/{{weapon['r2']}}m/{{weapon['r3']}}m</dd>
@@ -86,11 +87,11 @@
 							{% endfor %}
 							{% for armor in monster['armor'] %}
 								<div class="col-lg-4 col-md-6">
-									<div class="card border-warning">
+									<div class="card border-warning inspectable">
 										<div class="card-header">
 											<h4 class="card-title"> {{armor['name']}} </h4>
 										</div>
-										<div class="card-body text-warning">
+										<div class="card-body text-warning collapse" aria-expanded="false">
 											<dl>
 												<dt>Coverage</dt><dd>{{armor['coverage']}}%</dd>
 												<dt>AP Level</dt><dd>{{armor['ap_level']}}</dd>
@@ -109,11 +110,11 @@
 							{% endfor %}
 							{% for ability in monster['abilities'] %}
 								<div class="col-lg-4 col-md-6">
-									<div class="card border-success mb-3">
+									<div class="card border-success mb-3 inspectable">
 										<div class="card-header">
 											<h4 class="card-title"> {{ability['name']}} </h4>
 										</div>
-										<div class="card-body text-white">
+										<div class="card-body text-white collapse" aria-expanded="false">
 											<p> <strong> Type: {{ability['type']}} </strong> 
 											</p>
 											<p class="card-text"> {{ability['description']}} </p>
