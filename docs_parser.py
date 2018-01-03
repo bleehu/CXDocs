@@ -49,7 +49,8 @@ def parse(filepath):
                     index = append_unordered_list(lines, index, tokens)
                 elif lines[index].count(':') == 1 and lines[index + 1].count(':') == 1:
                     index = append_definition_list(lines, index, tokens)
-                elif len(lines) > index + 1 and lines[index][:2] == '+-' and lines[index + 1][0] == '|':
+                elif len(lines) > index + 1 and lines[index].strip()[:2] == '+-'\
+                 and lines[index + 1].strip()[0] == '|':
                     index = append_table(lines, index, tokens) 
                 else: #if we have no idea what it is
                     #dump text as normal
@@ -125,7 +126,8 @@ def append_definition_list(lines, index, tokens):
 def append_table(lines, index, tokens):
     new_table = {'type':'table', 'content':[]}
     index = index + 1 # skip top row of table
-    while lines[index].strip() != '':
+    while index < len(lines) and \
+    lines[index].strip() != '' and '|' in lines[index]:
         row = lines[index].split('|')
         new_table['content'].append(row)
         index = index + 2 # skip cross lines
