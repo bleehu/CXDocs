@@ -28,7 +28,7 @@
 								</div>
 								<div class="card-body row">
 									<p> {{suit['description']}} </p>
-									<dl class="col-lg-4 col-md-12 col-sm-12 text-warning">
+									<dl class="col-lg-6 col-md-12 col-sm-12 text-warning">
 										<dt>Coverage</dt><dd>{{suit['coverage']}} %</dd>
 										<dt>AP Level</dt><dd>{{suit['ap_level']}}</dd>
 										<dt>Armor Points</dt><dd>{{suit['armor_points']}} Points</dd>
@@ -38,7 +38,7 @@
 										<dt>Cost</dt><dd>${{suit['cost']}}</dd>
 										<dt>Author</dt><dd> {{suit['author']}} </dd>
 									</dl>
-									<div class="col-lg-8 col-md-12 col-sm-12">
+									<div class="col-lg-6 col-md-12 col-sm-12">
 										<form action="/deletemonsterarmor/{{suit['pk_id']}}" method="post">
 											<input type="submit" class="form-button btn btn-danger" value="Delete Armor">
 										</form>
