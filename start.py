@@ -240,7 +240,7 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 			docs.append(('Submachine Guns','/docs/smgs'))
 
 		if config.has_option('Parser', 'carbines_filepath'):
-			docs.append(('Carbines','/docs/carbines'))
+			docs.append(('Carbines and Assault Rifles','/docs/carbines'))
 
 		if config.has_option('Parser', 'long_rifles_filepath'):
 			docs.append(('Long Rifles and DMRs','/docs/longRifles'))
