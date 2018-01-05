@@ -230,6 +230,24 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 		if config.has_option('Parser', 'feats_filepath'):
 			docs.append(('Feats','/docs/feats'))
 
+		if config.has_option('Parser', 'melee_weapons_filepath'):
+			docs.append(('Melee Weapons','/docs/meleeWeapons'))
+
+		if config.has_option('Parser', 'pistols_filepath'):
+			docs.append(('Pistols','/docs/pistols'))
+
+		if config.has_option('Parser', 'smgs_filepath'):
+			docs.append(('Submachine Guns','/docs/smgs'))
+
+		if config.has_option('Parser', 'carbines_filepath'):
+			docs.append(('Carbines and Assault Rifles','/docs/carbines'))
+
+		if config.has_option('Parser', 'long_rifles_filepath'):
+			docs.append(('Long Rifles and DMRs','/docs/longRifles'))
+
+		if config.has_option('Parser', 'machineguns_filepath'):
+			docs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
+
 		if config.has_option('Parser', 'weapon_attachments_filepath'):
 			docs.append(('Weapon Attachments','/docs/weaponAttachments'))
 
@@ -326,6 +344,30 @@ def docs_items():
 @app.route("/docs/feats")
 def docs_feats():
 	return parser_page('feats_filepath')
+
+@app.route("/docs/meleeWeapons")
+def docs_melee():
+	return parser_page('melee_weapons_filepath')
+
+@app.route("/docs/pistols")
+def docs_pistols():
+	return parser_page('pistols_filepath')
+
+@app.route("/docs/smgs")
+def docs_smgs():
+	return parser_page('smgs_filepath')
+
+@app.route("/docs/carbines")
+def docs_carbines():
+	return parser_page('carbines_filepath')
+
+@app.route("/docs/longRifles")
+def docs_long_rifles():
+	return parser_page('long_rifles_filepath')
+
+@app.route("/docs/machineguns")
+def docs_machineguns():
+	return parser_page('machineguns_filepath')
 
 @app.route("/docs/weaponAttachments")
 def docs_wep_attachments():
