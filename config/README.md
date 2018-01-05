@@ -20,7 +20,7 @@ feats_filepath: (optional) absolute filepath to the 03_Feats.txt plaintext docum
 
 melee_weapons_filepath: (optional) absolute filepath to the 04_01_Melee_et_Thrown_Weapons.txt document from the compound_x repo
 
-pistols_filepath: (optional) absolute filepath to the document from the compound_x repo
+pistols_filepath: (optional) absolute filepath to the 04_02_Pistols.txt document from the compound_x repo
 
 smgs_filepath: (optional) absolute filepath to the 04_03_SMGs_et_Shotguns.txt document from the compound_x repo
 
