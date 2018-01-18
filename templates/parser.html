@@ -69,6 +69,12 @@
 						</h3>
 					{% elif element['type'] == 'p' %}
 						<p class="card-text"> {{element['content']}} </p>
+					{% elif element['type'] == 'footnote'%}
+						<div class="card text-white bg-secondary">
+							<div class="card-body">
+								 <p class="card-text"> {{ element['content'] }} </p>
+							</div>
+						</div>
 					{% elif element['type'] == 'table' %}
 						<table class="table table-hover">
 							<tbody>
