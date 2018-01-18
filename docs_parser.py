@@ -47,6 +47,8 @@ def parse(filepath):
                     index = append_numbered_list(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '* ' or lines[index][0:2] =='- ':
                     index = append_unordered_list(lines, index, tokens)
+                elif lines[index].strip()[0] == "*":
+                    index = append_footnote(lines, index, tokens)
                 elif lines[index].count(':') == 1 and lines[index + 1].count(':') == 1:
                     index = append_definition_list(lines, index, tokens)
                 elif len(lines) > index + 1 and lines[index].strip()[:2] == '+-'\
@@ -85,7 +87,7 @@ def append_subsection(lines, index, tokens):
 
 def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip().encode('ascii')}
-    index = index + 1
+    index = index + 1 #because we processed the line above
     while index < len(lines) and lines[index].strip() != '':
         try:
             lines[index].encode('ascii')
@@ -94,6 +96,18 @@ def append_paragraph(lines, index, tokens):
             new_paragraph['content'] = '%s %s' % (new_paragraph['content'], 'ERROR ON LINE %s. COULD NOT PARSE.' % index)
         index = index + 1
     append_token(tokens, new_paragraph)
+    return index
+
+def append_footnote(lines, index, tokens):
+    new_footnote = {'type':'footnote', 'content': ''}
+    while index < len(lines) and lines[index].strip() != '':
+        try:
+            lines[index].encode('ascii')
+            new_footnote['content'] = '%s %s' % (new_footnote['content'], lines[index].strip())
+        except:
+            new_footnote['content'] = '%s %s' % (new_footnote['content'], 'ERROR ON LINE %s. COULD NOT PARSE.' % index)
+        index = index + 1
+    append_token(tokens, new_footnote)
     return index
 
 def append_unordered_list(lines, index, tokens):
