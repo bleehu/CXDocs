@@ -4,9 +4,12 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 # set up
 ## Python module instalation
 ### On Ubuntu 16.04 
+1) $sudo apt-get install python
+2) $sudo apt-get install build-essentials
+2) $sudo apt-get install python-pip
+4) $pip install --upgrade pip
 1) $git clone https://github.com/bleehu/CXDocs.git
 2) $sudo pip install flask 
-3) $sudo pip install flask_sqlalchemy
 4) $sudo apt-get install python-psycopg2
 
 ### On Windows
@@ -43,6 +46,11 @@ That should write a file in /config/cxDocs.cfg which will have useful options se
 you will need Postgres 9.5.x 
 ###On Ubuntu 16.04  
 Postgres should be already installed. To check, try typing into the console: psql --version
+If it's not installed, try 
+`sudo apt-get install postgresql-client-common`
+and
+`sudo apt-get install postgresql-client-9.5`
+
 You will need to configure postres to accept CXDocs to login with a username and password. To do this, you'll need to edit /etc/postgresql/9.5/main/pg_hba.conf and add something like 
 `local mydb searcher password`
 to the file. 
