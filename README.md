@@ -4,9 +4,12 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 # set up
 ## Python module instalation
 ### On Ubuntu 16.04 
+1) $sudo apt-get install python
+2) $sudo apt-get install build-essentials
+2) $sudo apt-get install python-pip
+4) $pip install --upgrade pip
 1) $git clone https://github.com/bleehu/CXDocs.git
 2) $sudo pip install flask 
-3) $sudo pip install flask_sqlalchemy
 4) $sudo apt-get install python-psycopg2
 
 ### On Windows
@@ -43,9 +46,30 @@ That should write a file in /config/cxDocs.cfg which will have useful options se
 you will need Postgres 9.5.x 
 ###On Ubuntu 16.04  
 Postgres should be already installed. To check, try typing into the console: psql --version
+###If it's not installed
+`sudo apt-get install postgresql` 
+`sudo apt-get install postgresql-client-common`
+and
+`sudo apt-get install postgresql-client-9.5`
+
+###To initialize the database
+`$sudo su postgres`
+`postgres$ createdb mydb`
+`postgres$ psql mydb`
+you are now in the postgreSQL console, not the bash command console
+`mydb=# CREATE ROLE searcher LOGIN PASSWORD 'the password must be surrounded in single quotes';`
+`mydb=# CREATE ROLE validator LOGIN PASSWORD 'PutPasswordsInLastpass';`
+`mydb=#\q`
+now with the roles you've created, you should be able to restore from backup.
+`postgres$ psql mydb < db_backup.db`
+`postgres$ exit`
 You will need to configure postres to accept CXDocs to login with a username and password. To do this, you'll need to edit /etc/postgresql/9.5/main/pg_hba.conf and add something like 
 `local mydb searcher password`
 to the file. 
+Once you've modified the pg_hba.conf file, you'll need to restart postgres with the new configs.
+`$ sudo service postgresql restart`
+
+##To configure the db
 Before CXDocs is able to log in, you will need to also create the appropriate user on your particular database and declare it's password. Details on how to do that here:
 `https://www.postgresql.org/docs/9.5/static/auth-methods.html#AUTH-PASSWORD`
 ###On Windows
