@@ -5,14 +5,15 @@ import characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves. 
-import enemies
-import enemy_weapons
-import enemy_abilities
-import enemy_armor
-import enemies_common
+import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
+
+from enemies.enemy_routes import enemy_blueprint, initialize_enemies
+
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
 from flask import Flask, render_template, request, redirect, session, escape, flash
+
+import guestbook #our custom guestbook for showing who all is on at once.
 import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb	#Python Debuger is what I use to fix borked code. It should not be called in production EVER!
@@ -26,12 +27,16 @@ import security #our custom code that handles common security tasks like SQL san
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 
+
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # 1024 bytes x 1024 is a MB. Prevents people from uploading 40 GB pictures
 app.config.from_object(__name__)
+app.register_blueprint(enemy_blueprint)
 global log
 
-"""We call this on startup to get all of the config info from comand line. The username/password combination is
+global whos_on
+
+"""We call this on startup to get all of the config info from command line. The username/password combination is
 		used to prevent having to store the credentials on the box, so we don't have to defend data at rest."""
 def get_args():
 	parser = argparse.ArgumentParser()
@@ -40,28 +45,6 @@ def get_args():
 	parser.add_argument("-p", metavar="PostgresPassword", help="Password for PSQL login profile.")
 	args = parser.parse_args()
 	return args
-
-""" we call this any time someone checks out a page on the site that should be off-limits to someone who
-		hasn't logged in. If they aren't logged in, it returns false, if they are, it returns true."""
-def check_auth(session):
-	if 'username' not in session.keys():
-		log.error("Anonymous attempt to access %s! user_agent:%s, remoteIP:%s" % (request.path, request.user_agent.string, request.remote_addr))
-		return False
-	blacklisted_UA = ['zgrab', 'vas', 'burp']
-	for ua in blacklisted_UA:
-		if ua in request.user_agent.string.lower():
-			return False
-	return True
-
-def monster_connect():
-	username = "searcher"
-	if config.get('Enemies','enemies_psql_user'):
-		username = config.get('Enemies', 'enemies_psql_user')
-	db = 'mydb'
-	if config.get('Enemies', 'enemies_psql_db'):
-		db = config.get('Enemies', 'enemies_psql_db')
-	connection = psycopg2.connect("dbname=%s user=%s password=allDatSQL" % (db, username))
-	return connection
 
 """returns a list of maps where the map represents a class. The value of map['name'] might = 'Soldier' and
 			map['armorProficency'] might be equal to ['recon', 'medium', 'light']. Must have the correct .json
@@ -162,6 +145,15 @@ def get_races():
 		races = json.loads(racefile.read())
 	return races
 
+def parser_page(config_option):
+	if config.has_section('Parser') and config.has_option('Parser', config_option):
+		rule_filepath = config.get('Parser', config_option)
+		tokens = docs_parser.parse(rule_filepath)
+		return render_template("parser.html", elements = tokens)
+	else:
+		flash("That feature isn't configured.")
+		return redirect("/")
+
 """connect to user login database if said database is set up. uses psychopg2. 
 			if user is not found or if posgres database info is not set, returns None. Returns 
 			a tuple with username, displayname, realname and password if login is successful."""
@@ -178,7 +170,7 @@ def get_user_postgres(username, password, remoteIP):
 			% (saniUser, saniPass, remoteIP))
 		connection.commit()
 		#check the number of attempts in the last half hour
-		myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s';" % remoteIP)
+		myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s' AND 'username' LIKE '%s';" % (remoteIP,saniUser))
 		logins = myCursor.fetchall()
 		if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
 			log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
@@ -198,11 +190,67 @@ def get_user_postgres(username, password, remoteIP):
 def hello():			#tells flask what method to use when you hit a particular route. Same as regular python function definition.
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
+	docs = None
+	if config.has_section('Parser'):
+		docs = []
+		if config.has_option('Parser', 'basic_rules_filepath'):
+			docs.append(('Basic Rules','/docs/basic'))
+
+		if config.has_option('Parser', 'races_filepath'):
+			docs.append(('Races','/docs/races'))
+
+		if config.has_option('Parser', 'classes_filepath'):
+			docs.append(('Classes','/docs/classes'))
+
+		if config.has_option('Parser', 'feats_filepath'):
+			docs.append(('Feats','/docs/feats'))
+
+		if config.has_option('Parser', 'melee_weapons_filepath'):
+			docs.append(('Melee Weapons','/docs/meleeWeapons'))
+
+		if config.has_option('Parser', 'pistols_filepath'):
+			docs.append(('Pistols','/docs/pistols'))
+
+		if config.has_option('Parser', 'smgs_filepath'):
+			docs.append(('Submachine Guns','/docs/smgs'))
+
+		if config.has_option('Parser', 'carbines_filepath'):
+			docs.append(('Carbines and Assault Rifles','/docs/carbines'))
+
+		if config.has_option('Parser', 'long_rifles_filepath'):
+			docs.append(('Long Rifles and DMRs','/docs/longRifles'))
+
+		if config.has_option('Parser', 'machineguns_filepath'):
+			docs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
+
+		if config.has_option('Parser', 'weapon_attachments_filepath'):
+			docs.append(('Weapon Attachments','/docs/weaponAttachments'))
+
+		if config.has_option('Parser', 'armor_filepath'):
+			docs.append(('Armor','/docs/armor'))
+
+		if config.has_option('Parser', 'skills_filepath'):
+			docs.append(('Skill','/docs/skills'))
+
+		if config.has_option('Parser', 'items_filepath'):
+			docs.append(('Items','/docs/items'))
+
+		if config.has_option('Parser', 'Engineer_filepath'):
+			docs.append(('Engineer Processes','/docs/engineers'))
+
+		if config.has_option('Parser', 'Medic_filepath'):
+			docs.append(('Medic Procedures','/docs/medics'))
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
 		pc = characters.get_character(session['character']) 
-	return render_template('index.html', session=session, character=pc) #the flask method render_template() shows a jinja template 
+	gb = guestbook.get_guestbook()
+	return render_template('index.html', session=session, character=pc, docs=docs, guestbook = gb) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
+
+@app.route("/whoshere")
+def whosHereAPI():
+	gbook = json.dumps(guestbook.get_guestbook())
+	return gbook
 
 @app.route("/levelup")
 def levelUp():
@@ -254,6 +302,74 @@ def show_armor():
 	armor = get_armor(session)
 	return render_template('armor.html', armors=armor, session=session)
 
+#begin parser pages
+
+@app.route("/docs/classes")
+def docs_classes():
+	return parser_page('classes_filepath')
+
+@app.route("/docs/races")
+def docs_races():
+	return parser_page('races_filepath')
+
+@app.route("/docs/items")
+def docs_items():
+	return parser_page('items_filepath')
+
+@app.route("/docs/feats")
+def docs_feats():
+	return parser_page('feats_filepath')
+
+@app.route("/docs/meleeWeapons")
+def docs_melee():
+	return parser_page('melee_weapons_filepath')
+
+@app.route("/docs/pistols")
+def docs_pistols():
+	return parser_page('pistols_filepath')
+
+@app.route("/docs/smgs")
+def docs_smgs():
+	return parser_page('smgs_filepath')
+
+@app.route("/docs/carbines")
+def docs_carbines():
+	return parser_page('carbines_filepath')
+
+@app.route("/docs/longRifles")
+def docs_long_rifles():
+	return parser_page('long_rifles_filepath')
+
+@app.route("/docs/machineguns")
+def docs_machineguns():
+	return parser_page('machineguns_filepath')
+
+@app.route("/docs/weaponAttachments")
+def docs_wep_attachments():
+	return parser_page('weapon_attachments_filepath')
+
+@app.route("/docs/armor")
+def docs_armor():
+	return parser_page('armor_filepath')
+
+@app.route("/docs/skills")
+def docs_skills():
+	return parser_page('skills_filepath')
+
+@app.route("/docs/basic")
+def docs_basic():
+	return parser_page('basic_rules_filepath')
+
+@app.route("/docs/medics")
+def docs_medics():
+	return parser_page('Medic_filepath')
+
+@app.route("/docs/engineers")
+def docs_engineers():
+	return parser_page('Engineer_filepath')
+
+#End parser pages
+
 @app.route("/show/character")
 def show_char_select():
 	if 'username' not in session.keys():
@@ -272,7 +388,7 @@ def show_player_characters():
 	
 @app.route("/select/character", methods=['POST'])
 def char_select():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	character_blob = character.get_characters(session)
 	select_pk = int(request.form['pk'])
@@ -296,7 +412,7 @@ def char_modify(pk):
 
 @app.route("/mod/character", methods=['POST'])
 def char_mod():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 
 @app.route("/items")
@@ -331,14 +447,14 @@ def show_files():
 
 @app.route("/weaponsmith")
 def show_weaponsmith():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	guns = get_guns(session)
 	return render_template("weaponsmith.html", guns=guns, session=session)
 
 @app.route("/addgun", methods=['POST'])
 def make_gun():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	gun = {}
 	gun['name'] = request.form['gunname']
@@ -371,14 +487,14 @@ def show_missions():
 
 @app.route("/itemsmith")
 def show_itemsmith():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	items = get_items()
 	return render_template("itemsmith.html", items = items, session=session)
 
 @app.route("/additem", methods=['POST'])
 def make_item():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	item = {}
 	item['name'] = request.form['itemname']
@@ -394,517 +510,16 @@ def make_item():
 	log.info("%s added new race: %s", (session['username'], item['name']))
 	return redirect("itemsmith")
 
-@app.route("/monster")
-def show_monsters():
-	if not check_auth(session):
-		return redirect("/")
-	munsters = enemies.get_monsters()
-	return render_template("monsters.html", monsters = munsters, session=session)
-
-@app.route("/monsterstats")
-def show_monsters_stats():
-    if not check_auth(session):
-        return redirect("/")
-    munsters = enemies.get_monsters()
-    abilities = enemy_abilities.get_monster_abilities_all()
-    armor = enemy_armor.get_monster_armor_all()
-    weapons = enemy_weapons.get_monster_weapons_all()
-    stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters)}
-    stats['armor'] = {'count':len(armor), 'contributors':{}}
-    stats['weapons'] = {'count':len(weapons), 'contributors':{}}
-    stats['abilities'] = {'count':len(abilities), 'contributors': {}}
-    stats['contributors'] = {}
-    stats['nakedMonsters'] = []
-    stats['roles'] = {}
-    for monster in munsters:
-        hasAbs = True
-        hasWep = True
-        hasArm = True
-        if len(monster['abilities']) == 0:
-            stats['noabilities'] += 1
-            hasAbs = False
-        if len(monster['weapons']) == 0:
-            stats['noweapons'] += 1
-            hasWep = False
-        if len(monster['armor']) == 0:
-            stats['noarmor'] += 1
-            hasArm = False
-        if not (hasAbs or hasArm or hasWep):
-            stats['hasnothingcount'] += 1
-            stats['nakedMonsters'].append(monster)
-        if monster['level'] not in stats['levelcount'].keys():
-            stats['levelcount'][monster['level']] = 1
-        else:
-            stats['levelcount'][monster['level']] += 1
-        if monster['author'] not in stats['contributors'].keys():
-            stats['contributors'][monster['author']] = 1
-        else:
-            stats['contributors'][monster['author']] += 1
-        if monster['role'] not in stats['roles'].keys():
-            stats['roles'][monster['role']] = 1
-        else:
-            stats['roles'][monster['role']] += 1
-    stats['weapons']['types'] = {}
-    for weapon in weapons:
-          if weapon['type'] not in stats['weapons']['types'].keys():
-            stats['weapons']['types'][weapon['type']] = 1
-          else:
-            stats['weapons']['types'][weapon['type']] += 1
-          if weapon['author'] not in stats['weapons']['contributors'].keys():
-            stats['weapons']['contributors'][weapon['author']] = 1
-          else:
-            stats['weapons']['contributors'][weapon['author']] += 1
-    stats['abilities']['types'] = {}
-    for ability in abilities:
-        if ability['type'] not in stats['abilities']['types'].keys():
-            stats['abilities']['types'][ability['type']] = 1
-        else:
-            stats['abilities']['types'][ability['type']] += 1
-        if ability['author'] not in stats['abilities']['contributors'].keys():
-            stats['abilities']['contributors'][ability['author']] = 1
-        else:
-            stats['abilities']['contributors'][ability['author']] += 1
-    stats['armor']['types'] = {}
-    for suit in armor:
-          if suit['author'] not in stats['armor']['contributors'].keys():
-            stats['armor']['contributors'][suit['author']] = 1
-          else:
-            stats['armor']['contributors'][suit['author']] += 1
-          if suit['type'] not in stats['armor']['types'].keys():
-            stats['armor']['types'][ suit['type']] = 1
-          else:
-            stats['armor']['types'][suit['type']] += 1
-    return render_template("monster_meta.html", monsters=munsters, stats=stats, session=session)
-
-@app.route("/monstereditor")
-def show_monster_editor():
-	if not check_auth(session):
-		return redirect("/")
-	monsters = enemies.get_monsters()
-	return render_template("monster_smith.html", session=session, monsters=monsters)
-
-@app.route("/monsterupdate/<pk_id>")
-def show_monster_updater(pk_id):
-	if not check_auth(session):
-		return redirect("/")
-	monsters = enemies.get_monsters()
-	myMonster = None
-	for monster in monsters:
-		if monster['pk_id'] == int(pk_id):
-			myMonster = monster
-	if myMonster == None:
-		flash('Could not find the enemy you wanted to update!')
-		return redirect('monsters.html')
-	return render_template("monster_update.html", session=session, monsters=monsters, pk_id=pk_id, myMonster=myMonster)
-	
-@app.route("/monsterweaponupdate/<pk_id>")
-def show_monster_weapon_updater(pk_id):
-	if not check_auth(session):
-		return redirect("/")
-	monsters = enemies.get_monsters()
-	weapons = enemy_weapons.get_monster_weapons_all()
-	myWeapon = None
-	for weapon in weapons:
-		if weapon['pk_id'] == int(pk_id):
-			myWeapon = weapon
-	if myWeapon == None:
-		flash("Could not find the weapon you wanted to update!")
-		return redirect("/monstersweapons")
-	return render_template("monster_weapon_update.html", session=session, monsters=monsters, weapons=weapons, pk_id=pk_id, myWeapon=myWeapon)
-
-@app.route("/monsterarmorupdate/<pk_id>")
-def show_monster_armor_updater(pk_id):
-	if not check_auth(session):
-		return redirect("/")
-	monsters = enemies.get_monsters()
-	armors = enemy_armor.get_monster_armor_all()
-	myArmor = None
-	for armor in armors:
-		if armor['pk_id'] == int(pk_id):
-			myArmor = armor
-	if myArmor == None:
-		flash("Could not find the armor you wanted to update!")
-		return redirect("/monstersarmors")
-	return render_template("monster_armor_update.html", monsters=monsters, session=session, pk_id=pk_id, myArmor=myArmor, armors=armors)
-
-@app.route("/monsterabilityupdate/<pk_id>")
-def show_monster_ability_updater(pk_id):
-	if not check_auth(session):
-		flash("You must be logged in to update abilities!")
-		return redirect("/")
-	monsters = enemies.get_monsters()
-	abilities = enemy_abilities.get_monster_abilities_all()
-	myAbility = None
-	for ability in abilities:
-		if ability['pk_id'] == int(pk_id):
-			myAbility = ability
-	if myAbility == None:
-		flash("Could not find that ability!")
-		return redirect("/monsterabilities")
-	return render_template("monster_ability_update.html", monsters=monsters, session=session, pk_id=pk_id, myAbility=myAbility, abilities=abilities)
-
-@app.route("/monsterpic")
-def show_monster_photographer():
-	if not check_auth(session):
-		return redirect("")
-	monsters = enemies.get_monsters()
-	return render_template("monster_photographer.html", monsters=monsters)
-
-@app.route("/newMonster", methods=['POST'])
-def make_monster():
-	if not check_auth(session):
-		flash('Must be logged in to see this page')
-		return redirect("/")
-	user = session['displayname']
-	monster = enemies.validate_monster(request.form, user)
-	if not  monster:
-		flash('Enemy invalid. Could not add')
-		return redirect("/monstereditor")
-	enemies.insert_monster(monster)
-	log.info('User %s created monster: %s.', user, monster['name'])
-	flash('Enemy added!')
-	return redirect("/monstereditor")
-
-@app.route("/updateMonster/<pk_id>", methods=['POST'])
-def update_monster(pk_id):
-	if not check_auth(session):
-		flash('must be logged in to see this page')
-		return redirect('/')
-	user = session['displayname']
-	monster = enemies.validate_monster(request.form, user)
-	if not monster:
-		flash("Enemy invalid. Could not add.")
-		return redirect("/monsterupdate/%s" % pk_id)
-	enemies.update_monster(monster, pk_id)	
-	log.info('User %s updated monster: %s.', user, monster['name'])
-	flash("Enemy updated!")
-	return redirect("/monster")
-		
-@app.route("/updateMonsterWeapon/<pk_id>", methods=['POST'])
-def update_monster_weapon(pk_id):
-	if not check_auth(session):
-		flash("Must be logged in to see this page.")
-		return redirect("/")
-	user = session['displayname']
-	weapon = enemy_weapons.validate_monster_weapon(request.form, user)
-	if not weapon:
-		flash("Could not update weapon. Invalid input?")
-		return redirect("/monsterweaponupdate/%s" % pk_id)
-	enemies.update_monster_weapon(weapon, pk_id)
-	log.info('User %s updated enemy weapon: %s.', user, weapon['name'])
-	flash("Successfully updated enemy weapon!")
-	return redirect("/monsterweapons")
-
-@app.route("/updateMonsterArmor/<pk_id>", methods=['POST'])
-def update_monster_armor(pk_id):
-	if not check_auth(session):
-		flash("Must be logged in to do this.")
-		return redirect("/")
-	user = session['displayname']
-	armor = enemy_armor.validate_monster_armor(request.form, user)
-	if not armor:
-		flash("Could not update Armor. Invalid input?")
-		return redirect("monsterarmorupdate/%s" % pk_id)
-	enemy_armor.update_monster_armor(armor, pk_id)
-	log.info('User %s updated enemy Armor: %s', user, armor['name'])
-	flash("Successfully updated enemy Armor!")
-	return redirect("/monsterarmor")
-
-@app.route("/updateMonsterAbility/<pk_id>", methods=['POST'])
-def update_monster_ability(pk_id):
-	if not check_auth(session):
-		flash("Must be logged in to do that!")
-		return redirect("/")
-	user = session['displayname']
-	ability = enemy_abilities.validate_monster_ability(request.form, user)
-	if not ability:
-		flash("Could not update ability. Invalid input?")
-		return redirect("monsterabilityupdate/%s" % pk_id)
-	enemy_abilities.update_monster_ability(ability, pk_id)
-	log.info('User %s updated enemy Ability: %s', user, ability['name'])
-	flash("Successfully updated enemy Ability!")
-	return redirect("/monsterabilities")
-
-@app.route("/newMonsterpic", methods=['POST'])
-def make_monster_pic():
-    if not check_auth(session):
-        flash('You must be logged in to do that. This incident has been logged.')
-        return redirect('/')
-    user = session['displayname']
-    allowed_filetypes = set(['png'])
-    file = request.files['monster_pic']
-    filename = secure_filename(file.filename)
-    if not ('.' in filename and filename.split('.')[1].lower() in allowed_filetypes):
-        flash('invalid file. This incident has been logged.')
-        return redirect('/monsterpic')
-    monster_id = int(request.form['monster_id'])
-    file.save(os.path.join(config.get('Enemies', 'pics_file_path'),"%s.png" % monster_id))
-    return redirect("/monsterpic")
-
-@app.route("/newMonsterAbility", methods = ['POST'])
-def make_monster_ability():
-	if not check_auth(session):
-		flash("Must be logged in to do that.")
-		return redirect("/")
-	user = session['displayname']
-	ability = enemy_abilities.validate_monster_ability(request.form, user)
-	if not ability:
-		flash("New ability not valid. Could not add.")
-		return redirect("/monsterabilityeditor")
-	enemy_abilities.insert_monster_ability(ability)
-	log.info('User %s created enemy Ability: %s.', user, ability['name'])
-	flash("Enemy Ability Added!")
-	return redirect("/monsterabilityeditor")
-
-@app.route("/newMonsterWeapon", methods = ['POST'])
-def make_monster_weapon():
-	if not check_auth(session):
-		flash("Must be logged in to do that. This incident will be logged.")
-		return redirect("/")
-	user = session['displayname']
-	weapon = enemy_weapons.validate_monster_weapon(request.form, user)
-	if not weapon:
-		flash("New Weapon is invalid. Could not add.")
-		return redirect("/monsterweaponeditor")
-	enemy_weapons.insert_monster_weapon(weapon)
-	log.info('User %s created enemy Weapon: %s.', user, weapon['name'])
-	flash("Enemy Weapon Added to Armory!")
-	return redirect("/monsterweaponeditor")
-
-@app.route("/newMonsterArmor", methods=['Post'])
-def make_monster_armor():
-	if not check_auth(session):
-		flash("Must be logged in to do that. This incident willbe logged.")
-		return redirect("/")
-	user = session['displayname']
-	armor = enemy_armor.validate_monster_armor(request.form, user)
-	if not armor:
-		flash("New Armor is invalid. Could not add.")
-		return redirect("/monsterarmoreditor")
-	enemy_armor.insert_monster_armor(armor)
-	log.info('User %s created enemy Armor: %s', user, armor['name'])
-	flash("Enemy Armor Added successfully!")
-	return redirect("/monsterarmoreditor")
-
-@app.route("/assignMonsterAbility", methods=['POST'])
-def make_monster_ability_mapping():
-	if not check_auth(session):
-		flash("Must be logged in to do that.")
-		return redirect("/")
-	mapping = enemy_abilities.validate_monster_ability_map(request.form)
-	if not mapping:
-		flash("New mapping not valid. Could not add.")
-		return redirect("/monsterabilityeditor")
-	enemy_abilities.insert_monster_ability_map(mapping)
-	flash("Enemy Ability Assigned!")
-	return redirect("/monsterabilityeditor")
-
-@app.route("/assignMonsterWeapon", methods=['POST'])
-def make_monster_weapon_mapping():
-	if not check_auth(session):
-		flash("Must be logged in to do that.")
-		return redirect("/")
-	mapping = enemy_weapons.validate_monster_weapon_map(request.form)
-	if not mapping:
-		flash("New mapping not valid. Could not add.")
-		return redirect("/")
-	enemy_weapons.insert_monster_weapon_map(mapping)
-	flash("Weapon Assigned to Enemy Successfully!")
-	return redirect("/monsterweaponeditor")
-
-@app.route("/assignMonsterArmor", methods=['POST'])
-def make_monster_armor_mapping():
-	if not check_auth(session):
-		flash("Must be logged in to do that.")
-		return redirect("/")
-	mapping = enemy_armor.validate_monster_armor_map(request.form)
-	if not mapping:
-		flash("New armor assignment invalid. Could not add.")
-		return redirect("/")
-	enemy_armor.insert_monster_armor_map(mapping)
-	flash("Armor Assignment successful!")
-	return redirect("/monsterarmoreditor")
-
-@app.route("/deletemonster/<pk_id>", methods=['POST'])
-def delete_monster(pk_id):
-	if not check_auth(session):
-		flash("Must be logged in to do that. This incident has been reported.")
-		return redirect("/")
-	monster_id = None
-	try:
-		monster_id = int(pk_id)
-	except Exception(e):
-		flash("error parsing id of monster. This incident will be logged.")
-		return redirect("/monstereditor")
-	connection = monster_connect()
-	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
-	myCursor.close()
-	connection.commit()
-	
-	flash('Enemy deleted!')
-	return redirect("/monstereditor")
-
-@app.route("/deletemonsterability/<pk_id>", methods=['POST'])
-def delete_monster_ability(pk_id):
-	if not check_auth(session):
-		flash("Must be logged in to do that. This incident will be logged.")
-		return redirect("/")
-	monster_ability_id = None
-	try: 
-		monster_ability_id = int(pk_id)
-	except Exception(e):
-		flash("Error Parsing ID of monster. This incident will be logged.")
-		return redirect("/")
-	connection = monster_connect()
-	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
-	myCursor.close()
-	connection.commit()
-	
-	flash('ability Deleted')
-	return redirect("/monsterabilityeditor")
-
-@app.route("/deletemonsterweapon/<pk_id>", methods=['POST'])
-def delete_monster_weapon(pk_id):
-	if not check_auth(session):
-		flash("must be logged in to do that. This incident will be reported.")
-		return redirect("/")
-	monster_weapon_id = None
-	try:
-		monster_weapon_id = int(pk_id)
-	except Exception(e):
-		flash("error parsing ID of monster. This incident will be logged")
-		return redirect("/")
-	connection = monster_connect()
-	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters_weapons WHERE pk_id = %s;" % pk_id)
-	myCursor.close()
-	connection.commit()
-	
-	flash('weapon Deleted successfuly!')
-	return redirect("/monsterweaponeditor")
-
-@app.route("/deletemonsterarmor/<pk_id>", methods=['POST'])
-def delete_monster_armor(pk_id):
-	if not check_auth(session):
-		flash("You must be logged in to do that. This incident will be looged.")
-		return redirect("/")
-	monster_armor_id = None
-	try: 
-		monster_armor_id = int(pk_id)
-	except:
-		flash("error parsing ID of monster. This incident will be logged.")
-		return redirect("/")
-	connection = monster_connect()
-	myCursor = connection.cursor()
-	myCursor.execute("DELETE FROM monsters_armors WHERE pk_id = %s;" % pk_id)
-	myCursor.close()
-	connection.commit()
-	
-	flash('armor Deleted successfuly!')
-	return redirect("/monsterarmoreditor")
-
-@app.route("/deletemonsterabilitymap", methods=['post'])
-def delete_monster_ability_map():
-	if not check_auth(session):
-		flash("You must be logged in to do that. This incident has been logged.")
-		return redirect("/")
-	flash("Ability taken away successfully")
-	enemy_abilities.delete_monster_ability_map(request.form['pk_id'])
-	return redirect("/monsterabilities")
-
-@app.route("/deletemonsterweaponmap", methods=['post'])
-def delete_monster_weapon_map():
-	if not check_auth(session):
-		flash("You must be logged in to do that. This incident has been logged.")
-		return redirect("/")
-	flash("Weapon taken away successfully")
-	enemy_weapons.delete_monster_weapon_map(request.form['pk_id'])
-	return redirect("/monsterweapons")
-
-@app.route("/deletemonsterarmormap", methods=['post'])
-def delete_monster_armor_map():
-	if not check_auth(session):
-		flash("You must be logged in to do that. This incident has been logged.")
-		return redirect("/")
-	flash("Armor taken away successfully")
-	enemy_armor.delete_monster_armor_map(request.form['pk_id'])
-	return redirect("/monsterarmor")
-
-@app.route("/monsterabilities")
-def show_monster_abilities():
-	if not check_auth(session):
-		flash("You must be logged in to see that.")
-		return redirect("/")
-	mAbilities = enemy_abilities.get_monster_abilities_all()
-	munsters = enemies.get_monsters()
-	for ability in mAbilities:
-		maps = enemy_abilities.get_abilitys_monsters(ability['pk_id'])
-		ability['maps'] = maps
-	return render_template("monster_abilities.html", abilities=mAbilities, monsters=munsters)
-
-@app.route("/monsterweapons")
-def show_monster_weapons():
-	if not check_auth(session):
-		flash("you must be logged in to see that.")
-		return redirect("/")
-	mWeapons = enemy_weapons.get_monster_weapons_all()
-	munsters = enemies.get_monsters()
-	for weapon in mWeapons:
-		maps = enemy_weapons.get_weapons_monsters(weapon['pk_id'])
-		weapon['maps'] = maps
-	return render_template("monster_weapons.html", weapons=mWeapons, monsters=munsters)
-
-@app.route("/monsterarmor")
-def show_monster_armor():
-	if not check_auth(session):
-		flash("you must be logged in to see that")
-		return redirect("/")
-	mArmor = enemy_armor.get_monster_armor_all()
-	munsters = enemies.get_monsters()
-	for suit in mArmor:
-		maps = enemy_armor.get_armors_monsters(suit['pk_id'])
-		suit['maps'] = maps
-	return render_template("monster_armor.html", armor=mArmor, monsters=munsters)
-
-@app.route("/monsterabilityeditor")
-def show_monster_ability_editor():
-	if not check_auth(session):
-		flash("Must be logged in to do that.")
-		return redirect("/")
-	mAbilities = enemy_abilities.get_monster_abilities_all()
-	munsters = enemies.get_monsters()
-	return render_template("monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
-
-@app.route("/monsterweaponeditor")
-def show_monster_weapon_editor():
-	if not check_auth(session):
-		flash("must be logged in to see that.")
-		return redirect("/")
-	mWeps = enemy_weapons.get_monster_weapons_all()
-	munsters = enemies.get_monsters()
-	return render_template("monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
-
-@app.route("/monsterarmoreditor")
-def show_monster_armor_editor():
-	if not check_auth(session):
-		flash("you must be logged in to see that.")
-		return redirect("/")
-	mArmor = enemy_armor.get_monster_armor_all()
-	munsters = enemies.get_monsters()
-	return render_template("monster_armor_smith.html", session=session, armor=mArmor, monsters=munsters)
-
 @app.route("/armorsmith")
 def show_armorsmith():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	armor = get_armor(session)
 	return render_template("armorsmith.html", armor=armor, session=session)
 
 @app.route("/addarmor", methods=['POST'])
 def make_armor():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	newArmor = {}
 	newArmor['name'] = request.form['name']
@@ -928,14 +543,14 @@ def make_armor():
 
 @app.route("/racesmith")
 def show_racesmith():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	races = get_races()
 	return render_template("racesmith.html", races=races, session=session)
 
 @app.route("/addrace", methods=['POST'])
 def make_race():
-	if not check_auth(session):
+	if not security.check_auth(session):
 		return redirect("/")
 	newRace = {}
 	newRace['name'] = request.form['name']
@@ -975,6 +590,7 @@ def login():
 		session['role'] = user[5]
 		log.info("%s logged in" % uname)
 		flash('Logged in.')
+		guestbook.sign_guestbook(user[2])
 	else:
 		log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
 		flash('Failed to log in; username or password incorrect.')
@@ -1005,9 +621,17 @@ def roblocker():
 def gamelogs():
 	return render_template("gamelogs.html")
 
+@app.route("/designhowto")
+def show_design_howto():
+	return render_template("design_how_to.html")
+
 @app.route("/monsterweaponshowto")
 def show_monster_weapons_howto():
 	return render_template("monster_weapon_how_to.html")
+
+@app.route("/monsterarmorhowto")
+def show_monster_armor_howto():
+	return render_template("monster_armor_how_to.html")
 
 """ set generic handlers for common errors."""
 @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python. 
@@ -1032,9 +656,16 @@ if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    enemies_common.set_config(config)
     characters_common.set_config(config)
     
+    seconds_away = 60
+    seconds_out = 3600
+    if config.has_option('WhosHere', 'Seconds_away'):
+    	seconds_away = config.get('WhosHere', 'Seconds_away')
+    if config.has_option('WhosHere', 'Seconds_out'):
+    	seconds_out = config.get('WhosHere', 'Seconds_out')
+    guestbook.initialize(seconds_away, seconds_out)
+
     args = get_args()
     if args.i:	# if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
         host = args.i
@@ -1043,6 +674,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename=log_filename, level=logging.INFO)
     global log
     log = logging.getLogger("cxDocs:")
+    initialize_enemies(config, log)
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
     #app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
     #app.config['SQLAlchemy_ECHO'] = True
@@ -1061,3 +693,5 @@ CREATE TABLE login_audit_log (
 GRANT UPDATE ON login_log_seq TO validator;
 GRANT ALL ON login_audit_log TO validator;
 """
+
+#was 1223 lines before split, is 714 after.

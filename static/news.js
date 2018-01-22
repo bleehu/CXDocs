@@ -1,8 +1,9 @@
 
 //This file uses AJAX to reach out to the github API to retrieve and display news on recent development.
 (function(){
+    $(document).ready(initialize)
 
-    window.onload = function(){
+    function initialize(){
         var today = new Date();
         var thisMonth = today.getMonth();
         var lastMonth = new Date();
@@ -11,7 +12,7 @@
 
         var cxUpdateRequest = new XMLHttpRequest();
         cxUpdateRequest.onreadystatechange = gitNews;
-        cxUpdateRequest.open("GET", "https://api.github.com/repos/trowl223/compound_x/commits?since=" + startString, true);
+        cxUpdateRequest.open("GET", "https://api.github.com/repos/bleehu/compound_x/commits?since=" + startString, true);
         cxUpdateRequest.send();
 
         var doxUpdateRequest = new XMLHttpRequest();
@@ -23,21 +24,31 @@
 
     function gitNews(){
         var myNewsDiv = document.getElementById("cxNewsDiv");
-        var report = JSON.parse(this.responseText);
-        myNewsDiv.innerHTML = "<h2> CX Dev News </h2>";
-        for (var itteration = 0; itteration < 5; itteration++){
-            var commit = report[itteration]["commit"];
-            reportCommit(commit, myNewsDiv);
+        console.log(this.responseText);
+        try
+        {
+            var report = JSON.parse(this.responseText);
+            myNewsDiv.innerHTML = "<h2> CX Dev News </h2>";
+            for (var itteration = 0; itteration < 5; itteration++){
+                var commit = report[itteration]["commit"];
+                reportCommit(commit, myNewsDiv);
+            }
+        } catch (err){
+
         }
     }
 
     function doxNews(){
         var myNewsDiv = document.getElementById("doxNewsDiv");
-        var report = JSON.parse(this.responseText);
-        myNewsDiv.innerHTML = "<h2> CX Docs News </h2>";
-        for (var itteration = 0; itteration < 5; itteration++){
-            var commit = report[itteration]["commit"];
-            reportCommit(commit, myNewsDiv);
+        try{
+            var report = JSON.parse(this.responseText);
+            myNewsDiv.innerHTML = "<h2> CX Docs News </h2>";
+            for (var itteration = 0; itteration < 5; itteration++){
+                var commit = report[itteration]["commit"];
+                reportCommit(commit, myNewsDiv);
+            }
+        } catch(err){
+
         }
     }
 
@@ -48,7 +59,7 @@
             panel.classList.add("panel-primary");
             var panelHeading = document.createElement("div");
             panelHeading.classList.add("panel-heading");
-            var title = document.createElement("h3");
+            var title = document.createElement("h4");
             title.classList.add("panel-title");
             var panelContent = document.createElement("div");
             panelContent.classList.add("panel-body");

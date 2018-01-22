@@ -8,158 +8,165 @@
 			<div class="page-header">
 				<h1> Enemy Weapon Editor </h1>
 			</div>
-			<div class="col-lg-8">
-			<h2> Create New Enemy Weapon </h2>
-			<p>More than one enemy may have the same weapon assigned to it. For instance, both a Pirate
-				Breacher and a marine shotgunner may have the same shotgun. In addition, an enemy like 
-				a marine shotgunner may have more than one weapon, a knife and a shotgun. </p>
-				<form class="form-horizontal" action="/newMonsterWeapon" method="post" autocomplete="off">
-					<fieldset>
-						<div class="form-group">
-                            <label for="gunName" class="gol-lg-2 control-label"> Name </label>
-                            <div class="col-lg-4">
-                                <input id="gunName" class="form-control" name="name" placeholder="name of gun" type="text"/>
-                            </div>
-						</div>
-						<div class="form-group">
-                            <label for="gunDamage" class="col-lg-3 control-label">Damage</label>
-							<div = class="col-lg-3">
-								<input class="form-control" id="gunDamage" placeholder="##" type="text" name="damage">
-							</div>
-                            <label for="refmod" class="col-lg-3 control-label">Reflex Modifier</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="refmod" placeholder="##" type="text" name="refmod"></input>
-                            </div>
-                            <label for="ap_level" class="col-lg-3 control-label">Armor Peircing Level</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="ap_level" placeholder="##" type="text" name="ap_level"></input>
-                            </div>
-                            <label for="reload_dc" class="col-lg-3 control-label">Reload DC</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="reload_dc" placeholder="##" type="text" name="reload_dc"></input>
-                            </div>
-                            <label for="move_speed_penalty" class="col-lg-3 control-label">Move Speed Penalty</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="move_speed_penalty" placeholder="##" type="text" name="move_speed_penalty"></input>
-                            </div>
-                            <label for="cost" class="col-lg-2 control-label">Cost</label>
-							<div class="col-lg-3">
-								<input class="form-control" id="cost" placeholder="##" type="text" name="cost"></input>
-							</div>
-                            <label for="mag" class="col-lg-3 control-label">Mag Size</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="mag" placeholder="##" type="text" name="mag"></input>
-                            </div>
-                            <label for="magCost" class="col-lg-3 control-label">Magazine Cost</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="magCost" placeholder="##" type="text" name="magCost"></input>
-                            </div>
-                            <label for="auto_fire_rate" class="col-lg-3 control-label">Auto Fire Rate</label>
-                            <div class="col-lg-3">
-                                <input class="form-control" id="auto_fire_rate" value="0" type="text" name="auto_fire_rate"></input>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <div class="form-group">
-                                <label for="typeSelect" class="col-lg-2 control-label">Type</label>
-                                <div class="col-lg-4">
-                                    <select class="form-control" id="typeSelect" name="type">
-                                        <option value="Pistol">Pistol</option>
-                                        <option value="SMG">SMG</option>
-                                        <option value="Shotgun">Shotgun</option>
-                                        <option value="Carbine">Carbine</option>
-                                        <option value="Automatic Rifle">Automatic Rifle</option>
-                                        <option value="Heavy Weapon">Heavy Weapon</option>
-                                        <option value="Long Rifle">Long Rifle</option>
-                                        <option value="Melee">Melee</option>
-                                        <option value="Bow">Bow</option>
-                                    </select>
-                                </div>
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <legend> Accuracy over Distance </legend>
-                        <div class="form-group">
-                            <label for="range1" class="col-lg-3 control-label">Range 1</label>
-                            <div class="col-lg-3">
-                                <input id="range1" name="range1" placeholder="##" class="form-control" type="text"></input>
-                            </div>
-                            <label for="accuracy1" class="col-lg-3 control-label">Accuracy 1</label>
-                            <div class="col-lg-3">
-                                <input id="accuracy1" name="accuracy1" placeholder="##" class="form-control" type="text"></input>
-                            </div>
-                            <label for="range2" class="col-lg-3 control-label">Range 2</label>
-                            <div class="col-lg-3">
-                                <input id="range2" name="range2" placeholder="##" class="form-control" type="text"></input>
-                            </div>
-                            <label for="accuracy2" class="col-lg-3 control-label">Accuracy 2</label>
-                            <div class="col-lg-3">
-                                <input id="accuracy2" name="accuracy2" placeholder="##" class="form-control" type="text"></input>
-                            </div>
-                            <label for="range3" class="col-lg-3 control-label">Range 3</label>
-                            <div class="col-lg-3">
-                                <input id="range3" name="range3" placeholder="##" class="form-control" type="text"></input>
-                            </div>
-                            <label for="accuracy3" class="col-lg-3 control-label">Accuracy 3</label>
-                            <div class="col-lg-3">
-                                <input id="accuracy3" name="accuracy3" placeholder="##" class="form-control" type="text"></input>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <div class="col-lg-4">
-                            <label for="fire_select" class="col-lg-2 control-label">Suppresion Level</label>
-                            <select name="fire_select" id="fire_select" class="form-control">
-                                <option> None </option>
-                                <option> Light </option>
-                                <option> Medium </option>
-                                <option> Heavy </option>
-                            </select>
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <div class="col-lg-8">
-						<legend>Description</legend>
-						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
-                        </div>
-						<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
-					</fieldset>
-				</form>
+            <div class="row">
+            <div class="col-lg-3">
+                <h2> Existing Weapons </h2>
+                <table class="table table-striped table-hover">
+                {% for weapon in weapons %}
+                    <tr>
+                        <td>{{weapon['name']}}</td>
+                        <td>{{weapon['type']}}</td>
+                        <td><form action="deletemonsterweapon/{{weapon['pk_id']}}" method="POST">
+                            <input type="submit" value="Delete" class="form-control btn-danger"> 
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
             </div>
-			<div class="col-lg-4">
-				<h2> Existing Weapons </h2>
-				<table class="table table-striped table-hover">
-				{% for weapon in weapons %}
-					<tr>
-						<td>{{weapon['name']}}</td>
-						<td>{{weapon['type']}}</td>
-						<td><form action="deletemonsterweapon/{{weapon['pk_id']}}" method="POST">
-							<input type="submit" value="Delete" class="form-control"> 
-							</form>
-						</td>
-					</tr>
-				{% endfor %}
-				</table>
-			</div>
-			<div class="col-lg-4">
-				<h2> Assign Weapons </h2>
-				<p>Once you've created a weapon, it must be assigned to one or more enemy. Deleting an weapon will 
-					take that weapon from every enemy that has it. </p>
-				<form class="form-horizontal" action="/assignMonsterWeapon" method="POST">
-					<select name="monster_id">
-						{% for monster in monsters %}
-						<option value="{{monster['pk_id']}}"> {{monster['name']}} </option>
-						{% endfor %}
-					</select>
-					<select name="weapon_id">
-						{% for weapon in weapons %}
-						<option value="{{weapon['pk_id']}}"> {{weapon['name']}} </option>
-						{% endfor %}
-					</select>
-					<input class="form-button btn btn-success" type="submit" value="Give Weapon to Enemy">
-				</form>
-			</div>
+			<div class="col-lg-9">
+                <div class="row">
+                    <div class="col-lg-12">
+            			<h2> Create New Enemy Weapon </h2>
+            			<p>More than one enemy may have the same weapon assigned to it. For instance, both a Pirate
+            				Breacher and a marine shotgunner may have the same shotgun. In addition, an enemy like 
+            				a marine shotgunner may have more than one weapon, a knife and a shotgun. </p>
+            				<form class="form-horizontal" action="/newMonsterWeapon" method="post" autocomplete="off">
+            					<fieldset>
+            						<div class="form-group row">
+                                        <label for="gunName" class="gol-lg-2 control-label"> Name </label>
+                                        <div class="col-lg-4">
+                                            <input id="gunName" class="form-control" name="name" placeholder="name of gun" type="text"/>
+                                        </div>
+            						</div>
+            						<div class="form-group row">
+                                        <label for="gunDamage" class="col-lg-3 control-label">Damage</label>
+            							<div = class="col-lg-3">
+            								<input class="form-control" id="gunDamage" placeholder="##" type="text" name="damage">
+            							</div>
+                                        <label for="refmod" class="col-lg-3 control-label">Reflex Modifier</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="refmod" placeholder="##" type="text" name="refmod">
+                                        </div>
+                                        <label for="ap_level" class="col-lg-3 control-label">Armor Peircing Level</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="ap_level" placeholder="##" type="text" name="ap_level">
+                                        </div>
+                                        <label for="reload_dc" class="col-lg-3 control-label">Reload DC</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="reload_dc" placeholder="##" type="text" name="reload_dc">
+                                        </div>
+                                        <label for="move_speed_penalty" class="col-lg-3 control-label">Move Speed Penalty</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="move_speed_penalty" placeholder="##" type="text" name="move_speed_penalty">
+                                        </div>
+                                        <label for="cost" class="col-lg-2 control-label">Cost</label>
+            							<div class="col-lg-3">
+            								<input class="form-control" id="cost" placeholder="##" type="text" name="cost">
+            							</div>
+                                        <label for="mag" class="col-lg-3 control-label">Mag Size</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="mag" placeholder="##" type="text" name="mag">
+                                        </div>
+                                        <label for="magCost" class="col-lg-3 control-label">Magazine Cost</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="magCost" placeholder="##" type="text" name="magCost">
+                                        </div>
+                                        <label for="auto_fire_rate" class="col-lg-3 control-label">Auto Fire Rate</label>
+                                        <div class="col-lg-3">
+                                            <input class="form-control" id="auto_fire_rate" value="0" type="text" name="auto_fire_rate">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <div class="form-group row">
+                                            <label for="typeSelect" class="col-lg-2 control-label">Type</label>
+                                            <div class="col-lg-4">
+                                                <select class="form-control" id="typeSelect" name="type">
+                                                    <option value="Pistol">Pistol</option>
+                                                    <option value="SMG">SMG</option>
+                                                    <option value="Shotgun">Shotgun</option>
+                                                    <option value="Carbine">Carbine</option>
+                                                    <option value="Automatic Rifle">Automatic Rifle</option>
+                                                    <option value="Heavy Weapon">Heavy Weapon</option>
+                                                    <option value="Long Rifle">Long Rifle</option>
+                                                    <option value="Melee">Melee</option>
+                                                    <option value="Bow">Bow</option>
+                                                </select>
+                                            </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <legend> Accuracy over Distance </legend>
+                                    <div class="form-group row">
+                                        <label for="range1" class="col-lg-3 control-label">Range 1</label>
+                                        <div class="col-lg-3">
+                                            <input id="range1" name="range1" placeholder="##" class="form-control" type="text">
+                                        </div>
+                                        <label for="accuracy1" class="col-lg-3 control-label">Accuracy 1</label>
+                                        <div class="col-lg-3">
+                                            <input id="accuracy1" name="accuracy1" placeholder="##" class="form-control" type="text">
+                                        </div>
+                                        <label for="range2" class="col-lg-3 control-label">Range 2</label>
+                                        <div class="col-lg-3">
+                                            <input id="range2" name="range2" placeholder="##" class="form-control" type="text">
+                                        </div>
+                                        <label for="accuracy2" class="col-lg-3 control-label">Accuracy 2</label>
+                                        <div class="col-lg-3">
+                                            <input id="accuracy2" name="accuracy2" placeholder="##" class="form-control" type="text">
+                                        </div>
+                                        <label for="range3" class="col-lg-3 control-label">Range 3</label>
+                                        <div class="col-lg-3">
+                                            <input id="range3" name="range3" placeholder="##" class="form-control" type="text">
+                                        </div>
+                                        <label for="accuracy3" class="col-lg-3 control-label">Accuracy 3</label>
+                                        <div class="col-lg-3">
+                                            <input id="accuracy3" name="accuracy3" placeholder="##" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <div class="col-lg-4">
+                                        <label for="fire_select" class="col-lg-2 control-label">Suppresion Level</label>
+                                        <select name="fire_select" id="fire_select" class="form-control">
+                                            <option> None </option>
+                                            <option> Light </option>
+                                            <option> Medium </option>
+                                            <option> Heavy </option>
+                                        </select>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <div class="col-lg-8">
+            						<legend>Description</legend>
+            						<textarea class="form-control" type="textarea" name="description" rows="4" cols="70"></textarea>
+                                    </div>
+            						<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" >
+            					</fieldset>
+            				</form>
+                        </div> <!-- end new weapon form column -->
+                        <div class="col-lg-4">
+                            <h2> Assign Weapons </h2>
+                            <p>Once you've created a weapon, it must be assigned to one or more enemy. Deleting an weapon will 
+                                take that weapon from every enemy that has it. </p>
+                            <form class="form-horizontal" action="/assignMonsterWeapon" method="POST">
+                                <select name="monster_id">
+                                    {% for monster in monsters %}
+                                    <option value="{{monster['pk_id']}}"> {{monster['name']}} </option>
+                                    {% endfor %}
+                                </select>
+                                <select name="weapon_id">
+                                    {% for weapon in weapons %}
+                                    <option value="{{weapon['pk_id']}}"> {{weapon['name']}} </option>
+                                    {% endfor %}
+                                </select>
+                                <input class="form-button btn btn-success" type="submit" value="Give Weapon to Enemy">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end forms column -->
+        </div><!-- end row -->
 	</div>
 	{% endblock %}
 	
