@@ -36,7 +36,8 @@ def show_character_creator():
 
 @character_blueprint.route("/show/character")
 def show_char_select():
-    if 'username' not in session.keys():
+    if not security.check_auth(session):
+        flash("You must be logged in to do that.")
         return redirect("/")
     chars = characters.get_characters()
     pc = None
@@ -53,6 +54,7 @@ def show_player_characters():
 @character_blueprint.route("/select/character", methods=['POST'])
 def char_select():
     if not security.check_auth(session):
+        flash("You must be logged in to do that.")
         return redirect("/")
     character_blob = character.get_characters()
     select_pk = int(request.form['pk'])
@@ -63,7 +65,8 @@ def char_select():
 
 @character_blueprint.route("/modify/character/<pk>")
 def char_modify(pk):
-    if 'username' not in session.keys():
+    if not security.check_auth(session):
+        flash("You must be logged in to do that.")
         return redirect("/")
     to_mod = None
     char_blob = character.get_characters()
