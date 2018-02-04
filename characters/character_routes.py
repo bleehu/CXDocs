@@ -40,10 +40,10 @@ def show_char_select():
         flash("You must be logged in to do that.")
         return redirect("/")
     chars = characters.get_characters()
-    pc = None
+    pc = 0
     if 'character' in session.keys():
         pc = characters.get_character(pk_id)
-    return render_template('character_select.html', characters=chars, session=session, character=pc)
+    return render_template('characterviewer.html', session=session, pc=pc)
 
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
