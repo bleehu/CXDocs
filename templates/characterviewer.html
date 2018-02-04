@@ -1,0 +1,136 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Character Viewer</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+	
+	{% block body %}
+	
+		<div class="container">
+			<div class="page-header">
+				<h1> Compound X Character Creator </h1>
+			</div>
+			<div class="col-lg-6">
+				<table class="table table-striped table-hover ">
+					<tr>
+						<th> <form action="/action_page.php">
+							Welcome To CX Docs Character Creator, we can't wait to see who you become. <br>
+							<!-- HTML text and text boxes with id tags-->
+							Character Name:<br>
+							<input type="text" name="CharacterName" id="CharName" value = "Hooman">
+								<br>
+								<br>
+								<br>
+							Race:<br>
+							<input type="text" name="Race" id="Race" value = "Human">
+								<br>
+								<br>
+							Class:<br>
+							<input type="text" name="ClassName" id="Classname" value = "Soldier">
+								<br>
+								<br>
+								<br>
+								<br>
+							Strength:<br>
+							<input type="text" name="Strength" id="Str" value = "1">
+								<br>
+							Perception::<br>
+							<input type="text" name="Perception" id="Per" value = "1">
+							<br>
+							Fortitude: <br>
+							<input type="text" name="Fortitude" id="Fort" value = "1">
+							<br>
+							Charisma: <br>
+							<input type="text" name="Charisma" id="Char" value = "1">
+							<br>
+							Intelligence: <br>
+							<input type="text" name="Intelligence" id="Intel"  value = "1">
+							<br>
+							Dexterity:<br>
+							<input type="text" name="Dexterity" id="Dex" value = "1">
+							<br>
+							Luck: <br>
+							<input type="text" name="Luck" id="Luck" value = "1">
+							<br>
+							Total Stat Points: <br>
+							<input type="text" name="TotalStatPoints" readonly id="TSP" value = "1"<br>
+							<br>
+							Reflex: <br>
+							<input type="text" name="Reflex" readonly id="Reflex" value = "1">
+							<br>
+							Will: <br>
+							<input type="text" name="Will" readonly id="Will" value = "1">
+							<br>
+							Shock: <br>
+							<input type="text" name="Shock" readonly id="Shock" value = "1">
+							<br>
+							Level: <br>
+							<input type="text" name="Level" readonly id="Lvl" value = "1">
+							<br>
+						
+							
+							</form>
+							
+						
+						
+					</tr>
+					
+				</table>
+				<script type="text/javascript">
+				<!-- grab variables from above to be used by java script) -->
+				var Str2 = document.getElementById('Str'),
+					Per2 = document.getElementById('Per'),
+					Fort2 = document.getElementById('Fort'),
+					Char2 = document.getElementById('Char'),
+					Intel2 = document.getElementById('Intel'),
+					Dex2 = document.getElementById('Dex'),
+					Luck2 = document.getElementById('Luck'),
+					TSP2 = document.getElementById('TSP'),
+					Reflex2 = document.getElementById('Reflex'),
+					Will2 = document.getElementById('Will'),
+					Shock2 = document.getElementById('Shock'),
+					Internet2 = document.getElementById('Internet'),
+					<!-- Naming Conventions as follows: HTML variables have no numbers, JavaScript initial variables use the number 2 after, all else use increased number intervals as they are called and needing to be saved. -->
+					
+				function TotalStatsUpdate() {
+				var TSP3 = parseFloat(Str2.value) + parseFloat(Per2.value) + parseFloat(Fort2.value) + parseFloat(Char2.value) + parseFloat(Intel2.value) + parseFloat(Dex2.value) + parseFloat(Luck2.value) ;
+					TSP2.value = !isNaN(TSP3) ?  TSP3 : '';
+				}
+				function ReflexUpdate() {
+				var Reflex3 = 2 * ((parseFloat(Per2.value) + parseFloat(Dex2.value)) - 6) ;
+					Reflex2.value = !isNaN(Reflex3) ?  Reflex3 : '';
+				}
+				function WillUpdate() {
+				var Will3 = 2 * ((parseFloat(Char2.value) + parseFloat(Fort2.value)) - 6) ;
+					Will2.value = !isNaN(Will3) ?  Will3 : '';
+				}
+				function ShockUpdate() {
+				var Shock3 = 2 * ((parseFloat(Fort2.value) + parseFloat(Intel2.value)) - 6) ;
+					Shock2.value = !isNaN(Shock3) ?  Shock3 : '';
+				}
+					
+				<!-- On change updates to Hours text box, with updates for affected variables-->	
+				Str2.onchange = function() {
+					TotalStatsUpdate(); }
+				Per2.onchange = function() {
+					TotalStatsUpdate(); 
+					ReflexUpdate(); }
+				Fort2.onchange = function() {
+					TotalStatsUpdate(); 
+					WillUpdate(); 
+					ShockUpdate(); }
+				Char2.onchange = function() {
+					TotalStatsUpdate(); }
+				Intel2.onchange = function() {
+					TotalStatsUpdate(); }
+				Dex2.onchange = function() {
+					TotalStatsUpdate(); }
+				Luck2.onchange = function() {
+					TotalStatsUpdate(); }
+				
+					
+				</script>	
+			</div>
+		</div>
+		{% endblock %}
