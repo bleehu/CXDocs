@@ -32,6 +32,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # 1024 bytes x 1024 is a MB. Prevents people from uploading 40 GB pictures
 app.config.from_object(__name__)
 app.register_blueprint(enemy_blueprint)
+app.register_blueprint(character_blueprint)
 global log
 
 global whos_on
