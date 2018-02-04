@@ -1,13 +1,13 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
-import characters #character is a custom data type that we created to handle character information on the backend.
-import characters_common
+import characters
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves. 
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
+from characters.character_routes import character_blueprint, initialize_characters
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
@@ -370,51 +370,6 @@ def docs_engineers():
 
 #End parser pages
 
-@app.route("/show/character")
-def show_char_select():
-	if 'username' not in session.keys():
-		return redirect("/")
-	chars = characters.get_characters()
-	pc = None
-	if 'character' in session.keys():
-		pc = characters.get_character(pk_id)
-	return render_template('character_select.html', characters=chars, session=session, character=pc)
-
-@app.route("/playercharacters")
-def show_player_characters():
-	#SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
-	pcs = characters.get_characters()
-	return render_template("player_characters.html", pcs = pcs)
-	
-@app.route("/select/character", methods=['POST'])
-def char_select():
-	if not security.check_auth(session):
-		return redirect("/")
-	character_blob = character.get_characters(session)
-	select_pk = int(request.form['pk'])
-	for player_character in character_blob['characters']:
-		if player_character.pk == select_pk:
-			session['character'] = str(player_character)
-	return redirect("/show/character")
-
-@app.route("/modify/character/<pk>")
-def char_modify(pk):
-	if 'username' not in session.keys():
-		return redirect("/")
-	to_mod = None
-	char_blob = character.get_characters(session)
-	if int(pk) not in char_blob['pk_list']:
-		return redirect("/show/character")
-	for pc in char_blob['characters']:
-		if pc.pk == int(pk):
-			to_mod = pc
-			return render_template("character_modify.html", session=session, character=to_mod)
-
-@app.route("/mod/character", methods=['POST'])
-def char_mod():
-	if not security.check_auth(session):
-		return redirect("/")
-
 @app.route("/items")
 def show_items():
 	items = get_items()
@@ -656,7 +611,6 @@ if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    characters_common.set_config(config)
     
     seconds_away = 60
     seconds_out = 3600
@@ -675,6 +629,7 @@ if __name__ == "__main__":
     global log
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
+    initialize_characters(config, log)
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
     #app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
     #app.config['SQLAlchemy_ECHO'] = True
