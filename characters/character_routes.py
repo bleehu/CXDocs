@@ -1,3 +1,4 @@
+import characters
 import characters_common
 import security
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
