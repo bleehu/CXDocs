@@ -26,7 +26,7 @@ def make_new_character():
     flash("Created a new character!")
     return redirect("/character/create")
 
-@character_blueprint.route("character/create")
+@character_blueprint.route("/character/create")
 def show_character_creator():
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
@@ -39,10 +39,10 @@ def show_char_select():
     if 'username' not in session.keys():
         return redirect("/")
     chars = characters.get_characters()
-    pc = None
+    pc = 0
     if 'character' in session.keys():
         pc = characters.get_character(pk_id)
-    return render_template('character_select.html', characters=chars, session=session, character=pc)
+    return render_template('characterviewer.html', session=session, pc=pc)
 
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
