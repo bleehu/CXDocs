@@ -22,7 +22,7 @@ def make_new_character():
     if new_character is False:
         flash("Could not add new character; Character was invalid.")
         return redirect("/character/create")
-    #TODO: Insert new character
+    characters.insert_character(new_character, 0)
     flash("Created a new character!")
     return redirect("/character/create")
 
