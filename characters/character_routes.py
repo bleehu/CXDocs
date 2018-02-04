@@ -12,6 +12,20 @@ def initialize_characters(config, newlog):
     global log
     log = newlog
 
+@character_blueprint.route("/character/new", methods=['POST'])
+def make_new_character():
+    if not security.check_auth(session):
+        flash("You must be signed in to make a new character!")
+        return redirect("/")
+    user = session['displayname']
+    new_character = characters.validate_character(request.form, user)
+    if new_character is False:
+        flash("Could not add new character; Character was invalid.")
+        return redirect("/character/create")
+    #TODO: Insert new character
+    flash("Created a new character!")
+    return redirect("/character/create")
+
 @character_blueprint.route("/show/character")
 def show_char_select():
     if 'username' not in session.keys():
