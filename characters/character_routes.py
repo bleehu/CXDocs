@@ -12,6 +12,13 @@ def initialize_characters(config, newlog):
     global log
     log = newlog
 
+@character_blueprint.route("character/create")
+def show_character_creator():
+    if not security.check_auth(session):
+        flash("You must be logged in to do that.")
+        return redirect("/")
+    
+
 @character_blueprint.route("/show/character")
 def show_char_select():
     if 'username' not in session.keys():
