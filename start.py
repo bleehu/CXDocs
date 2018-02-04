@@ -1,7 +1,6 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
-import characters.characters #character is a custom data type that we created to handle character information on the backend.
-import characters.characters_common
+import characters
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves. 
@@ -657,7 +656,6 @@ if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    characters_common.set_config(config)
     
     seconds_away = 60
     seconds_out = 3600
@@ -676,6 +674,7 @@ if __name__ == "__main__":
     global log
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
+    initialize_characters(config, log)
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
     #app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
     #app.config['SQLAlchemy_ECHO'] = True
