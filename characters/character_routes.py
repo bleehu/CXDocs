@@ -51,8 +51,3 @@ def char_modify(pk):
         if pc.pk == int(pk):
             to_mod = pc
             return render_template("character_modify.html", session=session, character=to_mod)
-
-@character_blueprint.route("/mod/character", methods=['POST'])
-def char_mod():
-    if not security.check_auth(session):
-        return redirect("/")
