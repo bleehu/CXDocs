@@ -17,6 +17,8 @@ def show_character_creator():
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
+    return render_template("character_creator.html") #NOTE! Template does not exist yet!
+    #Template to be written by Wildlovelies on 2/4/2018
     
 
 @character_blueprint.route("/show/character")
