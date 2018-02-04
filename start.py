@@ -1,13 +1,14 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 from base64 import b64encode, b64decode
-import characters #character is a custom data type that we created to handle character information on the backend.
-import characters_common
+import characters.characters #character is a custom data type that we created to handle character information on the backend.
+import characters.characters_common
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves. 
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
+from characters.character_routes import character_blueprint, initialize_characters
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
