@@ -26,6 +26,14 @@ def make_new_character():
     flash("Created a new character!")
     return redirect("/character/create")
 
+@character_blueprint.route("character/create")
+def show_character_creator():
+    if not security.check_auth(session):
+        flash("You must be logged in to do that.")
+        return redirect("/")
+    return render_template("character_creator.html") #NOTE! Template does not exist yet!
+    #Template to be written by Wildlovelies on 2/4/2018
+
 @character_blueprint.route("/show/character")
 def show_char_select():
     if 'username' not in session.keys():
@@ -46,7 +54,7 @@ def show_player_characters():
 def char_select():
     if not security.check_auth(session):
         return redirect("/")
-    character_blob = character.get_characters(session)
+    character_blob = character.get_characters()
     select_pk = int(request.form['pk'])
     for player_character in character_blob['characters']:
         if player_character.pk == select_pk:
@@ -58,7 +66,7 @@ def char_modify(pk):
     if 'username' not in session.keys():
         return redirect("/")
     to_mod = None
-    char_blob = character.get_characters(session)
+    char_blob = character.get_characters()
     if int(pk) not in char_blob['pk_list']:
         return redirect("/show/character")
     for pc in char_blob['characters']:
