@@ -96,11 +96,11 @@ def insert_character(character, owner):
 def get_character(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT (name, health, nanites, \
-        strength, perception, fortitude, charisma, intelligence, dexterity\
-        luck, level, shock, will, reflex, description, race, class, owner, \
-        money, created_at) FROM characters WHERE pk_id = %s;" % pk_id)
-    line = myCursor.fetchone()
+    myCursor.execute("SELECT name, health, nanites, \
+        strength, perception, fortitude, charisma, intelligence, dexterity,\
+        luck, level, shock, will, reflex, description, race, class, fk_owner_id, \
+        money, created_at FROM characters WHERE pk_id = %s;" % pk_id)
+    line = myCursor.fetchall()[0]
     this_character = parse_line_to_character(line)
     return this_character
 
@@ -137,28 +137,28 @@ def update_character(character, pk_id):
         connection.close()
 
 def parse_line_to_character(line):
-        newCharacter = {}
-        newCharacter['name'] = line[0]
-        newCharacter['health'] = line[1]
-        newCharacter['nanites'] = line[2]
-        newCharacter['strength'] = line[3]
-        newCharacter['perception'] = line[4]
-        newCharacter['fortitude'] = line[5]
-        newCharacter['charisma'] = line[6]
-        newCharacter['intelligence'] = line[7]
-        newCharacter['dexterity'] = line[8]
-        newCharacter['luck'] = line[9]
-        newCharacter['level'] = line[10]
-        newCharacter['shock'] = line[11]
-        newCharacter['will'] = line[12]
-        newCharacter['reflex'] = line[13]
-        newCharacter['description'] = line[14]
-        newCharacter['race'] = line[15]
-        newCharacter['class'] = line[16]
-        newCharacter['owner'] = line[17]
-        newCharacter['money'] = line[18]
-        newCharacter['created_at'] = line[19]
-        return newCharacter
+    newCharacter = {}
+    newCharacter['name'] = line[0]
+    newCharacter['health'] = line[1]
+    newCharacter['nanites'] = line[2]
+    newCharacter['strength'] = line[3]
+    newCharacter['perception'] = line[4]
+    newCharacter['fortitude'] = line[5]
+    newCharacter['charisma'] = line[6]
+    newCharacter['intelligence'] = line[7]
+    newCharacter['dexterity'] = line[8]
+    newCharacter['luck'] = line[9]
+    newCharacter['level'] = line[10]
+    newCharacter['shock'] = line[11]
+    newCharacter['will'] = line[12]
+    newCharacter['reflex'] = line[13]
+    newCharacter['description'] = line[14]
+    newCharacter['race'] = line[15]
+    newCharacter['class'] = line[16]
+    newCharacter['owner'] = line[17]
+    newCharacter['money'] = line[18]
+    newCharacter['created_at'] = line[19]
+    return newCharacter
 
 """CREATE SEQUENCE characters_pk_seq NO CYCLE;    
     CREATE TABLE characters (
