@@ -44,7 +44,6 @@ def show_char_select(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    pdb.set_trace()
     pc = characters.get_character(pk_id)
     if 'character' in session.keys():
         pc = characters.get_character(pk_id)
