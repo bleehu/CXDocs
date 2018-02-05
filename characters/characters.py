@@ -135,6 +135,11 @@ def get_character(pk_id):
     thisCharacter = parse_character_from_line(char_line)
     return thisCharacter
 
+def delete_character(pk_id):
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("DELETE FROM characters WHERE pk_id = %s;" % pk_id)
+
 def parse_character_from_line(line):
         newCharacter = {}
         newCharacter['name'] = line[0]
