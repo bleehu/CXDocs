@@ -6,3 +6,4 @@ usr/*
 *.pyc
 *.log
 log/*
+config/*.cfg
