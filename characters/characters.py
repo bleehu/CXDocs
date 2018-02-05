@@ -96,7 +96,10 @@ def insert_character(character, owner):
 def get_character(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT * FROM characters WHERE pk_id = %s;" % pk_id)
+    myCursor.execute("SELECT (name, health, nanites, \
+        strength, perception, fortitude, charisma, intelligence, dexterity\
+        luck, level, shock, will, reflex, description, race, class, owner, \
+        money, created_at) FROM characters WHERE pk_id = %s;" % pk_id)
     line = myCursor.fetchone()
     this_character = parse_line_to_character(line)
     return this_character

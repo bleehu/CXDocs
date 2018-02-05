@@ -39,7 +39,7 @@ def show_character_creator():
     return render_template("character_creator.html") #NOTE! Template does not exist yet!
     #Template to be written by Wildlovelies on 2/4/2018
 
-@character_blueprint.route("/show/character/<pk_id>")
+@character_blueprint.route("/showcharacter/<pk_id>")
 def show_char_select(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
