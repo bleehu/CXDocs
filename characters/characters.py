@@ -13,7 +13,7 @@ def get_characters():
     characters = []
     results = myCursor.fetchall()
     for line in results:
-        newCharacter = parse_character_from_line(line)
+        newCharacter = parse_line_to_character(line)
         characters.append(newCharacter)
     return characters
 
@@ -93,6 +93,15 @@ def insert_character(character, owner):
     myCursor.close()
     connection.commit()
 
+def get_character(pk_id):
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT * FROM characters WHERE pk_id = %s;" % pk_id)
+    line = myCursor.fetchone()
+    this_character = parse_line_to_character(line)
+    return this_character
+
+
 def update_character(character, pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
@@ -124,23 +133,7 @@ def update_character(character, pk_id):
         myCursor.close()
         connection.close()
 
-def get_character(pk_id):
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT name, health, nanites, \
-        strength, perception, fortitude, charisma, intelligence, dexterity, luck, \
-        level, shock, will, reflex, description, race, class, \
-        fk_owner_id, money, created_at FROM characters WHERE pk_id = %s;" % pk_id)
-    char_line = myCursor.fetchone()
-    thisCharacter = parse_character_from_line(char_line)
-    return thisCharacter
-
-def delete_character(pk_id):
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM characters WHERE pk_id = %s;" % pk_id)
-
-def parse_character_from_line(line):
+def parse_line_to_character(line):
         newCharacter = {}
         newCharacter['name'] = line[0]
         newCharacter['health'] = line[1]
@@ -163,7 +156,6 @@ def parse_character_from_line(line):
         newCharacter['money'] = line[18]
         newCharacter['created_at'] = line[19]
         return newCharacter
-
 
 """CREATE SEQUENCE characters_pk_seq NO CYCLE;    
     CREATE TABLE characters (
