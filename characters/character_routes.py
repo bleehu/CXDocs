@@ -1,6 +1,7 @@
 import characters
 import characters_common
 import security
+import pdb
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 
 character_blueprint = Blueprint('character_blueprint', __name__, template_folder='templates')
@@ -22,7 +23,9 @@ def make_new_character():
     if new_character is False:
         flash("Could not add new character; Character was invalid.")
         return redirect("/character/create")
-    characters.insert_character(new_character, 0)
+    pk_id = security.get_user_pkid(session)
+    pdb.set_trace()
+    characters.insert_character(new_character, pk_id)
     flash("Created a new character!")
     return redirect("/character/create")
 
