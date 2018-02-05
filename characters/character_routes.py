@@ -1,5 +1,6 @@
 import characters
 import characters_common
+import pdb
 import security
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 
@@ -34,13 +35,13 @@ def show_character_creator():
     return render_template("character_creator.html") #NOTE! Template does not exist yet!
     #Template to be written by Wildlovelies on 2/4/2018
 
-@character_blueprint.route("/show/character")
-def show_char_select():
+@character_blueprint.route("/show/character/<pk_id>")
+def show_char_select(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    chars = characters.get_characters()
-    pc = 0
+    pdb.set_trace()
+    pc = characters.get_character(pk_id)
     if 'character' in session.keys():
         pc = characters.get_character(pk_id)
     return render_template('characterviewer.html', session=session, pc=pc)
