@@ -13,9 +13,9 @@
 			<div class="col-lg-6">
 				<div class="jumbotron">
 					<h1 class="display-3">CompoundX Character Viewer</h1>
-						<p class="lead">Currently Viewing {{{pc['name']}}.</p>
+						<p class="lead">Currently Viewing {{pc['name']}}.</p>
 						<hr class="my-4">
-						<p> Level {{{pc['level']}} {{{pc['race']}} {{{pc['class']}}.</p>
+						<p> Level {{pc['level']}} {{pc['race']}} {{pc['class']}}.</p>
 	</div>
 	<div>	
 		<div class = "row">
@@ -23,7 +23,7 @@
 			<section>
 					<DL>
 						<LH>Stats</LH>
-						<DT>Health<dd>{{{pc['health']}}
+						<DT>Health<dd>{{pc['health']}}
 						<DT>Nanites<dd> {{pc['nanites']}}
 						<DT>Strength<dd>{{pc['strength']}}
 						<DT>Perception<dd>{{pc['perception']}}
