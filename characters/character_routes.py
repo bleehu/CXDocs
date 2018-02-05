@@ -26,7 +26,6 @@ def make_new_character():
         flash("Could not add new character; Character was invalid.")
         return redirect("/character/create")
     pk_id = security.get_user_pkid(session)
-    pdb.set_trace()
     characters.insert_character(new_character, pk_id)
     flash("Created a new character!")
     return redirect("/character/create")
