@@ -7,6 +7,10 @@ dl{
     justify-content: center;
     align-content: flex-start;
     max-width: 420px;
+    background-color: #222;
+    padding: 8px;
+    margin: 4px;
+    border: 1px solid #fff;
 }
 dt{
     flex: 1;
@@ -18,4 +22,33 @@ dd{
     flex: 1;
     flex-basis: 48%;
 }
+
+td {
+    border-bottom: 1px solid #fff;
+}
+
 input, select {max-width: 95%}
+
+.card-text {
+    color:#aaa;
+}
+
+.border-warning dl{
+    border-color: #FF8800;
+}
+
+.border-success dl{
+    border-color: #77B300;
+}
+
+.border-danger dl{
+    border-color: #CC0000;
+}
+
+.border-primary dl{
+    border-color: #2A9FD6;
+}
+
+.border-info dl{
+    border-color: #9933CC;
+}
