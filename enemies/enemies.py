@@ -9,7 +9,7 @@ import security
 def get_monsters():
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id, author, level, role FROM monsters ORDER BY name;")
+    myCursor.execute("SELECT name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, pk_id, author, level, role FROM monsters WHERE deleted_at IS NULL ORDER BY name;")
     monsters = []
     results = myCursor.fetchall()
     for mun in results:

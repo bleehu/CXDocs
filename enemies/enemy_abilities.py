@@ -7,7 +7,12 @@ def get_monster_abilities(monster_id):
     monster_abilities = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT monsters_abilities.pk_id, name, type, description, author FROM monsters_abilities, monsters_ability_map WHERE monsters_ability_map.fk_monster_id = %s AND monsters_ability_map.fk_ability_id = monsters_abilities.pk_id;" % monster_id)
+    myCursor.execute("SELECT monsters_abilities.pk_id, name, type, \
+        description, author \
+        FROM monsters_abilities, monsters_ability_map \
+        WHERE monsters_abilities.deleted_at IS NULL \
+        AND monsters_ability_map.fk_monster_id = %s \
+        AND monsters_ability_map.fk_ability_id = monsters_abilities.pk_id;" % monster_id)
     results = myCursor.fetchall()
     for line in results:
         ability = {}
@@ -23,7 +28,10 @@ def get_abilitys_monsters(ability_id):
     abilitys_monsters = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT monsters_ability_map.pk_id, name FROM monsters, monsters_ability_map WHERE monsters_ability_map.fk_ability_id = %s AND monsters_ability_map.fk_monster_id = monsters.pk_id;" % ability_id)
+    myCursor.execute("SELECT monsters_ability_map.pk_id, name \
+        FROM monsters, monsters_ability_map \
+        WHERE monsters.deleted_at IS NULL monsters_ability_map.fk_ability_id = %s \
+        AND monsters_ability_map.fk_monster_id = monsters.pk_id;" % ability_id)
     results = myCursor.fetchall()
     return results
 
@@ -31,7 +39,9 @@ def get_monster_abilities_all():
     monster_abilities = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, name, type, description, author FROM monsters_abilities ORDER BY name;")
+    myCursor.execute("SELECT pk_id, name, type, description, author \
+        FROM monsters_abilities \
+        WHERE deleted_at IS NULL ORDER BY name;")
     results = myCursor.fetchall()
     for line in results:
         ability = {}

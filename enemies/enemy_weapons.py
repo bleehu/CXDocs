@@ -12,7 +12,9 @@ def get_monster_weapons_all():
         author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, \
         reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate,\
         cost, suppression_level \
-        FROM monsters_weapons ORDER BY name;")
+        FROM monsters_weapons \
+        WHERE deleted_at IS NULL\
+        ORDER BY name;")
     results = myCursor.fetchall()
     for line in results:
         weapon = {}
@@ -51,6 +53,7 @@ def get_monsters_weapons(monster_id):
         FROM monsters_weapons AS w, monsters_weapon_map \
         WHERE monsters_weapon_map.fk_monster_id = %s \
         AND monsters_weapon_map.fk_weapons_id = w.pk_id \
+        AND monsters_weapons.deleted_at IS NULL \
         ORDER BY name;" % monster_id)
     results = myCursor.fetchall()
     for line in results:
@@ -82,7 +85,10 @@ def get_monsters_weapons(monster_id):
 def get_weapons_monsters(weapon_id):
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT monsters_weapon_map.pk_id, name FROM monsters, monsters_weapon_map WHERE monsters_weapon_map.fk_weapons_id = %s AND monsters_weapon_map.fk_monster_id = monsters.pk_id;" % weapon_id)
+    myCursor.execute("SELECT monsters_weapon_map.pk_id, name FROM monsters, monsters_weapon_map \
+        WHERE monsters.deleted_at IS NULL \
+        AND monsters_weapon_map.fk_weapons_id = %s \
+        AND monsters_weapon_map.fk_monster_id = monsters.pk_id;" % weapon_id)
     results = myCursor.fetchall()
     return results
 
