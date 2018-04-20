@@ -38,7 +38,7 @@ def get_monsters_armor(monster_id):
         a.type, a.ap_level, a.armor_points, a.mags, a.cost, \
         a.hardpoints, a.move_penalty \
         FROM monsters_armors AS a, monsters_armor_map \
-        WHERE monsters_armors.deleted_at IS NULL \
+        WHERE a.deleted_at IS NULL \
         AND monsters_armor_map.fk_monster_id = %s \
         AND monsters_armor_map.fk_armor_id = a.pk_id \
         ORDER BY name;" % monster_id)

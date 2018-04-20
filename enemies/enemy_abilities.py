@@ -30,7 +30,7 @@ def get_abilitys_monsters(ability_id):
     myCursor = connection.cursor()
     myCursor.execute("SELECT monsters_ability_map.pk_id, name \
         FROM monsters, monsters_ability_map \
-        WHERE monsters.deleted_at IS NULL monsters_ability_map.fk_ability_id = %s \
+        WHERE monsters.deleted_at IS NULL AND monsters_ability_map.fk_ability_id = %s \
         AND monsters_ability_map.fk_monster_id = monsters.pk_id;" % ability_id)
     results = myCursor.fetchall()
     return results

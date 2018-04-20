@@ -53,7 +53,7 @@ def get_monsters_weapons(monster_id):
         FROM monsters_weapons AS w, monsters_weapon_map \
         WHERE monsters_weapon_map.fk_monster_id = %s \
         AND monsters_weapon_map.fk_weapons_id = w.pk_id \
-        AND monsters_weapons.deleted_at IS NULL \
+        AND w.deleted_at IS NULL \
         ORDER BY name;" % monster_id)
     results = myCursor.fetchall()
     for line in results:
