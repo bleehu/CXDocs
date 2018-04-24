@@ -33,7 +33,7 @@ input, select {max-width: 95%}
     color:#aaa;
 }
 
-.card{
+.card, dl{
     margin-bottom: 24px;
 }
 
