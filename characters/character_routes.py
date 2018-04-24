@@ -12,7 +12,7 @@ def initialize_characters(config, newlog):
     global log
     log = newlog
 
-@character_blueprint.route("character/create")
+@character_blueprint.route("/character/create")
 def show_character_creator():
     if not security.check_auth(session):
         flash("You must be logged in to do that.")

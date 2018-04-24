@@ -1,0 +1,137 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Create a Character</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Create a Character </h1>
+			</div>
+			<div class="col-lg-6">
+				<p>
+				Make a character!
+				</p>
+				<form class="form-horizontal" action="/character/new" method="post">
+					<div class="form-group row">
+						<div class="col-lg-12">
+							<label for="charname" > Name </label>
+							<input class="form-control" type="text" name="name" id="charname">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-lg-4">
+							<label for="Species">Species</label>
+							<select name="Species" id="Species">
+								<option>Human</option>
+								<option>Tundari</option>
+								<option>Security Drone</option>
+								<option>Opalite</option>
+								<option>Cyborg</option>
+							</select>
+						</div>
+						<div class="col-lg-4">
+							<label for="classname">Class</label>
+							<select name="classname" id="classname">
+								<option>Soldier</option>
+								<option>Specialist</option>
+								<option>Doctor</option>
+								<option>Engineer</option>
+								<option>Hacker</option>
+								<option>Pilot</option>
+								<option>Hunter</option>
+								<option>Gunslinger</option>
+								<option>Assassin</option>
+								<option>Berserker</option>
+							</select>
+						</div>
+						<div class="col-lg-4">
+							<label for="level"> Level </label>
+							<input class="form-control" type="text" name="level" id="level">
+						</div>
+					</div> <!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-3">
+							<label for="str"> Strength </label>
+							<input class="form-control" type="text" name="" id="str">
+
+							<label for="per"> Perception </label>
+							<input class="form-control" type="text" name="" id="per">
+						</div>
+						<div class="col-lg-3">
+							<label for="str"> STR mod </label>
+							<input class="form-control" type="text" name="" id="str" disabled="true">
+
+							<label for="per"> PER mod</label>
+							<input class="form-control" type="text" name="" id="per" disabled="true">
+						</div>
+						<div class="col-lg-3">
+							<label for="fort"> Fortitude </label>
+							<input class="form-control" type="text" name="" id="fort">
+
+							<label for="cha"> Charisma </label>
+							<input class="form-control" type="text" name="" id="cha">
+						</div>
+						<div class="col-lg-3">
+							<label for="str"> FORT mod </label>
+							<input class="form-control" type="text" name="" id="str" disabled="true">
+
+							<label for="per"> CHA mod </label>
+							<input class="form-control" type="text" name="" id="per" disabled="true">
+						</div>
+					</div> <!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-3">
+							<label for="int"> Intelligence </label>
+							<input class="form-control" type="text" name="" id="int">
+
+							<label for="dex"> Dexterity </label>
+							<input class="form-control" type="text" name="" id="dex">
+						</div>
+						<div class="col-lg-3">
+							<label for="str"> INT mod </label>
+							<input class="form-control" type="text" name="" id="str" disabled="true">
+
+							<label for="per"> DEX mod </label>
+							<input class="form-control" type="text" name="" id="per" disabled="true">
+						</div>
+						<div class="col-lg-3">
+							<label for="luck"> Luck </label>
+							<input class="form-control" type="text" name="Luck" id="luck">
+
+							<label for="totalSkill"> Total </label>
+							<input class="form-control" type="text" name="totalSkill" disabled="true">
+						</div>
+						<div class="col-lg-3">
+							<label for="str"> LUK mod </label>
+							<input class="form-control" type="text" name="" id="str" disabled="true">
+						</div>
+					</div><!-- endrow -->
+					<div class="row">
+						<div class="col-lg-4">
+							<label for="will"> Will </label>
+							<input class="form-control" type="text" name="will" disabled="true">
+						</div>
+						<div class="col-lg-4">
+							<label for="Reflex"> Reflex </label>
+							<input class="form-control" type="text" name="Reflex" disabled="true">
+						</div>
+						<div class="col-lg-4">
+							<label for="Shock"> Shock </label>
+							<input class="form-control" type="text" name="Shock" disabled="true">
+						</div>
+					</div> <!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-12">
+							<label for="description"> Description </label>
+							<textarea id="description" name="description" cols="60" rows="10">
+								
+							</textarea>
+						</div>
+					</div> <!-- endrow -->
+					<input class="btn btn-primary" type="submit" value="Create Character"/>
+				</form>
+			</div>
+		</div>
+	{% endblock %}
+	
