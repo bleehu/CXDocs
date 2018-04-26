@@ -33,6 +33,10 @@ input, select {max-width: 95%}
     color:#aaa;
 }
 
+.card, dl{
+    margin-bottom: 24px;
+}
+
 .border-warning dl{
     border-color: #FF8800;
 }
