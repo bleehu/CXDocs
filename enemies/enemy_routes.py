@@ -365,7 +365,7 @@ def delete_monster(pk_id):
         return redirect("/monstereditor")
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM monsters WHERE pk_id = %s;" % monster_id)
+    myCursor.execute("UPDATE monsters SET deleted_at=now() WHERE pk_id = %s;" % monster_id)
     myCursor.close()
     connection.commit()
     
@@ -385,7 +385,7 @@ def delete_monster_ability(pk_id):
         return redirect("/")
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM monsters_abilities WHERE pk_id = %s;" % pk_id)
+    myCursor.execute("UPDATE monsters_abilities SET deleted_at=now() WHERE pk_id = %s;" % pk_id)
     myCursor.close()
     connection.commit()
     
@@ -405,7 +405,7 @@ def delete_monster_weapon(pk_id):
         return redirect("/")
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM monsters_weapons WHERE pk_id = %s;" % pk_id)
+    myCursor.execute("UPDATE monsters_weapons SET deleted_at=now() WHERE pk_id = %s;" % pk_id)
     myCursor.close()
     connection.commit()
     
@@ -425,7 +425,7 @@ def delete_monster_armor(pk_id):
         return redirect("/")
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM monsters_armors WHERE pk_id = %s;" % pk_id)
+    myCursor.execute("UPDATE monsters_armors SET deleted_at=now() WHERE pk_id = %s;" % pk_id)
     myCursor.close()
     connection.commit()
     
