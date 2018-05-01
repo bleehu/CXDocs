@@ -631,6 +631,7 @@ if __name__ == "__main__":
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
+    security.initialize(log)
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
     #app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
     #app.config['SQLAlchemy_ECHO'] = True

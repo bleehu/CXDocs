@@ -1,6 +1,13 @@
 import guestbook
 from flask import request, session
 
+global log
+
+def initialize(newLog):
+    global log
+    log = newLog
+
+
 """ we call this any time someone checks out a page on the site that should be off-limits to someone who
         hasn't logged in. If they aren't logged in, it returns false, if they are, it returns true."""
 def check_auth(session):
