@@ -31,8 +31,14 @@
         var dex = parseInt($("#dex")[0].value); //get the integer of dexterity
         var luck = parseInt($("#luck")[0].value); //get the integer of luck
         
+        checkName();
         checkNanites();
         checkHealth();
+        checkLevel();
+
+        checkSkillGain();
+        checkMoveSpeed();
+        checkCarryAbility();
 
         var strMod = getMod(str);
         var perMod = getMod(per);
@@ -41,10 +47,6 @@
         var intMod = getMod(int);
         var dexMod = getMod(dex);
         var luckMod = getMod(luck);
-
-        var moveSpeed = Math.max(str, dex);
-        var carryCap = Math.max(str, fort);
-        var skillGain = Math.max(int, cha);
 
         var willScore = 2 * (cha + fort - 6);
         var reflexScore = 2 * (per + dex - 6);
@@ -69,6 +71,89 @@
 
     function getMod(baseStat){
         return (baseStat - 5) * 4; 
+    }
+
+    function checkName(){
+        var name = $("#charname").val();
+        var nameBox = $("#charname");
+        var validName = name.length > 0;
+        //if name is at least 1 character long, and doesn't contain a barred symbol
+        if (name.indexOf("<") != -1 || name.indexOf(">") != -1 || name.indexOf("/") != -1)
+            validName = false;
+        if (validName){
+            nameBox.addClass("is-valid");
+            nameBox.removeClass("is-invalid");
+        } else {
+            //light up red and show invalid feedback
+            nameBox.removeClass("is-valid");
+            nameBox.addClass("is-invalid");
+        }
+    }
+
+    function checkLevel(){
+        var level = parseInt($("#level").val());
+        var levelBox = $("#level");
+        //check that the level is a number between 0 and 50.
+        if (level != NaN && level > -1 && level < 51){
+            //light up green and hide invalid feedback
+            levelBox.addClass("is-valid");
+            levelBox.removeClass("is-invalid");
+        } else {
+            //light up red and show invalid feedback
+            levelBox.removeClass("is-valid");
+            levelBox.addClass("is-invalid");
+        }
+    }
+
+    function checkCarryAbility(){
+        var str = parseInt($("#str").val()); //get the integer of Strength
+        var fort = parseInt($("#fort").val()); //get the integer input from Dexterity 
+        var carryAbility = parseInt($("#carryAbility").val());
+        var expectedCarryAbility = Math.max(str, fort);
+        var carryBox = $("#carryAbility"); //get the jquery object representing the skillgain input tag
+        if (carryAbility == expectedCarryAbility){
+            // Light health input field up green
+            carryBox.addClass("is-valid"); // by using the class list, we set more than one class at a time
+            carryBox.removeClass("is-invalid");
+        } else {
+            // Light up red
+            carryBox.addClass("is-invalid");
+            carryBox.removeClass("is-valid");
+        }
+    }
+
+    function checkMoveSpeed(){
+        var str = parseInt($("#int").val()); //get the integer of Intelligence
+        var dex = parseInt($("#dex").val()); //get the integer input from Dexterity 
+        var moveSpeed = parseInt($("#moveSpeed").val());
+        var expectedMoveSpeed = Math.max(str, dex);
+        var moveSpeedBox = $("#moveSpeed"); //get the jquery object representing the skillgain input tag
+        if (moveSpeed == expectedMoveSpeed){
+            // Light health input field up green
+            moveSpeedBox.addClass("is-valid"); // by using the class list, we set more than one class at a time
+            moveSpeedBox.removeClass("is-invalid");
+        } else {
+            // Light up red
+            moveSpeedBox.addClass("is-invalid");
+            moveSpeedBox.removeClass("is-valid");
+        }
+    }
+
+    function checkSkillGain(){
+        var int = parseInt($("#int").val()); //get the integer of Intelligence
+        var cha = parseInt($("#cha").val()); //get the integer input from charisma
+        var skillGain = parseInt($("#skillGain").val());
+        var expectedskillGain = Math.max(int, cha);
+        var skillGainBox = $("#skillGain"); //get the jquery object representing the skillgain input tag
+        if (skillGain == expectedskillGain){
+            // Light health input field up green
+            skillGainBox.addClass("is-valid"); // by using the class list, we set more than one class at a time
+            skillGainBox.removeClass("is-invalid");
+        } else {
+            // Light up red
+            skillGainBox.addClass("is-invalid");
+            skillGainBox.removeClass("is-valid");
+        }
     }
 
     function checkHealth(){

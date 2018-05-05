@@ -20,6 +20,7 @@
 						<div class="col-lg-12">
 							<label for="charname" > Name </label>
 							<input class="form-control" type="text" name="name" id="charname">
+                            <div class="invalid-feedback"> The name of your character must be at least 1 character long, and not contain the following symbols: <, >, \.</div>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -50,7 +51,8 @@
 						</div>
 						<div class="col-lg-4">
 							<label for="level"> Level </label>
-							<input class="form-control" type="text" name="level" id="level">
+							<input class="form-control" type="text" name="level" id="level" value="1">
+                            <div class="invalid-feedback"> Your level should be a number below 50 and above -1.</div>
 						</div>
 					</div> <!-- endrow -->
                     <div class="row">
@@ -125,40 +127,45 @@
 					<div class="form-group row">
 						<div class="col-lg-4">
 							<label for="will"> Will </label>
-							<input class="form-control" type="text" name="will" disabled="true" value="">
+							<input class="form-control" id="will" type="text" name="will" disabled="true" value="">
 						</div>
 						<div class="col-lg-4">
 							<label for="Reflex"> Reflex </label>
-							<input class="form-control" type="text" name="Reflex" disabled="true">
+							<input class="form-control" id="reflex" type="text" name="Reflex" disabled="true">
 						</div>
 						<div class="col-lg-4">
 							<label for="Shock"> Shock </label>
-							<input class="form-control" type="text" name="Shock" disabled="true">
+							<input class="form-control" id="shock" type="text" name="Shock" disabled="true">
 						</div>
 					</div> <!-- endrow -->
                     <div class="form-group row">
                         <div class="col-lg-4">
                             <label for="carry"> Carry Ability </label>
-                            <input class="form-control" type="text" name="carry">
+                            <input class="form-control" type="text" name="carry" id="carryAbility">
+                            <div class="invalid-feedback">Your Carry Ability should be the max of either your Fortitude or Strength.</div>
                         </div>
                         <div class="col-lg-4">
                             <label for="move"> Move Speed </label>
-                            <input class="form-control" type="text" name="move">
+                            <input class="form-control" type="text" name="move" id="moveSpeed">
+                            <div class="invalid-feedback"> Your Move Speed should be the max of either your Strength or Dexterity. </div>
                         </div>
                         <div class="col-lg-4">
                             <label for="skill"> Skill Gain </label>
-                            <input class="form-control" type="text" name="skill">
+                            <input class="form-control" type="text" name="skill" id="skillGain">
+                            <div class="invalid-feedback"> Your Skill Gain should be the max of either your Intelligence or Charisma. </div>
                         
                     </div> <!-- endrow -->
 					<div class="form-group row">
 						<div class="col-lg-12">
 							<label for="description"> Description </label>
-							<textarea id="description" name="description" cols="60" rows="10">
-								
-							</textarea>
+							<textarea class="form-control" id="description" name="description" cols="60" rows="10"></textarea>
 						</div>
 					</div> <!-- endrow -->
-					<input class="btn btn-success" type="submit" value="Create Character"/>
+                    <div class="form-group row">
+                        <div class="col-lg-12"> 
+                            <input class="btn btn-success" type="submit" value="Create Character"/>
+                        </div>
+                    </div>
 				</form>
             </div> <!-- end column -->
             <div class="col-lg-12">
