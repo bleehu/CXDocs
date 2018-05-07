@@ -296,11 +296,6 @@ def character_guns():
 				if gun['minLevel'] <= my_character.level:
 					usable[type].append(gun)
 	return render_template('guns.html', guns=usable, session=session)
-	
-@app.route("/armor")
-def show_armor():
-	armor = get_armor(session)
-	return render_template('armor.html', armors=armor, session=session)
 
 #begin parser pages
 
