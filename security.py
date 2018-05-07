@@ -1,5 +1,9 @@
 import guestbook
 from flask import request, session
+import psycopg2
+
+global user_user #the postgres user that has permission to look at the table of users
+global user_password # the password for the postgres user that looks up users
 
 global log
 
@@ -22,6 +26,13 @@ def check_auth(session):
         guestbook.sign_guestbook(session['displayname'])
     return True
 
+def get_login_db_connection():
+    global user_user
+    global user_password
+    connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (user_user, user_password))
+    return connection
+
+
 """ we use this when we use player input to check postgres for a search. For instance, we don't want 
            badguys trying to log in with SQL injection - that could lead to damage to login data."""
 def sql_escape(dirty):
@@ -34,3 +45,18 @@ def sql_escape(dirty):
     sani = sani.replace("'","''")
     #sani = sani.replace("\\", "\\") #need a way to sanitize backslashes for escape characters
     return sani
+
+def get_user_pkid(session):
+    if 'username' not in session.keys():
+        return None
+    username = session['username']
+    connection = get_login_db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT pk_id FROM users WHERE username = '%s';" % username)
+    return int(myCursor.fetchall()[0])
+
+def initialize(new_user, new_password):
+    global user_user
+    user_user = new_user
+    global user_password
+    user_password = new_password
