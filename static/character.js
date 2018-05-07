@@ -27,7 +27,67 @@
         console.log("done initializing character javascript.");
     }
 
+    fuction saveCharacter(){
+        var str = parseInt($("#str")[0].value); //get the integer of strength
+        var per = parseInt($("#per")[0].value); //get the integer of perception
+        var fort = parseInt($("#fort")[0].value); //get the integer of fortitude
+        var cha = parseInt($("#cha")[0].value); //get the integer of charisma
+        var int = parseInt($("#int")[0].value); //get the integer of intelligence
+        var dex = parseInt($("#dex")[0].value); //get the integer of dexterity
+        var luck = parseInt($("#luck")[0].value); //get the integer of luck
+        //we don't bother doing a lot of sanitization at this point; all of this
+        // code can be bypassed with Burpsuite or even just the Chrome Console. 
+        // instead, we are forced to really sanitize in the back end. However,
+        // we can reduce unnecessary traffic by doing some simple checks.
+        var newStats = {'strength':str, 'perception': per, 'fortitude', fort, 'charisma': cha};
+        newStats['intelligence'] = int;
+        newStats['dexterity'] = dex;
+        newStats['luck'] = luck;
+
+        var charname = $('#charname').val(); //the .val() syntax is from jquery. It's newer and nicer
+        newStats['name'] = charname;
+
+        var nanites = parseInt($('#maxNanites')[0].value); //the [0].value syntax is from plain old javascript.
+        newStats['nanites'] = nanites; //it's ugly, but does the same thing. 
+
+        var health = parseInt($('#maxHealth').val());
+        newStats['health'] = health;
+
+        newStats['carryAbility'] = parseInt($('#carryAbility').val());
+        newStats['moveSpeed'] = parseInt($('#moveSpeed').val());
+        newStats['skillGain'] = parseInt($('#skillGain').val());
+        newStats['carryAbility'] = parseInt($('#carryAbility').val());
+        newStats['class'] = $('#className').val();
+        newStats['race'] = $('#race').val();
+
+        var pk_id = parseInt($("#pk_id").val());
+
+        //if the data has a NaN in it, it's just gonna fail anyway. May as well
+        // save the bandwidth by not sending the save request. 
+        if (str == NaN || per == NaN || fort == NaN || cha == NaN || int == NaN || dex == NaN ||  luck == NaN){
+            saveWarn();
+            return false;
+        } else if ( health == NaN || nanites == NaN || stats['moveSpeed'] == NaN || stats['skillGain'] == NaN || staths['carryAbility'] == NaN) {
+            saveWarn();
+            return false;
+        } 
+
+
+        var asyncPost = $.post("/character/update/" + pk_id, newStats);
+        asyncPost.done = saveSuccess;
+    }
+
+    function saveSuccess(){
+        //TODO set flash notification that character was saved successfully
+    }
+
+    function saveWarn(){
+        //TODO how do I get this to wire up? .error?
+    }
+
     function checkStats(){
+        var valid = true;
+
         var str = parseInt($("#str")[0].value); //get the integer of strength
         var per = parseInt($("#per")[0].value); //get the integer of perception
         var fort = parseInt($("#fort")[0].value); //get the integer of fortitude
@@ -36,7 +96,10 @@
         var dex = parseInt($("#dex")[0].value); //get the integer of dexterity
         var luck = parseInt($("#luck")[0].value); //get the integer of luck
         
-        checkName();
+        if (!checkName()){
+            valid = false;
+        }
+
         checkNanites();
         checkHealth();
         checkLevel();
@@ -72,6 +135,7 @@
         var totalStats = str + per + fort + cha + int + dex + luck;
         $("#totalStats").val(totalStats);
 
+        return valid;
     }
 
     function getMod(baseStat){
@@ -88,10 +152,12 @@
         if (validName){
             nameBox.addClass("is-valid");
             nameBox.removeClass("is-invalid");
+            return true;
         } else {
             //light up red and show invalid feedback
             nameBox.removeClass("is-valid");
             nameBox.addClass("is-invalid");
+            return false;
         }
     }
 
@@ -193,5 +259,5 @@
         }
     }
 
-    
+
 })();
