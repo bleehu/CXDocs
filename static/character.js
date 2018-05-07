@@ -16,7 +16,12 @@
         $("#luck").blur(checkStats);
 
         $("#maxHealth").blur(checkStats);
-        $("maxNanites").blur(checkStats);
+        $("#maxNanites").blur(checkStats);
+
+        $("#moveSpeed").blur(checkStats);
+        $("#carryAbility").blur(checkStats);
+        $("#skillGain").blur(checkStats);
+        
 
 
         console.log("done initializing character javascript.");
@@ -188,11 +193,5 @@
         }
     }
 
-    function toggleMenu(){
-        $('#whosHereDiv').toggle();
-    }
-
-    function blurMenu(){
-        $('#whosHereDiv').hide();
-    }
+    
 })();
