@@ -631,7 +631,6 @@ if __name__ == "__main__":
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
-
     if args.u and args.p:
     	security.initialize(args.u, args.p)
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically

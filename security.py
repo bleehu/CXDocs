@@ -5,6 +5,13 @@ import psycopg2
 global user_user #the postgres user that has permission to look at the table of users
 global user_password # the password for the postgres user that looks up users
 
+global log
+
+def initialize(newLog):
+    global log
+    log = newLog
+
+
 """ we call this any time someone checks out a page on the site that should be off-limits to someone who
         hasn't logged in. If they aren't logged in, it returns false, if they are, it returns true."""
 def check_auth(session):

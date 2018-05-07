@@ -14,6 +14,7 @@ def initialize_characters(config, newlog):
     global log
     log = newlog
 
+""" Load the web form to create a new character. """
 #the character creation API endpoint
 @character_blueprint.route("/character/new", methods=['POST'])
 def make_new_character():
@@ -36,6 +37,12 @@ def show_character_creator():
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
+    return render_template("character_creator.html")
+
+""" Display a specific character without modifying it. """
+@character_blueprint.route("/show/character")
+def show_char_select():
+    if 'username' not in session.keys():
     return render_template("character_creator.html") #NOTE! Template does not exist yet!
     #Template to be written by Wildlovelies on 2/4/2018
 
@@ -49,6 +56,7 @@ def show_char_select(pk_id):
         pc = characters.get_character(pk_id)
     return render_template('characterviewer.html', session=session, pc=pc)
 
+""" Show all player characters for community and display metadata to see if one class is getting much more play than another """
 @character_blueprint.route("/character/delete/<pk_id>")
 def delete_character(pk_id):
     if not security.check_auth(session):
@@ -76,6 +84,8 @@ def show_player_characters():
     pcs = characters.get_characters()
     return render_template("player_characters.html", pcs = pcs)
 
+""" If a User has more than one character, then they should be able to select one character that they are using at a time.
+Dynamic pages will be able to do things like display only weapons and armor that character can use. """
 #API endpoint to select a character
 @character_blueprint.route("/select/character", methods=['POST'])
 def char_select():
@@ -89,6 +99,7 @@ def char_select():
             session['character'] = str(player_character)
     return redirect("/show/character")
 
+""" Use the character creation page to update an existing character. """
 @character_blueprint.route("/modify/character/<pk>")
 def char_modify(pk):
     if not security.check_auth(session):
