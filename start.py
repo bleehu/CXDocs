@@ -251,11 +251,6 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 def whosHereAPI():
 	gbook = json.dumps(guestbook.get_guestbook())
 	return gbook
-
-@app.route("/levelup")
-def levelUp():
-	levels = get_levels()
-	return render_template('levelup.html', levels=levels)
 	
 @app.route("/guns")
 def show_guns():
@@ -424,12 +419,6 @@ def show_items():
 def show_races():
 	races = get_races()
 	return render_template('races.html', races=races)
-
-@app.route("/rules")
-def show_rules():
-	root = xml.etree.ElementTree.parse("docs/rules.xml").getroot()
-	sections = root.findall('section')
-	return render_template('rules.html', sections=sections)
 
 @app.route("/classes")
 def show_classes():
