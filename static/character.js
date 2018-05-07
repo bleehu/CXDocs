@@ -22,12 +22,12 @@
         $("#carryAbility").blur(checkStats);
         $("#skillGain").blur(checkStats);
         
-
+        $("#saveCharacterButton").click(saveCharacter());
 
         console.log("done initializing character javascript.");
     }
 
-    fuction saveCharacter(){
+    function saveCharacter(){
         var str = parseInt($("#str")[0].value); //get the integer of strength
         var per = parseInt($("#per")[0].value); //get the integer of perception
         var fort = parseInt($("#fort")[0].value); //get the integer of fortitude
@@ -39,7 +39,7 @@
         // code can be bypassed with Burpsuite or even just the Chrome Console. 
         // instead, we are forced to really sanitize in the back end. However,
         // we can reduce unnecessary traffic by doing some simple checks.
-        var newStats = {'strength':str, 'perception': per, 'fortitude', fort, 'charisma': cha};
+        var newStats = {'strength':str, 'perception': per, 'fortitude': fort, 'charisma': cha};
         newStats['intelligence'] = int;
         newStats['dexterity'] = dex;
         newStats['luck'] = luck;
@@ -67,7 +67,7 @@
         if (str == NaN || per == NaN || fort == NaN || cha == NaN || int == NaN || dex == NaN ||  luck == NaN){
             saveWarn();
             return false;
-        } else if ( health == NaN || nanites == NaN || stats['moveSpeed'] == NaN || stats['skillGain'] == NaN || staths['carryAbility'] == NaN) {
+        } else if ( health == NaN || nanites == NaN || newStats['moveSpeed'] == NaN || newStats['skillGain'] == NaN || newStats['carryAbility'] == NaN) {
             saveWarn();
             return false;
         } 

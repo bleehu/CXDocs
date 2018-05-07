@@ -12,7 +12,7 @@
 				<p>
 				Make a character! Please 
 				</p>
-				<form class="form-horizontal" action="/character/new" method="post">
+				<form class="form-horizontal" id="baseForm">
 					<div class="form-group row">
                         <h2> Base Stats </h2>               
                     </div>
@@ -163,7 +163,7 @@
 					</div> <!-- endrow -->
                     <div class="form-group row">
                         <div class="col-lg-12"> 
-                            <input class="btn btn-success" type="submit" value="Create Character"/>
+                            <input class="btn btn-success" type="button" id="saveCharacterButton" value="Save Character"/>
                         </div>
                     </div>
 				</form>
