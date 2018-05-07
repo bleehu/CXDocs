@@ -256,11 +256,6 @@ def whosHereAPI():
 def levelUp():
 	levels = get_levels()
 	return render_template('levelup.html', levels=levels)
-	
-@app.route("/guns")
-def show_guns():
-	guns = get_guns(session)
-	return render_template('guns.html', guns=guns, session=session)
 
 @app.route("/searchguns/<type>")
 def show_gun_type(type):
