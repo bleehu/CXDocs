@@ -56,8 +56,8 @@ def show_char_select(pk_id):
         pc = characters.get_character(pk_id)
     return render_template('characterviewer.html', session=session, pc=pc)
 
-""" Show all player characters for community and display metadata to see if one class is getting much more play than another """
-@character_blueprint.route("/character/delete/<pk_id>")
+""" Delete Character endpoint  """
+@character_blueprint.route("/character/modify/<pk_id>", methods=['DELETE'])
 def delete_character(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to delete a character!")
@@ -76,7 +76,28 @@ def delete_character(pk_id):
     characters.delete_character(pk_id_int)
     flash("Deleted Character successfully.")
 
+""" Endpoint for updating an existing character. Attempting to emulate a 
+RESTful API endpoint where the route is the same to add new, update existing,
+delete existing or view existing character. """
+@character_blueprint.route("/character/modify/<pk_id>", methods=['PUT'])
+def update_character(pk_id):
+    if not security.check_auth(session):
+        flash("You must be logged in to update your character.")
+        return redirect("/")
+    pk_id_int = -1
+    try:
+        pk_id_int = int(pk_id)
+    user_id = security.get_user_pkid(session)
+    new_character = characters.validate_character(request.form, user)
+    modified_character = characters.get_character(pk_id_int)
+    if user_id != modified_character['owner']:
+        flash("You cannot modify a character that's not yours!")
+        return redirect("/show/character")
+    characters.update_character(new_character,pk_id_int)
+    flash("Successfully updated character.")
 
+""" Show all player characters for community and display metadata to see if one 
+class is getting much more play than another. """
 #show all of the player characters. For game designers to get a feel for the distribution. 
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
