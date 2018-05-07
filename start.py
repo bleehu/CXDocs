@@ -93,12 +93,6 @@ def get_guns(session):
 				goons[type].remove(popper)
 	return goons
 
-def get_items():
-	goons = None
-	with open("docs/items1.json") as itemfile:
-		goons = json.loads(itemfile.read())
-	return goons
-
 def get_armor(session):
 	arms = None
 	types = []
