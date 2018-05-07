@@ -22,12 +22,14 @@
         $("#carryAbility").blur(checkStats);
         $("#skillGain").blur(checkStats);
         
-        $("#saveCharacterButton").click(saveCharacter());
+        $("#saveCharacterButton").click(saveCharacter);
 
         console.log("done initializing character javascript.");
     }
 
     function saveCharacter(){
+        console.log("Beginning saving characters.");
+
         var str = parseInt($("#str")[0].value); //get the integer of strength
         var per = parseInt($("#per")[0].value); //get the integer of perception
         var fort = parseInt($("#fort")[0].value); //get the integer of fortitude
@@ -73,16 +75,17 @@
         } 
 
 
-        var asyncPost = $.post("/character/update/" + pk_id, newStats);
-        asyncPost.done = saveSuccess;
+        $.post("/character/update/" + pk_id, newStats, saveSuccess);
     }
 
     function saveSuccess(){
         //TODO set flash notification that character was saved successfully
+        console.log("Save Success!");
     }
 
     function saveWarn(){
         //TODO how do I get this to wire up? .error?
+        console.log("Not saving due to a NaN.");
     }
 
     function checkStats(){
