@@ -93,12 +93,6 @@ def get_guns(session):
 				goons[type].remove(popper)
 	return goons
 
-def get_items():
-	goons = None
-	with open("docs/items1.json") as itemfile:
-		goons = json.loads(itemfile.read())
-	return goons
-
 def get_armor(session):
 	arms = None
 	types = []
@@ -138,12 +132,6 @@ def get_missions():
 		new_mission = Mission(pk, name, level, description)
 		missions.append(new_mission)
 	return missions
-
-def get_races():
-	races = None
-	with open("docs/races.json") as racefile:
-		races = json.loads(racefile.read())
-	return races
 
 def parser_page(config_option):
 	if config.has_section('Parser') and config.has_option('Parser', config_option):
@@ -251,11 +239,19 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 def whosHereAPI():
 	gbook = json.dumps(guestbook.get_guestbook())
 	return gbook
+<<<<<<< HEAD
 	
 @app.route("/guns")
 def show_guns():
 	guns = get_guns(session)
 	return render_template('guns.html', guns=guns, session=session)
+=======
+
+@app.route("/levelup")
+def levelUp():
+	levels = get_levels()
+	return render_template('levelup.html', levels=levels)
+>>>>>>> master
 
 @app.route("/searchguns/<type>")
 def show_gun_type(type):
@@ -291,11 +287,6 @@ def character_guns():
 				if gun['minLevel'] <= my_character.level:
 					usable[type].append(gun)
 	return render_template('guns.html', guns=usable, session=session)
-	
-@app.route("/armor")
-def show_armor():
-	armor = get_armor(session)
-	return render_template('armor.html', armors=armor, session=session)
 
 #begin parser pages
 
@@ -415,11 +406,6 @@ def show_items():
 	items = get_items()
 	return render_template('items.html', items=items, session=session)
 
-@app.route("/races")
-def show_races():
-	races = get_races()
-	return render_template('races.html', races=races)
-
 @app.route("/classes")
 def show_classes():
 	classless = get_classes()
@@ -473,93 +459,6 @@ def make_gun():
 def show_missions():
 	missions = get_missions()
 	return render_template("missions.html", missions = missions)
-
-@app.route("/itemsmith")
-def show_itemsmith():
-	if not security.check_auth(session):
-		return redirect("/")
-	items = get_items()
-	return render_template("itemsmith.html", items = items, session=session)
-
-@app.route("/additem", methods=['POST'])
-def make_item():
-	if not security.check_auth(session):
-		return redirect("/")
-	item = {}
-	item['name'] = request.form['itemname']
-	item['type'] = request.form['itemType']
-	item['cost'] = request.form['cost']
-	item['minLevel'] = request.form['minLevel']
-	item['details'] = request.form['details']
-	items = get_items()
-	items.append(item)
-	json_string = json.dumps(items)
-	with open("docs/items1.json", 'w') as itemfile:
-		itemfile.write(json_string)
-	log.info("%s added new race: %s", (session['username'], item['name']))
-	return redirect("itemsmith")
-
-@app.route("/armorsmith")
-def show_armorsmith():
-	if not security.check_auth(session):
-		return redirect("/")
-	armor = get_armor(session)
-	return render_template("armorsmith.html", armor=armor, session=session)
-
-@app.route("/addarmor", methods=['POST'])
-def make_armor():
-	if not security.check_auth(session):
-		return redirect("/")
-	newArmor = {}
-	newArmor['name'] = request.form['name']
-	newArmor['damageReduction'] = request.form['dr']
-	newArmor['type'] = request.form['type']
-	newArmor['primaryMags'] = request.form['prime']
-	newArmor['secondaryMags'] = request.form['secondary']
-	newArmor['coverage'] = request.form['coverage']
-	newArmor['cost'] = request.form['cost']
-	newArmor['description'] = request.form['effect']
-	newArmor['minLevel'] = request.form['minLevel']
-	armor = get_armor(session)
-	if newArmor['type'] not in armor.keys():
-		armor[newArmor['type']] = []
-	armor[newArmor['type']].append(newArmor)
-	json_string = json.dumps(armor)
-	with open("docs/armor.json", 'w') as armorfile:
-		armorfile.write(json_string)
-	log.info("%s added new armor: %s", (session['username'], newArmor['name']))
-	return redirect("armorsmith")
-
-@app.route("/racesmith")
-def show_racesmith():
-	if not security.check_auth(session):
-		return redirect("/")
-	races = get_races()
-	return render_template("racesmith.html", races=races, session=session)
-
-@app.route("/addrace", methods=['POST'])
-def make_race():
-	if not security.check_auth(session):
-		return redirect("/")
-	newRace = {}
-	newRace['name'] = request.form['name']
-	newRace['society'] = request.form['society']
-	newRace['world'] = request.form['world']
-	newRace['info'] = request.form['info']
-	newRace['type'] = request.form['type']
-	newRace['size'] = request.form['size']
-	newRace['speed'] = request.form['speed']
-	newRace['mods'] = request.form['mods']
-	newRace['languages'] = request.form['languages']
-	newRace['traits'] = request.form['traits']
-	newRace['weaks'] = request.form['weaks']
-	races = get_races()
-	races.append(newRace)
-	json_string = json.dumps(races)
-	with open("docs/races.json", 'w') as racefile:
-		racefile.write(json_string)
-	log.info("%s added new race: %s", (session['username'], newRace['name']))
-	return redirect("racesmith")
 	
 @app.route("/login", methods=['POST'])
 def login():
