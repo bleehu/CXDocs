@@ -410,11 +410,6 @@ def show_items():
 def show_classes():
 	classless = get_classes()
 	return render_template("classes.html", classes = classless)
-
-@app.route("/feats")
-def show_feats():
-	feats = get_feats()
-	return render_template("feats.html", feats=feats)
 	
 @app.route("/files")
 def show_files():
