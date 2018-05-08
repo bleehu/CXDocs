@@ -93,12 +93,6 @@ def get_guns(session):
 				goons[type].remove(popper)
 	return goons
 
-def get_items():
-	goons = None
-	with open("docs/items1.json") as itemfile:
-		goons = json.loads(itemfile.read())
-	return goons
-
 def get_armor(session):
 	arms = None
 	types = []
@@ -479,31 +473,6 @@ def make_gun():
 def show_missions():
 	missions = get_missions()
 	return render_template("missions.html", missions = missions)
-
-@app.route("/itemsmith")
-def show_itemsmith():
-	if not security.check_auth(session):
-		return redirect("/")
-	items = get_items()
-	return render_template("itemsmith.html", items = items, session=session)
-
-@app.route("/additem", methods=['POST'])
-def make_item():
-	if not security.check_auth(session):
-		return redirect("/")
-	item = {}
-	item['name'] = request.form['itemname']
-	item['type'] = request.form['itemType']
-	item['cost'] = request.form['cost']
-	item['minLevel'] = request.form['minLevel']
-	item['details'] = request.form['details']
-	items = get_items()
-	items.append(item)
-	json_string = json.dumps(items)
-	with open("docs/items1.json", 'w') as itemfile:
-		itemfile.write(json_string)
-	log.info("%s added new race: %s", (session['username'], item['name']))
-	return redirect("itemsmith")
 
 @app.route("/racesmith")
 def show_racesmith():
