@@ -46,18 +46,6 @@ def get_args():
 	args = parser.parse_args()
 	return args
 
-"""returns a list of maps where the map represents a class. The value of map['name'] might = 'Soldier' and
-			map['armorProficency'] might be equal to ['recon', 'medium', 'light']. Must have the correct .json
-			file in /docs/ in order to work."""
-def get_classes():
-	classless = None
-	with open("docs/classes.json") as classFile:
-		classString = classFile.read()
-		blob = json.loads(classString)
-		classless = blob['classes']
-		#sort by name
-	return classless
-
 def get_levels():
 	levels = []
 	with open('docs/levels.csv', 'r') as csvfile:
@@ -65,58 +53,6 @@ def get_levels():
 		for line in csv_reader:
 			levels.append(line)
 	return levels
-	
-def get_feats():
-	feats = []
-	with open("docs/feats.csv") as csvfile:
-		csv_reader = csv.reader(csvfile, delimiter=',',quotechar='"')
-		for line in csv_reader:
-			feats.append(line)
-	return feats
-	
-def get_guns(session):
-	goons = None
-	with open("docs/guns.json") as gunfile:
-		goons = json.loads(gunfile.read())
-	for type in goons:
-		toRemove = [] #can't remove in first pass or it'll screw up the iterator
-		for peice in goons[type]:
-			peice['minLevel'] = int(peice['minLevel'])
-			if 'username' in session.keys() or peice['minLevel'] < 10: #hide lv 10 content unless logged in
-				peice['cost'] = int(peice['cost'])
-				peice['damage'] = int(peice['damage'])
-				peice['mag'] = int(peice['mag'])
-			else:
-				toRemove.append(peice)
-		if len(toRemove) > 0:
-			for popper in toRemove:
-				goons[type].remove(popper)
-	return goons
-
-def get_armor(session):
-	arms = None
-	types = []
-	by_type = {}
-	with open("docs/armor.json") as armfile:
-		arms = json.loads(armfile.read())
-	for kind in arms:
-		toHide = []
-		for ageis in arms[kind]:
-			for k, v in ageis.items():
-				if v == '':
-					ageis[k] = '0'
-			ageis['minLevel'] = int(ageis['minLevel'])
-			if 'username' in session.keys() or ageis['minLevel'] < 10: #don't serve level 10 gear unless logged in
-				ageis['cost'] = int(ageis['cost'])
-				ageis['primaryMags'] = int(ageis['primaryMags'])
-				ageis['secondaryMags'] = int(ageis['secondaryMags'])
-				#ageis['damageReduction'] = int(ageis['damageReduction']) +1d10 is screwing it up
-			else:
-				toHide.append(ageis)
-		if len(toHide) > 0:
-			for hider in toHide:
-				arms[kind].remove(hider)
-	return arms
 
 def get_missions():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
@@ -240,41 +176,6 @@ def whosHereAPI():
 	gbook = json.dumps(guestbook.get_guestbook())
 	return gbook
 
-@app.route("/searchguns/<type>")
-def show_gun_type(type):
-	guns = get_guns(session)
-	if type in guns.keys():
-		guns = {type:guns[type.lower()]}
-		return render_template('guns.html', guns=guns, session=session)
-	else:
-		show_guns()
-
-@app.route("/characterguns")
-def character_guns():
-	if 'username' not in session.keys():
-		return redirect("/")
-	if 'character' not in session.keys():
-		return redirect("/")
-	character_string = session['character']
-	my_character = character.from_string(character_string)
-	classes = get_classes()
-	my_class = None
-	for cc in classes:
-		if my_character.my_class == cc['name']:
-			my_class = cc
-	usable = {}
-	profs = []
-	for proficiency in my_class['Weapon Proficiencies']:
-		profs.append(proficiency.lower())
-	guns = get_guns(session)
-	for type in guns.keys():
-		if type.lower() + 's' in profs:
-			usable[type.lower()] = []
-			for gun in guns[type]:
-				if gun['minLevel'] <= my_character.level:
-					usable[type].append(gun)
-	return render_template('guns.html', guns=usable, session=session)
-
 #begin parser pages
 
 @app.route("/docs/classes")
@@ -388,11 +289,6 @@ def char_mod():
 	if not security.check_auth(session):
 		return redirect("/")
 
-@app.route("/items")
-def show_items():
-	items = get_items()
-	return render_template('items.html', items=items, session=session)
-
 @app.route("/classes")
 def show_classes():
 	classless = get_classes()
@@ -401,41 +297,6 @@ def show_classes():
 @app.route("/files")
 def show_files():
 	return render_template("files.html")
-
-@app.route("/weaponsmith")
-def show_weaponsmith():
-	if not security.check_auth(session):
-		return redirect("/")
-	guns = get_guns(session)
-	return render_template("weaponsmith.html", guns=guns, session=session)
-
-@app.route("/addgun", methods=['POST'])
-def make_gun():
-	if not security.check_auth(session):
-		return redirect("/")
-	gun = {}
-	gun['name'] = request.form['gunname']
-	gun['range'] = request.form['range']
-	gun['damage'] = request.form['gunDamage']
-	gun['type'] = request.form['gunType']
-	gun['mag'] = request.form['mag']
-	gun['toMiss'] = request.form['toMiss']
-	gun['effect'] = request.form['effect']
-	gun['cost'] = request.form['cost']
-	gun['magcost'] = request.form['magcost']
-	gun['minLevel'] = request.form['minLevel']
-	if request.form['manufacturer']:
-		gun['manufacturer'] = request.form['manufacturer']
-	guns = get_guns(session)
-	type = gun['type'].lower()
-	if type not in guns.keys():
-		guns[type] = []
-	guns[type].append(gun)
-	json_string = json.dumps(guns)
-	with open("docs/guns.json", 'w') as gunfile:
-		gunfile.write(json_string)
-	log.info("%s added new gun: %s", (session['username'], gun['name']))
-	return redirect("weaponsmith")
 
 @app.route("/missions")
 def show_missions():
