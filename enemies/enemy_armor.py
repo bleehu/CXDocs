@@ -8,7 +8,10 @@ def get_monster_armor_all():
     monster_armor = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, name, description, coverage, type, author, ap_level, armor_points, mags, cost, hardpoints, move_penalty FROM monsters_armors ORDER BY name;")
+    myCursor.execute("SELECT pk_id, name, description, coverage, type, author, \
+        ap_level, armor_points, mags, cost, hardpoints, move_penalty \
+        FROM monsters_armors \
+        WHERE deleted_at IS NULL ORDER BY name;")
     results = myCursor.fetchall()
     for line in results:
         suit = {}
@@ -31,7 +34,14 @@ def get_monsters_armor(monster_id):
     monster_armor = []
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT a.pk_id, name, coverage, description, a.author, a.type, a.ap_level, a.armor_points, a.mags, a.cost, a.hardpoints, a.move_penalty FROM monsters_armors AS a, monsters_armor_map WHERE monsters_armor_map.fk_monster_id = %s AND monsters_armor_map.fk_armor_id = a.pk_id ORDER BY name;" % monster_id)
+    myCursor.execute("SELECT a.pk_id, name, coverage, description, a.author, \
+        a.type, a.ap_level, a.armor_points, a.mags, a.cost, \
+        a.hardpoints, a.move_penalty \
+        FROM monsters_armors AS a, monsters_armor_map \
+        WHERE a.deleted_at IS NULL \
+        AND monsters_armor_map.fk_monster_id = %s \
+        AND monsters_armor_map.fk_armor_id = a.pk_id \
+        ORDER BY name;" % monster_id)
     results = myCursor.fetchall()
     for line in results:
         armor = {}
@@ -53,7 +63,11 @@ def get_monsters_armor(monster_id):
 def get_armors_monsters(armor_id):
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT monsters_armor_map.pk_id, name FROM monsters, monsters_armor_map WHERE monsters_armor_map.fk_armor_id = %s AND monsters_armor_map.fk_monster_id = monsters.pk_id;" % armor_id)
+    myCursor.execute("SELECT monsters_armor_map.pk_id, name \
+        FROM monsters, monsters_armor_map \
+        WHERE monsters.deleted_at IS NULL \
+        AND monsters_armor_map.fk_armor_id = %s \
+        AND monsters_armor_map.fk_monster_id = monsters.pk_id;" % armor_id)
     results = myCursor.fetchall()
     return results
 

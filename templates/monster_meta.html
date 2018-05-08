@@ -26,7 +26,7 @@
                     <div class="col-lg-4">
                         <h2> Level Breakdown </h2>
                         <p> There are {{monsters|count}} enemies registered in the database.</p>
-                        <table class="table">
+                        <table class="table table-hover">
                         {% for level in stats['levelcount'].keys() | sort %}
                         <tr><td>Level {{level}}</td><td> {{stats['levelcount'][level]}} enemies</td></tr>
                         {% endfor %}
@@ -42,7 +42,7 @@
                             have!</p>
                     </div>
                     <div class="col-lg-4">
-                        <table class="table">
+                        <table class="table table-hover">
                         {% for role in stats['roles'].keys() | sort %}
                             <tr>
                                 <td>{{role}}</td>
@@ -61,22 +61,22 @@
                         </p>
                         <p> Enemies without  abilities: {{stats['noabilities']}}  ({{(stats['noabilities'] / stats['monsters'] * 100)| round(1, 'floor')}}%)</p>
                         <div class="progress progress-striped">
-                          <div class="progress-bar progress-bar-success" style="width:{{stats['noabilities'] / stats['monsters'] * 100}}%">
+                          <div class="progress-bar bg-success" style="width:{{stats['noabilities'] / stats['monsters'] * 100}}%">
                           </div>
                         </div>       
                         <p> Enemies without weapons: {{stats['noweapons']}}  ({{stats['noweapons'] / stats['monsters'] * 100| round(1, 'floor')}}%)</p>
                         <div class="progress progress-striped">
-                          <div class="progress-bar progress-bar-success" style="width: {{stats['noweapons'] / stats['monsters'] * 100}}%">
+                          <div class="progress-bar bg-success" style="width: {{stats['noweapons'] / stats['monsters'] * 100}}%">
                         </div>
                     </div>
                         <p> Enemies without armor: {{stats['noarmor']}}  ({{stats['noarmor'] / stats['monsters'] * 100| round(1, 'floor')}}%)</p>
                         <div class="progress progress-striped">
-                          <div class="progress-bar progress-bar-success" style="width: {{stats['noarmor'] / stats['monsters'] * 100}}%">
+                          <div class="progress-bar bg-success" style="width: {{stats['noarmor'] / stats['monsters'] * 100}}%">
                           </div>
                         </div>
                         <p> Enemies without any mappings: {{stats['hasnothingcount']}}  ({{(stats['hasnothingcount'] / stats['monsters'] * 100)| round(1, 'floor')}}%)</p>
                         <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-danger" style="width:{{stats['hasnothingcount'] / stats['monsters'] * 100}}%">
+                            <div class="progress-bar bg-danger" style="width:{{stats['hasnothingcount'] / stats['monsters'] * 100}}%">
                             </div>
                         </div>
                         <p>The "naked" enemies are listed below. Enemies which don't have an ability, weapon nor 
@@ -91,7 +91,7 @@
                     <div class-"col-lg-6">
                         <h2>Contributors</h2>
                         <p> Enemies </p>
-                        <table class="table">
+                        <table class="table table-hover">
                         {% for contributor in stats['contributors'].keys() | sort %}
                         <tr>
                             <td>{{contributor}}</td>
@@ -100,30 +100,30 @@
                         </tr>
                         {% endfor %}
                         </table>
-                        <p> Weapons </p>
-                        <table class="table">
+                        <p class="text-warning"> Weapons </p>
+                        <table class="table table-hover">
                         {% for contributor in stats['weapons']['contributors'].keys() | sort %}
-                            <tr>
+                            <tr class="table-warning">
                                 <td> {{contributor}} </td>
                                 <td>  Made {{stats['weapons']['contributors'][contributor]}} Weapons</td>
                                 <td> {{(stats['weapons']['contributors'][contributor] / stats['weapons']['count'] * 100) | round(1, 'floor')}}% </td>
                             </tr>
                         {% endfor %}
                         </table>
-                        <p> Armor </p>
-                        <table class="table">
+                        <p class="text-info"> Armor </p>
+                        <table class="table table-hover">
                         {% for contributor in stats['armor']['contributors'].keys() | sort %}
-                            <tr>
+                            <tr class="table-info">
                                 <td> {{contributor}} </td>
                                 <td>  Made {{stats['armor']['contributors'][contributor]}} Armor varieties </td>
                                 <td> {{(stats['armor']['contributors'][contributor] / stats['armor']['count'] * 100) | round(1, 'floor')}}% </td>
                             </tr>
                         {% endfor %}
                         </table>
-                        <p> Abilities </p>
-                        <table class="table">
+                        <p  class="text-success"> Abilities </p>
+                        <table class="table table-hover">
                         {% for contributor in stats['abilities']['contributors'].keys() | sort %}
-                            <tr>
+                            <tr class="table-success">
                                 <td> {{contributor}} </td>
                                 <td>  Made {{stats['abilities']['contributors'][contributor]}} Abilities </td>
                                 <td> {{(stats['abilities']['contributors'][contributor] / stats['abilities']['count'] * 100) | round(1, 'floor')}}% </td>
@@ -135,9 +135,9 @@
                     <div class="col-lg-4">
                         <h2> Enemy Weapons </h2>
                         <p> There are {{stats['weapons']['count']}} enemy weapons registered in the database. </p>
-                        <table class="table">
+                        <table class="table table-hover">
                             {% for type in stats['weapons']['types'].keys() | sort %}
-                            <tr>
+                            <tr class="table-warning">
                                 <td>{{type}}</td>
                                 <td>{{stats['weapons']['types'][type]}} Weapons </td>
                                 <td>{{ (stats['weapons']['types'][type] / stats['weapons']['count'] * 100) | round(1, 'floor') }} %</td>
@@ -147,7 +147,7 @@
                         {% for type in stats['weapons']['types'].keys() | sort %}
                             <p> {{type}} </p>
                             <div class="progress progress-striped">
-                                <div class="progress-bar progress-bar-warning" style="width:{{stats['weapons']['types'][type] / stats['weapons']['count'] * 200}}%">
+                                <div class="progress-bar bg-warning" style="width:{{stats['weapons']['types'][type] / stats['weapons']['count'] * 200}}%">
                                 </div>
                             </div>
                         {% endfor %}
@@ -156,9 +156,9 @@
                     <div class="col-lg-4">
                         <h2> Enemy Armor </h2>
                         <p> There are {{stats['armor']['count']}} enemy armor varieties registered in the database. </p>
-                        <table class="table">
+                        <table class="table table-hover">
                             {% for type in stats['armor']['types'].keys() | sort %}
-                            <tr>
+                            <tr class="table-info">
                                 <td>{{type}}</td>
                                 <td>{{stats['armor']['types'][type]}} varieties </td>
                                 <td>{{ (stats['armor']['types'][type] / stats['armor']['count'] * 100) | round(1, 'floor') }} %</td>
@@ -168,7 +168,7 @@
                         {% for type in stats['armor']['types'].keys() | sort %}
                             <p> {{type}} </p>
                             <div class="progress progress-striped">
-                                <div class="progress-bar progress-bar-info" style="width:{{stats['armor']['types'][type] / stats['armor']['count'] * 200}}%">
+                                <div class="progress-bar bg-info" style="width:{{stats['armor']['types'][type] / stats['armor']['count'] * 200}}%">
                                 </div>
                             </div>
                         {% endfor %}
@@ -177,9 +177,9 @@
                     <div class="col-lg-4">
                         <h2> Enemy Abilities </h2>
                         <p> There are {{stats['abilities']['count']}} enemy abilities registered in the database. </p>
-                        <table class="table">
+                        <table class="table table-hover">
                             {% for type in stats['abilities']['types'].keys() | sort %}
-                            <tr>
+                            <tr class="table-success">
                                 <td>{{type}}</td>
                                 <td>{{stats['abilities']['types'][type]}} Abilities </td>
                                 <td>{{ (stats['abilities']['types'][type] / stats['abilities']['count'] * 100) | round(1, 'floor') }} %</td>
@@ -189,7 +189,7 @@
                         {% for type in stats['abilities']['types'].keys() | sort %}
                             <p> {{type}} </p>
                             <div class="progress progress-striped">
-                                <div class="progress-bar progress-bar-success" style="width:{{stats['abilities']['types'][type] / stats['abilities']['count'] * 100}}%">
+                                <div class="progress-bar bg-success" style="width:{{stats['abilities']['types'][type] / stats['abilities']['count'] * 100}}%">
                                 </div>
                             </div>
                         {% endfor %}

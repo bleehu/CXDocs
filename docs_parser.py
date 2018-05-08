@@ -1,6 +1,7 @@
 
 import argparse #we use the argparse module for passing command-line arguments on startup.
 import pdb
+import re #regular expressions
 
 global new_id
 
@@ -27,12 +28,14 @@ def parse(filepath):
         while index < len(lines):
             #decide which kind of token we are looking at
             try:
-                lines[index].encode('ascii')
+                lines[index].encode('ascii') #check to make sure there are no illegal characters
                 if lines[index].strip() == '': #if the next line is blank
                     pass
                 elif lines[index][0:4] == '    ' or lines[index][0] == '\t': #if the next line is an indented paragraph
                     index = append_paragraph(lines, index, tokens)
-                elif lines[index].strip() == '==============================': # if the next line is a Heading
+                elif lines[index].strip() == '=============================='\
+                    and index + 2 < len(lines)\
+                     and lines[index + 2].strip() == '==============================': # if the next line is a Heading
                     index = append_Heading(lines, index, tokens)
                 elif lines[index][0:4].strip() == '====' and lines[index].strip()[-4:] == '====': #if the next line is a sub Heading
                     append_subHeading(lines, index, tokens)
@@ -40,10 +43,17 @@ def parse(filepath):
                     append_Section(lines, index, tokens)
                 elif lines[index].strip()[-1] == ':':
                     append_subsection(lines, index, tokens)
+                elif re.match('^\d+\. ', lines[index]) != None:
+                    index = append_numbered_list(lines, index, tokens)
                 elif lines[index].strip()[0:2] == '* ' or lines[index][0:2] =='- ':
                     index = append_unordered_list(lines, index, tokens)
+                elif lines[index].strip()[0] == "*":
+                    index = append_footnote(lines, index, tokens)
                 elif lines[index].count(':') == 1 and lines[index + 1].count(':') == 1:
                     index = append_definition_list(lines, index, tokens)
+                elif len(lines) > index + 1 and lines[index].strip()[:2] == '+-'\
+                 and lines[index + 1].strip()[0] == '|':
+                    index = append_table(lines, index, tokens) 
                 else: #if we have no idea what it is
                     #dump text as normal
                     new_token = {'type':'unknown', 'content':lines[index]}
@@ -77,12 +87,27 @@ def append_subsection(lines, index, tokens):
 
 def append_paragraph(lines, index, tokens):
     new_paragraph = {'type':'p','content':lines[index].strip().encode('ascii')}
-    index = index + 1
+    index = index + 1 #because we processed the line above
     while index < len(lines) and lines[index].strip() != '':
-        lines[index].encode('ascii')
-        new_paragraph['content'] = '%s %s' % (new_paragraph['content'], lines[index].strip())
+        try:
+            lines[index].encode('ascii')
+            new_paragraph['content'] = '%s %s' % (new_paragraph['content'], lines[index].strip())
+        except:
+            new_paragraph['content'] = '%s %s' % (new_paragraph['content'], 'ERROR ON LINE %s. COULD NOT PARSE.' % index)
         index = index + 1
     append_token(tokens, new_paragraph)
+    return index
+
+def append_footnote(lines, index, tokens):
+    new_footnote = {'type':'footnote', 'content': ''}
+    while index < len(lines) and lines[index].strip() != '':
+        try:
+            lines[index].encode('ascii')
+            new_footnote['content'] = '%s %s' % (new_footnote['content'], lines[index].strip())
+        except:
+            new_footnote['content'] = '%s %s' % (new_footnote['content'], 'ERROR ON LINE %s. COULD NOT PARSE.' % index)
+        index = index + 1
+    append_token(tokens, new_footnote)
     return index
 
 def append_unordered_list(lines, index, tokens):
@@ -91,7 +116,17 @@ def append_unordered_list(lines, index, tokens):
         new_list['content'].append(lines[index][2:])
         index = index + 1 
     append_token(tokens, new_list)
-    return index
+    return index - 1
+
+def append_numbered_list(lines, index, tokens):
+    new_list = {'type':'ol', 'content':[]}
+    regex_pattern = '^\d+\. '
+    while index < len(lines) and re.match(regex_pattern,lines[index]) != None:
+        match = re.match(regex_pattern,lines[index])
+        new_list['content'].append(lines[index][match.end():])
+        index = index + 1
+    append_token(tokens, new_list)
+    return index - 1
 
 def append_definition_list(lines, index, tokens):
     new_list = {'type':'dl', 'content':[]}
@@ -100,7 +135,18 @@ def append_definition_list(lines, index, tokens):
         new_list['content'].append((term, definition))
         index = index + 1
     append_token(tokens, new_list)
-    return index
+    return index - 1
+
+def append_table(lines, index, tokens):
+    new_table = {'type':'table', 'content':[]}
+    index = index + 1 # skip top row of table
+    while index < len(lines) and \
+    lines[index].strip() != '' and '|' in lines[index]:
+        row = lines[index].split('|')
+        new_table['content'].append(row)
+        index = index + 2 # skip cross lines
+    append_token(tokens, new_table)
+    return index - 1
 
 if __name__ == "__main__":
     args = get_args()
