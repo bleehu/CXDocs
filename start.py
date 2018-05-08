@@ -250,11 +250,6 @@ def whosHereAPI():
 def levelUp():
 	levels = get_levels()
 	return render_template('levelup.html', levels=levels)
-	
-@app.route("/guns")
-def show_guns():
-	guns = get_guns(session)
-	return render_template('guns.html', guns=guns, session=session)
 
 @app.route("/searchguns/<type>")
 def show_gun_type(type):
@@ -478,37 +473,6 @@ def make_gun():
 def show_missions():
 	missions = get_missions()
 	return render_template("missions.html", missions = missions)
-
-@app.route("/armorsmith")
-def show_armorsmith():
-	if not security.check_auth(session):
-		return redirect("/")
-	armor = get_armor(session)
-	return render_template("armorsmith.html", armor=armor, session=session)
-
-@app.route("/addarmor", methods=['POST'])
-def make_armor():
-	if not security.check_auth(session):
-		return redirect("/")
-	newArmor = {}
-	newArmor['name'] = request.form['name']
-	newArmor['damageReduction'] = request.form['dr']
-	newArmor['type'] = request.form['type']
-	newArmor['primaryMags'] = request.form['prime']
-	newArmor['secondaryMags'] = request.form['secondary']
-	newArmor['coverage'] = request.form['coverage']
-	newArmor['cost'] = request.form['cost']
-	newArmor['description'] = request.form['effect']
-	newArmor['minLevel'] = request.form['minLevel']
-	armor = get_armor(session)
-	if newArmor['type'] not in armor.keys():
-		armor[newArmor['type']] = []
-	armor[newArmor['type']].append(newArmor)
-	json_string = json.dumps(armor)
-	with open("docs/armor.json", 'w') as armorfile:
-		armorfile.write(json_string)
-	log.info("%s added new armor: %s", (session['username'], newArmor['name']))
-	return redirect("armorsmith")
 
 @app.route("/racesmith")
 def show_racesmith():
