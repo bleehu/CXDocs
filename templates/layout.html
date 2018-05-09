@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<!-- This line links to the Cascading Style Sheet (CSS) which dictates the color, alignment and style of the page. -->
@@ -8,6 +8,7 @@
         <link rel="stylesheet" type="text/css" href="../static/custom.css">
         <!-- Let's get some jquery! -->
         <script src="../static/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="../static/bootstrap.min.js"></script>
         <script src="../static/whoshere.js"></script>
 		{%block head%}{%endblock%}
 	</head>
@@ -47,12 +48,13 @@
 		</nav>
 		{% with messages = get_flashed_messages() %}
         <!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
+        <!-- See bootstrap.js docs here for how we get them to fade out http://v4-alpha.getbootstrap.com/components/alerts/ -->
 		  {% if messages %}
 		  <div class="container" id="flashcontainer">
-			{% for message in messages %}
-			<div class="alert alert-dismissible alert-success">
-			  <button type="button" class="close" data-dismiss="alert">&times;</button>
-			  {{ message }}.
+			{% for message in range(messages|length) %}
+			<div class="alert alert-dismissible alert-success" role="alert" id="alert{{message}}">
+			  <button type="button" class="close" data-dismiss="alert" data-target="#alert{{message}}" aria-label="close">&times;</button>
+			  {{ messages[message] }}.
 			</div>
 			{% endfor %}
 		</div>
