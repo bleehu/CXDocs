@@ -15,14 +15,9 @@
 			<div class="col-lg-4">
 			{% if 'username' in session %}
 				<div class="list-group table-of-contents">
-				{% if 'character' in session %}
-					<a class="list-group-item"> Currently have selected character: {{character.name}}</a>
-					<a class="list-group-item" href="/show/character">Select a Different Character</a>
-					<a class="list-group-item" href="/characterguns"> Guns For {{character.name}}</a>
-				{% else %}
-					<a class="list-group-item" href="/show/character">Select a Character</a>
-				{% endif%}
-					<a class="list-group-item" href="/playercharacters"> All Characteres </a>
+					<a class="list-group-item" href="/playercharacters"> Your Characters </a>
+					<a class="list-group-item" href="/playercharacters"> All Characters </a>
+					<a class="list-group-item" href="/playercharacters"> Make a New Character </a>
 				</div>
 				<p>Welcome, {{session['username']}}!</p>
 				<form class="form-group" action="logout" method="post">
@@ -33,7 +28,7 @@
 						</div>
 					</div>
 				</form>
-			{% else %}
+			{% else %} <!-- Else, if not signed in -->
 				<form action="login" method="post" class="form-horizontal">
 				<div class="form-group">
 					<label for="uname" class="col-lg-2 control-label">username</label>
@@ -53,10 +48,10 @@
 						</div>
 					</div>
 						<input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
-				</form>
-			{% endif %}
-			</div>
-		</div>
+				</form> <!-- End if not signed in -->
+			{% endif %} 
+			</div> <!-- End Col -->
+		</div> <!-- End Row -->
 	</div>
 	<div class="bs-component">
 		<div class="row">
