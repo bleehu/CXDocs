@@ -7,9 +7,10 @@ def get_characters():
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT name, health, nanites, \
-        strength, perception, fortitude, charisma, intelligence, dexterity, luck, \
-        level, shock, will, reflex, description, race, class, \
-        fk_owner_id, money, created_at, pk_id FROM characters \
+        strength, perception, fortitude, charisma, intelligence, dexterity,\
+        luck, level, shock, will, reflex, description, race, class, fk_owner_id, \
+        money, created_at, pk_id, carry_ability, move_speed, skill_gain\
+        FROM characters \
         WHERE deleted_at IS NULL ORDER BY level;")
     characters = []
     results = myCursor.fetchall()
