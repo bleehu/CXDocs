@@ -1,5 +1,4 @@
 import characters_common
-import pdb
 import psycopg2
 import security
 
@@ -9,7 +8,8 @@ def get_characters():
     myCursor.execute("SELECT name, health, nanites, \
         strength, perception, fortitude, charisma, intelligence, dexterity, luck, \
         level, shock, will, reflex, description, race, class, \
-        fk_owner_id, money, created_at FROM characters WHERE deleted_at IS NULL ORDER BY level;")
+        fk_owner_id, money, created_at, pk_id FROM characters \
+        WHERE deleted_at IS NULL ORDER BY level;")
     characters = []
     results = myCursor.fetchall()
     for line in results:
@@ -21,7 +21,8 @@ def validate_character(form, user):
     #check to make sure nobody is tampering with the web form.
     expected = set(['name', 'description', \
         'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', \
-        'reflex', 'will', 'shock', 'health', 'nanites', 'race', 'class'])
+        'reflex', 'will', 'shock', 'health', 'nanites', 'race', 'class', \
+        'carry_ability', 'move_speed', 'skill_gain', 'pk_id'])
     if expected ^ set(form.keys()) != set([]):
         return False
     character = {}
@@ -44,6 +45,10 @@ def validate_character(form, user):
         character['money'] = int(form['money'])
         character['race'] = security.sql_escape(form['race'])
         character['class'] = security.sql_escape(form['class'])
+        character['carry_ability'] = int(form['carry_ability'])
+        character['move_speed'] = int(form['move_speed'])
+        character['skill_gain'] = int(form['skill_gain'])
+        character['pk_id'] = int(form['pk_id'])
     except Exception as e:
         return False
     if character['name'].strip() == '':
@@ -61,10 +66,12 @@ def validate_character(form, user):
     #the pk_id will also be added by default by postgres in the database
     return newCharacter
 
+""" Owner should be the pk_id of the user who generated the character in integer form. 
+This method mostly used in the copy character route; in which case the character
+should be the map of the character, such as the output from parse_character_line() """
 def insert_character(character, owner):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute()
     #ending a line with a backslash keeps the command from running off the screen
     characterString = (character['name'], \
         character['health'], \
@@ -84,7 +91,10 @@ def insert_character(character, owner):
         character['race'], \
         character['description'], \
         character['money'], \
-        owner)
+        owner\
+        character['carry_ability']\
+        character['move_speed']\
+        character['skill_gain'])
     myCursor.execute("INSERT INTO characters \
         SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
         reflex, will, shock, level, class, race, description, money, fk_owner_id) \
@@ -93,13 +103,28 @@ def insert_character(character, owner):
     myCursor.close()
     connection.commit()
 
+def create_blank_character(owner_pk_id):
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("INSERT INTO characters (name, health, nanites, \
+        strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
+        reflex, will, shock, level, class, race, description, money, fk_owner_id, \
+        carry_ability, move_speed, skill_gain) \
+        VALUES ('New Character', 100, 100, 6, 6, 6, 6, 6, 6, 6, 12, 12, 12, 1, \
+        'Soldier', 'Human', '', 0, '%s', 6, 6, 6);" % owner_pk_id)
+    myCursor.close()
+    connection.commit()
+
+
 def get_character(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT name, health, nanites, \
         strength, perception, fortitude, charisma, intelligence, dexterity,\
         luck, level, shock, will, reflex, description, race, class, fk_owner_id, \
-        money, created_at FROM characters WHERE deleted_at IS NULL AND pk_id = %s;" % pk_id)
+        money, created_at, pk_id, carry_ability, move_speed, skill_gain\
+        FROM characters \
+        WHERE deleted_at IS NULL AND pk_id = %s;" % pk_id)
     line = myCursor.fetchall()[0]
     this_character = parse_line_to_character(line)
     return this_character
@@ -108,18 +133,30 @@ def get_users_characters(session):
     these_characters = None
     if 'username' not in session.keys():
         return None #if the user isn't signed in, this method should error out
+    these_characters = []
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT c.name, c.health, c.nanites, \
         c.strength, c.perception, c.fortitude, c.charisma, c.intelligence, \
         c.dexterity, c.luck, c.level, c.shock, c.will, c.reflex, c.description, \
-        c.race, c.class, c.fk_owner_id, c.money, c.created_at \
+        c.race, c.class, c.fk_owner_id, c.money, c.created_at, c.pk_id, \
+        c.carry_ability, c.move_speed, c.skill_gain\
         FROM characters AS c, users AS u \
         WHERE u.pk_id = c.fk_owner_id AND u.username LIKE '%s'" % session['username'])
     lines = myCursor.fetchall()
     for line in lines:
-        these_characters.append(parse_line_to_character(line)) 
+        these_characters.append(parse_line_to_character(line))
     return these_characters
+
+def get_users_newest_character(session):
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT c.pk_id FROM characters AS c, users AS u \
+        WHERE u.displayname LIKE '%s' ORDER BY c.pk_id DESC;" % session['displayname'])
+    all_pk_ids = myCursor.fetchall()
+    new_pk_id = parse_line_to_character(all_pk_ids[0])
+    new_character = get_character(new_pk_id)
+    return new_character
 
 def update_character(character, pk_id):
     connection = characters_common.db_connection()
@@ -141,7 +178,11 @@ def update_character(character, pk_id):
         character['class'], \
         character['race'], \
         character['description'], \
-        character['money'], pk_id)
+        character['money'], \
+        pk_id\
+        character['carry_ability']\
+        character['move_speed']\
+        character['skill_gain'])
     if pk_id > 0:
         myCursor.execute("UPDATE characters\
             SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
@@ -184,6 +225,10 @@ def parse_line_to_character(line):
     newCharacter['owner'] = line[17]
     newCharacter['money'] = line[18]
     newCharacter['created_at'] = line[19]
+    newCharacter['pk_id'] = line[20]
+    newCharacter['carry_ability'] = line[21]
+    newCharacter['move_speed'] = line[22]
+    newCharacter['skill_gain'] = line[23]
     return newCharacter
 
 """CREATE SEQUENCE characters_pk_seq NO CYCLE;    

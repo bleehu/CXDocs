@@ -16,38 +16,30 @@ def initialize_characters(config, newlog):
 
 """ Load the web form to create a new character. """
 #the character creation API endpoint
-@character_blueprint.route("/character/new", methods=['POST'])
+@character_blueprint.route("/character/new", methods=['GET'])
 def make_new_character():
     if not security.check_auth(session):
         flash("You must be signed in to make a new character!")
         return redirect("/")
-    user = session['displayname']
-    new_character = characters.validate_character(request.form, user)
-    if new_character is False:
-        flash("Could not add new character; Character was invalid.")
-        return redirect("/character/create")
-    pk_id = security.get_user_pkid(session)
-    characters.insert_character(new_character, pk_id)
-    flash("Created a new character!")
+    #Create a new character
+    #get newest character
+    #go to edit new character
     return redirect("/character/create")
 
-#show the character creation menu
-@character_blueprint.route("/character/create")
-def show_character_creator():
+""" Show the character management page """
+@character_blueprint.route("/character/mine")
+def show_my_characters():
     if not security.check_auth(session):
-        flash("You must be logged in to do that.")
+        flash("You must be signed in to see your characters.")
         return redirect("/")
-    return render_template("character_creator.html")
-
-""" Display a specific character without modifying it. """
-@character_blueprint.route("/show/character")
-def show_char_select():
-    if 'username' not in session.keys():
-    return render_template("character_creator.html") #NOTE! Template does not exist yet!
-    #Template to be written by Wildlovelies on 2/4/2018
+    my_characters = characters.get_users_characters(session)
+    if (len(my_characters) < 1):
+        flash("You don't have any characters yet. Would you like to make one?")
+        return redirect("/character/new")
+    return render_template("character_select.html", characters=my_characters)
 
 @character_blueprint.route("/showcharacter/<pk_id>")
-def show_char_select(pk_id):
+def show_character(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
@@ -84,8 +76,10 @@ def show_player_characters():
     pcs = characters.get_characters()
     return render_template("player_characters.html", pcs = pcs)
 
-""" If a User has more than one character, then they should be able to select one character that they are using at a time.
-Dynamic pages will be able to do things like display only weapons and armor that character can use. """
+""" If a User has more than one character, then they should be able to select 
+one character that they are using at a time. Dynamic pages will be able to do 
+things like display only weapons and armor that character can use. """
+
 #API endpoint to select a character
 @character_blueprint.route("/select/character", methods=['POST'])
 def char_select():
@@ -100,16 +94,20 @@ def char_select():
     return redirect("/show/character")
 
 """ Use the character creation page to update an existing character. """
-@character_blueprint.route("/modify/character/<pk>")
+@character_blueprint.route("/modifycharacter/<pk>")
 def char_modify(pk):
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    to_mod = None
-    char_blob = character.get_characters()
-    if int(pk) not in char_blob['pk_list']:
-        return redirect("/show/character")
-    for pc in char_blob['characters']:
-        if pc.pk == int(pk):
-            to_mod = pc
-            return render_template("character_modify.html", session=session, character=to_mod)
+    pk_id_int = -1
+    try:
+        pk_id_int = int(pk)
+    except:
+        flash("That's not a character id, stupid.")
+        return redirect("/")
+    my_character = characters.get_character(pk_id_int)
+    user_id = security.get_user_pkid(session)
+    if my_character['owner'] != user_id:
+        flash("You cannot modify a character that isn't yours!")
+        return redirect("/character/mine")
+    return render_template("character_creator.html", character=my_character)
