@@ -9,7 +9,7 @@ def get_characters():
     myCursor.execute("SELECT name, health, nanites, \
         strength, perception, fortitude, charisma, intelligence, dexterity, luck, \
         level, shock, will, reflex, description, race, class, \
-        fk_owner_id, money, created_at FROM characters ORDER BY level;")
+        fk_owner_id, money, created_at FROM characters WHERE deleted_at IS NULL ORDER BY level;")
     characters = []
     results = myCursor.fetchall()
     for line in results:
@@ -99,7 +99,7 @@ def get_character(pk_id):
     myCursor.execute("SELECT name, health, nanites, \
         strength, perception, fortitude, charisma, intelligence, dexterity,\
         luck, level, shock, will, reflex, description, race, class, fk_owner_id, \
-        money, created_at FROM characters WHERE pk_id = %s;" % pk_id)
+        money, created_at FROM characters WHERE deleted_at IS NULL AND pk_id = %s;" % pk_id)
     line = myCursor.fetchall()[0]
     this_character = parse_line_to_character(line)
     return this_character
@@ -135,6 +135,16 @@ def update_character(character, pk_id):
             % characterString)
         myCursor.close()
         connection.close()
+
+""" Add a delete timestamp to the deleted_at  column of the character postgres table.  
+pk_id is assumed to have been sanitized in the route (character_routes.py) and the 
+user permissions are assumed to have been checked there too."""
+def delete_character(pk_id):
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("UPDATE characters SET (deleted_at) = now() WHERE pk_id=%s" % pk_id)
+    myCursor.close()
+    connection.close()
 
 def parse_line_to_character(line):
     newCharacter = {}
