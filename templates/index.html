@@ -15,9 +15,9 @@
 			<div class="col-lg-4">
 			{% if 'username' in session %}
 				<div class="list-group table-of-contents">
-					<a class="list-group-item" href="/playercharacters"> Your Characters </a>
+					<a class="list-group-item" href="/character/mine"> Your Characters </a>
 					<a class="list-group-item" href="/playercharacters"> All Characters </a>
-					<a class="list-group-item" href="/playercharacters"> Make a New Character </a>
+					<a class="list-group-item" href="/character/new"> Make a New Character </a>
 				</div>
 				<p>Welcome, {{session['username']}}!</p>
 				<form class="form-group" action="logout" method="post">
