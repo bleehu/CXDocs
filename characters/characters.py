@@ -104,6 +104,22 @@ def get_character(pk_id):
     this_character = parse_line_to_character(line)
     return this_character
 
+def get_users_characters(session):
+    these_characters = None
+    if 'username' not in session.keys():
+        return None #if the user isn't signed in, this method should error out
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT c.name, c.health, c.nanites, \
+        c.strength, c.perception, c.fortitude, c.charisma, c.intelligence, \
+        c.dexterity, c.luck, c.level, c.shock, c.will, c.reflex, c.description, \
+        c.race, c.class, c.fk_owner_id, c.money, c.created_at \
+        FROM characters AS c, users AS u \
+        WHERE u.pk_id = c.fk_owner_id AND u.username LIKE '%s'" % session['username'])
+    lines = myCursor.fetchall()
+    for line in lines:
+        these_characters.append(parse_line_to_character(line)) 
+    return these_characters
 
 def update_character(character, pk_id):
     connection = characters_common.db_connection()
