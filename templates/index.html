@@ -87,18 +87,29 @@
 				{% if 'username' in session %}
 				<!-- TODO: make only available to admins -->
 				<div class="col-lg-3 col-md-3 col-sm-4">
-					<p> Tools for making good enemies: </p>
-					<div class="list-group table-of-contents">
-						<a class="list-group-item" href="monster">Bestiary</a>
-						<a class="list-group-item" href="monsterabilities"> Enemy Abilities </a>
-						<a class="list-group-item" href="monsterarmor">Enemy Armor</a>
-						<a class="list-group-item" href="monsterweapons">Enemy Weapons</a>
-						<a class="list-group-item" href="monstereditor">Enemy Editor</a>
-						<a class="list-group-item" href="monsterabilityeditor">Enemy Ability Editor</a>
-						<a class="list-group-item" href="monsterarmoreditor">Enemy Armor Editor</a>
-						<a class="list-group-item" href="monsterweaponeditor"> Enemy Weapon Editor </a>
-                        <a class="list-group-item" href="monsterstats"> Enemy Database Metadata </a>
-					</div>
+					<div class="card border-secondary">
+						<div class="card-header">Enemy Component Browser</div>
+						<div class="card-body">
+							<div class="btn-group-vertical" data-toggle="buttons">
+								<a class="btn btn-primary" href="monster">Bestiary</a>
+								<a class="btn btn-success" href="monsterabilities"> Enemy Abilities </a>
+								<a class="btn btn-warning" href="monsterarmor">Enemy Armor</a>
+								<a class="btn btn-danger" href="monsterweapons">Enemy Weapons</a>
+							</div><!-- end vertical button group -->
+						</div><!-- end card body -->
+					</div> <!-- End card -->
+					<div class="card border-secondary">
+						<div class="card-header">Enemy Editors</div>
+						<div class="card-body">
+							<div class="btn-group-vertical" data-toggle="buttons">
+								<a class="btn btn-primary" href="monstereditor">Enemy Editor</a>
+								<a class="btn btn-success" href="monsterabilityeditor">Enemy Ability Editor</a>
+								<a class="btn btn-warning" href="monsterarmoreditor">Enemy Armor Editor</a>
+								<a class="btn btn-danger" href="monsterweaponeditor"> Enemy Weapon Editor </a>
+		                        <a class="btn btn-primary" href="monsterstats"> Enemy Database Metadata </a>
+							</div> <!-- end vertical button group -->
+						</div><!-- end card body -->
+					</div><!-- end card -->
 				</div>
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available Help Pages:</p>
