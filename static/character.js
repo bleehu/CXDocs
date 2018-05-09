@@ -22,7 +22,7 @@
         $("#carryAbility").blur(checkStats);
         $("#skillGain").blur(checkStats);
         
-        $("#saveCharacterButton").click(saveCharacter);
+        //$("#saveCharacterButton").click(saveCharacter);
 
         console.log("done initializing character javascript.");
     }
@@ -67,15 +67,19 @@
         //if the data has a NaN in it, it's just gonna fail anyway. May as well
         // save the bandwidth by not sending the save request. 
         if (str == NaN || per == NaN || fort == NaN || cha == NaN || int == NaN || dex == NaN ||  luck == NaN){
-            saveWarn();
+            console.log("NaN'd on basic stats")
             return false;
         } else if ( health == NaN || nanites == NaN || newStats['moveSpeed'] == NaN || newStats['skillGain'] == NaN || newStats['carryAbility'] == NaN) {
-            saveWarn();
+            console.log("NaN'd on other stats")
             return false;
-        } 
+        }
 
-
-        $.post("/character/update/" + pk_id, newStats, saveSuccess);
+        var saveRequest = $.ajax({
+            method: "PUT",
+            URL: "/character/modify/" + pk_id,
+            data: newStats});
+        saveRequest.done(saveSuccess);
+        saveRequest.fail(saveWarn);
     }
 
     function saveSuccess(){
@@ -85,6 +89,8 @@
 
     function saveWarn(){
         //TODO how do I get this to wire up? .error?
+        var blahblah = this;
+        console.log(this);
         console.log("Not saving due to a NaN.");
     }
 

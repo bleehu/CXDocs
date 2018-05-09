@@ -21,10 +21,15 @@ def make_new_character():
     if not security.check_auth(session):
         flash("You must be signed in to make a new character!")
         return redirect("/")
+    #get user's pk_id
+    users_pk_id = security.get_user_pkid(session)
     #Create a new character
+    characters.create_blank_character(users_pk_id)
     #get newest character
+    new_character = characters.get_users_newest_character(session)
+    new_character_id = new_character['pk_id']
     #go to edit new character
-    return redirect("/character/create")
+    return redirect("/modifycharacter/%s" % new_character_id)
 
 """ Show the character management page """
 @character_blueprint.route("/character/mine")
@@ -71,7 +76,7 @@ def delete_character(pk_id):
 """ Endpoint for updating an existing character. Attempting to emulate a 
 RESTful API endpoint where the route is the same to add new, update existing,
 delete existing or view existing character. """
-@character_blueprint.route("/character/modify/<pk_id>", methods=['PUT'])
+@character_blueprint.route("/character/modify/<pk_id>", methods=['POST'])
 def update_character(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to update your character.")
@@ -79,14 +84,21 @@ def update_character(pk_id):
     pk_id_int = -1
     try:
         pk_id_int = int(pk_id)
+    except:
+        flash("That's not a primary key!")
+        return redirect("/")
     user_id = security.get_user_pkid(session)
-    new_character = characters.validate_character(request.form, user)
+    new_character = characters.validate_character(request.form, user_id)
+    if not new_character:
+        flash("Something is wrong with your character; we couldn't update it.")
+        return redirect("/modified_character")
     modified_character = characters.get_character(pk_id_int)
     if user_id != modified_character['owner']:
         flash("You cannot modify a character that's not yours!")
         return redirect("/show/character")
     characters.update_character(new_character,pk_id_int)
     flash("Successfully updated character.")
+    return redirect("/modifycharacter/%s" % pk_id)
 
 """ Show all player characters for community and display metadata to see if one 
 class is getting much more play than another. """

@@ -1,6 +1,7 @@
 import characters_common
 import psycopg2
 import security
+import pdb
 
 def get_characters():
     connection = characters_common.db_connection()
@@ -17,12 +18,13 @@ def get_characters():
         characters.append(newCharacter)
     return characters
 
+""" user is the pk_id of the user """
 def validate_character(form, user):
     #check to make sure nobody is tampering with the web form.
     expected = set(['name', 'description', \
         'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', \
-        'reflex', 'will', 'shock', 'health', 'nanites', 'race', 'class', \
-        'carry_ability', 'move_speed', 'skill_gain', 'pk_id'])
+        'reflex', 'will', 'shock', 'maxHealth', 'maxNanites', 'species', 'classname', \
+        'carry_ability', 'move_speed', 'skill_gain', 'level', 'pk_id', 'money'])
     if expected ^ set(form.keys()) != set([]):
         return False
     character = {}
@@ -39,12 +41,11 @@ def validate_character(form, user):
         character['reflex'] = int(form['reflex'])
         character['shock'] = int(form['shock'])
         character['will'] = int(form['will'])
-        character['health'] = int(form['health'])
-        character['nanites'] = int(form['nanites'])
+        character['health'] = int(form['maxHealth'])
+        character['nanites'] = int(form['maxNanites'])
         character['level'] = int(form['level'])
-        character['money'] = int(form['money'])
-        character['race'] = security.sql_escape(form['race'])
-        character['class'] = security.sql_escape(form['class'])
+        character['race'] = security.sql_escape(form['species'])
+        character['class'] = security.sql_escape(form['classname'])
         character['carry_ability'] = int(form['carry_ability'])
         character['move_speed'] = int(form['move_speed'])
         character['skill_gain'] = int(form['skill_gain'])
@@ -64,7 +65,7 @@ def validate_character(form, user):
     character['money'] = 0 # have zero money to start, so that we can update cash with another safe system
     #created_at timestamp will be added by default by postgres in the database
     #the pk_id will also be added by default by postgres in the database
-    return newCharacter
+    return character
 
 """ Owner should be the pk_id of the user who generated the character in integer form. 
 This method mostly used in the copy character route; in which case the character
@@ -91,9 +92,9 @@ def insert_character(character, owner):
         character['race'], \
         character['description'], \
         character['money'], \
-        owner\
-        character['carry_ability']\
-        character['move_speed']\
+        owner,\
+        character['carry_ability'],\
+        character['move_speed'],\
         character['skill_gain'])
     myCursor.execute("INSERT INTO characters \
         SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
@@ -154,7 +155,7 @@ def get_users_newest_character(session):
     myCursor.execute("SELECT c.pk_id FROM characters AS c, users AS u \
         WHERE u.displayname LIKE '%s' ORDER BY c.pk_id DESC;" % session['displayname'])
     all_pk_ids = myCursor.fetchall()
-    new_pk_id = parse_line_to_character(all_pk_ids[0])
+    new_pk_id = all_pk_ids[0]
     new_character = get_character(new_pk_id)
     return new_character
 
@@ -179,19 +180,19 @@ def update_character(character, pk_id):
         character['race'], \
         character['description'], \
         character['money'], \
-        pk_id\
-        character['carry_ability']\
-        character['move_speed']\
-        character['skill_gain'])
+        character['carry_ability'],\
+        character['move_speed'],\
+        character['skill_gain'],\
+        pk_id)
     if pk_id > 0:
         myCursor.execute("UPDATE characters\
             SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
-        reflex, will, shock, level, class, race, description, money) =\
-            (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', E'%s', %s)\
+        reflex, will, shock, level, class, race, description, money, carry_ability, move_speed, skill_gain) =\
+            (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, %s)\
             WHERE pk_id=%s;" \
             % characterString)
         myCursor.close()
-        connection.close()
+        connection.commit()
 
 """ Add a delete timestamp to the deleted_at  column of the character postgres table.  
 pk_id is assumed to have been sanitized in the route (character_routes.py) and the 
