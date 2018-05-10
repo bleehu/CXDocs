@@ -1,7 +1,6 @@
 import guestbook
 from flask import request, session
 import psycopg2
-
 global user_user #the postgres user that has permission to look at the table of users
 global user_password # the password for the postgres user that looks up users
 
@@ -53,7 +52,8 @@ def get_user_pkid(session):
     connection = get_login_db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT pk_id FROM users WHERE username = '%s';" % username)
-    return int(myCursor.fetchall()[0])
+    line = myCursor.fetchall()[0]
+    return int(line[0])
 
 def initialize(new_user, new_password):
     global user_user
