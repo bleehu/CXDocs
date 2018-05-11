@@ -15,14 +15,9 @@
 			<div class="col-lg-4">
 			{% if 'username' in session %}
 				<div class="list-group table-of-contents">
-				{% if 'character' in session %}
-					<a class="list-group-item"> Currently have selected character: {{character.name}}</a>
-					<a class="list-group-item" href="/show/character">Select a Different Character</a>
-					<a class="list-group-item" href="/characterguns"> Guns For {{character.name}}</a>
-				{% else %}
-					<a class="list-group-item" href="/show/character">Select a Character</a>
-				{% endif%}
-					<a class="list-group-item" href="/playercharacters"> All Characteres </a>
+					<a class="list-group-item" href="/character/mine"> Your Characters </a>
+					<a class="list-group-item" href="/playercharacters"> All Characters </a>
+					<a class="list-group-item" href="/character/new"> Make a New Character </a>
 				</div>
 				<p>Welcome, {{session['username']}}!</p>
 				<form class="form-group" action="logout" method="post">
@@ -33,7 +28,7 @@
 						</div>
 					</div>
 				</form>
-			{% else %}
+			{% else %} <!-- Else, if not signed in -->
 				<form action="login" method="post" class="form-horizontal">
 				<div class="form-group">
 					<label for="uname" class="col-lg-2 control-label">username</label>
@@ -53,68 +48,78 @@
 						</div>
 					</div>
 						<input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
-				</form>
-			{% endif %}
-			</div>
-		</div>
+				</form> <!-- End if not signed in -->
+			{% endif %} 
+			</div> <!-- End Col -->
+		</div> <!-- End Row -->
 	</div>
 	<div class="bs-component">
 		<div class="row">
+				{% if rulesDocs != None %}
 				<div class="col-lg-3 col-md-3 col-sm-4">
-				<p>Available interactive pages:</p>
+					<p> Rules Documents </p>
 					<div class="list-group table-of-contents">
-						<a class="list-group-item" href="levelup">Level up</a>
-						<a class="list-group-item" href="guns">Guns</a>
-						<a class="list-group-item" href="armor">Armor</a>
-						<a class="list-group-item" href="items">Items</a>
-						<a class="list-group-item" href="races">Races/Species</a>
-						<a class="list-group-item" href="classes">Classes</a>
-						<a class="list-group-item" href="missions">Missions</a>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-3 col-sm-4">
-				<p>Available static pages:</p>
-					<div class="list-group table-of-contents">
-						<a class="list-group-item" href="rules">Basic Rules</a>
-						<a class="list-group-item" href="feats">Feats</a>
-						<a class="list-group-item" href="npcgen">NPC Generator</a>
-						<a class="list-group-item" href="files"> Files </a>
-						<a class="list-group-item" href="gamelogs"> Game Logs </a>
-					</div>
-				</div>
-				{% if docs != None %}
-				<div class="col-lg-3 col-md-3 col-sm-4">
-					<p> Available Documents </p>
-					<div class="list-group table-of-contents">
-						{% for document in docs %}
+						{% for document in rulesDocs %}
 						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
 						{% endfor %}
 					</div>
 				</div>
 				{% endif %}
+				{% if character_docs != None %}
+				<div class="col-lg-3 col-md-3 col-sm-4">
+					<p> Character Rules Documents </p>
+					<div class="list-group table-of-contents">
+						{% for document in character_docs %}
+						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
+						{% endfor %}
+					</div>
+				</div>
+				{% endif %}
+				{% if itemsDocs != None %}
+				<div class="col-lg-3 col-md-3 col-sm-4">
+					<p> Items and Weapons Documents </p>
+					<div class="list-group table-of-contents">
+						{% for document in itemsDocs %}
+						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
+						{% endfor %}
+					</div>
+				</div>
+				{% endif %}
+				<div class="col-lg-3 col-md-3 col-sm-4">
+				<p>Available static pages:</p>
+					<div class="list-group table-of-contents">
+						<a class="list-group-item" href="npcgen">NPC Generator</a>
+						<a class="list-group-item" href="files"> Files </a>
+						<a class="list-group-item" href="gamelogs"> Game Logs </a>
+						<a class="list-group-item" href="missions">Missions</a>
+					</div>
+				</div>
 				{% if 'username' in session %}
 				<!-- TODO: make only available to admins -->
 				<div class="col-lg-3 col-md-3 col-sm-4">
-					<p> Tools for making good enemies: </p>
-					<div class="list-group table-of-contents">
-						<a class="list-group-item" href="monster">Bestiary</a>
-						<a class="list-group-item" href="monsterabilities"> Enemy Abilities </a>
-						<a class="list-group-item" href="monsterarmor">Enemy Armor</a>
-						<a class="list-group-item" href="monsterweapons">Enemy Weapons</a>
-						<a class="list-group-item" href="monstereditor">Enemy Editor</a>
-						<a class="list-group-item" href="monsterabilityeditor">Enemy Ability Editor</a>
-						<a class="list-group-item" href="monsterarmoreditor">Enemy Armor Editor</a>
-						<a class="list-group-item" href="monsterweaponeditor"> Enemy Weapon Editor </a>
-                        <a class="list-group-item" href="monsterstats"> Enemy Database Metadata </a>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-3 col-sm-4">
-				<p>Available Smithies:</p>
-					<div class="list-group table-of-contents">
-						<a class="list-group-item" href="armorsmith">Armor Smithy</a>
-						<a class="list-group-item" href="weaponsmith">Weapon Smithy</a>
-						<a class="list-group-item" href="itemsmith">Item Smithy</a>
-					</div>
+					<div class="card border-secondary">
+						<div class="card-header">Enemy Component Browser</div>
+						<div class="card-body">
+							<div class="btn-group-vertical" data-toggle="buttons">
+								<a class="btn btn-primary" href="monster">Bestiary</a>
+								<a class="btn btn-success" href="monsterabilities"> Enemy Abilities </a>
+								<a class="btn btn-warning" href="monsterarmor">Enemy Armor</a>
+								<a class="btn btn-danger" href="monsterweapons">Enemy Weapons</a>
+							</div><!-- end vertical button group -->
+						</div><!-- end card body -->
+					</div> <!-- End card -->
+					<div class="card border-secondary">
+						<div class="card-header">Enemy Editors</div>
+						<div class="card-body">
+							<div class="btn-group-vertical" data-toggle="buttons">
+								<a class="btn btn-primary" href="monstereditor">Enemy Editor</a>
+								<a class="btn btn-success" href="monsterabilityeditor">Enemy Ability Editor</a>
+								<a class="btn btn-warning" href="monsterarmoreditor">Enemy Armor Editor</a>
+								<a class="btn btn-danger" href="monsterweaponeditor"> Enemy Weapon Editor </a>
+		                        <a class="btn btn-primary" href="monsterstats"> Enemy Database Metadata </a>
+							</div> <!-- end vertical button group -->
+						</div><!-- end card body -->
+					</div><!-- end card -->
 				</div>
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available Help Pages:</p>
