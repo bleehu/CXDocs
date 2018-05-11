@@ -15,7 +15,7 @@ def db_connection():
     if config.get('Characters', 'characters_psql_db'):
         db = config.get('Characters', 'characters_psql_db')
     db_pass = "allDatSQL"
-    if config.get('Characters','character_psql_pass'):
-        db_pass = config.get('Characters','character_psql_pass')
+    if config.get('Characters','characters_psql_pass'):
+        db_pass = config.get('Characters','characters_psql_pass')
     connection = psycopg2.connect("dbname=%s user=%s password=%s" % (db, username,db_pass))
     return connection
