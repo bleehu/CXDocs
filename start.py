@@ -110,6 +110,89 @@ def get_user_postgres(username, password, remoteIP):
 	else:
 		return None
 
+def get_rules_docs():
+		rulesDocs = []
+		if config.has_option('Parser', 'basic_rules_filepath'):
+			rulesDocs.append(('Basic Rules','/docs/basic'))
+
+		if config.has_option('Parser', 'combat_rules_filepath'):
+			rulesDocs.append(('Combat Rules','/docs/combat'))
+
+		if config.has_option('Parser', 'damage_types_filepath'):
+			rulesDocs.append(('Damage Types and Armors','/docs/damagetypes'))
+
+		if config.has_option('Parser', 'conditions_filepath'):
+			rulesDocs.append(('Conditions','/docs/conditions'))
+
+		if config.has_option('Parser', 'cloaking_rules_filepath'):
+			rulesDocs.append(('Basic Rules','/docs/cloaking'))
+
+		if config.has_option('Parser', 'glossary_filepath'):
+			rulesDocs.append(('Glossary of Terms','/docs/glossary'))
+
+		if len(rulesDocs) < 1:
+			return None
+		return rulesDocs
+
+def get_items_docs():
+	itemsDocs = []
+	if config.has_option('Parser', 'melee_weapons_filepath'):
+		itemsDocs.append(('Melee Weapons','/docs/meleeWeapons'))
+
+	if config.has_option('Parser', 'pistols_filepath'):
+		itemsDocs.append(('Pistols','/docs/pistols'))
+
+	if config.has_option('Parser', 'smgs_filepath'):
+		itemsDocs.append(('Submachine Guns','/docs/smgs'))
+
+	if config.has_option('Parser', 'carbines_filepath'):
+		itemsDocs.append(('Carbines and Assault Rifles','/docs/carbines'))
+
+	if config.has_option('Parser', 'long_rifles_filepath'):
+		itemsDocs.append(('Long Rifles and DMRs','/docs/longRifles'))
+
+	if config.has_option('Parser', 'machineguns_filepath'):
+		itemsDocs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
+
+	if config.has_option('Parser', 'weapon_attachments_filepath'):
+		itemsDocs.append(('Weapon Attachments','/docs/weaponAttachments'))
+
+	if config.has_option('Parser', 'armor_filepath'):
+		itemsDocs.append(('Armor','/docs/armor'))
+
+	if config.has_option('Parser', 'items_filepath'):
+		itemsDocs.append(('Items','/docs/items'))
+
+	if len(itemsDocs) < 1:
+		return None
+	return itemsDocs
+
+def get_character_docs():
+	character_docs = []
+	if config.has_option('Parser', 'new_player_walkthrough_filepath'):
+		character_docs.append(('New Player Walkthrough','/docs/newplayer'))
+
+	if config.has_option('Parser', 'races_filepath'):
+		character_docs.append(('Races','/docs/races'))
+
+	if config.has_option('Parser', 'classes_filepath'):
+		character_docs.append(('Classes','/docs/classes'))
+
+	if config.has_option('Parser', 'feats_filepath'):
+		character_docs.append(('Feats','/docs/feats'))
+
+	if config.has_option('Parser', 'skills_filepath'):
+		character_docs.append(('Skill','/docs/skills'))
+
+	if config.has_option('Parser', 'Engineer_filepath'):
+		character_docs.append(('Engineer Processes','/docs/engineers'))
+
+	if config.has_option('Parser', 'Medic_filepath'):
+		character_docs.append(('Medic Procedures','/docs/medics'))
+	if len(character_docs) < 1:
+		return None
+	return character_docs
+
 """handles the display of the main page for the site. """
 @app.route("/")	#tells flask what url to trigger this behavior for. In this case, the main page of the site.
 def hello():			#tells flask what method to use when you hit a particular route. Same as regular python function definition.
@@ -117,58 +200,20 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	docs = None
 	if config.has_section('Parser'):
-		docs = []
-		if config.has_option('Parser', 'basic_rules_filepath'):
-			docs.append(('Basic Rules','/docs/basic'))
+		rulesDocs = get_rules_docs()
+		itemsDocs =  get_items_docs()
+		character_docs = get_character_docs()
 
-		if config.has_option('Parser', 'races_filepath'):
-			docs.append(('Races','/docs/races'))
-
-		if config.has_option('Parser', 'classes_filepath'):
-			docs.append(('Classes','/docs/classes'))
-
-		if config.has_option('Parser', 'feats_filepath'):
-			docs.append(('Feats','/docs/feats'))
-
-		if config.has_option('Parser', 'melee_weapons_filepath'):
-			docs.append(('Melee Weapons','/docs/meleeWeapons'))
-
-		if config.has_option('Parser', 'pistols_filepath'):
-			docs.append(('Pistols','/docs/pistols'))
-
-		if config.has_option('Parser', 'smgs_filepath'):
-			docs.append(('Submachine Guns','/docs/smgs'))
-
-		if config.has_option('Parser', 'carbines_filepath'):
-			docs.append(('Carbines and Assault Rifles','/docs/carbines'))
-
-		if config.has_option('Parser', 'long_rifles_filepath'):
-			docs.append(('Long Rifles and DMRs','/docs/longRifles'))
-
-		if config.has_option('Parser', 'machineguns_filepath'):
-			docs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
-
-		if config.has_option('Parser', 'weapon_attachments_filepath'):
-			docs.append(('Weapon Attachments','/docs/weaponAttachments'))
-
-		if config.has_option('Parser', 'armor_filepath'):
-			docs.append(('Armor','/docs/armor'))
-
-		if config.has_option('Parser', 'skills_filepath'):
-			docs.append(('Skill','/docs/skills'))
-
-		if config.has_option('Parser', 'items_filepath'):
-			docs.append(('Items','/docs/items'))
-
-		if config.has_option('Parser', 'Engineer_filepath'):
-			docs.append(('Engineer Processes','/docs/engineers'))
-
-		if config.has_option('Parser', 'Medic_filepath'):
-			docs.append(('Medic Procedures','/docs/medics'))
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
 		pc = characters.get_character(session['character']) 
 	gb = guestbook.get_guestbook()
-	return render_template('index.html', session=session, character=pc, docs=docs, guestbook = gb) #the flask method render_template() shows a jinja template 
+	return render_template('index.html', \
+		session=session, \
+		character=pc, \
+		rulesDocs=rulesDocs, \
+		itemsDocs= itemsDocs, \
+		character_docs=character_docs, \
+		guestbook = gb) #the flask method render_template() shows a jinja template 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
 
@@ -242,6 +287,30 @@ def docs_medics():
 @app.route("/docs/engineers")
 def docs_engineers():
 	return parser_page('Engineer_filepath')
+
+@app.route("/docs/combat")
+def docs_combat():
+	return parser_page('combat_rules_filepath')
+
+@app.route("/docs/conditions")
+def docs_conditions():
+	return parser_page('conditions_filepath')
+
+@app.route("/docs/damagetypes")
+def docs_damage():
+	return parser_page('damage_types_filepath')
+
+@app.route("/docs/cloaking")
+def docs_cloaking():
+	return parser_page('cloaking_rules_filepath')
+
+@app.route("/docs/glossary")
+def docs_glossary():
+	return parser_page('glossary_filepath')
+
+@app.route("/docs/newplayer")
+def docs_new_walkthrough():
+	return parser_page('new_player_walkthrough_filepath')
 
 #End parser pages
 

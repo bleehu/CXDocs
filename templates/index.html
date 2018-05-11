@@ -55,30 +55,45 @@
 	</div>
 	<div class="bs-component">
 		<div class="row">
+				{% if rulesDocs != None %}
 				<div class="col-lg-3 col-md-3 col-sm-4">
-				<p>Available interactive pages:</p>
+					<p> Rules Documents </p>
 					<div class="list-group table-of-contents">
-						<a class="list-group-item" href="missions">Missions</a>
+						{% for document in rulesDocs %}
+						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
+						{% endfor %}
 					</div>
 				</div>
+				{% endif %}
+				{% if character_docs != None %}
+				<div class="col-lg-3 col-md-3 col-sm-4">
+					<p> Character Rules Documents </p>
+					<div class="list-group table-of-contents">
+						{% for document in character_docs %}
+						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
+						{% endfor %}
+					</div>
+				</div>
+				{% endif %}
+				{% if itemsDocs != None %}
+				<div class="col-lg-3 col-md-3 col-sm-4">
+					<p> Items and Weapons Documents </p>
+					<div class="list-group table-of-contents">
+						{% for document in itemsDocs %}
+						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
+						{% endfor %}
+					</div>
+				</div>
+				{% endif %}
 				<div class="col-lg-3 col-md-3 col-sm-4">
 				<p>Available static pages:</p>
 					<div class="list-group table-of-contents">
 						<a class="list-group-item" href="npcgen">NPC Generator</a>
 						<a class="list-group-item" href="files"> Files </a>
 						<a class="list-group-item" href="gamelogs"> Game Logs </a>
+						<a class="list-group-item" href="missions">Missions</a>
 					</div>
 				</div>
-				{% if docs != None %}
-				<div class="col-lg-3 col-md-3 col-sm-4">
-					<p> Available Documents </p>
-					<div class="list-group table-of-contents">
-						{% for document in docs %}
-						<a class="list-group-item" href="{{document[1]}}"> {{document[0]}} </a>
-						{% endfor %}
-					</div>
-				</div>
-				{% endif %}
 				{% if 'username' in session %}
 				<!-- TODO: make only available to admins -->
 				<div class="col-lg-3 col-md-3 col-sm-4">

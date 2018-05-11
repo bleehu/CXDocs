@@ -40,9 +40,21 @@ items_filepath: (optional) absolute filepath to the 07_Items.txt plaintext docum
 
 basic_rules_filepath: (optional) absolute filepath to the Basic Rules.txt plaintext document from the compound_x repo
 
+combat_rules_filepath: (optional) absolute filepath to the 01_02_Combat_Rules.txt plaintext document in teh compound_x repo
+
+conditions_filepath: (optional) absolute filepath to the conditions 01_05_Conditions.txt plaintext file
+
+glossary_filepath: (optional) absolute filepath to the 03_Glossary_of_Terms.txt file
+
+cloaking_filepath: (option) absolute filepath to the cloaking rules file
+
+new_player_walkthrough_filepath: (optional) absolute filepath to the new player walkthrough rule page
+
 Engineer_filepath: (optional) absolute filepath to the Engineer Processes.txt plaintext document from the compound_x repo
 
 Medic_filepath: (optional) absolute filepath to the Medic Procedures.txt plaintext document from the compound_x repo
+
+
 
 ## WhosHere Section
 
