@@ -1,0 +1,206 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - {{character['name']}}</title>
+        <script type="text/javascript" src="../static/character.js"></script>
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Modify {{character['name']}} </h1>
+			</div>
+			<div class="col-lg-12">
+				<p>
+				Make a character! Please 
+				</p>
+				<form class="form-horizontal" id="baseForm" action="/character/modify/{{character['pk_id']}}" method="POST">
+					<div class="form-group row">
+                        <h2> Base Stats </h2>               
+                    </div>
+                    <div class="form-group row">
+						<div class="col-lg-12">
+							<label for="charname" > Name </label>
+							<input class="form-control" type="text" name="name" id="charname" value="{{character['name']}}">
+                            <div class="invalid-feedback"> The name of your character must be at least 1 character long, and not contain the following symbols: <, >, \.</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-lg-4">
+							<label for="species">Species</label>
+							<select name="species" id="species" class="form-control">
+                                <option>{{character['race']}}</option>
+								<option>Human</option>
+								<option>Tundari</option>
+								<option>Security Drone</option>
+								<option>Opalite</option>
+								<option>Cyborg</option>
+							</select>
+						</div>
+						<div class="col-lg-4">
+							<label for="classname">Class</label>
+							<select name="classname" id="classname" class="form-control">
+                                <option>{{character['class']}}</option>
+								<option>Soldier</option>
+								<option>Specialist</option>
+								<option>Doctor</option>
+								<option>Engineer</option>
+								<option>Hacker</option>
+								<option>Pilot</option>
+								<option>Hunter</option>
+								<option>Gunslinger</option>
+								<option>Assassin</option>
+								<option>Berserker</option>
+							</select>
+						</div>
+						<div class="col-lg-4">
+							<label for="level"> Level </label>
+							<input class="form-control" type="text" name="level" id="level" value="{{character['level']}}">
+                            <div class="invalid-feedback"> Your level should be a number below 50 and above -1.</div>
+						</div>
+					</div> <!-- endrow -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="maxHealth"> Max Health</label>
+                            <input class="form-control" type="text" name="maxHealth" value="{{character['health']}}" id="maxHealth" cols="6">
+                            <div class="invalid-feedback"> Expecting a number equal to 50 + (10 x Fortitude)</div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="maxNanites"> Max Nanites</label>
+                            <input class="form-control" type="text" name="maxNanites" value="{{character['nanites']}}" id="maxNanites" cols="6">
+                            <div class="invalid-feedback"> Expecting a number equal to 50 + (10 x Intelligence)</div>
+                        </div>
+                    </div> <!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-3">
+							<label for="str"> Strength </label>
+							<input class="form-control" type="text" name="strength" value="{{character['strength']}}" id="str">
+
+							<label for="per"> Perception </label>
+							<input class="form-control" type="text" name="perception" id="per" value="{{character['perception']}}">
+						</div>
+						<div class="col-lg-3">
+							<label for="strmod"> STR mod </label>
+							<input class="form-control" type="text" name="strmod" id="strmod" disabled="true" value="4">
+
+							<label for="permod"> PER mod</label>
+							<input class="form-control" type="text" name="permod" id="permod" disabled="true" value="4">
+						</div>
+						<div class="col-lg-3">
+							<label for="fort"> Fortitude </label>
+							<input class="form-control" type="text" name="fortitude" id="fort" value="{{character['fortitude']}}">
+
+							<label for="cha"> Charisma </label>
+							<input class="form-control" type="text" name="charisma" id="cha" value="{{character['charisma']}}">
+						</div>
+						<div class="col-lg-3">
+							<label for="fortmod"> FORT mod </label>
+							<input class="form-control" type="text" name="fortmod" id="fortmod" disabled="true" value="4">
+
+							<label for="chamod"> CHA mod </label>
+							<input class="form-control" type="text" name="chamod" id="chamod" disabled="true" value="4">
+						</div>
+					</div> <!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-3">
+							<label for="int"> Intelligence </label>
+							<input class="form-control" type="text" name="intelligence" id="int" value="{{character['intelligence']}}">
+
+							<label for="dex"> Dexterity </label>
+							<input class="form-control" type="text" name="dexterity" id="dex" value="{{character['dexterity']}}">
+						</div>
+						<div class="col-lg-3">
+							<label for="intmod"> INT mod </label>
+							<input class="form-control" type="text" name="intmod" id="intmod" disabled="true" value="4">
+
+							<label for="dex"> DEX mod </label>
+							<input class="form-control" type="text" name="dexmod" id="dexmod" disabled="true" value="4">
+						</div>
+						<div class="col-lg-3">
+							<label for="luck"> Luck </label>
+							<input class="form-control" type="text" name="luck" id="luck" value="{{character['luck']}}">
+
+							<label for="totalStats"> Total </label>
+							<input class="form-control" type="text" name="totalStats" disabled="true" value="42" id="totalStats">
+						</div>
+						<div class="col-lg-3">
+							<label for="luckmod"> LUCK mod </label>
+							<input class="form-control" type="text" name="luckmod" id="luckmod" disabled="true" value="4">
+                            <label for="money"> Money </label>
+                            <input class="form-control" type="text" name="money" id="money" value="{{character['money']}}">
+						</div>
+					</div><!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-4">
+							<label for="will"> Will </label>
+							<input class="form-control" id="will" type="text" name="will" value="{{character['will']}}">
+						</div>
+						<div class="col-lg-4">
+							<label for="Reflex"> Reflex </label>
+							<input class="form-control" id="reflex" type="text" name="reflex" value="{{character['reflex']}}">
+						</div>
+						<div class="col-lg-4">
+							<label for="Shock"> Shock </label>
+							<input class="form-control" id="shock" type="text" name="shock" value="{{character['shock']}}">
+						</div>
+					</div> <!-- endrow -->
+                    <div class="form-group row">
+                        <div class="col-lg-4">
+                            <label for="carry"> Carry Ability </label>
+                            <input class="form-control" type="text" name="carry_ability" id="carryAbility" value="{{character['carry_ability']}}">
+                            <div class="invalid-feedback">Your Carry Ability should be the max of either your Fortitude or Strength.</div>
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="move"> Move Speed </label>
+                            <input class="form-control" type="text" name="move_speed" id="moveSpeed" value="{{character['move_speed']}}">
+                            <div class="invalid-feedback"> Your Move Speed should be the max of either your Strength or Dexterity. </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="skill"> Skill Gain </label>
+                            <input class="form-control" type="text" name="skill_gain" id="skillGain" value="{{character['skill_gain']}}">
+                            <div class="invalid-feedback"> Your Skill Gain should be the max of either your Intelligence or Charisma. </div>
+                        
+                    </div> <!-- endrow -->
+					<div class="form-group row">
+						<div class="col-lg-12">
+							<label for="description"> Description </label>
+							<textarea class="form-control" id="description" name="description" cols="60" rows="10">{{character['description']}}</textarea>
+						</div>
+					</div> <!-- endrow -->
+                    <div class="form-group row">
+                        <div class="col-lg-12"> 
+                            <input type="hidden" name="pk_id" value="{{character['pk_id']}}" id="pk_id">
+                            <input class="btn btn-success" type="submit" id="saveCharacterButton" value="Save Character"/>
+                        </div>
+                    </div>
+				</form>
+            </div> <!-- end column -->
+            <div class="col-lg-12">
+                <form class="form-horizontal">
+                    <div class="form-group row">
+                        <h2> Skills </h2>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-4">
+                            <input type="text" name="skill1Label" value="Stealth">
+                        </div>
+                        <div class="col-lg-4">
+                            <input type="text" name="skill1number" value="10">
+                        </div>
+                        <div class="col-lg-4">
+                            <input class="btn btn-danger" value="Delete Skill" type="button" name="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <input class="btn btn-primary" type="button" name="newSkillButton" id="newSkillButton" value="Add New Skill">
+                    </div>
+                    <div class="form-group row">
+                        <label for="totalSkill"> Total Skill Points:</label>
+                        <input type="text" name="totalSkill" id="totalSkill" disabled="true">
+                    </div>
+                    <div class="form-group row">
+                        <input class="btn btn-success" type="submit" value="Update Skills" name="updateSkillsButton">
+                    </div>
+                </form>
+			</div> <!-- end column -->
+		</div>
+	{% endblock %}
+	

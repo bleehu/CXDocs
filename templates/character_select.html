@@ -8,68 +8,48 @@
 			<div class="page-header">
 				<h1> Your Characters </h1>
 			</div>
-			<div class="col-lg-2">
-				<div class="list-group table-of-contents">
-					{% for character in characters['characters'] %}
-						<a class="list-group-item" href="#{{character.name }}panel"> {{character.name}} </a>
-					{% endfor %}
+			<div class="row">
+				<div class="col-lg-2">
+					<div class="list-group table-of-contents">
+						{% for character in characters['characters'] %}
+							<a class="list-group-item" href="#{{character.name }}panel"> {{character.name}} </a>
+						{% endfor %}
+					</div>
 				</div>
-			</div>
-			<div class="col-lg-6">
-				<p>
-				{% if 'character' in session.keys() %}
-				{{ character.name }} is currently selected. 
-				{% else %}
-				You have not selected a character yet. Selecting a character allows access to new pages on the site.
-				{% endif %}
-				</p>
-			{% for character in characters['characters'] %}
-				<h2 id="{{character.name}}panel"> {{character.name}} </h2>
-				<ul>
-					<li><strong>Level:</strong> {{character.level}} </li>
-					<li><strong>Race:</strong> {{character.race}} </li>
-					<li><strong>Class:</strong> {{character.my_class}} </li>
-					<li><strong>Money:</strong> ${{character.money}} </li>
-					<li><strong>Current Mission:</strong> {{character.mission}} </li>
-				</ul>
-				{% if character.feats | count > 0 %}
-					<h4>Feats</h4>
-					<ul>
-						{% for feat in character.feats %}
-							<li> {{feat}} </li>
-						{% endfor %}
-					</ul>
-				{% endif %}
-				{% if character.skills | count > 0 %}
-					<dl>
-						{% for skill in character.skills.keys() %}
-							<dt>{{skill}}</dt><dd>{{character.skills[skill]}}</dd>
-						{% endfor %}
-					</dl>
-				{% endif %}
-				<!--
-				self.pk = 0
-			self.name = "Sam Vaughn"
-			self.level = 1
-			self.money = 0
-			self.mission = "Mercenaries"
-			self.my_class = "Preist"
-			self.race = "Human"
-			self.weapons = []
-			self.armor = []
-			self.items = []
-			self.feats = []
-			self.skills = {}
-			-->
-				<form class="form-horizontal" action="/select/character" method="post">
-					<input type="hidden" name="pk" value="{{character.pk}}"></input>
-					<input class="btn btn-primary" type="submit" value="Select Character"/>
-				</form>
-				<form class="form-horizontal" action="/modify/character/{{character.pk}}" method="get">
-					<input class="btn btn-warn" type="submit" value="Modify Character"/>
-				</form>
-			{% endfor %}
-			</div>
+				{% for character in characters %}
+				<div class="col-lg-3">
+					<div class="card">
+						<div class="card-header"> {{character.name}} </div>
+						<div class="card-body">
+							<ul>
+								<li><strong>Level:</strong> {{character['level']}} </li>
+								<li><strong>Race:</strong> {{character['race']}} </li>
+								<li><strong>Class:</strong> {{character['class']}} </li>
+								<li><strong>Money:</strong> ${{character['money']}} </li>
+							</ul>
+							<form class="form-horizontal" action="/select/character" method="post">
+								<input type="hidden" name="pk" value="{{character['pk_id']}}"></input>
+								<input class="btn btn-primary" type="submit" value="Select Character"/>
+							</form>
+							<form class="form-horizontal" action="/modifycharacter/{{character['pk_id']}}" method="get">
+								<input class="btn btn-warn" type="submit" value="Modify Character"/>
+							</form>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+				</div>
+			</div> <!-- end row -->
+			<div class="row">
+				<div class="col-lg-3">
+					<div class="card">
+						<div class="card-header">Make a New Character?</div>
+						<div class="card-body">
+							<a href="/character/new"><div class="btn btn-success">New Character</div></a>
+						</div>
+					</div>>
+				</div> <!-- end column -->
+			</div> <!-- end row -->
 		</div>
 	{% endblock %}
 	

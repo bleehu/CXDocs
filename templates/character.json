@@ -1,0 +1,20 @@
+{
+    "name":"{% character['name'] %}",
+    "description":"{% character['description'] %}",
+    "level":"{% character['level'] %}",
+    "health":"{% character['health'] %}",
+    "strength":"{% character['strength'] %}",
+    "perception":"{% character['perception'] %}",
+    "fortitude":"{% character['fortitude'] %}",
+    "charisma":"{% character['charisma'] %}",
+    "intelligence":"{% character['intelligence'] %}",
+    "luck":"{% character['luck'] %}",
+    "dexterity":"{% character['dexterity'] %}",
+    "shock":"{% character['shock'] %}",
+    "will":"{% character['will'] %}",
+    "reflex":"{% character['reflex'] %}",
+    "race":"{% character['race'] %}",
+    "class":"{% character['class'] %}",
+    "fk_owner_pkid":"{% character['fk_owner_pkid'] %}",
+    "nanites":"{% character['nanites'] %}"
+}
