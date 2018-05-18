@@ -41,11 +41,7 @@
 								</form>
 							</div>
 							<div class="row">
-								<form class="form-horizontal" action="/character/modify/{{character['pk_id']}}" method="DELETE">
-									<label for="imsure">I'm sure:</label>
-									<input type="checkbox" name="imsure" id="imsure">
-									<input class="btn btn-danger deleteButton" type="submit" value="Delete Character" name="deletechar">
-								</form>
+									<input class="btn btn-danger deleteButton" type="button" value="Delete Character" pk_id="{{character['pk_id']}}" name="deletechar">
 							</div>
 						</div>
 					</div>

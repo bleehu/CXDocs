@@ -14,13 +14,14 @@
     }
 
     function deleteCharacter(){
-        var pk_id = 0;
+        var pk_id = $(this).attr("pk_id");
         $.ajax({
             url:'/character/modify/' + pk_id,
             type:'DELETE',
             success: function(result){
                 //notify of success
                 console.log("Deleted Character with pk_id " + pk_id);
+                location.reload();
             }
         });
     }
