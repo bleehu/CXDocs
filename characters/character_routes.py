@@ -72,6 +72,7 @@ def delete_character(pk_id):
         return redirect("/show/character")
     characters.delete_character(pk_id_int)
     flash("Deleted Character successfully.")
+    return redirect("/character/mine")
 
 """ Endpoint for updating an existing character. Attempting to emulate a 
 RESTful API endpoint where the route is the same to add new, update existing,

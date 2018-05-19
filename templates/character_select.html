@@ -1,7 +1,7 @@
 {%extends "layout.html"%}
 	{%block head%}
 		<title>CX Docs - Your Characters</title>
-		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+		<script type="text/javascript" src="../static/character_select.js"></script>
 	{% endblock %}
 	{% block body %}
 		<div class="container">
@@ -11,7 +11,7 @@
 			<div class="row">
 				<div class="col-lg-2">
 					<div class="list-group table-of-contents">
-						{% for character in characters['characters'] %}
+						{% for character in characters %}
 							<a class="list-group-item" href="#{{character.name }}panel"> {{character.name}} </a>
 						{% endfor %}
 					</div>
@@ -19,7 +19,7 @@
 				{% for character in characters %}
 				<div class="col-lg-3">
 					<div class="card">
-						<div class="card-header"> {{character.name}} </div>
+						<div class="card-header"><h3> {{character.name}} </h3> </div>
 						<div class="card-body">
 							<ul>
 								<li><strong>Level:</strong> {{character['level']}} </li>
@@ -27,18 +27,26 @@
 								<li><strong>Class:</strong> {{character['class']}} </li>
 								<li><strong>Money:</strong> ${{character['money']}} </li>
 							</ul>
-							<form class="form-horizontal" action="/select/character" method="post">
-								<input type="hidden" name="pk" value="{{character['pk_id']}}"></input>
-								<input class="btn btn-primary" type="submit" value="Select Character"/>
-							</form>
-							<form class="form-horizontal" action="/modifycharacter/{{character['pk_id']}}" method="get">
-								<input class="btn btn-warn" type="submit" value="Modify Character"/>
-							</form>
+							<div class="row">
+							</div>
+							<div class="row">
+								<form class="form-horizontal" action="/select/character" method="post">
+									<input type="hidden" name="pk" value="{{character['pk_id']}}"></input>
+									<input class="btn btn-primary" type="submit" value="Select Character"/>
+								</form>
+							</div>
+							<div class="row">
+								<form class="form-horizontal" action="/modifycharacter/{{character['pk_id']}}" method="get">
+									<input class="btn btn-warn" type="submit" value="Modify Character"/>
+								</form>
+							</div>
+							<div class="row">
+									<input class="btn btn-danger deleteButton" type="button" value="Delete Character" pk_id="{{character['pk_id']}}" name="deletechar">
+							</div>
 						</div>
 					</div>
 				</div>
 				{% endfor %}
-				</div>
 			</div> <!-- end row -->
 			<div class="row">
 				<div class="col-lg-3">
@@ -47,9 +55,9 @@
 						<div class="card-body">
 							<a href="/character/new"><div class="btn btn-success">New Character</div></a>
 						</div>
-					</div>>
+					</div>
 				</div> <!-- end column -->
 			</div> <!-- end row -->
-		</div>
+		</div> <!-- End container -->
 	{% endblock %}
 	
