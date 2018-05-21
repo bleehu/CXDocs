@@ -6,6 +6,14 @@ import feats
 
 global config
 
+
+""" The primary routine of this script. This routine pulls the
+text from which ever document CXDocs is configured to point to
+to read feats from (see config/cxDocs.cfg) and then parses that
+plaintext page. The routine then checks the feats psql database
+that the CXDocs character creator is configured to read from and
+compares the differences. It then prompts the user of this script
+to make changes to the psql database to keep it up to date."""
 def update_feats():
     connection = characters_common.db_connection()
     cursor = connection.cursor()
@@ -22,6 +30,8 @@ def update_feats():
         if feat['title'] not in psql_feat_map.keys():
             add_feat(feat)
 
+
+""""""
 def ingest_feats_doc(feat_filepath):
     feats = []
     lines = []
@@ -82,6 +92,15 @@ def parse_a_feat(lines):
 
     return this_feat
 
+""" Expects feat to be a map with the keys
+* title
+* description
+* prerequisites
+* nanite cost
+Also expects that the global config file has the section 'Characters'
+with the configs 'characters_psql_pass' and 'characters_psql_user'
+options set. 
+uses psycopg2 to insert a new feat into the database """
 def add_feat(feat):
     print "This feat isn't currently in the database."
     print "title: %s" % feat['title']
@@ -102,6 +121,45 @@ def add_feat(feat):
         cursor.close()
         connection.commit()
 
+""" Expects feat_1 and feat_2 to be maps representing feats in the
+psql database for CXDocs. Each map should have the following keys:
+* title
+* description
+* nanite cost
+* prerequisites
+Returns False if the two feats have the same title, prerequisites,
+nanite cost and description. 
+Returns True otherwise. 
+Raises exceptions if the feats passed do not match the standard format."""
+def diff_feat(feat_1, feat_2):
+    if "title" not in feat_1.keys():
+        print "Error! feat_1 has no name! Feat: %s" % str(feat_1)
+        raise Exception
+    if "title" not in feat_2.keys():
+        print "Error! feat_2 has no name! Feat: %s" % str(feat_2)
+        raise Exception
+    if "description" not in feat_1.keys():
+        print "Error! feat_1 has no description! Feat: %s" feat_1['title']
+        raise Exception
+    if "description" not in feat_2.keys():
+        print "Error! feat_2 has no description! Feat: %s" % feat_2['title']
+    if feat_1['title'].strip() != feat_2['title'].strip():
+        return True 
+    if feat_1['description'].strip() != feat_2['description'].strip():
+        return True
+    if sorted(feat_1['prerequisites']) != sorted(feat_2['prerequisites'])
+        return True
+    if feat_1['nanite cost'].strip() != feat_2['nanite cost'].strip():
+        return True
+    return False
+
+
+""" Expects the prompt to be a string containing a 
+yes or no question to ask the user of the script. 
+Prompts the user with the yes or no question until 
+the user replies with either y or n. then returns 
+True if the user replied y, returns False if the user
+replied n."""
 def yes_or_no(prompt):
     answer = raw_input(prompt)
     if answer.strip() == 'y':
@@ -111,7 +169,10 @@ def yes_or_no(prompt):
     else:
         yes_or_no(prompt)
 
-
+""" This is the main method; this script is intended
+to be run from the command line and uses shell input
+to decide what to do and to complete running. This
+script can not be run by the CX Flask application. """
 if __name__ == "__main__":
     global config
     config = ConfigParser.RawConfigParser()
