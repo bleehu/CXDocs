@@ -125,7 +125,7 @@ def get_rules_docs():
 			rulesDocs.append(('Conditions','/docs/conditions'))
 
 		if config.has_option('Parser', 'cloaking_rules_filepath'):
-			rulesDocs.append(('Basic Rules','/docs/cloaking'))
+			rulesDocs.append(('Cloaking Rules','/docs/cloaking'))
 
 		if config.has_option('Parser', 'glossary_filepath'):
 			rulesDocs.append(('Glossary of Terms','/docs/glossary'))
