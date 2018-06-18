@@ -18,6 +18,8 @@ classes_filepath: (optional)  absolute filepath to the 02_Classes.txt plaintext 
 
 feats_filepath: (optional) absolute filepath to the 03_Feats.txt plaintext document from the compound_x repo
 
+level_up_filepath: (optional) absolute filepath to the 01_06_leveling_up.txt plaintext rules document from the compound_x repo
+
 melee_weapons_filepath: (optional) absolute filepath to the 04_01_Melee_et_Thrown_Weapons.txt document from the compound_x repo
 
 pistols_filepath: (optional) absolute filepath to the 04_02_Pistols.txt document from the compound_x repo
@@ -29,6 +31,8 @@ carbines_filepath: (optional) absolute filepath to the 04_04_Carbines_AssaultRif
 long_rifles_filepath: (optional) absolute filepath to the 04_05_Long_Rifles_et_DMRs.txt document from the compound_x repo
 
 machineguns_filepath: (optional) absolute filepath to the 04_06_MachineGuns_HeavyWeps_et_RocketLaunchers.txt document from the compound_x repo
+
+explosives_filepath: (optional) the absolute (full) filepath to the explosives document. This document should conform to the plaintext standards outlined in the CX design team's design repo.
 
 weapon_attachments_filepath: (optional) absolute filepath to the 04_00_WeaponAttachments.txt plaintext document from the compound_x repo
 

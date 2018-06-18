@@ -124,6 +124,9 @@ def get_rules_docs():
 		if config.has_option('Parser', 'conditions_filepath'):
 			rulesDocs.append(('Conditions','/docs/conditions'))
 
+		if config.has_option('Parser', 'level_up_filepath'):
+			rulesDocs.append(('Level Up Rules', '/docs/levelup'))
+
 		if config.has_option('Parser', 'cloaking_rules_filepath'):
 			rulesDocs.append(('Cloaking Rules','/docs/cloaking'))
 
@@ -153,6 +156,9 @@ def get_items_docs():
 
 	if config.has_option('Parser', 'machineguns_filepath'):
 		itemsDocs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
+
+	if config.has_option('Parser', 'explosives_filepath'):
+		itemsDocs.append(('Explosives', '/docs/explosives'))
 
 	if config.has_option('Parser', 'weapon_attachments_filepath'):
 		itemsDocs.append(('Weapon Attachments','/docs/weaponAttachments'))
@@ -240,6 +246,10 @@ def docs_items():
 def docs_feats():
 	return parser_page('feats_filepath')
 
+@app.route("/docs/levelup")
+def docs_levelup():
+	return parser_page('level_up_filepath')
+
 @app.route("/docs/meleeWeapons")
 def docs_melee():
 	return parser_page('melee_weapons_filepath')
@@ -263,6 +273,10 @@ def docs_long_rifles():
 @app.route("/docs/machineguns")
 def docs_machineguns():
 	return parser_page('machineguns_filepath')
+
+@app.route("/docs/explosives")
+def docs_explosives():
+	return parser_page('explosives_filepath')
 
 @app.route("/docs/weaponAttachments")
 def docs_wep_attachments():
