@@ -5,7 +5,7 @@ def get_feats():
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT feat, prerequisites, description, author,\
-        created_at, private, nanite_cost\
+        created_at, private, nanite_cost, pk_id\
         FROM feats \
         WHERE deleted_at IS NULL;")
     feats = []
@@ -19,8 +19,10 @@ def get_characters_feats(character_pk_id):
     char_pk_id_int = int(character_pk_id)
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, fk_character_id, pk_feat_id\
-        FROM feats_map WHERE fk_character_id = %s" % char_pk_id_int)
+    myCursor.execute("SELECT f.feat, f.prerequisites, f.description, f.author,\
+        f.created_at, f.private, f.nanite_cost, f.pk_id\
+        FROM feats_map AS map, feats AS f \
+        WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int)
     lines = myCursor.fetchall()
     characters_feats = []
     for line in lines:
@@ -28,7 +30,7 @@ def get_characters_feats(character_pk_id):
         characters_feats.append(new_feat)
     return characters_feats
 
-def validate_character_feat_map(mapping):
+def validate_character_feat_map(form):
     expected = set(['character_id', 'feat_id'])
     if expected ^ set(form.keys()) != set([]): #if the form has been tampered with
         return False  #stop trying to parse a tampered form for security reasons.
@@ -41,7 +43,7 @@ def validate_character_feat_map(mapping):
         return False #if the ids aren't integers, this isn't a valid mapping
     return {'character_id': character_id, 'feat_id': feat_id}
 
-def insert_character_feat_map(mappping):
+def insert_character_feat_map(mapping):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     mapstring = (mapping['character_id'], mapping['feat_id'])
@@ -61,4 +63,5 @@ def parse_line_to_feat(line):
     feat['created_at'] = line[4]
     feat['private'] = line[5]
     feat['nanite_cost'] = line[6]
+    feat['pk_id'] = line[7]
     return feat

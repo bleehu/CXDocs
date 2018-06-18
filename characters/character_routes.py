@@ -141,6 +141,7 @@ def char_modify(pk):
         flash("That's not a character id, stupid.")
         return redirect("/")
     my_character = characters.get_character(pk_id_int)
+    my_character['feats'] = feats.get_characters_feats(my_character['pk_id'])
     user_id = security.get_user_pkid(session)
     all_feats = feats.get_feats()
     if my_character['owner'] != user_id:
@@ -159,4 +160,4 @@ def make_character_feat_mapping():
         return redirect("/")
     feats.insert_character_feat_map(mapping)
     flash("Gave feat to character successfully!")
-    return redirect("/modifycharacter/%s" % mapping[1])
+    return redirect("/modifycharacter/%s" % mapping['character_id'])
