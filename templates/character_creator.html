@@ -8,7 +8,14 @@
 			<div class="page-header">
 				<h1> Modify {{character['name']}} </h1>
 			</div>
-			<div class="col-lg-12">
+            <div class="col-lg-2">
+                <div class="list-group">
+                    <a href="#" class="list-group-item" id="base_switch">Base Stats</a>
+                    <a href="#" class="list-group-item" id="skills_switch">Skills</a>
+                    <a href="#" class="list-group-item" id="feats_switch">Feats </a>
+                </div>
+            </div>
+			<div class="col-lg-10" id="base_stats_pane">
 				<p>
 				Make a character! Please 
 				</p>
@@ -173,7 +180,8 @@
                     </div>
 				</form>
             </div> <!-- end column -->
-            <div class="col-lg-12">
+        </div><!-- end container -->
+            <div class="col-lg-10" id="skills_pane">
                 <form class="form-horizontal">
                     <div class="form-group row">
                         <h2> Skills </h2>
@@ -201,6 +209,42 @@
                     </div>
                 </form>
 			</div> <!-- end column -->
-		</div>
+            <div class="col-lg-10" id="feats_pane">
+                <h2> Feats </h2>
+                <p> As your character levels up, they'll earn perks called Feats.
+                    Be aware that as the dev team updates feats, they may change
+                    on your character sheet to stay up to date.  </p>
+                <h4>Your Feats</h4>
+                <p> These are the feats that you have already.</p>
+                <div id="your_feats">
+                    <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
+                      <div class="card-header">My one Feat</div>
+                      <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <button type="button" class="btn btn-danger btn-sm">Remove Feat</button>
+                      </div>
+                    </div>
+                </div> <!-- End your_feats -->
+                <h4>Available Feats</h4>
+                <p>These are all of the feats in the game. Please be sure to read
+                    the prerequisites before picking a new feat!</p>
+                <div id="all_feats">
+                    <p> Please wait while the feat list loads... </p>
+                    {% for feat in feats %}
+                    <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
+                      <div class="card-header">{{ feat['title'] }}
+                        {% if feat['nanite_cost'] != '0' %}
+                        [ {{ feat['nanite_cost'] }} ]
+                        {% endif %}
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text"> {{ feat['prerequisites']}} </p>
+                        <p class="card-text">{{ feat['description'] }}</p>
+                        <button type="button" class="btn btn-success btn-sm">Take Feat</button>
+                      </div>
+                    </div>
+                    {% endfor %}
+                </div> <!-- End all_feats -->
+            </div>
 	{% endblock %}
 	
