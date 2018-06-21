@@ -38,6 +38,7 @@ input, select {max-width: 95%}
 
 .card, dl{
     margin-bottom: 24px;
+    margin-right: 8px;
 }
 
 .border-warning dl{

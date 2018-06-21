@@ -1,5 +1,6 @@
 import characters
 import characters_common
+import feats
 import pdb
 import security
 import pdb
@@ -140,8 +141,23 @@ def char_modify(pk):
         flash("That's not a character id, stupid.")
         return redirect("/")
     my_character = characters.get_character(pk_id_int)
+    my_character['feats'] = feats.get_characters_feats(my_character['pk_id'])
     user_id = security.get_user_pkid(session)
+    all_feats = feats.get_feats()
     if my_character['owner'] != user_id:
         flash("You cannot modify a character that isn't yours!")
         return redirect("/character/mine")
-    return render_template("character_creator.html", character=my_character)
+    return render_template("character_creator.html", character=my_character, feats=all_feats)
+
+@character_blueprint.route("/assignCharacterFeat", methods=['POST'])
+def make_character_feat_mapping():
+    if not security.check_auth(session):
+        flash("You must be logged in to do that.")
+        return redirect("/")
+    mapping = feats.validate_character_feat_map(request.form)
+    if not mapping:
+        flash("New feat assignment failed. Could not give feat to character.")
+        return redirect("/")
+    feats.insert_character_feat_map(mapping)
+    flash("Gave feat to character successfully!")
+    return redirect("/modifycharacter/%s" % mapping['character_id'])
