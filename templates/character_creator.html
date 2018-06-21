@@ -187,15 +187,17 @@
                         <h2> Skills </h2>
                     </div>
                     <div class="form-group row">
+                        {% for skill in character['skills'] %}
                         <div class="col-lg-4">
-                            <input type="text" name="skill1Label" value="Stealth">
+                            <input type="text" name="{{skill['pk_id']}}Label" value="{{skill['name']}}">
                         </div>
                         <div class="col-lg-4">
-                            <input type="text" name="skill1number" value="10">
+                            <input type="text" name="{{skill['pk_id']}}number" value="{{skill['points']}}">
                         </div>
                         <div class="col-lg-4">
                             <input class="btn btn-danger" value="Delete Skill" type="button" name="">
                         </div>
+                        {% endfor %}
                     </div>
                     <div class="form-group row">
                         <input class="btn btn-primary" type="button" name="newSkillButton" id="newSkillButton" value="Add New Skill">
