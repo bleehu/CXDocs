@@ -328,6 +328,10 @@ def docs_new_walkthrough():
 
 #End parser pages
 
+@app.route("/docs/trees")
+def docs_skill_trees():
+	return render_template("skilltrees.html")
+
 @app.route("/classes")
 def show_classes():
 	classless = get_classes()
