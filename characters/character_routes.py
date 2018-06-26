@@ -1,6 +1,7 @@
 import characters
 import characters_common
 import feats
+import skills
 import pdb
 import security
 import pdb
@@ -142,6 +143,7 @@ def char_modify(pk):
         return redirect("/")
     my_character = characters.get_character(pk_id_int)
     my_character['feats'] = feats.get_characters_feats(my_character['pk_id'])
+    my_character['skills'] = skills.get_characters_skills(my_character['pk_id'])
     user_id = security.get_user_pkid(session)
     all_feats = feats.get_feats()
     if my_character['owner'] != user_id:
