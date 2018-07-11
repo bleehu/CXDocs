@@ -44,29 +44,5 @@ if pwd != 'N':
 	config.set('Parser', 'new_player_walkthrough_filepath', "%s/00_New_Player_Walkthrough.txt" % pwd)
 	config.set('Parser', 'Engineer_filepath', "%s/CharacterCreation/Class-Specific Documentation/Engineer Processes.txt" % pwd)
 
-"""races_filepath: /home/bleehu/1_compound_x/Compound_X/01_01_Basic_Rules.txt
-classes_filepath: /home/bleehu/1_compound_x/Compound_X/CharacterCreation/02_Classes.txt
-feats_filepath: /home/bleehu/1_compound_x/Compound_X/CharacterCreation/03_Feats.txt
-level_up_filepath: /home/bleehu/1_compound_x/Compound_X/01_06_Leveling_Up.txt
-melee_weapons_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_01_Melee_&_Thrown_Weapons.txt
-pistols_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_02_Pistols.txt
-smgs_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_03_SMGs_&_Shotguns.txt
-carbines_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_04_Carbines_AssaultRifles_&_BattleRifles.txt
-long_rifles_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_05_Long_Rifles_&_DMRs.txt
-machineguns_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_06_MachineGuns_HeavyWeps_&_RocketLaunchers.txt
-#explosives_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_01_Melee_&_Thrown_Weapons.txt
-weapon_attachments_filepath: /home/bleehu/1_compound_x/Compound_X/Items/04_00_WeaponAttachments.txt
-armor_filepath: /home/bleehu/1_compound_x/Compound_X/Items/05_Armors.txt
-skills_filepath: /home/bleehu/1_compound_x/Compound_X/CharacterCreation/06_Skills.txt
-items_filepath: /home/bleehu/1_compound_x/Compound_X/Items/07_Items.txt
-basic_rules_filepath: /home/bleehu/1_compound_x/Compound_X/01_01_Basic_Rules.txt
-combat_rules_filepath: /home/bleehu/1_compound_x/Compound_X/01_02_Combat_Rules.txt
-conditions_filepath: /home/bleehu/1_compound_x/Compound_X/01_05_Conditions.txt
-glossary_filepath: /home/bleehu/1_compound_x/Compound_X/03_Glossary_of_Terms.txt
-cloaking_filepath: /home/bleehu/1_compound_x/Compound_X/01_07_Cloaking_Rules.txt
-new_player_walkthrough_filepath: /home/bleehu/1_compound_x/Compound_X/00_New_Player_Walkthrough.txt
-Engineer_filepath: /home/bleehu/1_compound_x/Compound_X/CharacterCreation/Class-Specific Documentation/Engineer Processes.txt"""
-
-
 with open('config/cxDocs.cfg', 'wb') as configfile:
     config.write(configfile)
