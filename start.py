@@ -205,6 +205,7 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	docs = None
+	rulesDocs = None
 	if config.has_section('Parser'):
 		rulesDocs = get_rules_docs()
 		itemsDocs =  get_items_docs()

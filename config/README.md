@@ -8,6 +8,8 @@ enemies_psql_db: The name of the database that contains the data about enemies f
 
 enemies_psql_user: The user that the application uses to get/update the enemy database. Default is searcher.
 
+enemies_psql_pass: The password for the user that inspects the enemies in your database.
+
 pics_file_path: the file path in which to store pictures uploaded to the server of monsters.
 
 ## Parser Section
