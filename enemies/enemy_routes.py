@@ -25,18 +25,18 @@ def initialize_enemies(config, newlog):
 def show_monsters():
     if not security.check_auth(session):
         return redirect("/")
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     return render_template("monsters.html", monsters = munsters, session=session)
 
 @enemy_blueprint.route("/monsterstats")
 def show_monsters_stats():
     if not security.check_auth(session):
         return redirect("/")
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     abilities = enemy_abilities.get_monster_abilities_all()
     armor = enemy_armor.get_monster_armor_all()
     weapons = enemy_weapons.get_monster_weapons_all()
-    stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters)}
+    stats = {"levelcount":{}, "noabilities":0, "noweapons":0, "noarmor":0, "hasnothingcount":0, "monsters":len(munsters), "private":0, "public":0}
     stats['armor'] = {'count':len(armor), 'contributors':{}}
     stats['weapons'] = {'count':len(weapons), 'contributors':{}}
     stats['abilities'] = {'count':len(abilities), 'contributors': {}}
@@ -71,6 +71,10 @@ def show_monsters_stats():
             stats['roles'][monster['role']] = 1
         else:
             stats['roles'][monster['role']] += 1
+        if monster['public'] == 't':
+        	stats['public'] = 1 + stats['public']
+        else:
+        	stats['private'] = 1 + stats['private']
     stats['weapons']['types'] = {}
     for weapon in weapons:
           if weapon['type'] not in stats['weapons']['types'].keys():
@@ -107,14 +111,14 @@ def show_monsters_stats():
 def show_monster_editor():
     if not security.check_auth(session):
         return redirect("/")
-    monsters = enemies.get_monsters()
+    monsters = enemies.get_monsters(session)
     return render_template("monster_smith.html", session=session, monsters=monsters)
 
 @enemy_blueprint.route("/monsterupdate/<pk_id>")
 def show_monster_updater(pk_id):
     if not security.check_auth(session):
         return redirect("/")
-    monsters = enemies.get_monsters()
+    monsters = enemies.get_monsters(session)
     myMonster = None
     for monster in monsters:
         if monster['pk_id'] == int(pk_id):
@@ -128,7 +132,7 @@ def show_monster_updater(pk_id):
 def show_monster_weapon_updater(pk_id):
     if not security.check_auth(session):
         return redirect("/")
-    monsters = enemies.get_monsters()
+    monsters = enemies.get_monsters(session)
     weapons = enemy_weapons.get_monster_weapons_all()
     myWeapon = None
     for weapon in weapons:
@@ -143,7 +147,7 @@ def show_monster_weapon_updater(pk_id):
 def show_monster_armor_updater(pk_id):
     if not security.check_auth(session):
         return redirect("/")
-    monsters = enemies.get_monsters()
+    monsters = enemies.get_monsters(session)
     armors = enemy_armor.get_monster_armor_all()
     myArmor = None
     for armor in armors:
@@ -159,7 +163,7 @@ def show_monster_ability_updater(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to update abilities!")
         return redirect("/")
-    monsters = enemies.get_monsters()
+    monsters = enemies.get_monsters(session)
     abilities = enemy_abilities.get_monster_abilities_all()
     myAbility = None
     for ability in abilities:
@@ -174,7 +178,7 @@ def show_monster_ability_updater(pk_id):
 def show_monster_photographer():
     if not security.check_auth(session):
         return redirect("")
-    monsters = enemies.get_monsters()
+    monsters = enemies.get_monsters(session)
     return render_template("monster_photographer.html", monsters=monsters)
 
 @enemy_blueprint.route("/newMonster", methods=['POST'])
@@ -465,7 +469,7 @@ def show_monster_abilities():
         flash("You must be logged in to see that.")
         return redirect("/")
     mAbilities = enemy_abilities.get_monster_abilities_all()
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     for ability in mAbilities:
         maps = enemy_abilities.get_abilitys_monsters(ability['pk_id'])
         ability['maps'] = maps
@@ -477,7 +481,7 @@ def show_monster_weapons():
         flash("you must be logged in to see that.")
         return redirect("/")
     mWeapons = enemy_weapons.get_monster_weapons_all()
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     for weapon in mWeapons:
         maps = enemy_weapons.get_weapons_monsters(weapon['pk_id'])
         weapon['maps'] = maps
@@ -489,7 +493,7 @@ def show_monster_armor():
         flash("you must be logged in to see that")
         return redirect("/")
     mArmor = enemy_armor.get_monster_armor_all()
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     for suit in mArmor:
         maps = enemy_armor.get_armors_monsters(suit['pk_id'])
         suit['maps'] = maps
@@ -501,7 +505,7 @@ def show_monster_ability_editor():
         flash("Must be logged in to do that.")
         return redirect("/")
     mAbilities = enemy_abilities.get_monster_abilities_all()
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     return render_template("monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
 
 @enemy_blueprint.route("/monsterweaponeditor")
@@ -510,7 +514,7 @@ def show_monster_weapon_editor():
         flash("must be logged in to see that.")
         return redirect("/")
     mWeps = enemy_weapons.get_monster_weapons_all()
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     return render_template("monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
 
 @enemy_blueprint.route("/monsterarmoreditor")
@@ -519,5 +523,5 @@ def show_monster_armor_editor():
         flash("you must be logged in to see that.")
         return redirect("/")
     mArmor = enemy_armor.get_monster_armor_all()
-    munsters = enemies.get_monsters()
+    munsters = enemies.get_monsters(session)
     return render_template("monster_armor_smith.html", session=session, armor=mArmor, monsters=munsters)

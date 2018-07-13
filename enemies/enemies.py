@@ -6,12 +6,12 @@ import enemy_armor
 import enemies_common
 import security
 
-def get_monsters():
+def get_monsters(session):
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT name, health, nanites, strength, perception, \
         fortitude, charisma, intelligence, dexterity, luck, shock, will, \
-        reflex, description, pk_id, author, level, role \
+        reflex, description, pk_id, author, level, role, private \
         FROM monsters WHERE deleted_at IS NULL ORDER BY name;")
     monsters = []
     results = myCursor.fetchall()
@@ -49,7 +49,7 @@ def get_monsters():
         
         newmun['level'] = int(mun[16])
         newmun['role'] = mun[17]
-
+        newmun['private'] = mun[18]
         
         #add abilities
         newmun['abilities'] = enemy_abilities.get_monster_abilities(monster_id)
@@ -57,12 +57,18 @@ def get_monsters():
         newmun['armor'] = enemy_armor.get_monsters_armor(monster_id)
         #add weapons
         newmun['weapons'] = enemy_weapons.get_monsters_weapons(monster_id)
-        monsters.append(newmun)
+        if newmun['private'] == False or newmun['author'] == session['username']:
+            monsters.append(newmun)
     return monsters
 
 def validate_monster(form, user):
-    expected = set(['name', 'description', 'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', 'reflex', 'will', 'shock', 'health', 'nanites', 'level', 'role'])
-    if expected ^ set(form.keys()) != set([]):
+    expected = set(['name', 'description', \
+        'strength', 'perception', 'dexterity', 'fortitude', 'charisma', 'intelligence', 'luck', \
+        'reflex', 'will', 'shock', \
+        'health', 'nanites', \
+        'level', 'role', 'private'])
+    #If the checkbox is unchecked, the paramater is ommited, rather than marked false.
+    if expected ^ set(form.keys()) != set([]) and expected ^ set(form.keys()) != set(['private']):
         return False
     monster = {}
     try:
@@ -83,7 +89,10 @@ def validate_monster(form, user):
         monster['description'] = security.sql_escape(form['description'])[:3000]
         monster['name'] = security.sql_escape(form['name'])[:46]
         monster['author'] = user
-        
+        if 'private' in form.keys():
+            monster['private'] = form['private']
+        else:
+            monster['private'] = 'f'
         monster['strmod'] = (monster['strength'] - 5) * 4
         monster['permod'] = (monster['perception'] - 5) * 4
         monster['fortmod'] = (monster['fortitude'] - 5) * 4
@@ -103,8 +112,29 @@ def validate_monster(form, user):
 def insert_monster(monster):
     connection = enemies_common.db_connection()
     myCursor = connection.cursor()
-    monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'])
-    myCursor.execute("INSERT INTO monsters (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s');" % monstring)
+    monstring = (monster['name'], \
+        monster['health'], \
+        monster['nanites'], \
+        monster['strength'], \
+        monster['perception'], \
+        monster['dexterity'], \
+        monster['fortitude'], \
+        monster['charisma'], \
+        monster['intelligence'], \
+        monster['luck'], \
+        monster['reflex'], \
+        monster['will'], \
+        monster['shock'], \
+        monster['level'], \
+        monster['role'], \
+        monster['description'], \
+        monster['author'],
+        monster['private'])
+    myCursor.execute("INSERT INTO monsters (name, \
+        health, nanites, \
+        strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
+        reflex, will, shock, level, role, description, author, private) \
+        VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s', E'%s');" % monstring)
     myCursor.close()
     connection.commit()
     
@@ -113,8 +143,13 @@ def update_monster(monster, pk_id):
     if primary_key > 0:
         connection = enemies_common.db_connection()
         myCursor = connection.cursor()
-        monstring = (monster['name'], monster['health'], monster['nanites'], monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'], pk_id)
-        myCursor.execute("UPDATE monsters SET (name, health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, reflex, will, shock, level, role, description, author) = (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s') WHERE pk_id=%s;" % monstring)
+        monstring = (monster['name'], monster['health'], monster['nanites'], \
+            monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], \
+            monster['reflex'], monster['will'], monster['shock'], monster['level'], monster['role'], monster['description'], monster['author'], monster['private'], pk_id)
+        myCursor.execute("UPDATE monsters SET (name, \
+            health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
+            reflex, will, shock, level, role, description, author, private) = \
+            (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s', E'%s') WHERE pk_id=%s;" % monstring)
         myCursor.close()
         connection.commit()
 
