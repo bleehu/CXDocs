@@ -57,7 +57,7 @@ def get_monsters(session):
         newmun['armor'] = enemy_armor.get_monsters_armor(monster_id)
         #add weapons
         newmun['weapons'] = enemy_weapons.get_monsters_weapons(monster_id)
-        if newmun['private'] == False or newmun['author'] == session['username']:
+        if newmun['private'] == False or newmun['author'] == session['displayname']:
             monsters.append(newmun)
     return monsters
 
@@ -90,7 +90,7 @@ def validate_monster(form, user):
         monster['name'] = security.sql_escape(form['name'])[:46]
         monster['author'] = user
         if 'private' in form.keys():
-            monster['private'] = form['private']
+            monster['private'] = 't'
         else:
             monster['private'] = 'f'
         monster['strmod'] = (monster['strength'] - 5) * 4
@@ -128,7 +128,7 @@ def insert_monster(monster):
         monster['level'], \
         monster['role'], \
         monster['description'], \
-        monster['author'],
+        monster['author'], \
         monster['private'])
     myCursor.execute("INSERT INTO monsters (name, \
         health, nanites, \
