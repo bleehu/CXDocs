@@ -117,7 +117,10 @@ def create_blank_character(owner_pk_id):
     myCursor.close()
     connection.commit()
 
-
+"""Get a character by searching for it's primary key id. This should return a
+character regardless of whether it's been soft-deleted or not; we use this method
+to report on which character we just deleted as well. If no character matches
+this pk_id, returns none. """
 def get_character(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
@@ -126,10 +129,14 @@ def get_character(pk_id):
         luck, level, shock, will, reflex, description, race, class, fk_owner_id, \
         money, created_at, pk_id, carry_ability, move_speed, skill_gain\
         FROM characters \
-        WHERE deleted_at IS NULL AND pk_id = %s;" % pk_id)
-    line = myCursor.fetchall()[0]
-    this_character = parse_line_to_character(line)
-    return this_character
+        WHERE pk_id = %s;" % pk_id)
+    lines = myCursor.fetchall()
+    if len(lines) > 0:
+        line = lines[0]
+        this_character = parse_line_to_character(line)
+        return this_character
+    else:
+        return None
 
 def get_users_characters(session):
     these_characters = None
@@ -144,7 +151,9 @@ def get_users_characters(session):
         c.race, c.class, c.fk_owner_id, c.money, c.created_at, c.pk_id, \
         c.carry_ability, c.move_speed, c.skill_gain\
         FROM characters AS c, users AS u \
-        WHERE u.pk_id = c.fk_owner_id AND u.username LIKE '%s'" % session['username'])
+        WHERE u.pk_id = c.fk_owner_id \
+        AND u.username LIKE '%s' \
+        AND c.deleted_at IS NULL" % session['username'])
     lines = myCursor.fetchall()
     for line in lines:
         these_characters.append(parse_line_to_character(line))
@@ -201,9 +210,9 @@ user permissions are assumed to have been checked there too."""
 def delete_character(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("UPDATE characters SET (deleted_at) = now() WHERE pk_id=%s" % pk_id)
+    myCursor.execute("UPDATE characters SET deleted_at=now() WHERE pk_id=%s;" % pk_id)
     myCursor.close()
-    connection.close()
+    connection.commit()
 
 def parse_line_to_character(line):
     newCharacter = {}

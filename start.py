@@ -124,8 +124,11 @@ def get_rules_docs():
 		if config.has_option('Parser', 'conditions_filepath'):
 			rulesDocs.append(('Conditions','/docs/conditions'))
 
+		if config.has_option('Parser', 'level_up_filepath'):
+			rulesDocs.append(('Level Up Rules', '/docs/levelup'))
+
 		if config.has_option('Parser', 'cloaking_rules_filepath'):
-			rulesDocs.append(('Basic Rules','/docs/cloaking'))
+			rulesDocs.append(('Cloaking Rules','/docs/cloaking'))
 
 		if config.has_option('Parser', 'glossary_filepath'):
 			rulesDocs.append(('Glossary of Terms','/docs/glossary'))
@@ -153,6 +156,9 @@ def get_items_docs():
 
 	if config.has_option('Parser', 'machineguns_filepath'):
 		itemsDocs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
+
+	if config.has_option('Parser', 'explosives_filepath'):
+		itemsDocs.append(('Explosives', '/docs/explosives'))
 
 	if config.has_option('Parser', 'weapon_attachments_filepath'):
 		itemsDocs.append(('Weapon Attachments','/docs/weaponAttachments'))
@@ -199,6 +205,7 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	session['X-CSRF'] = "foxtrot"	#set a session token. This helps prevent session takeover hacks. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	docs = None
+	rulesDocs = None
 	if config.has_section('Parser'):
 		rulesDocs = get_rules_docs()
 		itemsDocs =  get_items_docs()
@@ -240,6 +247,10 @@ def docs_items():
 def docs_feats():
 	return parser_page('feats_filepath')
 
+@app.route("/docs/levelup")
+def docs_levelup():
+	return parser_page('level_up_filepath')
+
 @app.route("/docs/meleeWeapons")
 def docs_melee():
 	return parser_page('melee_weapons_filepath')
@@ -263,6 +274,10 @@ def docs_long_rifles():
 @app.route("/docs/machineguns")
 def docs_machineguns():
 	return parser_page('machineguns_filepath')
+
+@app.route("/docs/explosives")
+def docs_explosives():
+	return parser_page('explosives_filepath')
 
 @app.route("/docs/weaponAttachments")
 def docs_wep_attachments():
@@ -313,6 +328,10 @@ def docs_new_walkthrough():
 	return parser_page('new_player_walkthrough_filepath')
 
 #End parser pages
+
+@app.route("/docs/trees")
+def docs_skill_trees():
+	return render_template("skilltrees.html")
 
 @app.route("/classes")
 def show_classes():

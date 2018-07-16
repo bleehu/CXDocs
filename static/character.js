@@ -21,6 +21,14 @@
         $("#moveSpeed").blur(checkStats);
         $("#carryAbility").blur(checkStats);
         $("#skillGain").blur(checkStats);
+
+        $("#base_stats_pane").show();
+        $("#feats_pane").hide();
+        $("#skills_pane").hide();
+
+        $("#base_switch").click(showBasics);
+        $("#feats_switch").click(showFeats);
+        $("#skills_switch").click(showSkills);
         
         //$("#saveCharacterButton").click(saveCharacter);
 
@@ -268,5 +276,22 @@
         }
     }
 
+    function showBasics(){
+        $("#base_stats_pane").fadeIn();
+        $("#feats_pane").hide();
+        $("#skills_pane").hide();
+    }
+
+    function showFeats(){
+        $("#base_stats_pane").hide();
+        $("#feats_pane").fadeIn();
+        $("#skills_pane").hide();
+    }
+
+    function showSkills(){
+        $("#base_stats_pane").hide();
+        $("#feats_pane").hide();
+        $("#skills_pane").fadeIn();
+    }
 
 })();

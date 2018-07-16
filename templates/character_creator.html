@@ -8,7 +8,14 @@
 			<div class="page-header">
 				<h1> Modify {{character['name']}} </h1>
 			</div>
-			<div class="col-lg-12">
+            <div class="col-lg-2">
+                <div class="list-group">
+                    <a href="#" class="list-group-item" id="base_switch">Base Stats</a>
+                    <a href="#" class="list-group-item" id="skills_switch">Skills</a>
+                    <a href="#" class="list-group-item" id="feats_switch">Feats </a>
+                </div>
+            </div>
+			<div class="col-lg-12" id="base_stats_pane">
 				<p>
 				Make a character! Please 
 				</p>
@@ -173,21 +180,24 @@
                     </div>
 				</form>
             </div> <!-- end column -->
-            <div class="col-lg-12">
+        </div><!-- end container -->
+            <div class="col-lg-12" id="skills_pane">
                 <form class="form-horizontal">
                     <div class="form-group row">
                         <h2> Skills </h2>
                     </div>
                     <div class="form-group row">
+                        {% for skill in character['skills'] %}
                         <div class="col-lg-4">
-                            <input type="text" name="skill1Label" value="Stealth">
+                            <input type="text" name="{{skill['pk_id']}}Label" value="{{skill['name']}}">
                         </div>
                         <div class="col-lg-4">
-                            <input type="text" name="skill1number" value="10">
+                            <input type="text" name="{{skill['pk_id']}}number" value="{{skill['points']}}">
                         </div>
                         <div class="col-lg-4">
                             <input class="btn btn-danger" value="Delete Skill" type="button" name="">
                         </div>
+                        {% endfor %}
                     </div>
                     <div class="form-group row">
                         <input class="btn btn-primary" type="button" name="newSkillButton" id="newSkillButton" value="Add New Skill">
@@ -201,6 +211,55 @@
                     </div>
                 </form>
 			</div> <!-- end column -->
-		</div>
+            <div class="col-lg-12" id="feats_pane">
+                <h2> Feats </h2>
+                <p> As your character levels up, they'll earn perks called Feats.
+                    Be aware that as the dev team updates feats, they may change
+                    on your character sheet to stay up to date.  </p>
+                <h4>Your Feats</h4>
+                <p> These are the feats that you have already.</p>
+                <div class="row">
+                {% for feat in character['feats']%}
+                <div id="your_feats">
+                    <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
+                      <div class="card-header"> {{feat['feat']}} </div>
+                      <div class="card-body">
+                        <p class="card-text">{{feat['description']}} </p>
+                        <form method="POST" action="/deleteCharacterFeatMap">
+                            <input type="hidden" name="feat_id" value="{{feat['pk_id']}}">
+                            <input type="hidden" name="character['pk_id']">
+                            <button type="button" class="btn btn-danger btn-sm">Remove Feat</button>
+                        </form>
+                      </div>
+                    </div>
+                </div> <!-- End your_feats -->
+                {% endfor %}
+                </div>
+                <h4>Available Feats</h4>
+                <p>These are all of the feats in the game. Please be sure to read
+                    the prerequisites before picking a new feat!</p>
+                <div id="all_feats" class="col-lg-12">
+                    <div class="row">
+                    {% for feat in feats %}
+                    <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
+                      <div class="card-header">{{ feat['title'] }}
+                        {% if feat['nanite_cost'] != '0' %}
+                        [ {{ feat['nanite_cost'] }} ]
+                        {% endif %}
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text"> {{ feat['prerequisites']}} </p>
+                        <p class="card-text">{{ feat['description'] }}</p>
+                        <form method="POST" action="/assignCharacterFeat">
+                            <input type="hidden" name="character_id" value="{{character['pk_id']}}">
+                            <input type="hidden" name="feat_id" value="{{feat['pk_id']}}">
+                            <button type="submit" class="btn btn-success btn-sm">Take Feat</button>
+                        </form>
+                      </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                </div> <!-- End all_feats -->
+            </div>
 	{% endblock %}
 	
