@@ -2,6 +2,7 @@
 import argparse #we use the argparse module for passing command-line arguments on startup.
 import pdb #the python debugger is helpful during development, but shouldn't be in production.
 import re #regular expressions
+import os #os handles files
 
 #this variable keeps a unique ID number for each token. 
 global new_id
@@ -39,8 +40,13 @@ def append_token(tokens, new_token):
     returns list of tokens. Tokens are listed as maps with the following keys:
     * type: the type of element, usually in terms of html
     * content: the text within the html element, usually used like innerHTML javascript property.
-    * id: the unique integer indentifer of this element. """
+    * id: the unique integer indentifer of this element. 
+    Returns None if the passed filepath isn't a valid file
+    """
 def parse(filepath):
+    if not os.path.isfile(filepath):
+        print "ERROR!: %s isn't a file!" % filepath
+        return None
     tokens = []
     with open(filepath) as docfile:
         global new_id
