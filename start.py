@@ -31,10 +31,17 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # 1024 bytes x 1024 is a MB. Prevents people from uploading 40 GB pictures
 app.config.from_object(__name__)
+#Flask supports a concept called "blueprints" which are like addons or plugins for your web application.
+#in this case, we are using blueprints to separate our enemy forge application and our character creator into separate files.
+#these two lines activate our character creator and enemy creator "plugins."
 app.register_blueprint(enemy_blueprint)
 app.register_blueprint(character_blueprint)
+#both flask and werkzeug (what flask is built on) output their information to a log called "log." by declaring it here,
+#we can use python's logging library to easily put more helpful information into the server log to help make our admin's
+#lives much easier.
 global log
-
+#whos_on is a list of tuples with displaynames and last-action timestamps that we use to show who's currently using this
+#web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
 global whos_on
 
 """We call this on startup to get all of the config info from command line. The username/password combination is
@@ -47,6 +54,7 @@ def get_args():
 	args = parser.parse_args()
 	return args
 
+"""depricated. """
 def get_levels():
 	levels = []
 	with open('docs/levels.csv', 'r') as csvfile:
@@ -55,6 +63,7 @@ def get_levels():
 			levels.append(line)
 	return levels
 
+""" depricated. Used to show dungeons that were actively being run."""
 def get_missions():
 	connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
 	myCursor = connection.cursor()
@@ -70,18 +79,43 @@ def get_missions():
 		missions.append(new_mission)
 	return missions
 
+""" CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
+ to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
+ straight out of a local git repo, so updating all of the rules is as easy as running `$git pull` on the server.
+
+config_option: a string containing the name of the flag in the config/cxDocs.cfg file to look up the plain text
+file for. E.X. "Items_filepath". See config/README.md for more info.
+
+ Returns the flask template of the rules page requested if configured correctly. If it detects an error, flashes
+ an error message and redirects to the home page. """
 def parser_page(config_option):
 	if config.has_section('Parser') and config.has_option('Parser', config_option):
 		rule_filepath = config.get('Parser', config_option)
+		if not os.path.isfile(rule_filepath):
+			log.error("Rule document missing: %s." % rule_filepath)
+			log.error("Maybe check to see if cxDocs.cfg is configured correctly?")
+			flash("That rule document is missing from the server. Please contact your administrator.")
+			return redirect("/")
+		#the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
 		tokens = docs_parser.parse(rule_filepath)
 		return render_template("parser.html", elements = tokens)
 	else:
+		log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
 		flash("That feature isn't configured.")
 		return redirect("/")
 
 """connect to user login database if said database is set up. uses psychopg2. 
-			if user is not found or if posgres database info is not set, returns None. Returns 
-			a tuple with username, displayname, realname and password if login is successful."""
+	
+	username: the string of what the user entered as their username. This can be passed raw;
+		this method will call the security file's SQL sanitize before looking it up.
+	password: the string containing what the user entered as their password. This can be 
+		passed raw; this method will call the security code file's SQL sanitize before 
+		looking it up.
+	Remote IP: This should be the string of the remote IP Address of the user attempting
+		to log in. This is used for logging and for too many tries lockout.
+
+	If user is not found or if posgres database info is not set, returns None. Returns 
+	a tuple with username, displayname, realname and password if login is successful."""
 def get_user_postgres(username, password, remoteIP):
 	if args.u != None and args.p != None:
 		#if postgres username and password is set,
@@ -91,8 +125,9 @@ def get_user_postgres(username, password, remoteIP):
 		#log the current attempt
 		saniUser = security.sql_escape(username)
 		saniPass = security.sql_escape(password)
+		saniIP = security.sql_escape(remoteIP)
 		myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) VALUES ('%s', '%s', '%s');" \
-			% (saniUser, saniPass, remoteIP))
+			% (saniUser, saniPass, saniIP))
 		connection.commit()
 		#check the number of attempts in the last half hour
 		myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s' AND 'username' LIKE '%s';" % (remoteIP,saniUser))
@@ -100,16 +135,25 @@ def get_user_postgres(username, password, remoteIP):
 		if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
 			log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
 			return None 
-		myCursor.execute("SELECT * FROM users WHERE username LIKE '%s';" % saniUser)
+		myCursor.execute("SELECT pk_id, username, displayname, role, password  FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
 			if password == result[4]:
 				log.info('logged in: %s. Password matches.' % saniUser )
 				return result
+		log.info("%s failed to log in. No password match found. Tried %s." % (saniUser, saniPass))
 		return None
 	else:
+		print "ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled."
+		print "If you'd like to enable login, you'll need to set up your postgres user database then run:"
+		print "$python start.py -u databaseUsername -p databasePassword"
+		print "Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."
 		return None
 
+""" reads the config document to build a list of names of rules documents and their filepath.
+
+returns a list of tuples, where the first field is the name of the document and the second is the
+	filepath to the document. Assumed to be the rules for the game Compound X from github.bleehu/Compound_X"""
 def get_rules_docs():
 		rulesDocs = []
 		if config.has_option('Parser', 'basic_rules_filepath'):
@@ -134,6 +178,7 @@ def get_rules_docs():
 			rulesDocs.append(('Glossary of Terms','/docs/glossary'))
 
 		if len(rulesDocs) < 1:
+			log.warn("Looked for Rules documents, but didn't find any. See config/README.md to configure rules docs.")
 			return None
 		return rulesDocs
 
@@ -170,6 +215,7 @@ def get_items_docs():
 		itemsDocs.append(('Items','/docs/items'))
 
 	if len(itemsDocs) < 1:
+		log.warn("Looked for Item documents, but didn't find any. See config/README.md to configure rules docs.")
 		return None
 	return itemsDocs
 
@@ -196,6 +242,7 @@ def get_character_docs():
 	if config.has_option('Parser', 'Medic_filepath'):
 		character_docs.append(('Medic Procedures','/docs/medics'))
 	if len(character_docs) < 1:
+		log.warn("Looked for Character documents, but didn't find any. See config/README.md to configure rules docs.")
 		return None
 	return character_docs
 
@@ -206,10 +253,18 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	docs = None
 	rulesDocs = None
+	itemsDocs = None
+	character_docs = None
 	if config.has_section('Parser'):
 		rulesDocs = get_rules_docs()
 		itemsDocs =  get_items_docs()
 		character_docs = get_character_docs()
+	else:
+		print "Config file has no [Parser] section; Cannot load rules documents."
+		print "Have you tried running the generate_config.py helper script?"
+		print "See config/README.md for more help configuring your parser."
+		log.warn("Parser Section not configured; cannot load rules documents on index page.")
+		log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
 
 	if 'character' in session.keys():	#if player is logged in and has picked a character, we load that character from the session string
 		pc = characters.get_character(session['character']) 
