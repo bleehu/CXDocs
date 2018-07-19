@@ -279,6 +279,8 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	#jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
 	#dynamically. 
 
+""" The /whoshere endpoint shows a .json blob of how many users are logged into the site. This is called by the javascript from repo/static/whoshere.js
+	to show the guestbook.  """
 @app.route("/whoshere")
 def whosHereAPI():
 	gbook = json.dumps(guestbook.get_guestbook())
@@ -387,11 +389,6 @@ def docs_new_walkthrough():
 @app.route("/docs/trees")
 def docs_skill_trees():
 	return render_template("skilltrees.html")
-
-@app.route("/classes")
-def show_classes():
-	classless = get_classes()
-	return render_template("classes.html", classes = classless)
 	
 @app.route("/files")
 def show_files():
@@ -401,7 +398,16 @@ def show_files():
 def show_missions():
 	missions = get_missions()
 	return render_template("missions.html", missions = missions)
-	
+
+""" the /login route expects the POST request from the login form in the repo/templates/index.html file. It expects 
+	strings from the "uname" and "password" fields. 
+
+	If the login information is correct, it signs the guestbook and adds the user's username, displayname 
+	and role to flask's session object. Then it returns to the index/login page, which should now show the user as
+	logged in.
+
+	If the login info isn't correct,
+	or has been tampered with, then it logs the attempt and redirects back to the index/login page. """
 @app.route("/login", methods=['POST'])
 def login():
 	form = request.form
@@ -426,12 +432,15 @@ def login():
 		flash('Failed to log in; username or password incorrect.')
 	return redirect("/")
 
+""" Logs the user out. Doesn't terminate the session, only empties the session of its info. """
 @app.route("/logout", methods=['POST'])
 def logout():
 	form = request.form
 	if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
 		log.info("%s logged out" % session['username'])
 		session.pop('username', None)
+		session.pop('character', None)
+		session.pop('role', None)
 		session.pop('character', None)
 	return redirect("/")
 
