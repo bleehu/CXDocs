@@ -1,24 +1,52 @@
 
 import argparse #we use the argparse module for passing command-line arguments on startup.
-import pdb
+import pdb #the python debugger is helpful during development, but shouldn't be in production.
 import re #regular expressions
+import os #os handles files
 
+#this variable keeps a unique ID number for each token. 
 global new_id
 
+""" This helper method reads arguments from the command line. That way, you can use the document parser without needing to build the full CXDocs stack.
+    usage: $python docs_parser docs/example.txt  """
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("p", metavar="filepath/to/doc.txt", help="relative or absolute filepath to the document you'd like to test parsing on.")
     args = parser.parse_args()
     return args
 
+"""
+This method adds a token to the end of the list of tokens which is being built up. This method also increments the new_id number, so that each
+token has an awareness of its own index. This token id number is used for things like linking the table of contents or having a unique ID for 
+javascript methods. 
+
+tokens: the list of all of the tokens which the parser is accumulating in order. When parsing is complete, this list will be sent to the parsing
+    JINJA template in repo/templates/parser.html
+
+new_token: the new token to be added to the end of the list of all tokens parsed from this document. 
+"""
 def append_token(tokens, new_token):
     global new_id
     new_token['id'] = new_id
     new_id = new_id + 1
     tokens.append(new_token)
 
+""" This function runs through a plain text document in the style esablished at github.com/bleehu/CX_Design_Guide/devProcesses/plaintext_style_guide.text 
+    and returns an ordered list of tokens which can be interpreted by the repo/templates/parser.html JINJA template to be rendered as a web page. That way
+    we can dynamically show Compound X Docs rules as colorful web pages without our developers needing to write each rule in html. 
 
+    filepath: the absolute filepath to the document that should be parsed. EX: /home/blah/docs/compound_x/Items/07_items.txt 
+
+    returns list of tokens. Tokens are listed as maps with the following keys:
+    * type: the type of element, usually in terms of html
+    * content: the text within the html element, usually used like innerHTML javascript property.
+    * id: the unique integer indentifer of this element. 
+    Returns None if the passed filepath isn't a valid file
+    """
 def parse(filepath):
+    if not os.path.isfile(filepath):
+        print "ERROR!: %s isn't a file!" % filepath
+        return None
     tokens = []
     with open(filepath) as docfile:
         global new_id
