@@ -135,7 +135,7 @@ def get_user_postgres(username, password, remoteIP):
 		if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
 			log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
 			return None 
-		myCursor.execute("SELECT pk_id, username, displayname, role, password  FROM users WHERE username LIKE '%s';" % saniUser)
+		myCursor.execute("SELECT pk_id, username, displayname, realname, password, role  FROM users WHERE username LIKE '%s';" % saniUser)
 		results = myCursor.fetchall()
 		for result in results:
 			if password == result[4]:
