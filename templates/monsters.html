@@ -74,14 +74,39 @@
 										</div>
 										<div class="card-body text-danger collapse" aria-expanded="false">
 											<dl>
-												<dt class="card-text">Damage</dt><dd>{{weapon['damage']}}</dd>
-												<dt>Range</dt><dd>{{weapon['r1']}}m/{{weapon['r2']}}m/{{weapon['r3']}}m</dd>
-												<dt>Accuracy</dt><dd>{{weapon['acc1']}}/{{weapon['acc2']}}/{{weapon['acc3']}} to miss</dd>
+												<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
 				                                <dt>Type</dt><dd>{{weapon['type']}}</dd>
 				                                <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
 				                                <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}</dd>
+				                                <dt>Auto Fire Rate</dt> <dd> {{weapon['auto_fire_rate']}} </dd>
 				                                <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
+				                                <dt>Weapon Cost</dt> <dd> ${{weapon['cost']}} </dd>
+				                                <dt>RMod</dt><dd>{{weapon['reflex_modifier']}}</dd>
+				                                <dt>RDC</dt><dd>{{weapon['reload_dc']}}</dd>
+				                                <dt>MSP</dt><dd>{{weapon['move_speed_penalty']}}</dd>
 											</dl>
+											<table class="table table-hover table-danger">
+												<thead> 
+													<tr>
+														<th></th>
+														<th colspan="3"> Range & Accuracy </th>
+													</tr>
+													<tr>
+														<th></th>
+														<th> {{weapon['r1']}}m </th>
+														<th> {{weapon['r2']}}m </th>
+														<th> {{weapon['r3']}}m </th> 
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<th>Acc</th> 
+														<td>{{weapon['acc1']}}</td>
+														<td>{{weapon['acc2']}}</td>
+														<td>{{weapon['acc3']}}</td> 
+													</tr>
+												</tbody>
+											</table>
 											<p class="card-text"> 
 												{{ weapon['description'] }}
 											</p>
