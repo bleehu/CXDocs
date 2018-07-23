@@ -1,11 +1,23 @@
 import characters_common
 import psycopg2
+import security
 
+""" returns a list of maps, where each map has the following keys:
+    * name - name of the skill
+    * skill - alias of name
+    * points - magnitude of the given skill, should be an integer
+    * pk_id - the unique identifier of the skill-magnitude pair in the database
+    * fk_owner_id - the unique identifier of the character who has this skill 
+
+    character_pk_id - the integer of the pk_id of the character who's skill list we want"""
 def get_characters_skills(character_pk_id):
-    char_pk_id_int = int(character_pk_id)
+    try:
+        char_pk_id_int = int(character_pk_id)
+    except:
+        return None
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT skillname, points, pk_id FROM skills WHERE fk_owner_id = %s;" % char_pk_id_int)
+    myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id FROM skills WHERE fk_owner_id = %s;" % char_pk_id_int)
     lines = myCursor.fetchall()
     characters_skills = []
     for line in lines:
@@ -13,10 +25,34 @@ def get_characters_skills(character_pk_id):
         characters_skills.append(new_skill)
     return characters_skills
 
+""" returns a map from a list such as that expected by the get_characters_skills function 
+    line: the list of skill variables in the order skillname, points, pk_id, fk_owner_id
+        such as that output from a psql query using psychopg2
+"""
 def parse_line_to_skill(line):
     skill = {}
     skill['skill'] = line[0]
     skill['name'] = line[0]
     skill['points'] = line[1]
     skill['pk_id'] = line[2]
+    skill['fk_owner_id'] = line[3]
     return skill
+
+""" sets an existing skill to have the new values """
+def update_skill(new_skill_map):
+    #sanitize!
+    saniname = security.sql_escape(new_skill_map['name'])
+    try:
+        sanipoints = int(new_skill_map['points'])
+    except:
+        return None
+    try:
+        sani_pk_id = int(new_skill_map['pk_id'])
+    except:
+        return None
+    #update
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    skill_tuple = (saniname, sanipoints, sani_pk_id)
+    myCursor.execute("UPDATE skills SET (skillname, points) = (E'%s', %s) WHERE pk_id = %s;" % (skill_tuple))
+    return new_skill_map
