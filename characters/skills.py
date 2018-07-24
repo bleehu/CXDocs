@@ -81,9 +81,9 @@ def get_newest_skill(character_pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT max(pk_id) FROM skills;")
-    new_pk_id = int(myCursor.fetch())
+    new_pk_id = int(myCursor.fetchone()[0])
     new_pk_id = new_pk_id + 1
-    myCursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skill, points, created_at) VALUES (%s, %s, 'new skill', 0, now());" % (new_pk_id, sani_pk_id))
+    myCursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skillname, points, created_at) VALUES (%s, %s, 'new skill', 0, now());" % (new_pk_id, sani_pk_id))
     myCursor.close()
     connection.commit()
     return new_pk_id

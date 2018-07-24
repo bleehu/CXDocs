@@ -32,7 +32,7 @@
         
         //$("#saveCharacterButton").click(saveCharacter);
 
-        $("#newSkillButton").click(AddNewSkillSpace);
+        $("#newSkillButton").click(getNewSkillId);
 
         console.log("done initializing character javascript.");
     }
@@ -296,7 +296,13 @@
         $("#skills_pane").fadeIn();
     }
 
-    function AddNewSkillSpace(){
+    function getNewSkillId(){
+        var pk_id = parseInt($("#newSkillButton").attr("character_id"));
+        $.post("/skills/new/" + pk_id, AddNewSkillSpace);
+    }
+
+    function AddNewSkillSpace(data){
+        console.log("Got response:" + data + ".");
         //note to self, we need an asynch call to the server to find out what our next pk_id is.
         var nameDiv = document.createElement("div");
         nameDiv.className = "col-lg-4";

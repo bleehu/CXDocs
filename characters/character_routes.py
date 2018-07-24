@@ -176,7 +176,7 @@ def make_character_feat_mapping():
 
 """ the pk_id here is the pk_id of the character for whom the new skill will go to. """
 @character_blueprint.route("/skills/new/<pk_id>", methods=['POST'])
-def make_new_skill():
+def make_new_skill(pk_id):
     #check if the user is logged in
     if not security.check_auth(session):
         flash("You can't do that without logging in")
@@ -202,7 +202,7 @@ def make_new_skill():
         return redirect("/")
     #looks good. make a new skill and send its ID back to 'em.
     new_skill_pk_id = skills.get_newest_skill(sani_character_pk_id)
-    return new_skill_pk_id
+    return "%s" % new_skill_pk_id
 
 """ The pk_id here is for the skill that you wish to delete. Note that is a different 
     convention from the creation of a skill above. """
