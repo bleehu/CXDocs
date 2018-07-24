@@ -1,0 +1,20 @@
+{%extends "layout.html"%}
+	{% block head %}
+		<title>CX Docs - Files</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../static/mission_files.js"></script>
+	{% endblock %}
+	{% block body %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Mission Files </h1>
+			</div>
+      		<div class="row">
+				<div class="col-lg-2"> <!-- table of contents div -->
+					<div class="list-group" id="missionToC"></div>
+				</div>	<!-- end table of contents div -->
+				<div class="col-lg-10" id="missionSpot"></div> <!-- end dungeons -->
+			</div>
+      		</div>
+		</div>
+	{% endblock %}

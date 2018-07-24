@@ -206,6 +206,8 @@ def hello():			#tells flask what method to use when you hit a particular route. 
 	pc = None	#player character defaults to None if user isn't logged in.
 	docs = None
 	rulesDocs = None
+	itemsDocs = None
+	character_docs = None
 	if config.has_section('Parser'):
 		rulesDocs = get_rules_docs()
 		itemsDocs =  get_items_docs()
@@ -347,6 +349,10 @@ def show_missions():
 	missions = get_missions()
 	return render_template("missions.html", missions = missions)
 	
+@app.route("/missionfiles")
+def show_mission_files():
+	return render_template("mission_files.html")
+
 @app.route("/login", methods=['POST'])
 def login():
 	form = request.form
