@@ -32,6 +32,8 @@
         
         //$("#saveCharacterButton").click(saveCharacter);
 
+        $("#newSkillButton").click(AddNewSkillSpace);
+
         console.log("done initializing character javascript.");
     }
 
@@ -292,6 +294,23 @@
         $("#base_stats_pane").hide();
         $("#feats_pane").hide();
         $("#skills_pane").fadeIn();
+    }
+
+    function AddNewSkillSpace(){
+        //note to self, we need an asynch call to the server to find out what our next pk_id is.
+        var nameDiv = document.createElement("div");
+        nameDiv.className = "col-lg-4";
+        var nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = "newSkill";
+        nameDiv.appendChild(nameInput);
+        var numberDiv = $("<div>", {"class":"col-lg-4"});
+        var numberInput = $("<input>",{"type":"text", "value":0,});
+        numberDiv.append(numberInput);
+        var buttonDiv = $("<div>", {"class":"col-lg-4"});
+        var delButton = $("<input>", {"class":"btn btn-danger", "type":"button", "value":"Delete Skill"});
+        buttonDiv.append(delButton);
+        $("#skillDiv").append(nameDiv, numberDiv, buttonDiv);
     }
 
 })();

@@ -188,7 +188,7 @@
                     <h2 class="card-header"> Skills </h2>
                 </div>
                 <form class="form-horizontal">
-                    <div class="form-group row">
+                    <div class="form-group row" id="skillDiv">
                         {% for skill in character['skills'] %}
                         <div class="col-lg-4">
                             <input type="text" name="{{skill['pk_id']}}Label" value="{{skill['name']}}">

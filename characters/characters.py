@@ -122,6 +122,10 @@ character regardless of whether it's been soft-deleted or not; we use this metho
 to report on which character we just deleted as well. If no character matches
 this pk_id, returns none. """
 def get_character(pk_id):
+    try:
+        sani_pk_id = int(pk_id)
+    except:
+        return None
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT name, health, nanites, \

@@ -17,7 +17,7 @@ def get_characters_skills(character_pk_id):
         return None
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id FROM skills WHERE fk_owner_id = %s;" % char_pk_id_int)
+    myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at FROM skills WHERE fk_owner_id = %s;" % char_pk_id_int)
     lines = myCursor.fetchall()
     characters_skills = []
     for line in lines:
@@ -36,6 +36,7 @@ def parse_line_to_skill(line):
     skill['points'] = line[1]
     skill['pk_id'] = line[2]
     skill['fk_owner_id'] = line[3]
+    skill['created_at'] = line[4]
     return skill
 
 """ sets an existing skill to have the new values """
@@ -56,3 +57,33 @@ def update_skill(new_skill_map):
     skill_tuple = (saniname, sanipoints, sani_pk_id)
     myCursor.execute("UPDATE skills SET (skillname, points) = (E'%s', %s) WHERE pk_id = %s;" % (skill_tuple))
     return new_skill_map
+
+""" Since Skills hold so little data, and nothing depends on them, we eschew lazy delete with them.
+    pk_id - the primary key of the skill that you wish to delete from the database. """
+def delete_skill(pk_id):
+    try:
+        sani_pk_id = int(pk_id)
+    except:
+        return None
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("UPDATE skills SET deleted_at = now() WHERE pk_id = %s;" % sani_pk_id)
+    return sani_pk_id
+
+""" Called asynchronously to create a new skill for later editing. Returns None if there's an error, otherwise
+    returns the PK_ID of the newly created skill.
+    Expects character_pk_id to be the primary key of the character to which the new skill will be assigned. """
+def get_newest_skill(character_pk_id):
+    try:
+        sani_pk_id = int(character_pk_id)
+    except:
+        return None
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT max(pk_id) FROM skills;")
+    new_pk_id = int(myCursor.fetch())
+    new_pk_id = new_pk_id + 1
+    myCursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skill, points, created_at) VALUES (%s, %s, 'new skill', 0, now());" % (new_pk_id, sani_pk_id))
+    myCursor.close()
+    connection.commit()
+    return new_pk_id
