@@ -191,10 +191,12 @@
                     <div class="form-group row" id="skillDiv">
                         {% for skill in character['skills'] %}
                         <div class="col-lg-4">
-                            <input type="text" name="{{skill['pk_id']}}Label" value="{{skill['name']}}">
+                            <input type="text" class="skillNames" name="{{skill['pk_id']}}Label" 
+                                id="{{skill['pk_id']}}Label" value="{{skill['name']}}">
                         </div>
                         <div class="col-lg-4">
-                            <input type="text" name="{{skill['pk_id']}}number" value="{{skill['points']}}">
+                            <input type="text" class="skillPoints" name="{{skill['pk_id']}}number" 
+                            id="{{skill['pk_id']}}number" value="{{skill['points']}}">
                         </div>
                         <div class="col-lg-4">
                             <input class="btn btn-danger" value="Delete Skill" type="button" name="">
@@ -209,7 +211,8 @@
                         <input type="text" name="totalSkill" id="totalSkill" disabled="true">
                     </div>
                     <div class="form-group row">
-                        <input class="btn btn-success" type="submit" value="Update Skills" name="updateSkillsButton">
+                        <input class="btn btn-success" type="button" 
+                        value="Update Skills" name="updateSkillsButton" id="updateSkillsButton">
                     </div>
                 </form>
 			</div> <!-- end column -->

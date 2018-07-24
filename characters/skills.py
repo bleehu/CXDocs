@@ -1,6 +1,27 @@
 import characters_common
 import psycopg2
 import security
+import pdb
+
+""" Gets the skill with given pk_id, or returns none if such a skill doesn't exist."""
+def get_skill(pk_id):
+    try:
+        sani_pk_id = int(pk_id)
+    except:
+        return None
+    connection = characters_common.db_connection()
+    myCursor = connection.cursor()
+    try:
+        myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at FROM skills WHERE pk_id = %s;" % pk_id)
+    except:
+        errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database."
+        print errmsg
+        log.error(errmsg)
+        return None
+    line = myCursor.fetchone()
+    skill = parse_line_to_skill(line)
+    return skill
+
 
 """ returns a list of maps, where each map has the following keys:
     * name - name of the skill
@@ -56,6 +77,8 @@ def update_skill(new_skill_map):
     myCursor = connection.cursor()
     skill_tuple = (saniname, sanipoints, sani_pk_id)
     myCursor.execute("UPDATE skills SET (skillname, points) = (E'%s', %s) WHERE pk_id = %s;" % (skill_tuple))
+    myCursor.close()
+    connection.commit()
     return new_skill_map
 
 """ Since Skills hold so little data, and nothing depends on them, we eschew lazy delete with them.

@@ -33,6 +33,7 @@
         //$("#saveCharacterButton").click(saveCharacter);
 
         $("#newSkillButton").click(getNewSkillId);
+        $("#updateSkillsButton").click(updateAllSkills);
 
         console.log("done initializing character javascript.");
     }
@@ -302,7 +303,6 @@
     }
 
     function AddNewSkillSpace(data){
-        console.log("Got response:" + data + ".");
         //note to self, we need an asynch call to the server to find out what our next pk_id is.
         var nameDiv = document.createElement("div");
         nameDiv.className = "col-lg-4";
@@ -317,6 +317,30 @@
         var delButton = $("<input>", {"class":"btn btn-danger", "type":"button", "value":"Delete Skill"});
         buttonDiv.append(delButton);
         $("#skillDiv").append(nameDiv, numberDiv, buttonDiv);
+    }
+
+    function updateAllSkills(){
+        $(".skillNames").each(updateASkill);
+    }
+
+    function updateASkill(){
+        var name = $(this).attr("name");
+        var id = parseInt(name.replace("Label",""));
+        var skillName = $(this).val();
+        var skillPointsString = $("#" + id + "number").val();
+        skillPointsString = skillPointsString.replace("number", "");
+        var skillPoints = parseInt(skillPointsString);
+        var payload = {"pk_id":id, "skillName":skillName, "skillPoints":skillPoints};
+        $.ajax({
+            type:"POST",
+            url:"/skills/modify/" + id,
+            data:payload,
+            asynch: true,
+            success: function(){
+                console.log("updated skill pk_id:" + id);
+            }
+        });
+
     }
 
 })();
