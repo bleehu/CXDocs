@@ -21,7 +21,18 @@
     			</div>	<!-- end table of contents div -->
 
     			<div class="col-lg-10" id="weapons">
-    				<p>There are {{weapons | count}} weapons for enemies to choose from.</p>
+    				<p>There are {{weapons | count}} weapons for enemies to choose from. Some weapon
+                        stats have been abrieviated on their cards below. The list of abreviations is
+                        below.</p>
+                    <dl class="border-danger col-lg-12">
+                        <dt>APL</dt><dd>Armor Piercing Level</dd>
+                        <dt>RMod</dt><dd>Reflex Modifier</dd>
+                        <dt>MSP</dt><dd>Move Speed Penalty</dd>
+                        <dt>Sup Lvl</dt><dd>Suppression Level</dd>
+                        <dt>Cap</dt><dd>Magazine Capacity</dd>
+                        <dt>RDC</dt><dd>Reload DC</dd>
+                        <dt>AFR</dt><dd>Automatic Fire Rate</dd>
+                    </dl>
                     <div class="row">
     				{% for weapon in weapons %}
                     <div class="col-lg-6 col-md-12 col-sm-12">
@@ -32,28 +43,45 @@
         					<div class="card-body">
         						<p> {{weapon['description']}} </p>
                                 <div class="row">
-        						<dl class="col-lg-4 col-md-6 col-sm-12">
+        						<dl class="col-lg-5 col-md-6 col-sm-12">
         							<dt>Damage</dt><dd>{{weapon['damage']}}</dd>
-                                    <dt>Armor Pierce Level</dt><dd>{{weapon['ap_level']}}</dd>
-                                    <dt>Reflex Modifier</dt><dd>{{weapon['reflex_modifier']}}</dd>
-                                    <dt>Move Speed Penalty</dt><dd>{{weapon['move_speed_penalty']}}</dd>
-                                    <dt>Suppression Level</dt><dd>{{weapon['suppression_level']}}</dd>
+                                    <dt>APL</dt><dd>{{weapon['ap_level']}}</dd>
+                                    <dt>RMod</dt><dd>{{weapon['reflex_modifier']}}</dd>
+                                    <dt>MSP</dt><dd>{{weapon['move_speed_penalty']}}</dd>
+                                    <dt>Sup Lvl</dt><dd>{{weapon['suppression_level']}}</dd>
         							<dt>Type</dt><dd>{{weapon['type']}}</dd>
         						</dl>
-                                <dl class="col-lg-4 col-md-6 col-sm-12">
+                                <dl class="col-lg-5 col-md-6 col-sm-12">
                                     <dt>Weapon Cost</dt><dd> ${{weapon['cost']}}</dd>
                                     <dt>Mag Cost</dt><dd>${{weapon['mag_cost']}}</dd>
-                                    <dt>Mag Capacity</dt><dd>{{weapon['capacity']}}rds</dd>
-                                    <dt>Reload DC</dt><dd>{{weapon['reload_dc']}}</dd>
+                                    <dt>Cap</dt><dd>{{weapon['capacity']}}rds</dd>
+                                    <dt>RDC</dt><dd>{{weapon['reload_dc']}}</dd>
+                                    <dt>AFR:</dt> <dd> {{weapon['auto_fire_rate']}} rnds/Act </dd>
                                 </dl>
-                                <dl class="col-lg-4 col-md-6 col-sm-12">
-                                    <dt>Range 1</dt><dd>{{weapon['r1']}}</dd>
-                                    <dt>Range 2</dt><dd>{{weapon['r2']}}</dd>
-                                    <dt>Range 3</dt><dd>{{weapon['r3']}}</dd>
-                                    <dt>Accuracy 1</dt><dd>{{weapon['acc1']}}</dd>
-                                    <dt>Accuracy 2</dt><dd>{{weapon['acc2']}}</dd>
-                                    <dt>Accuracy 3</dt><dd>{{weapon['acc3']}}</dd>
-                                </dl>
+                            </div>
+                            <div class="row">
+                                <table class="table table-hover table-danger">
+                                    <thead> 
+                                        <tr>
+                                            <th></th>
+                                            <th colspan="3"> Range & Accuracy </th>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <th> {{weapon['r1']}}m </th>
+                                            <th> {{weapon['r2']}}m </th>
+                                            <th> {{weapon['r3']}}m </th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th>Acc</th> 
+                                            <td>{{weapon['acc1']}}</td>
+                                            <td>{{weapon['acc2']}}</td>
+                                            <td>{{weapon['acc3']}}</td> 
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="card-body row">
         						<div class="col-lg-6 col-md-6 col-sm-12">
