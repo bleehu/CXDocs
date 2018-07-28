@@ -72,7 +72,8 @@
 	};
 	
 	var missions = [
-		cassandra
+		cassandra,
+		hive_mission
 	];
 	
 	function populateLinkCard(css, linkCardData) {
