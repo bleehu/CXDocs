@@ -46,6 +46,30 @@
 						Corporate docks in the near-ish Mendel system.",
 		author:"Turtlelord"
 	};
+
+	var hive_mission = {
+		title: "The Hive",
+		rLevel: "&lt 5",
+		rPartySize: "4-6",
+		environment: "Spaceport",
+		combat: "High",
+		puzzle: "Low",
+		rp: "Medium",
+		linkCard1: [
+			["static/files/the_hive/script.pdf","Mission Script"],
+			["static/files/the_hive/rewards.pdf","Rewards"]
+		],
+		linkCard2: [
+			["static/files/the_hive/simple map.pdf","Simple Map"]
+		],
+		description: "The small town of Orrton has a terrible pest problem. \
+			Local Antlions have been eating people in the streets and have\
+			set up their hive in the spaceport that the town uses to get \
+			much-needed supplies. A brave band of heros are needed to take back\
+			the vital space port! And if altruistic heros are in short supply,\
+			the town's mayor is offering a handsome reward...",
+		author: "Bleehu"
+	};
 	
 	var missions = [
 		cassandra
