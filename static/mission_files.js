@@ -48,6 +48,7 @@
 	};
 	
 	var missions = [
+		//template,
 		cassandra
 	];
 	
@@ -142,5 +143,11 @@
 			newCard.append(newCardHeader, newCardBody);
 			$("#missionSpot").append(newCard);
 		}
+		$("#searchbar").on("keyup", function(){
+			var search = $(this).val().toLowerCase();
+			$("#missionSpot .card").filter(function(){
+				$(this).toggle($(this).text().toLowerCase().indexOf(search) > -1)
+			})
+		});
 	});
 })();
