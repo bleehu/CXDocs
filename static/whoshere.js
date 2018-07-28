@@ -6,7 +6,7 @@
     function initialize(){
         console.log("Who's here file loaded.");
         //check who's here every minute
-        setInterval(askWhosHere, 15000);
+        setInterval(askWhosHere, 30000);
         askWhosHere();
         $("#whosHereToggle").click(toggleMenu);
         $("#whosHereToggle").blur(blurMenu);
@@ -21,7 +21,9 @@
     }
 
     function thatsWhosHere(){
-        console.log(this.responseText);
+        if (this.responseText.length < 3){
+            return 0;
+        }
         var whosHereDiv = document.getElementById("whosHereDiv");
         var report = JSON.parse(this.responseText);
         whosHereDiv.innerHTML = ""; //remove old data
