@@ -10,6 +10,9 @@ import enemy_weapons
 import security
 
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
+#we use this to prevent nasty ../home/.bashrc overwrite attacks etc.
+#only currently used in /newmonsterpic route
+from werkzeug.utils import secure_filename 
 
 enemy_blueprint = Blueprint('enemy_blueprint', __name__, template_folder='templates')
 
@@ -262,14 +265,46 @@ def make_monster_pic():
         flash('You must be logged in to do that. This incident has been logged.')
         return redirect('/')
     user = session['displayname']
+    if not config.has_section('Enemies'):
+        flash("The administrator has not configured the Bestiary on this server.")
+        log.warn("The Enemies Section has not been configured in /config/cxDocs.config")
+        return redirect("/")
+    if not config.has_option('pics_file_path'):
+        flash("The administrator has not configured the bestiary profile picture directory option.")
+        log.warn("The Enemies Section doesn't have the pics_file_path option set to a valid directory.")
+        return redirect("/")
+    try:
+        monster_id = int(request.form['monster_id'])
+    except:
+        flash("Could not identify which enemy you wanted to update.")
+        log.error("%s attempted to update an enemy with pk_id of %s" % (user, request.form['monster_id']))
+        return redirect("/monsterpic")
+    #currently hardcoded to only allow .png files
     allowed_filetypes = set(['png'])
     file = request.files['monster_pic']
+    if file is None:
+        flash('Please select a .png file for this enemy\'s profile picture.')
+        log.warn("%s tried to update %s profile picture, but forgot to select a pic."\
+            % (user, monster_id))
+        return redirect("/monsterpic")
     filename = secure_filename(file.filename)
     if not ('.' in filename and filename.split('.')[1].lower() in allowed_filetypes):
         flash('invalid file. This incident has been logged.')
+        log.warn("%s attempted to upload an invalid file; %s" % (user, filename))
         return redirect('/monsterpic')
-    monster_id = int(request.form['monster_id'])
-    file.save(os.path.join(config.get('Enemies', 'pics_file_path'),"%s.png" % monster_id))
+    pic_directory = config.get('Enemies', 'pics_file_path')
+    if not os.path.isdir(pic_directory):
+        log.warn("%s is attempting to update a profile pic, but the configured \
+            directory doesn't exist." % user)
+        log.warn("... attempting to create %s to compensate." % pic_directory)
+        try:
+            os.mkdir(pic_directory)
+        except Exception as e:
+            flash("The administrator has misconfigured the profile picture feature.")
+            log.error(str(e))
+            return redirect("/")
+    file.save(os.path.join(pic_directory,"%s.png" % monster_id))
+    flash("Enemy profile pic updated successfully!")
     return redirect("/monsterpic")
 
 @enemy_blueprint.route("/newMonsterAbility", methods = ['POST'])
