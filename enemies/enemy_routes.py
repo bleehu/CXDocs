@@ -180,7 +180,9 @@ def show_monster_ability_updater(pk_id):
 @enemy_blueprint.route("/monsterpic")
 def show_monster_photographer():
     if not security.check_auth(session):
-        return redirect("")
+        flash("You must be signed in to do that!")
+        log.warn("%s attempted to view monsterpic without logging in." % request.remote_addr)
+        return redirect("/")
     monsters = enemies.get_monsters(session)
     return render_template("monster_photographer.html", monsters=monsters)
 
