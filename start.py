@@ -519,7 +519,7 @@ if __name__ == "__main__":
     initialize_enemies(config, log)
     initialize_characters(config, log)
     if args.u and args.p:
-    	security.initialize(args.u, args.p)
+    	security.initialize(args.u, args.p, log)
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
     #app.config['SQLAlchemy_DATABASE_URI'] = 'postgresql://searcher:AllDatSQL@localhost/mydb'
     #app.config['SQLAlchemy_ECHO'] = True
