@@ -7,6 +7,8 @@ import enemies_common
 import enemy_routes
 import enemy_weapons
 
+import os
+
 import security
 
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
@@ -17,11 +19,14 @@ from werkzeug.utils import secure_filename
 enemy_blueprint = Blueprint('enemy_blueprint', __name__, template_folder='templates')
 
 global log
+global config
 
-def initialize_enemies(config, newlog):
-    enemies_common.set_config(config)
+def initialize_enemies(newconfig, newlog):
+    enemies_common.set_config(newconfig)
     global log
     log = newlog
+    global config
+    config = newconfig
 
 
 @enemy_blueprint.route("/monster")
@@ -271,7 +276,7 @@ def make_monster_pic():
         flash("The administrator has not configured the Bestiary on this server.")
         log.warn("The Enemies Section has not been configured in /config/cxDocs.config")
         return redirect("/")
-    if not config.has_option('pics_file_path'):
+    if not config.has_option('Enemies','pics_file_path'):
         flash("The administrator has not configured the bestiary profile picture directory option.")
         log.warn("The Enemies Section doesn't have the pics_file_path option set to a valid directory.")
         return redirect("/")
