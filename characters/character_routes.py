@@ -253,24 +253,26 @@ def update_skill(pk_id):
         sani_skill_pk_id = int(pk_id)
     except:
         flash("There was an error figuring out which character to delete this skill from.")
-        log.error("There was an error deleting skill from: %s character pk_id." % pk_id)
+        log.error("There was an error modifying skill from: %s skill pk_id." % pk_id)
         return redirect("/")
     #check if the integer they sent was a skill that exists
     skill = skills.get_skill(sani_skill_pk_id)
     if skill is None:
         flash("That skill doesn't seem to exist")
-        log.warn("%s attempted to delete a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
+        log.warn("%s attempted to modify a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
         return redirect("/characters/mine")
     character = characters.get_character(skill['fk_owner_id'])
     if character is None:
         flash("That Character doesn't seem to exist.")
-        log.warn("%s attempted to delete a skill to a character that doesn't exist. Character id %s." % (session['username'], pk_id))
+        log.warn("%s attempted to modify a skill belonging to a character that \
+            doesn't exist. Character id %s." % (session['username'], pk_id))
         return redirect("/characters/mine")
     #check if the integer they sent was a character that they own
     user_id = security.get_user_pkid(session)
     if user_id != character['owner']:
         flash("You don't own that character!")
-        log.warn("%s attempted to delete a skill to a character that they don't own! Character id: %s" % (session['username'], pk_id))
+        log.warn("%s attempted to modify a skill to a character that they don't \
+            own! Character id: %s" % (session['username'], pk_id))
         return redirect("/")
     #looks good. Update that skill.
     new_skill_name = request.form['skillName']

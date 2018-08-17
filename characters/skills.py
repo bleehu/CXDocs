@@ -12,7 +12,8 @@ def get_skill(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     try:
-        myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at FROM skills WHERE pk_id = %s;" % pk_id)
+        myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
+            FROM skills WHERE pk_id = %s AND deleted_at IS NULL;" % pk_id)
     except:
         errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database."
         print errmsg
@@ -81,7 +82,7 @@ def update_skill(new_skill_map):
     connection.commit()
     return new_skill_map
 
-""" Since Skills hold so little data, and nothing depends on them, we eschew lazy delete with them.
+""" Sets the deleted_at timestamp to the time deleted, which by convention means the skill has been deleted.
     pk_id - the primary key of the skill that you wish to delete from the database. """
 def delete_skill(pk_id):
     try:
