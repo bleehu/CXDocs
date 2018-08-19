@@ -1,15 +1,10 @@
 import guestbook
 from flask import request, session
 import psycopg2
+
 global user_user #the postgres user that has permission to look at the table of users
 global user_password # the password for the postgres user that looks up users
-
 global log
-
-def initialize(newLog):
-    global log
-    log = newLog
-
 
 """ we call this any time someone checks out a page on the site that should be off-limits to someone who
         hasn't logged in. If they aren't logged in, it returns false, if they are, it returns true."""
@@ -55,8 +50,10 @@ def get_user_pkid(session):
     line = myCursor.fetchall()[0]
     return int(line[0])
 
-def initialize(new_user, new_password):
+def initialize(new_user, new_password, newLog):
     global user_user
     user_user = new_user
     global user_password
     user_password = new_password
+    global log
+    log = newLog

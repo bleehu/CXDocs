@@ -132,22 +132,32 @@ def char_select():
 """ Use the character creation page to update an existing character. """
 @character_blueprint.route("/modifycharacter/<pk>")
 def char_modify(pk):
+    #check to make sure the user is logged in.
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
     pk_id_int = -1
+    #check to make sure the pk_id the user sent is actually an integer
     try:
         pk_id_int = int(pk)
     except:
         flash("That's not a character id, stupid.")
+        log.error("User %s attempted to update a character using malicious id: %s" % (session['username'], pk))
         return redirect("/")
+    #check to make sure the character exists
     my_character = characters.get_character(pk_id_int)
+    if my_character is None:
+        flash("You cannot update a character that isn't yours!")
+        return redirect("/")
     my_character['feats'] = feats.get_characters_feats(my_character['pk_id'])
     my_character['skills'] = skills.get_characters_skills(my_character['pk_id'])
     user_id = security.get_user_pkid(session)
     all_feats = feats.get_feats()
+    #check to make sure the user updating the character actually owns that character.
     if my_character['owner'] != user_id:
         flash("You cannot modify a character that isn't yours!")
+        log.error("Intruder! %s attempted to update a character other than their own! un: %s IP: %s char_id: %s" \
+            % (session['displayname'], request.remote_addr, pk_id_int))
         return redirect("/character/mine")
     return render_template("character_creator.html", character=my_character, feats=all_feats)
 
@@ -163,3 +173,114 @@ def make_character_feat_mapping():
     feats.insert_character_feat_map(mapping)
     flash("Gave feat to character successfully!")
     return redirect("/modifycharacter/%s" % mapping['character_id'])
+
+""" the pk_id here is the pk_id of the character for whom the new skill will go to. """
+@character_blueprint.route("/skills/new/<pk_id>", methods=['POST'])
+def make_new_skill(pk_id):
+    #check if the user is logged in
+    if not security.check_auth(session):
+        flash("You can't do that without logging in")
+        return redirect("/")
+    #check if what the user sent was actually an integer
+    try:
+        sani_character_pk_id = int(pk_id)
+    except:
+        flash("There was an error figuring out which character to give this skill to.")
+        log.error("There was an error giving a new skill to %s character pk_id." % pk_id)
+        return redirect("/")
+    #check if the integer they sent was a character that exists
+    character = characters.get_character(sani_character_pk_id)
+    if character is None:
+        flash("That Character doesn't seem to exist.")
+        log.warn("%s attempted to give a skill to a character that doesn't exist. Character id %s." % (session['username'], pk_id))
+        return redirect("/characters/mine")
+    #check if the integer they sent was a character that they own
+    user_id = security.get_user_pkid(session)
+    if user_id != character['owner']:
+        flash("You don't own that character!")
+        log.warn("%s attempted to give a skill to a character that they don't own! Character id: %s" % (session['username'], pk_id))
+        return redirect("/")
+    #looks good. make a new skill and send its ID back to 'em.
+    new_skill_pk_id = skills.get_newest_skill(sani_character_pk_id)
+    return "%s" % new_skill_pk_id
+
+""" The pk_id here is for the skill that you wish to delete. Note that is a different 
+    convention from the creation of a skill above. """
+@character_blueprint.route("/skills/delete/<pk_id>", methods=['POST'])
+def delete_skill():
+    #check if the user is logged in
+    if not security.check_auth(session):
+        flash("You can't do that without logging in")
+        return redirect("/")
+    #check if what the user sent was actually an integer
+    try:
+        sani_skill_pk_id = int(pk_id)
+    except:
+        flash("There was an error figuring out which character to delete this skill from.")
+        log.error("There was an error deleting skill from: %s character pk_id." % pk_id)
+        return redirect("/")
+    #check if the integer they sent was a skill that exists
+    skill = skills.get_skill(sani_skill_pk_id)
+    if skill is None:
+        flash("That skill doesn't seem to exist")
+        log.warn("%s attempted to delete a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
+        return redirect("/characters/mine")
+    character = characters.get_character(skill['fk_owner_id'])
+    if character is None:
+        flash("That Character doesn't seem to exist.")
+        log.warn("%s attempted to delete a skill to a character that doesn't exist. Character id %s." % (session['username'], pk_id))
+        return redirect("/characters/mine")
+    #check if the integer they sent was a character that they own
+    user_id = security.get_user_pkid(session)
+    if user_id != character['owner']:
+        flash("You don't own that character!")
+        log.warn("%s attempted to delete a skill to a character that they don't own! Character id: %s" % (session['username'], pk_id))
+        return redirect("/")
+    #looks good. delete that skill.
+    skills.delete_skill(sani_skill_pk_id)
+    return redirect("/modifycharacter/%s" % character['pk_id'])
+
+
+""" pk_id here is the pk_id of the skill to update. """
+@character_blueprint.route("/skills/modify/<pk_id>", methods=['POST'])
+def update_skill(pk_id):
+    #check if the user is logged in
+    if not security.check_auth(session):
+        flash("You can't do that without logging in")
+        return redirect("/")
+    #check if what the user sent was actually an integer
+    try:
+        sani_skill_pk_id = int(pk_id)
+    except:
+        flash("There was an error figuring out which character to delete this skill from.")
+        log.error("There was an error modifying skill from: %s skill pk_id." % pk_id)
+        return redirect("/")
+    #check if the integer they sent was a skill that exists
+    skill = skills.get_skill(sani_skill_pk_id)
+    if skill is None:
+        flash("That skill doesn't seem to exist")
+        log.warn("%s attempted to modify a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
+        return redirect("/characters/mine")
+    character = characters.get_character(skill['fk_owner_id'])
+    if character is None:
+        flash("That Character doesn't seem to exist.")
+        log.warn("%s attempted to modify a skill belonging to a character that \
+            doesn't exist. Character id %s." % (session['username'], pk_id))
+        return redirect("/characters/mine")
+    #check if the integer they sent was a character that they own
+    user_id = security.get_user_pkid(session)
+    if user_id != character['owner']:
+        flash("You don't own that character!")
+        log.warn("%s attempted to modify a skill to a character that they don't \
+            own! Character id: %s" % (session['username'], pk_id))
+        return redirect("/")
+    #looks good. Update that skill.
+    new_skill_name = request.form['skillName']
+    new_skill_points = int(request.form['skillPoints'])
+    #we can ommit the owner here; update_skill() doesn't use it.
+    newskill = {'pk_id':sani_skill_pk_id, 'name':new_skill_name, 'points':new_skill_points}
+    result = skills.update_skill(newskill)
+    if result is None:
+        log.warn("There was an error updating skill with pk_id %s" % pk_id)
+        flash("there was an error updating the skill")
+    return redirect("/modifycharacter/%s" % character['pk_id'])
