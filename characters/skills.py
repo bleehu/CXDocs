@@ -20,10 +20,12 @@ def get_skill(pk_id):
     try:
         myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
             FROM skills WHERE pk_id = %s AND deleted_at IS NULL;" % pk_id)
-    except:
-        errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database."
+    except Exception as e:
+        errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database." % pk_id
         print errmsg
+        print str(e)
         log.error(errmsg)
+        log.error(str(e))
         return None
     line = myCursor.fetchone()
     skill = parse_line_to_skill(line)
