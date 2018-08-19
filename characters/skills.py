@@ -3,6 +3,12 @@ import psycopg2
 import security
 import pdb
 
+global log
+
+def initialize_skills(newlog):
+    global log
+    log = newlog
+
 """ Gets the skill with given pk_id, or returns none if such a skill doesn't exist."""
 def get_skill(pk_id):
     try:
