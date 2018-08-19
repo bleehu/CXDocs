@@ -13,6 +13,7 @@ global log
 
 def initialize_characters(config, newlog):
     characters_common.set_config(config)
+    skills.initialize_skills(newlog)
     global log
     log = newlog
 
