@@ -6,6 +6,7 @@ services:
 install:
   - pip install -r travis/requirements.txt
 before_script:
-  - psql -f travis/test.db mydb
+  - psql -c 'create database mydb;' -U postgres
+  - psql -f travis/test.db mydb -U postgres
 script:
   - pytest
