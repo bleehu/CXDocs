@@ -1,5 +1,5 @@
 import pytest #pytest helps us create the testbench and clean up afterwards
-
+from flask import session
 from ..server import app as cxApp 
 
 
