@@ -41,6 +41,7 @@ def test_bestiary(client):
             sess['username'] = 'testy'
             sess['displayname'] = 'test'
             sess['role'] = 'Admin'
+            sess['X-CSRF'] = 'foxtrot'
         #now that we're logged in...
         assert c.get('/monster').status_code == 200
         assert c.get('/monsterabilities').status_code == 200
@@ -49,7 +50,7 @@ def test_bestiary(client):
         assert c.get('/monsterabilityeditor').status_code == 200
         assert c.get('/monsterweaponeditor').status_code == 200
         assert c.get('/monsterarmoreditor').status_code == 200
-        c.post('/logout')
+        c.post('/logout', data={'X-CSRF':'foxtrot'})
         assert 'username' not in session
         assert 'displayname' not in session
         assert 'role' not in session
