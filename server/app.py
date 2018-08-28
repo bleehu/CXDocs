@@ -1,5 +1,3 @@
-import argparse #we use the argparse module for passing command-line arguments on startup.
-from base64 import b64encode, b64decode
 import characters
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
@@ -23,20 +21,24 @@ import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets 
 import os   #we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
-import security #our custom code that handles common security tasks like SQL sanitization
+from security import security #our custom code that handles common security tasks like SQL sanitization
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 
-
-"""We call this on startup to get all of the config info from command line. The username/password combination is
-        used to prevent having to store the credentials on the box, so we don't have to defend data at rest."""
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-i", metavar="###.###.###.###", help="Your local IP address. use ifconfig on linux.")
-    parser.add_argument("-u", metavar="PostgresUsername", help="Username for PSQL login profile.")
-    parser.add_argument("-p", metavar="PostgresPassword", help="Password for PSQL login profile.")
-    args = parser.parse_args()
-    return args
+def get_env_vars():
+    username = os.environ.get('FLASK_USER')
+    password = os.environ.get('FLASK_PASS')
+    ip_address = os.environ.get('FLASK_IP')
+    if not username and not password:
+        print("Warning!!!")
+        print("The login username/password has not been set.")
+        print("Some site functionality will be limited.")
+        print(" Try $export FLASK_USER=blah and $export FLASK_PASS=blah")
+        #logging has not been configured at this point.
+    if not ip_address:
+        print("Warning!!! IP Address has not been set! This application will only be available on the local host!")
+        print("Try $export FLASK_IP=##.##.##.##")
+    return (username, password, ip_address)
 
 def create_app():
     app = Flask(__name__)
@@ -118,10 +120,10 @@ def create_app():
         If user is not found or if posgres database info is not set, returns None. Returns 
         a tuple with username, displayname, realname and password if login is successful."""
     def get_user_postgres(username, password, remoteIP):
-        if args.u != None and args.p != None:
+        if app.config['username'] != None and app.config['password'] != None:
             #if postgres username and password is set,
             #use username lookup to check username and password
-            connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (args.u, args.p))
+            connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (app.config['username'], app.config['password']))
             myCursor = connection.cursor()
             #log the current attempt
             saniUser = security.sql_escape(username)
@@ -508,9 +510,6 @@ def create_app():
         seconds_out = config.get('WhosHere', 'Seconds_out')
     guestbook.initialize(seconds_away, seconds_out)
 
-    args = None #get_args()
-    #if args.i:  # if given a -i ip.ip.ip.address, open that on LAN, so friends can visit your site.
-    #    host = args.i
     local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
     log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
     logging.basicConfig(filename=log_filename, level=logging.INFO)
@@ -518,8 +517,12 @@ def create_app():
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
-    #if args.u and args.p:
-    #    security.initialize(args.u, args.p, log)
+    (username, password, host) = get_env_vars()
+    app.config['username'] = username
+    app.config['password'] = password
+    app.config['ip_address'] = host
+
+    security.initialize(username, password, log)
 
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 
