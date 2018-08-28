@@ -27,6 +27,8 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
+CREATE ROLE searcher WITH LOGIN PASSWORD 'SometimesWeWearSombreros';
+CREATE ROLE validator WITH LOGIN PASSWORD 'SometimesWeWearSombreros';
 
 --
 -- Name: character_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
