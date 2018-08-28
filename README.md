@@ -27,11 +27,14 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 
 to test navigate to the root directory and, use:
 
+`$export FLASK_APP=sever/app.py` or on Windows: `$set FLASK_APP=server/app.py`
+`$export FLASK_ENV=development` or on Windows: `$set FLASK_ENV=development`
 `$flask run`
+
 
 then in a web browser, go to localhost:5000/levelup
 
-For LAN, use:
+For sharing dev over LAN (for one house), use:
 
 `$python start.py -i local.ip.goes.here`
 
@@ -135,6 +138,45 @@ Once you have postgres installed and configured to let you log in, use the
 default database config from /config/default_db.db using the pg_restore command
 
 
+# What's in this Direcory and why is it here?
+
+## Pipfile
+
+The Pipfile helps pipenv track what version of python modules it needs to run
+our application. It's also helpful for telling TravisCI what to install before
+starting testing.
+
+## Pipfile.lock
+
+A [lock file](https://askubuntu.com/questions/530598/what-is-the-purpose-of-lock-file)
+for your pipfile. It also holds security hashes to make sure that someone isn't
+poisoning your python libraries.
+
+## Readme.md
+
+A markdown file that shows easy-to-read instructions for using and contributing
+to CXDocs. Readme files are displayed on github direcory pages automatically,
+and markedown readme files are prettier than text files. What you're reading
+right now is the readme file.
+
+## The generate_config.py script
+
+A helpful little script that writes a valid config file for you. It makes 
+setting up a new instance of CXDocs much quicker.
+
+## The Server directory
+
+We put the code for the CXDocs web application in here.
+
+## The Travis directory
+
+We put the tests that travis runs in here. It is helpful for making sure what 
+we write doesn't break anything.
+
+## The .travis.yml file
+
+This hidden file tells TravisCI what to do with our repo in order to run its
+tests.
 
 # Documentation
 We use a couple of different technologies in this project. You can find documentation on them here.
