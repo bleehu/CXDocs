@@ -446,6 +446,7 @@ def create_app():
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
             log.info("%s logged out" % session['username'])
             session.pop('username', None)
+            session.pop('displayname', None)
             session.pop('character', None)
             session.pop('role', None)
             session.pop('character', None)
