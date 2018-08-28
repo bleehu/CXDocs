@@ -4,4 +4,4 @@ python:
 install:
   - pip install -r travis/requirements.txt
 script:
-  - python test.py
+  - pytest

@@ -9,7 +9,7 @@ import enemy_weapons
 
 import os
 
-import security
+from ..security import security
 
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 #we use this to prevent nasty ../home/.bashrc overwrite attacks etc.

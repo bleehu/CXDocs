@@ -10,7 +10,8 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 4) $pip install --upgrade pip
 1) $git clone https://github.com/bleehu/CXDocs.git
 2) $sudo pip install flask 
-4) $sudo apt-get install python-psycopg2
+3) $sudo pip install pipenv
+4) $pipenv install -r travis/requirements.txt
 
 ### On Windows
 1) Install Python https://www.python.org/
@@ -24,9 +25,9 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 3) use cd /d G:\ to change to g drive if need be
 
 
-to test, use:
+to test navigate to the root directory and, use:
 
-`$python start.py`
+`$flask run`
 
 then in a web browser, go to localhost:5000/levelup
 
