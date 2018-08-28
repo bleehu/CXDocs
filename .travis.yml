@@ -1,7 +1,11 @@
 language: python
 python:
    - "2.7"
+services:
+  - postgres
 install:
   - pip install -r travis/requirements.txt
+before_script:
+  - pg_restore -C travis/test.db
 script:
   - pytest
