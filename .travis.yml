@@ -6,6 +6,6 @@ services:
 install:
   - pip install -r travis/requirements.txt
 before_script:
-  - psql -f travis/test.db
+  - psql -f travis/test.db mydb
 script:
   - pytest
