@@ -50,6 +50,8 @@ def show_monsters_stats():
     stats['abilities'] = {'count':len(abilities), 'contributors': {}}
     stats['contributors'] = {}
     stats['nakedMonsters'] = []
+    stats['private'] = 0
+    stats['public'] = 0
     stats['roles'] = {}
     for monster in munsters:
         hasAbs = True
@@ -79,7 +81,7 @@ def show_monsters_stats():
             stats['roles'][monster['role']] = 1
         else:
             stats['roles'][monster['role']] += 1
-        if monster['public'] == 't':
+        if monster['private'] == 't':
         	stats['public'] = 1 + stats['public']
         else:
         	stats['private'] = 1 + stats['private']
