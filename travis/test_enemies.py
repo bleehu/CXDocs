@@ -34,7 +34,7 @@ def test_bestiary(client):
         assert c.get("/monsterweapons").status_code == 302
         assert c.get("/monsterabilityeditor").status_code == 302
         assert c.get("/monsterweaponeditor").status_code == 302
-        assert c.get("/monsterabilities").status_code == 302
+        assert c.get("/monsterarmoreditor").status_code == 302
 
         #fake logging in
         with c.session_transaction() as sess:
@@ -43,3 +43,13 @@ def test_bestiary(client):
             sess['role'] = 'Admin'
         #now that we're logged in...
         assert c.get('/monster').status_code == 200
+        assert c.get('/monsterabilities').status_code == 200
+        assert c.get('/monsterarmor').status_code == 200
+        assert c.get('/monsterweapons').status_code == 200
+        assert c.get('/monsterabilityeditor').status_code == 200
+        assert c.get('/monsterweaponeditor').status_code == 200
+        assert c.get('/monsterarmoreditor').status_code == 200
+        c.post('/logout')
+        assert 'username' not in session
+        assert 'displayname' not in session
+        assert 'role' not in session
