@@ -1,6 +1,6 @@
 import psycopg2
 import pdb
-import security
+from ..security import security
 import enemies_common
 
 

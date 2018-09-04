@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+
+[packages]
+requests = "*"
+"psycopg2" = "*"
+Flask = "*"
+logging = "*"
+configparser = "*"
+pytest = "*"
+
+[requires]
+python_version = "2.7"
+

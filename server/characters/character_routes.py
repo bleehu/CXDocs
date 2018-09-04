@@ -3,7 +3,7 @@ import characters_common
 import feats
 import skills
 import pdb
-import security
+from ..security import security
 import pdb
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 

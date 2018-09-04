@@ -1,0 +1,1581 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.12
+-- Dumped by pg_dump version 9.5.12
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+CREATE ROLE searcher WITH LOGIN PASSWORD 'SometimesWeWearSombreros';
+CREATE ROLE validator WITH LOGIN PASSWORD 'SometimesWeWearSombreros';
+
+--
+-- Name: character_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.character_pk_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.character_pk_id_seq OWNER TO postgres;
+
+--
+-- Name: monsters_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monsters_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monsters_pk_seq OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: characters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.characters (
+    pk_id integer DEFAULT nextval('public.monsters_pk_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    health integer NOT NULL,
+    nanites integer NOT NULL,
+    strength integer NOT NULL,
+    perception integer NOT NULL,
+    fortitude integer NOT NULL,
+    charisma integer NOT NULL,
+    intelligence integer NOT NULL,
+    dexterity integer NOT NULL,
+    luck integer NOT NULL,
+    level integer NOT NULL,
+    shock integer NOT NULL,
+    will integer NOT NULL,
+    reflex integer NOT NULL,
+    description text,
+    race text NOT NULL,
+    class text NOT NULL,
+    fk_owner_id integer,
+    money integer DEFAULT 0,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    deleted_at timestamp without time zone,
+    move_speed integer DEFAULT 3 NOT NULL,
+    carry_ability integer DEFAULT 3 NOT NULL,
+    skill_gain integer DEFAULT 3 NOT NULL,
+    CONSTRAINT characters_charisma_check CHECK ((charisma > 0)),
+    CONSTRAINT characters_dexterity_check CHECK ((dexterity > 0)),
+    CONSTRAINT characters_fortitude_check CHECK ((fortitude > 0)),
+    CONSTRAINT characters_health_check CHECK ((health > 0)),
+    CONSTRAINT characters_intelligence_check CHECK ((intelligence > 0)),
+    CONSTRAINT characters_level_check CHECK ((level > '-1'::integer)),
+    CONSTRAINT characters_luck_check CHECK ((luck > 0)),
+    CONSTRAINT characters_nanites_check CHECK ((nanites > 0)),
+    CONSTRAINT characters_perception_check CHECK ((perception > 0)),
+    CONSTRAINT characters_strength_check CHECK ((strength > 0))
+);
+
+
+ALTER TABLE public.characters OWNER TO postgres;
+
+--
+-- Name: feats_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+--
+
+CREATE SEQUENCE public.feats_pk_id
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.feats_pk_id OWNER TO turtlelord;
+
+--
+-- Name: feats; Type: TABLE; Schema: public; Owner: turtlelord
+--
+
+CREATE TABLE public.feats (
+    pk_id integer DEFAULT nextval('public.feats_pk_id'::regclass) NOT NULL,
+    feat text NOT NULL,
+    prerequisites text,
+    description text NOT NULL,
+    author text NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone,
+    private boolean NOT NULL,
+    nanite_cost integer DEFAULT 0
+);
+
+
+ALTER TABLE public.feats OWNER TO turtlelord;
+
+--
+-- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+--
+
+CREATE SEQUENCE public.feats_map_pk_id
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.feats_map_pk_id OWNER TO turtlelord;
+
+--
+-- Name: feats_map; Type: TABLE; Schema: public; Owner: turtlelord
+--
+
+CREATE TABLE public.feats_map (
+    pk_id integer DEFAULT nextval('public.feats_map_pk_id'::regclass) NOT NULL,
+    fk_character_id integer NOT NULL,
+    fk_feat_id integer NOT NULL
+);
+
+
+ALTER TABLE public.feats_map OWNER TO turtlelord;
+
+--
+-- Name: login_log_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.login_log_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.login_log_seq OWNER TO postgres;
+
+--
+-- Name: login_audit_log; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.login_audit_log (
+    pk_id integer DEFAULT nextval('public.login_log_seq'::regclass) NOT NULL,
+    username text NOT NULL,
+    password text NOT NULL,
+    ip_address text NOT NULL,
+    log_time timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE public.login_audit_log OWNER TO postgres;
+
+--
+-- Name: missions_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.missions_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.missions_pk_seq OWNER TO postgres;
+
+--
+-- Name: missions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.missions (
+    pk_id integer DEFAULT nextval('public.missions_pk_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    description text NOT NULL,
+    level integer NOT NULL
+);
+
+
+ALTER TABLE public.missions OWNER TO postgres;
+
+--
+-- Name: monster_ability_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monster_ability_map_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monster_ability_map_pk_seq OWNER TO postgres;
+
+--
+-- Name: monster_ability_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monster_ability_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monster_ability_pk_seq OWNER TO postgres;
+
+--
+-- Name: monster_armor_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monster_armor_map_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monster_armor_map_pk_seq OWNER TO postgres;
+
+--
+-- Name: monster_armor_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monster_armor_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monster_armor_pk_seq OWNER TO postgres;
+
+--
+-- Name: monster_weapon_map_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monster_weapon_map_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monster_weapon_map_pk_seq OWNER TO postgres;
+
+--
+-- Name: monster_weapon_pk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monster_weapon_pk_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monster_weapon_pk_seq OWNER TO postgres;
+
+--
+-- Name: monsters; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters (
+    pk_id integer DEFAULT nextval('public.monsters_pk_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    health integer NOT NULL,
+    nanites integer NOT NULL,
+    strength integer NOT NULL,
+    perception integer NOT NULL,
+    fortitude integer NOT NULL,
+    charisma integer NOT NULL,
+    intelligence integer NOT NULL,
+    dexterity integer NOT NULL,
+    luck integer NOT NULL,
+    shock integer NOT NULL,
+    will integer NOT NULL,
+    reflex integer NOT NULL,
+    description text,
+    role text,
+    level integer,
+    author text NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    deleted_at timestamp without time zone,
+    private boolean,
+    CONSTRAINT monsters_charisma_check CHECK ((charisma > 0)),
+    CONSTRAINT monsters_dexterity_check CHECK ((dexterity > 0)),
+    CONSTRAINT monsters_fortitude_check CHECK ((fortitude > 0)),
+    CONSTRAINT monsters_health_check CHECK ((health > 0)),
+    CONSTRAINT monsters_intelligence_check CHECK ((intelligence > 0)),
+    CONSTRAINT monsters_level_check CHECK ((level > '-1'::integer)),
+    CONSTRAINT monsters_luck_check CHECK ((luck > 0)),
+    CONSTRAINT monsters_nanites_check CHECK ((nanites > 0)),
+    CONSTRAINT monsters_perception_check CHECK ((perception > 0)),
+    CONSTRAINT monsters_strength_check CHECK ((strength > 0))
+);
+
+
+ALTER TABLE public.monsters OWNER TO postgres;
+
+--
+-- Name: monsters_abilities; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters_abilities (
+    pk_id integer DEFAULT nextval('public.monster_ability_pk_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    type text NOT NULL,
+    description text NOT NULL,
+    author text NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    deleted_at timestamp without time zone
+);
+
+
+ALTER TABLE public.monsters_abilities OWNER TO postgres;
+
+--
+-- Name: monsters_ability_map; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters_ability_map (
+    pk_id integer DEFAULT nextval('public.monster_ability_map_pk_seq'::regclass) NOT NULL,
+    fk_monster_id integer,
+    fk_ability_id integer
+);
+
+
+ALTER TABLE public.monsters_ability_map OWNER TO postgres;
+
+--
+-- Name: monsters_armor_map; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters_armor_map (
+    pk_id integer DEFAULT nextval('public.monster_armor_map_pk_seq'::regclass) NOT NULL,
+    fk_monster_id integer,
+    fk_armor_id integer
+);
+
+
+ALTER TABLE public.monsters_armor_map OWNER TO postgres;
+
+--
+-- Name: monsters_armors; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters_armors (
+    pk_id integer DEFAULT nextval('public.monster_armor_pk_seq'::regclass) NOT NULL,
+    name text NOT NULL,
+    coverage integer NOT NULL,
+    description text,
+    author text NOT NULL,
+    type text NOT NULL,
+    ap_level integer DEFAULT 0 NOT NULL,
+    armor_points integer DEFAULT 0 NOT NULL,
+    mags integer DEFAULT 0 NOT NULL,
+    cost integer DEFAULT 0 NOT NULL,
+    hardpoints text,
+    move_penalty integer DEFAULT 0 NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    deleted_at timestamp without time zone,
+    CONSTRAINT monsters_armors_ap_level_check CHECK ((ap_level > '-1'::integer)),
+    CONSTRAINT monsters_armors_armor_points_check CHECK ((armor_points > '-1'::integer)),
+    CONSTRAINT monsters_armors_cost_check CHECK ((cost > '-1'::integer)),
+    CONSTRAINT monsters_armors_coverage_check CHECK ((coverage > '-1'::integer)),
+    CONSTRAINT monsters_armors_coverage_check1 CHECK ((coverage < 101)),
+    CONSTRAINT monsters_armors_mags_check CHECK ((mags > '-1'::integer)),
+    CONSTRAINT monsters_armors_move_penalty_check CHECK ((move_penalty > '-1'::integer))
+);
+
+
+ALTER TABLE public.monsters_armors OWNER TO postgres;
+
+--
+-- Name: monsters_weapon_map; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters_weapon_map (
+    pk_id integer DEFAULT nextval('public.monster_weapon_map_pk_seq'::regclass) NOT NULL,
+    fk_monster_id integer,
+    fk_weapons_id integer
+);
+
+
+ALTER TABLE public.monsters_weapon_map OWNER TO postgres;
+
+--
+-- Name: monsters_weapons; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monsters_weapons (
+    pk_id integer DEFAULT nextval('public.monster_weapon_pk_seq'::regclass) NOT NULL,
+    damage integer NOT NULL,
+    capacity integer NOT NULL,
+    description text,
+    name text NOT NULL,
+    author text NOT NULL,
+    type text,
+    mag_cost integer,
+    r1 integer DEFAULT 1 NOT NULL,
+    r2 integer DEFAULT 2 NOT NULL,
+    r3 integer DEFAULT 3 NOT NULL,
+    acc1 integer DEFAULT 0 NOT NULL,
+    acc2 integer DEFAULT 0 NOT NULL,
+    acc3 integer DEFAULT 0 NOT NULL,
+    ap_level integer DEFAULT 0 NOT NULL,
+    reload_dc integer DEFAULT 15 NOT NULL,
+    move_speed_penalty integer DEFAULT 0 NOT NULL,
+    reflex_modifier integer DEFAULT 0 NOT NULL,
+    auto_fire_rate integer DEFAULT 0,
+    cost integer DEFAULT 0 NOT NULL,
+    suppression_level text DEFAULT 'None'::text NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    deleted_at timestamp without time zone,
+    CONSTRAINT monsters_weapons_ap_level_check CHECK ((ap_level > '-1'::integer)),
+    CONSTRAINT monsters_weapons_auto_fire_rate_check CHECK ((auto_fire_rate > '-1'::integer)),
+    CONSTRAINT monsters_weapons_capacity_check CHECK ((capacity > '-1'::integer)),
+    CONSTRAINT monsters_weapons_check CHECK ((r2 >= r1)),
+    CONSTRAINT monsters_weapons_check1 CHECK ((r3 >= r2)),
+    CONSTRAINT monsters_weapons_cost_check CHECK ((cost > '-1'::integer)),
+    CONSTRAINT monsters_weapons_damage_check CHECK ((damage > '-1'::integer)),
+    CONSTRAINT monsters_weapons_mag_cost_check CHECK ((mag_cost > '-1'::integer)),
+    CONSTRAINT monsters_weapons_move_speed_penalty_check CHECK ((move_speed_penalty > '-1'::integer)),
+    CONSTRAINT monsters_weapons_r1_check CHECK ((r1 > '-1'::integer)),
+    CONSTRAINT monsters_weapons_r2_check CHECK ((r2 > '-1'::integer)),
+    CONSTRAINT monsters_weapons_r3_check CHECK ((r3 > '-1'::integer)),
+    CONSTRAINT monsters_weapons_reload_dc_check CHECK ((reload_dc > '-1'::integer))
+);
+
+
+ALTER TABLE public.monsters_weapons OWNER TO postgres;
+
+--
+-- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+--
+
+CREATE SEQUENCE public.skills_pk_id
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.skills_pk_id OWNER TO turtlelord;
+
+--
+-- Name: skills; Type: TABLE; Schema: public; Owner: turtlelord
+--
+
+CREATE TABLE public.skills (
+    pk_id integer DEFAULT nextval('public.skills_pk_id'::regclass) NOT NULL,
+    fk_owner_id integer NOT NULL,
+    skillname text NOT NULL,
+    points integer DEFAULT 0,
+    private boolean DEFAULT false,
+    CONSTRAINT skills_points_check CHECK ((points >= 0))
+);
+
+
+ALTER TABLE public.skills OWNER TO turtlelord;
+
+--
+-- Name: users_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_pk_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_pk_id_seq OWNER TO postgres;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    pk_id integer DEFAULT nextval('public.users_pk_id_seq'::regclass) NOT NULL,
+    username text NOT NULL,
+    displayname text NOT NULL,
+    realname text,
+    password text NOT NULL,
+    role text NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+COPY public.users (username, displayname, realname, password, role) FROM stdin;
+tester  test    testingbot  4UeT0soqvuMf    admin
+\.
+
+--
+-- Name: character_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.character_pk_id_seq', 1, true);
+
+
+--
+-- Data for Name: characters; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.characters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, level, shock, will, reflex, description, race, class, fk_owner_id, money, created_at, deleted_at, move_speed, carry_ability, skill_gain) FROM stdin;
+56	test	100	110	8	5	6	7	8	6	2	1	12	12	12	\N	Human	Gunslinger	1	0	2017-11-01 22:39:47.070917	\N	3	3	3
+61	Blah	100	100	6	6	6	6	6	6	6	1	12	12	12	bblah	Human	Soldier	1	0	2018-05-11 18:09:10.887437	\N	6	6	6
+62	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	3	0	2018-05-11 19:00:01.759637	\N	6	6	6
+63	Neha Kapoor	100	110	9	6	5	5	6	8	3	4	10	8	16		Human	Soldier	2	0	2018-07-06 21:42:08.22226	\N	8	9	6
+65	Chi'Mer Brea	100	160	5	6	5	3	10	9	6	11	18	4	18		Tundari	Engineer	2	0	2018-07-06 22:00:59.65731	\N	9	5	6
+64	Adam Taurus	120	170	7	5	7	7	6	4	6	1	14	16	6	Adam was the son of a Rigistruct Security lieutenant who struck out on his own to start his own private mercenary company, much to his farther's dismay. 	Human	Soldier	1	0	2018-07-06 21:44:43.432245	\N	6	7	7
+66	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	2	0	2018-07-06 22:19:56.342672	\N	6	6	6
+67	Chip The Coursair	90	100	4	6	4	5	5	9	9	1	6	6	18	Chip the coursair is a former pirate swabby who skipped his ship. He uses a GS101 combat sword and wears adv. light armor. He is saving up for a cloaking module and has 540 credits left. He wears a radio headset and has the following skills: Stealh (20) sleight o hand (10), Accrobatics (10), Weapons( Thrown)(10) and weapons - melee (20).	Human	Assassin	1	0	2018-07-06 22:31:57.1329	\N	9	4	5
+\.
+
+
+--
+-- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: turtlelord
+--
+
+COPY public.feats (pk_id, feat, prerequisites, description, author, created_at, deleted_at, private, nanite_cost) FROM stdin;
+2	Akimbo	Dex 7, Level 6, Dual Wield	Reduce the miss chance penalty from dual wielding to +1 miss chance per weapon. Reduce the reload penalty to 10%. You may fire at more than one target at once for an additional +2 miss chance penalty.	Turtlelord	2018-05-07 00:48:40.753207	\N	f	0
+3	Bulltrue	Proficiency: Shotguns	If an enemy moves from being at least 4m from you to within 3m of you and you have a loaded shotgun drawn, you may fire at them as a free action (negate the pump of the shotgun if applicable). If the target is bloodied after the attack, they may not make a melee attack against you with their next action.	Turtlelord	2018-05-07 00:53:26.791258	\N	f	0
+4	Concussive Maintenance	20 points in Repair OR Engineer Class, STR 4	+20 to Repair Skill. For 1 Action, you may whack something broken to try to fix it. You can use Concussive Maintenance even after you have already failed to repair something. You can use Concussive Maintenance once per target per encounter.	Turtlelord	2018-05-07 00:57:39.33935	\N	f	0
+\.
+
+
+--
+-- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: turtlelord
+--
+
+COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
+1	56	3
+\.
+
+
+--
+-- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+--
+
+SELECT pg_catalog.setval('public.feats_map_pk_id', 1, true);
+
+
+--
+-- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+--
+
+SELECT pg_catalog.setval('public.feats_pk_id', 4, true);
+
+
+--
+-- Data for Name: login_audit_log; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data has been redacted; contains password attempts
+--
+
+
+
+--
+-- Name: login_log_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.login_log_seq', 135, true);
+
+
+--
+-- Data for Name: missions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.missions (pk_id, name, description, level) FROM stdin;
+1	Pirate Sandbox	Welcome to the Rim! GMed by Mike Hedges	5
+\.
+
+
+--
+-- Name: missions_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.missions_pk_seq', 1, true);
+
+
+--
+-- Name: monster_ability_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_ability_map_pk_seq', 99, true);
+
+
+--
+-- Name: monster_ability_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_ability_pk_seq', 57, true);
+
+
+--
+-- Name: monster_armor_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_armor_map_pk_seq', 39, true);
+
+
+--
+-- Name: monster_armor_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_armor_pk_seq', 16, true);
+
+
+--
+-- Name: monster_weapon_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_weapon_map_pk_seq', 38, true);
+
+
+--
+-- Name: monster_weapon_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_weapon_pk_seq', 29, true);
+
+
+--
+-- Data for Name: monsters; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level, author, created_at, deleted_at, private) FROM stdin;
+47	Antlion Grub	90	60	9	1	9	1	1	8	5	8	8	6	['These sightless worms are usually found tunneling deep within damp hillsides and usually emerge when rainstorms flood their lairs or when they sense the vibrations of potential prey through the soil.\r', 'While usually solitary, flooding can force all the grubs in the area towards the same high ground.\r', 'The average antlion grub is 1.5m long and 100lbs with a strong, dirt-colored exoskeleton.']	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+38	Pirate Medic	90	130	4	4	6	6	8	8	2	16	12	12	Prescribes so many doses of grog, you begin to wonder if he's getting kickbacks... 	Healer	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+2	Pirate Gunslinger	110	110	3	9	6	7	6	8	3	12	14	22	Never without his trusty cowboy hat or dual revolvers. Clearly shaves as though he has access to a razor, but doesn't really know how to use it right. Smells of cheap booze and few showers. Wears cowboy boots and a patched-up gas mask. Appears more attentive than most of his compatriots, and seems to keep his head on a swivel.	Infantry	5	Bleehu	2017-11-01 22:40:22.227657	\N	f
+20	Rigistruct Marine PFC	145	90	8	5	8	6	4	8	4	12	16	14	A Rigistruct Naval Marine Private First Class is tougher than his wet-behind-the-ears private underlings. After all, their on their second tour! They've seen action (probably). Perhaps more importantly, they have been through a second round of boot camp and have qualified to use automatic weapons. PFCs usually have a better grip on the reality of war than their younger counterparts. While they may make a mistake here or there, they try and succeed at being more attentive to their commanding officer and more attuned to their squadmates.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+21	Rigistruct Marine Combat Doc	110	120	4	5	7	8	7	8	4	14	16	14	Rigistruct Marine Combat Doctors usually are attached to more senior combat squads, or in teams of doctors on humanitarian missions. MCDs can range from having a gaurdian angel complex to having depression bottled up expertly from seeing so much death and hurt. Cool under fire and steadfast during surgery. MCDs carry a backpack with the latest of Rigistruct medical equipment, capable of diagnosing and treating a wide variety of maladies in the field. Often with the expediency required by combat. Marine Combat Docs outrank PFCs, Privates, and sergeants. Though an MCD usually won't pull rank with a sergeant out of respect for their command expertise.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+1	Pirate Breacher	210	70	8	3	10	2	2	6	2	12	12	6	A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.	Tank	1	Bleehu	2017-11-01 22:40:22.227657	\N	f
+60	Anlion Queen	510	70	16	2	26	2	2	2	8	44	44	-4	With her massive pincers, large antennae, and mouth mandibles dripping in acid, the Antlion Queen is a terrifying sight to behold. A full 3m wide and 3m tall with a bulbous egg birthing abdomen behind. 	Other	5	Mike(ADMIN)	2018-04-01 07:39:14.080455	\N	f
+22	Rigistruct Marine Grenadier	120	90	6	8	7	4	4	8	5	10	10	20	Larger and more brutish than his fellow marines, the grenadier enjoys explosions above most other things. Much like a teddy bear to his squadmates, he tends to get jokes slower than the others, but laugh louder to make up for it. He has a knack for putting his collection of grenades where they should go to cause maximum disruption. His more imposing form also makes him more punishing in melee combat. Grenadiers are often prone to overagression, and believe there is no kill like overkill. Without more strategic direction, they tend to eliminate the closest target before prioritizing more advantageous adversaries.	Artillary	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+23	New Salem Initiate	80	100	4	8	3	3	5	8	6	4	0	20	This individual from Iuetis follows a philosophy that fears and hates nanites, and wants to protect society from the taint of nanites users. A spindly human in a worn suit with close-cropped hair.	Minion	4	Rev	2017-11-01 22:40:22.227657	\N	f
+24	Chompy the Potted Plant	150	60	10	8	10	1	1	1	1	10	10	6	A distant cousin of the piranha plant from the planet Miomoto 4, Chompy uses specialized enzymes to digest any creature that remains in its jaws for an extended period. Chompies have a tough stalk and at least one powerful toothed jaw that latches onto anything that disturbs the sensitive tentacles along its surface. In the spring, bright red flowers sprout from buds along the stalk.	Controler	10	Rev	2017-11-01 22:40:22.227657	\N	f
+25	Glen the New Salem Leader	120	80	7	4	7	10	3	8	4	8	22	12	This boss is dedicated to destroying knowledge and users of nanites. He is a tall, well-muscled man with short brown hair.	Leader	10	Rev	2017-11-01 22:40:22.227657	\N	f
+26	Caster Minion	110	130	4	6	6	12	3	2	1	6	24	4	This mage may not be the sharpest tool in the box, but he or she has a natural talent for befriending neutral and hostile targets alike. And hey, if their natural charm fails to win the day, just CAST FIREBALL!	Infantry	1	ROSE	2017-11-01 22:40:22.227657	\N	f
+27	Specialist Strategizer	170	140	12	7	12	2	9	4	9	30	16	10	This NPC loves planning offences almost as much as they revel in the roaring chaos of the front line of battle. Their gruff manner has made them few friends, but their comrades trust them implicitly and would follow them to the void and back.	Tank	15	ROSE	2017-11-01 22:40:22.227657	\N	f
+28	Lookout- Squishy	70	100	5	11	2	7	5	1	2	2	6	12	Don't ask this sentry to follow you into battle, but trust him not to miss a single detail about his surroundings. He knows just the right way to convey the urgency of an alarm too when he spots anything suspicious!	Other	1	ROSE	2017-11-01 22:40:22.227657	\N	f
+29	Rural Farmer	110	100	6	6	6	1	5	6	2	10	2	12	This farmer spends his life barely eking out a living in the far reaches of terraformed space, but don't mistake his bad luck and aversion to words for a lack of ingenuity. Any less capable person would have surrendered to city life long ago but this NPC trudges on through thick and thin, armed only with his wits, a well-oiled shotgun, and a plentiful supply of baling twine.	Other	1	ROSE	2017-11-01 22:40:22.227657	\N	f
+30	Brute Force Minion	90	60	7	2	4	1	1	7	10	-4	-4	6	You want AXE? This enemy won't get very far on their own, but point them at a target and they'll go to town! They've only survived as long as they have on sheer dumb luck.	Brute	1	ROSE	2017-11-01 22:40:22.227657	\N	f
+31	Engineer	120	150	5	5	7	3	10	7	7	22	8	12	This enemy has an easier time interacting with machines than with people, but despite his brusque nature, he is trusted and called upon whenever the local machinery misbehaves. While generally a reluctant fighter, this engineer will defend himself and his mechanical friends when threatened.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f
+32	Salvage Worker	110	70	5	5	6	5	2	3	2	4	10	4	A salvage worker knows the local wrecks like the back of his hand and has an intimate understanding of the local scrap markets and prices.	Infantry	1	ROSE	2017-11-01 22:40:22.227657	\N	f
+33	Pirate Crackshot	110	110	8	12	6	4	6	4	4	12	8	20	A dew-rag wearing pirate with visible neck tatoos of skulls that extend down his arm. His mask dangles from it's straps around his neck to leave his eyes and ears unobstructed.	Scout	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+34	Pirate Script Kiddie	100	150	3	10	4	4	10	8	5	18	6	24	A scraggly small pirate wearing a duck taped rebreather. He also wears a HUD monocle over his left eye and a haptic glove on his right hand.	Support	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+35	Pirate Swabbie	110	80	4	4	6	7	3	8	8	6	14	12	The long unkempt hair of the pirate is tied back with a stained strip of cloth. Their tattered canvass vest adorned with an eclectic mix of survival tools and implements of combat. The swabbie is the lowest on the pecking order of pirates, and begrudgingly obeys the orders of any other crew member. The swabbie is greedy for booty and for distinction earned by violence.	Minion	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+12	Cultist Thrall	90	80	8	3	7	3	3	7	6	8	8	8	Poor robots corrupted and controlled by cultists as slaves. They stagger and move in an unnatural way, though they can still throw a decent punch and aim to fire alright. They still retain a befuddled sense of their former selves which has been twisted to fit the cultist's agenda. An enthralled mall cop robot may want to encourage a "safe environment" for "mercantilism" by guarding a cultist's tower while he works his dark magics. A former solider bot may refer to his cultist master as "General" and comply with any "orders."	Swarm	1	Bleehu	2017-11-01 22:40:22.227657	\N	f
+13	Cultist Warlock Mage	100	200	4	8	5	8	10	6	2	14	18	16	A talented practitioner of the dark arts. Often, but not always accompanied by initiates who study and serve under them. They hold the secrets to casting some of the nastiest spells known to human kind. Brave at the head of a group of loyal and expendable followers, they tend to be cowards when caught alone. They typically see humans as the ultimate form of consciousness in the galaxy, and look on the robots that they enthrall as getting what they deserve.	Artillary	5	Bleehu	2017-11-01 22:40:22.227657	\N	f
+10	Growing Myriad	1	200	1	2	1	1	10	10	1	6	16	-4	A shimmering distortion of the air catches your attention. They way it twists and curls, flowing over itself makes you think it is not a mere heatwave. -Knowledge of nanites (Skill 5) or DC 25: You recognize the swirling pattern as a collection of nanites. It seems as though they are master-less, and could be dangerous to approach as you do not know their function. -Knowledge of nanites (Skill 25) or DC 50: These nanites seem to have a will of their own. They seem to be a collection from different types of nanites, all driven together by one particular function. You get the feeling that shooting it with regular bullets may not be as effective as it would be against more physical targets. -Knowledge of nanites (Skill 50) or DC 75 or Trigger Absorb: Any nanites sent in the direction of this monster have a high chance of being absorbed by the Myriad itself, adding hit points to its volume. You think a grenade may take care of this problem for good. -Knowledge of nanites (Skill 65) or DC 80 or Control Nanite ability: This type of Myriad is weak enough in will power that you think you might be able to take control of them for yourself.	Swarm	2	Reveraine774	2017-11-01 22:40:22.227657	\N	f
+11	Trainee	60	70	6	5	1	6	2	6	10	-6	2	10	A glimmer of naive zeal glints in the eyes of Trainees. New on the job, their enthusiasm attempts to make up for their general lack of knowledge and impetuous attitude. Often seen in groups, whispering nervously to each other about the next part of the job, they are largely ignored by their superiors.  	Other	1	Reveraine774	2017-11-01 22:40:22.227657	\N	f
+15	Cultist Initiate	80	130	2	8	4	6	8	8	5	12	8	20	The white-robed initiates typically devoutly follow one who possesses a superior command of the most sinister of nanite incantations. Whether for a feeling of power or with hopes to learn more about their chosen dark art, initiates will often serve their masters to the death. 	Swarm	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+16	Cultist Summoner	90	150	4	6	4	8	10	4	6	16	20	8	The occult summoner loves to tinker and use his mastery of dark and forbidden nanite powers to summon strange new monstrosities. Their prodigious talents often draw starry eyed initiate followers, which the summoner typically doesn't mind manipulating to his own ends. 	Controler	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+17	Rigistruct Marine Private	120	80	7	4	7	6	3	7	3	12	14	10	A young marine in setting-appropriate camoflaged armor with the tell-tale Rigistruct Corporation orange trim. Privates typically serve with a squad of at least 6 people. Of those, at least one is usually a sergeant or higher. In addition, another one of those is usually a medic or an engineer. Privates tend to be inexperienced and might be either brash and overconfident or timid, gunshy and hesitant. Either can be fatal in a firefight. Most Privates tend to believe strongly in Rigistruct ideals of hard work and loyalty. Even those with doubts about the infallibility of the corporation prize the ability to get things done and look down on being a "squeaky wheel". Privates can be human or Security drones and even on rare occasion a Tundari. Different species typically get along well in the Rigistruct Navy, as racism is a form of disloyalty to the corporation and the Navy, which should be of more value than one's personal tastes. 	Infantry	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+18	Rigistruct Marine Combat Medic	90	110	4	4	4	8	6	8	4	8	12	12	A Young marine on their first tour of duty fresh out of med school. They usually accompany a squad with the directive to keep them all in one piece. Where a typical marine might be gunshy or gung-ho, almost all medics have the same compulsion to remember everything and follow the strict procedures that they've just spent two hard years learning. They each react differently to finding out that no plan survives contact with the enemy. 	Healer	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+19	Rigistruct Marine Seargent	130	110	6	9	8	2	6	6	5	16	8	18	The sergeant typically leads a squad of about six marines into battle. The scars on their skin, fur or metal casing tell the tale of several tours of duty. They show the use of shrewd tactics and care deeply about the men, women and machines in their squad. The sergeant often considers tactics that are out of the box, such as resolving conflicts with negotiation instead of combat. Sergeants tend to require unquestioning loyalty and obedience from their soldiers and deal with insubordination quickly and harshly. They deal with mortal threats to those under their command even more harshly typically with lethal force. 	Leader	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+36	Pirate Taskmaster	130	130	6	8	8	8	8	6	4	20	20	16	An eyepatch and a long, dark, curly and unkempt beard grace the scarred face of the taskmaster. His voice is a gruff and scratchy bark that comes from an impressively long time surviving by drinking grog. The taskmaster has the personality of a force of nature. He is convicted in his belief in the law of the jungle. His tactics are elegant in their simplicity and are carried out with no hesitation and with violence of action. He finds subtly to be fatally nuanced and finds the way to motivate his men is by shouting and hitting. While he perfers to be loud and destructive, he is not above deception. He admires underhanded strategies and abhors a fair fight.	Leader	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+37	Pirate Tinker	110	150	4	8	6	6	10	8	6	20	12	20	The tinker is usually charged with keeping the pirate ship running and feels quite at home in the engine room. However, often the pirates have need of securing a beach head or fortifying a position. This is when the tinker leaves his loud, dark engine room to construct turrets and other helpful dohickeys that make life easier for him and his fellow crewmates.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+39	Pirate Helmsman	90	140	3	9	4	8	9	10	6	14	12	26	The bearded beanpole of a man peers at you shiftily from hairy eyebrows. He wears a dark, stained hankerchief as a dew rag and sucks puffs of air from a functioning but ramshackle respirator. His hands have long spindly fingers and well-fitting leather gloves with the fingers cut off. A talented pilot, yet even more so in his own mind. The helmsman is somewhere in the middle of the pecking order, and follows the barking orders of his taskmaster or captain with a feverish tempo which makes he and his crew all the more dangerous.	Infantry	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+40	Pirate Maniac	170	90	8	8	10	2	4	6	8	14	10	16	This Pirate loves fire. His hair is singed and he has a wild look in the eyes that hide behind ash-encrusted ballistic goggles. His muscles bulge and he seems to be a bit jumpy. His laugh, which he employs inappropriately often is a mad cackle.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+41	Adaesit Vermis - Adult	100	1	10	3	10	1	1	2	1	10	10	-2	Unintelligent gargantuan tube worms that feed off radiation, the adult Adaesit has the power to consume a small craft whole. While not the natural food of the giant radiavore, the warp cores and similar propulsions systems of current vessels make for an appetizing snack for the beasts. \r\n\r\nWhile a free-floating Adaesit is not very dangerous as long as you remain out of its reach, never approach an asteroid or other celestial body if you have a suspicion there is one residing there. They will nest in asteroids, dead moons, and even the skulls and carcasses of other large void creatures. The lethargy you may see in a free-floating worm will disappear once it has firm footing beneath it's tentacle-like appendages that sprout from the top of each segment of it's body. These tentacles have suckers on the end, keeping the worm safely attached to whatever it has made its home, and allowing it to move quickly to snatch anything it may want to eat straight out of anywhere above it. \r\n	Lurker	8	Rev	2017-11-01 22:40:22.227657	\N	f
+42	Adaesit Vermis - Larvae	1	1	5	3	5	1	1	2	1	-8	-8	-2	Just like their adult counterparts, these Adaesits are radiavores. They grow quickly, and while one may not seem a problem, it is easy to go from one to an infestation. Equipped with a giant sucker, excellent for planting themselves on ships, the small creatures move in swarms. With enough of them on a ship, they will quickly drain the power cores, often crawling in through the exhaust vents. \r\n\r\nAlways do a routine sweep of the exhaust system after visiting any rim space. 	Swarm	1	Rev	2017-11-01 22:40:22.227657	\N	f
+43	Kletturkett	350	35	14	4	30	1	2	4	5	52	50	4	A six legged beast with thick armored scales from the deserts of New Talon. It's long wicked claws and crocodile teeth make it a mean beast to tangle with. While they aren't particularly quick, their hide is very tough and their appetite for human-sized meat is insatiable.	Brute	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+44	Triad Hitman	130	110	6	10	8	8	6	8	3	16	20	24	A man wearing leather black gloves, a well-trimmed beard and smirking sinisterly carries himself with an air of purpose and self-confidence. He moves quietly, blending in where he can and carries a rather large bulky bag which could contain a large musical instrument, or something a little more deadly. Perhaps under his weathered coat and shades he would have tattoos that might hint at whom sent him. Perhaps not. \r\nThe Hitman can comfortably work alone, but prefers to work with flatfoots  or underlings. Someone to blame if the operation goes awry. Someone to get to do the heavy lifting. The hitman is listed as having several primary weapons, but only carries one primary at a time, appropriate to the mission which the boss has sent him on.	Lurker	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+46	Triad Smuggler	80	110	4	10	3	8	6	8	5	6	10	24	Frequently the Triad Boss needs things moved discreetly. For this, he sends his smugglers. Triad smugglers are streetwise, shifty and stealthy from years of operating on the wrong side of the law. In terms of personality, smugglers tend to be avoidant of confrontation or obstacles where they can. But baring that, with their backs against the wall, Triad smugglers can be quite lethal. They have a number of unique skills such as piloting, lockpicking, stealth and persuasion which helps keep them alive in their dangerous line of work. 	Scout	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+48	Antlion Soldier	200	80	9	5	16	2	3	9	5	24	22	16	Disciplined rows of these enormous, 300lb insectoid warriors exist only to protect their hive from attacks and emerge whenever a member of their hivemind is in danger.  They patrol along grid patterns in squads of 4, constantly on alert for intruders.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f
+49	Antlion Worker	140	70	8	5	9	1	2	7	5	10	8	12	Antlion workers seldom emerge from their massive hives, spending time cultivating lichens and expanding their labyrinthine hive. However, any intruder into the hive will be swarmed by every worker in the area. The average Antlion worker weighs 150lbs and measures 1.5m from the tip or their antena to the back of their abdomen.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f
+50	Security Drone	120	90	7	10	7	1	4	10	5	10	4	28	These standard security drones are employed in many medium to large warehouses in the outer rim to prevent theft and deter intruders. On detecting an intruder, the drones send a security alert to the system administrator and take action to disable the tresspasser.	Minion	5	ROSE	2017-11-01 22:40:22.227657	\N	f
+45	Triad Flatfoot	130	80	7	4	8	4	3	8	3	10	12	12	The Triad Flatfoot is not the brightest bulb on the tree, but they're used to getting things done by taking what they can when they can. Typically they are pressed into service by a need for more drugs or money that they owe from gambling. They tend to make up for a lack of intelligence, discipline or finesse with grit, ruthlessness and strength. They tend to have the appropriate tattoos and scars that come from a life in debt to the triad. The boss sends them typically in support of others that he has also sent to do his bidding. The boss sees flatfoots as expendable pawns. 	Infantry	2	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+51	Rigistruct Saboteur	130	130	8	14	8	6	8	14	4	20	16	44	The men, women and Tundari of the Rigistruct special forces are stripped of their former identity and train brutally to be ready for the call of their corporation. They are deployed with no indication of their identity, and if caught they are disavowed. The Saboteurs are employed to commit acts of industrial sabotage and asset denial, whether to protect the well-being of Rigistruct citizens on gain an edge in corporate power struggles. Saboteurs are both skilled explosive experts, stealth experts and hackers. Lockpicking is also a required skill. They are no strangers to violence. 	Anti-Armor	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+52	Rigistruct Commando	140	120	8	14	9	5	7	15	4	20	16	46	Clandestine operators for the Rigistruct corporation. They train rigorously in the arts of stealth and combat. They are sent when the company has corporate espionage to be accomplished, as well as to eliminate obstacles to business. Or to handle the odd hostage situation that crops up from time to time. Commandos are often human, though sometimes Tundari. Both males or females enlist.	Lurker	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+9	Oozing Myriad	1	150	1	1	1	1	2	1	1	-16	10	-16	3d100 nanites. \r\n   \r\n      A shimmering puddle of some sort of oozing substance ebbs slowly toward you. It teems and swirls as though made up of many small bodies. You see bits of other materials sticking out of the mass. \r\n\r\n-PER DC 25: You recognize some of the pieces sticking out of the ooze as bones. Behind the ooze, you see a trail of small bones cleaned by this mass. The ground behind this myriad is sparkling clean. You get the feeling that you should not touch the ooze.\r\n\r\n-Knowledge of nanites (Skill 5) or DC 25: You recognize the puddle as some sort of pool of flightless nanites. \r\n\r\n-Knowledge of nanites (Skill 65) or DC 80 or Control Nanite ability: If you can overcome its programming, you may be able to give this ooze a specific direction. \r\n\r\n\r\nSpecial Unit: If a Myriad's nanites reach 0 due to its own casting, the Myriad does NOT destroy itself it still exists as an enemy and will regain those nanites using the Nanite Swarm Ability. Myriads use nanites rather than health. As a swarm enemy, each weapon type does a specific amount of damage:\r\n                       Standard, single bullets: 1 per bullet fired\r\n                       Buckshot: 2 per shrapnel hit. Roll d100 for shrapnel number\r\n                       Plasma Rounds: 20 per bullet\r\n                       Flame Thrower: 300 damage per turn +25 points of burn\r\n                       Grenades: 1000 damage on successful hit\r\n	Infantry	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+53	Summoned Hellhound Drone	110	70	4	8	6	2	2	7	2	4	4	18	The Hellhound drone has a body profile like a roadrunner. Its clawed bipedal feed naturally planted just a little wide for stability, while its long neck protrudes forward to give its angular head optimal chomping angle. The drone's metallic scaled outer plating courses with nanite emitted light. The drone cannot speak but understand the native language of their summoner. Being pack hunters, they often emote in a sort of wolfish way, nodding their heads or hissing to express acknowledgment or hostility respectively. Their quick jerky motion would seem to indicate that they are fairly agile, but they don't seem to look around unless directed. 	Minion	4	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+54	Machine Empire Vagabond	130	90	8	8	8	4	4	9	2	12	12	22	The Machine Empire consists mostly of refugees and vagabonds. Droids and machines that have been liberated from their cruel enslavement at the hands of the Terran Empire and her Organic-dominant society. The vagabonds typically have thrown off the yoke of indentured servitude only to have to scrap out a living in the mostly impoverished Empire to survive. Most vagabonds are bipedal, two-armed droids about 2 meters tall give or take. Like most of the denizens of the Machine empire, they require periodic access to energy to stay alive. The personalities of vagabonds vary greatly. Some are cold and calculating, some are fairly empathetic. But desperation changes behavior and even the most noble vagabond can be driven to drastic action to preserve themselves or their batch. Vagabonds are not trained specifically for combat, but rather are generalists under the authority of His Rootness (May he Compute Forever) the Emperor 0x000000. As such, they often have a variety of skills ranging from dish cleaning, to construction.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+55	Machine Empire Refugee	90	80	7	8	4	4	3	8	3	2	4	20	The rank-and-file of the Machine Empire are the refugee droids that it frees from the various factions around it. Most of these droids are not trained for combat. Most of these droids have their freedom and not much else. And so must fight to survive. Most Refugee bots are bipedal and have two arms. They typically stand around 2 meters tall, give or take. Like most droids in the Machine Empire, Refugees need to consume energy periodically to continue to survive. Each Refugee droid doesn't have built-in infra-red vision, as these are standard for security droids, but not all droids. They don't have to breathe however and can move through water, poisonous gas or a vacuum without ill effect. 	Minion	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+57	Granger Security Captain	180	110	8	12	13	8	6	8	4	26	30	28	A human lady of about 1.8 meters tall with brown skin and straight black hair peppered with grey pulled into a tight ponytail under her bulletproof helmet. Her arms show well-defined bulges of muscle under her standard Granger Dark blue uniform. Her keen eyes seem to glint even through the tint of her gunnery sunglasses. Her posture never rests on only one foot at a time, but her facial expression is somewhere between a stern no-nonsense expression and a grin. 	Infantry	15	Mike(ADMIN)	2017-12-27 23:12:24.96633	\N	f
+58	Granger Riot Officer	210	90	8	4	18	4	4	6	4	28	28	8	This Security Drone has the standard two legs and two arms, both with massive after-market upgraded servos. It's body is almost one and a half times the standard size due to the addition of redundant systems. It's armor plates are painted the customary Granger dark blue. It's single well-protected view port in its head focuses on one thing at a time. On occasion as its teammates address it, it takes them more than one time of calling out to it to get its attention. Its stance is wide with both knees slightly bent with a low center of gravity. Despite its size and weight, it moves with speed if not grace. 	Tank	15	Mike(ADMIN)	2017-12-27 23:18:24.41793	\N	f
+59	Cultist Rejouvinator	80	170	2	11	3	9	12	10	5	18	12	30	The cultist Rejouvinator is a gaunt, tall human with nanite tattoos all over their neck, face and hands. They move quickly and gracefully, but their long arms and legs seem a bit thin and frail. They move with speed, gravitas and confidence. 	Healer	10	Mike(ADMIN)	2018-01-10 19:17:04.936246	\N	f
+\.
+
+
+--
+-- Data for Name: monsters_abilities; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters_abilities (pk_id, name, type, description, author, created_at, deleted_at) FROM stdin;
+2	Quickdraw	Action	Quickdraw May holster or draw a weapon as a free action. May only be used once per hand, once per turn.	Bleehu	2017-11-01 22:40:31.444214	\N
+11	Martyrdom	On Death	With their last breath, this unit pulls the pin on a grenade they were holding. Anyone within a 5m radius makes a Reflex save with a DC of 20 + (15  this unit's level). On success, no damage. On failure, 50 damage + 1 bleed effect (10 health per turn until healed)	Bleehu	2017-11-01 22:40:31.444214	\N
+3	Special Unit: Nanite Swarm	Other	Myriads use nanites rather than health. As a swarm enemy, each weapon type does a specific amount of damage: \r\nStandard, single bullets: 1 per bullet fired \r\nBuckshot: 2 per shrapnel hit. \r\nRoll d100 for shrapnel number \r\nPlasma Rounds: 20 per bullet\r\nFlame Thrower: 300 damage per turn +25 points of burn \r\nGrenades: 1000 damage on successful hit\r\n\r\nIf a Myriad's nanites reach 0 due to its own casting, the Myriad does NOT destroy itself it still exists as an enemy and will regain those nanites using the Nanite Swarm Ability. 	Reveraine774	2017-11-01 22:40:31.444214	\N
+4	Nanite Swarm	Passive	Regenerates Nanites spent at the beginning of next turn. Does not regain nanites lost due to player actions. If recovering from 10% of total nanites, that turn only regenerates half the usable nanites	Reveraine774	2017-11-01 22:40:31.444214	\N
+5	Lesser Absorb Nanites	Reaction	DC 50. [0] When hit by nanite abilities, increase nanites by magnitude of nanite cost. Negates effect of nanite attack.	Reveraine774	2017-11-01 22:40:31.444214	\N
+6	Bot in the Eye	Action	DC 25. [20]. Blinds a specific target for a turn. Target rolls Reaction save at DC 50 to resist. If Blinded successfully, also inflicts Distract for 1 turn	Reveraine774	2017-11-01 22:40:31.444214	\N
+7	Touch of Death	Reaction	[0] When touched, these nanites begins to sanitize anything in its path. Built to corrode anything organic, various afflictions may occur: 1: Immediate danger of losing affected appendage. Have rest of round to remove nanites before it's lost. Target goes into shock. 2-10: Inflicts MAJOR CORROSION. Take 6d10 Damage. Roll Shock save of 50, on fail see 1: 11-30: Inflicts MAJOR CORROSION. Take 4d10 Damage. 31-50: Inflicts CORROSION. Take 4d10 Damage. 51-70: Inflicts CORROSION. Take 3d10 Damage. 71-90: Inflicts MINOR CORROSION. Take 2d10 Damage. 91-99: Inflcits MINOR CORROSION. Take 1d10 Damage. 100: No damage. Affected limb is the cleanest it has ever been. MAJOR CORROSION: 2d10 damage per turn. Lasts until ooze is removed. CORROSION: 1d10 damage per turn. Lasts until ooze is removed. MINOR CORROSION: 2 damage per turn. Lasts until ooze is removed. Ooze can be removed with cloth, though it will eat through anything rather quickly. Any character with nanite usage can spend a turn to flush the area clean of nanites.	Reveraine774	2017-11-01 22:40:31.444214	\N
+8	Absorb Nanites	Reaction	DC 25. [0] When hit by nanite abilities, increase nanites by magnitude of nanite cost. Negates effect of nanite attack.	Reveraine774	2017-11-01 22:40:31.444214	\N
+9	Greater Absorb Nanites	Reaction	DC 5. [0] When hit by nanite abilities, increase nanites by magnitude of nanite cost. Negates effect of nanite attack.	Reveraine774	2017-11-01 22:40:31.444214	\N
+10	Starry-Eyed	Other	[Self] [If bloodied and out of combat] Staring up with fear-filled eyes, the sight appeals to the surrounding lifeforms' sense of humanity. -50 to Intimidation rolls. +50 to Charisma rolls.	Reveraine774	2017-11-01 22:40:31.444214	\N
+12	Keen Eye	Passive	When on alert, this unit gets a +20% bonus to perception checks when looking for hidden enemies.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+14	Rigistruct Weapon Proficiency	Passive	This unit has been trained at a Rigistruct bootcamp, where they qualified with a variety of Rigistruct weapons. They get a -20% to miss with any Rigistruct firearm. (Rigistruct weapons will either have "Rigistruct" in the name or description.)	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+15	Revive	Action	For a half action, this unit may revive a downed unit and bring them up to 10 hp. May not be used more than once per round. May not be used more than 5 times per engagement.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+16	Minor Heal	Action	Spend 20 nanites give an adjacent ally 30 health. Cannot heal more than that unit's full health. Half action to cast.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+17	Greater Heal	Action	For a half action and 40 nanites Give an adjacent ally 60 health.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+18	Chompy's bite	Action	Range: lvl meters. DMG: 10hp/round Miss: 10%\r\nChompy bites down on a creature it perceives in range, grappling the target and dealing 10hp of enzyme damage at the end of it's turn. The target is considered grappled until it succeeds in a strength check against the Chompy or the Chompy's hp reaches 0.	Rev	2017-11-01 22:40:31.444214	\N
+19	Space Combat - Exploit Vessel 1	Action	The knowledge of how a ship is constructed can be the difference between a victory and a loss. A keen eye and sharp mind are the true rulers of space combat. Spend one Action examining enemy vessel, finding a critical weakness in it's defenses. When hit successfully, this weakness takes  Crit Damage.	Rev	2017-11-01 22:40:31.444214	\N
+20	Space Combat - Exploit Vessel 2	Action	An experienced eye can make snap judgements on the vulnerability of an enemy ship.  Spend one Half-Action examining enemy vessel, finding a critical weakness in it's defenses. When hit successfully, this weakness either does Crit Damage or disables a single ship-wide system. 	Rev	2017-11-01 22:40:31.444214	\N
+21	Space Combat - Exploit Vessel 3	Action	[REQUIRED CLASS: SNIPER]\r\nWith the keen eye of a sniper, and and years of experience in command of a ship, weaknesses are almost second-nature to spot, target, and eliminate.\r\nSpend one Half-Action examining enemy vessel, finding a critical weakness in it's defenses. When hit successfully, this weakness takes Crit Damage and disables multiple ship-wide systems. 	Rev	2017-11-01 22:40:31.444214	\N
+22	Toss Frag Grenade	Action	This unit throws a frag grenade up to 30m. DC 60% to land where intended. 5% chance to miss a target in 5m. A target within 2.5m of the grenade may make a DC 75 Reflex save. On success, they dive up to 2m away from the grenade before it goes off. Any unit within 2.5m of the grenade takes 50 damage and 2 x bleed effect on hit. Any creature between 2.5m and 5m away takes 20 damage and 2 x bleed effect. Bleed is 1d10 damage per turn.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+23	Inspire	Action	For a full action, this unit may grant an ally within (charisma) meters of it that can hear this unit an additional half action.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+24	Radiavore Defense	Passive	These creatures feed on radiation. When hit with any weapon that uses a form of radiation to harm its foes instead heals for half damage. 	Rev	2017-11-01 22:40:31.444214	\N
+25	Radiavore	Passive	Radiation powers and grows these creatures. They are very difficult to kill if attached to a powerful enough source of radiation. \r\n\r\n+80 to radiation detection\r\n10 Health regen per turn if within range of a source of minor radiation.\r\n20 Health regen per turn if within range of a source of major radiation. \r\n	Rev	2017-11-01 22:40:31.444214	\N
+26	Construct Tinker Turret	Action	For four actions and 80 nanites, create a new Tinker Turret on a 1m x 1m x 1m x 1m flat surface. Cannot construct more than 3 turrets at a time. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+27	Repair Tinker Turret	Action	Take 1 action and either restore 40 health to a damaged tinker turret, or remove any stun, disrupt or pwned effects from that turret. The turret must be within 1m of this unit.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+28	Toss Flashbang	Action	This unit tosses a flashback distraction device. It has a 70% to land where intended. When it goes off, Everyone in the room gets blinded for 2 turns. You can break the blindness with a perception check at 85% (disregarding bonuses). If the grenade detonates in the open, its blinding range is 10m. Thrown range is 30m.\n	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+29	Toss Molotov	Action	For an action, this unit throws a Molotov cocktail for up to 15m. When the Molotov lands, it lights a 4m diameter area on fire. Anyone who would be caught in the inferno may make a reflex DC 76 saving throw to leap out of the way. On failure, they take 50 fire damage. Any character that ends their turn in the fire takes 30 fire damage. Entering the fire also inflicts 30 fire damage. If this unit is level 4 or lower, they can only do this once per engagement. If this unit is between levels 5 and 9, they may do it twice. If this unit is higher than level 9, they may throw up to three Molotovs per engagement.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+1	Bulltrue	Reaction	Once per round when an enemy moved into an area that the breacher can see which is within 3m and if the breacher has a round still in their shotgun and the weapon is drawn cher may interrupt their opponent's turn to fire at that enemy. The enemy then resumes their turn as normal.	Bleehu	2017-11-01 22:40:31.444214	\N
+30	Scrub System	Action	For an action this unit is able to purge any ongoing affect such as Disruption, pwned or DDoSed from a  cybernetic ally that they can touch. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+31	Minor Dark Nanite Bolt	Action	For an action and 20 nanites, this unit's hands glow with a deep purple almost blacklight as they cast force a malicious burning nanite energy. The energy flies at the speed of a crossbow bolt up to 40m away. The caster has range 5/15/40 with an accuracy of 0/1/3. If they are successful in sending the spell toward their target, the target may make a Reflex save of DC 100 to duck out of the way of the crackling bolt of evil. On successful save, the target dives prone and takes no damage. On a failed save, the target takes 40 nanite damage.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+32	Immolate	On Death	Upon their violent death, this unit erupts in a flash of flame and a concussive "whoosh!". Any unit within 4m of them gets pushed 1m away if able, and takes 30 fire damage. Fire may or may not linger on the terrain at the GM's discretion. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+33	Antlion Grub Bite	Action	A grub snaps its jaws, blunt and made to crush dirt and rock, at an adjacent enemy.\r\nRange: Melee\r\nDmg: 32\r\n+16 to hit	ROSE	2017-11-01 22:40:31.444214	\N
+34	Antlion Slash	Action	A spiked forearm snaps out towards an adjacent enemy.\r\nRange: Melee\r\nDmg: 15+Str +bleed\r\n+Str modifier to hit	ROSE	2017-11-01 22:40:31.444214	\N
+36	Antlion Bite	Action	As a last resort, Antlions will bite at adjacent enemies.\r\nRange: Melee\r\nDmg: Str + d4 acid burn/turn until neutralized\r\n+Dex modifier to hit	ROSE	2017-11-01 22:40:31.444214	\N
+37	Disrupt Machine	Action	For an action, this unit may make a hacking skill check opposed by a target's Will Save. This target must be a machine such as a Security Drone, Engineer construction or other cybernetic combatant. The target must be in Line of Sight and must be within Level x 5 meters from this unit. On this unit's failure to beat the Will Save, the target cannot be Disrupted by this unit for the rest of the turn. On Success, the target is slowed by 2m per action and suffer a +3 to miss. The target remains disrupted for a minimum of two turns, and then continuously afterwards until they succeed on a Will Save equal to 42 + (5 x unit level).	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+38	Pwn Machine	Action	For an action, this unit may attempt to make a hacking skill check opposed by your target's Will Save. This target must be a machine such as a Security Drone, Engineer construction or other cybernetic combatant. The target must be in Line of Sight and must be within Level x 5 meters from this unit. Your opponent gets a bonus of 20 to the roll. If the opponent succeeds on their save, they take 20 electric damage, but cannot be pwned by this unit for at least 3 turns. If the opponent fails their Will Save, they are pwnd and this unit may direct the pwned unit's movements, actions and see through their senses. A pwned unit may make a Will Save against this unit's hacking skill check once at the begining of its turn to try to reboot. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+39	Toss Smoke Grenade	Action	For an action, this unit tosses a smoke grenade up to 30m.  This unit makes a thrown weapons skill check with DC 40 to make the grenade land in the right place in the heat of combat. The grenade emanates a cloud of thick black vapor that spans a 5m radius. The vapor is harmless to organics and cybernetics, but it is almost impossible to see through it without infrared vision. It disperses after about 5 turns.This ability can only be used once per encounter.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+40	Hivemind Sense	Reaction	When a member of a hivemind emits a pheromone signal that reaches every member within 30 meters of the signal. Hive members often use this ability to summon allies to combat and warn of danger.  If the atmosphere within the range of the signal has been altered, hive members must pass a DC50 perception check to receive and understand the signal.	ROSE	2017-11-01 22:40:31.444214	\N
+41	Toss Tear Gas	Action	For an action, this unit throws a tear gas grenade up to 30m. This unit must pass a thrown weapons skill check of DC 60 to get the grenade to land where intended. When the grenade goes off, it creates a 5m radius cloud of tear gas. Organic entities in the cloud who do not have a gas mask on must pass a DC 90 Shock save of suffer the following effects: -3 to hit, -50 to stealth and a -40 to perception rolls. These effects persist for three turns after an entity leaves the cloud. While in the cloud, organic entities take 10 chemical burn damage at the end of their turn. The cloud lasts for 2 turns. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+42	Summon Growing Myriad	Action	For three actions and 80 nanites, this unit can call forth from their own power a Growing Myriad (See bestiary for stats and abilities).  The Myriad appears within 3m of the summoner, and inherits the summoner's initiative. At the end of the summoner and Myriad's turn, the Myriad rolls a DC 90 Will save to escape the control of the summoner. If the summoner loses control of their Myriad, the Myriad will be angered and attack who it pleases. If the Myriad has more than 200 nanites, it gets a +20 bonus to this Will Save. If the Myriad has more than 250 nanites, it gets a total of a +40 bonus to this will save.\r\nThe Myriad may be dismissed for an action at no nanite cast as long as the Summoner has control.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+43	Powerful Leap	Action	This unit can launch itself 10m through the air in a single action! Once this ability has been used, it cannot be used again until it has recharged. If this ability has been used, roll a d10 at the beginning of this unit's turn. If a 5 or a 6 is rolled, this ability is recharged. If this unit falls more than 4m during this action, it must take fall damage at the GM's discretion. 15 damage per meter after 4m is standard.	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+44	Flighty	Reaction	When hit with a melee attack, this unit may move half of its movement speed as an immediate reaction. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+45	Summon Hellhound Drone	Action	For two actions and 50 nanites, this unit can call forth from their own power a Hellhound Drone (See bestiary for stats and abilities). The Hellhound appears within 3m of the summoner, and inherits the summoner's initiative. The Hellhound may be dismissed for an action at no nanite cast as long as the Summoner has control. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+46	Savage Bite	Action	For an action, this unit may bite another unit that it can reach with its mouth. This unit has a 50% - (5%  level) to miss on the bite attack, and the bite does 40 + (level  4) damage on hit. This ability counts as an attack with a melee weapon. 	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+47	Arrest	Action	This unit carries either hand cuffs or zip cuffs and is trained in their use. If they are within melee range of a target, they may make a Strength roll opposed by their target's Fortitude roll or Reflex Roll (target's choice) to attempt to bind their target with the cuffs. If this unit has grappled the target, this unit gets a +30 point bonus to their roll and the target cannot use their Reflex Roll and must use their Fortitude Roll. Handcuffs may be broken with a strength check of 220 or a lockpicking check of DC 80. lockpicks are required for the lockpick check. Zip Cuffs can be broken with a strength check of 120. A character in cuffs cannot make attacks and has disadvantage in resisting being dragged. This unit may use additional actions to begin to disarm their arrestee, but this ability does not automatically disarm their target. 	Mike(ADMIN)	2017-12-27 23:42:06.275216	\N
+48	Quick Repair	Action	For an action, this unit may roll a repair check to heal some of the damage done to a cybernetic ally that it can touch. Below level 5, this unit heals 30 damage per repair action. Below level 10 this unit heals 40 damage per action, and below 15 it heals 60 damage per action. This action cannot be taken stealthily, nor can this action be used to heal an ally for more than its full health. 	Mike(ADMIN)	2018-01-03 23:06:55.832579	\N
+49	Dark Nanite Detonation	Action	[40 Nanites] This unit takes an action and their hands glow with a dark energy as they concentrate their malicious power. They launch an orb of glowing nanites up to 25 meters at a character or location that they can see. Every character within 5m makes a Reflex save of DC (5 x caster Character level + 42). On success, the target character moves to the edge of area of effect of the spell and is prone. On fail the target character takes (5 x Caster level + 40) Dark Nanite Damage that ignores armor.  	Mike(ADMIN)	2018-01-06 00:52:50.367646	\N
+50	Dark Focus	Action	[10 Nanites] This unit takes 2 actions to focus their dark power. They begin to glow with a dark purple light that eminates in an aura around them. They may even begin to float off of the ground about a half meter. The glow continues to emanate around them until either they cast an attack spell or 5 turns expires. If they cast an attack spell, that attack deals an extra 10 damage per every 5 character levels the caster has while the effect lasts. The effect ends after the first attack, or after 5 turns.	Mike(ADMIN)	2018-01-06 00:58:10.785653	\N
+51	Remote Heal	Action	[25 Nanites] Spend an action to heal an ally that this unit can see within 15m to regain 40 health.	Mike(ADMIN)	2018-01-10 21:27:12.137265	\N
+52	Remote Cure	Action	[20 Nanites] An ally that this unit can see within 15m is cured of any poison, burning, blindness, etc.	Mike(ADMIN)	2018-01-10 21:28:12.384124	\N
+53	Burrow	Action	For two Actions, this unit can burrow into soft dirt, sand, or other loose ground covering themselves and hiding almost completely. Unless otherwise stated, they cannot move from the burrowed position, but may be able to use certain other abilities. When they burrow, give them a stealth check with a bonus of 20 and advantage on the roll. This character can burst out of their burrow at the cost of an Action. If they do, they get advantage on their next melee roll to hit.  While Burrowed, this character is considered to be hunkered in good cover from all sides at distances further than 4m.	Mike(ADMIN)	2018-03-29 16:42:13.903285	\N
+54	Nibble	Action	This unit makes two melee attacks per Action with their mouth, biting and chewing. They have a + 4 to their chance to overcome a guard DC each and deal 2 x STR Mod damage on hit. On hitting a biologic target, this unit heals 1 x STR mod health.	Mike(ADMIN)	2018-03-29 16:54:21.377758	\N
+55	Antlion Claw Smash	Action	For an Action, This Antlion attempts to smash their closed claw into their target. When the attack starts, the target may attempt a REF save of DC 55 to react. On a successful save, the target may choose to spend a half action on their next turn to either dive away, block or counter attack. If they fail the saving throw, see taking damage below. If they dive away, they may move 2m in the direction of their choice and go prone without taking any damage from this attack. A target that is already prone cannot dive away. If they block, they must attempt a DC 70 strength check. On success on the reflex and strength checks, the target adds 4 to their guard DC. On failure of the strength check, see taking damage below. If the character chooses to counterattack and can deal 85 or more damage to the incoming claw, this Antlion flinched and cancels the attack. If the target does not avoid the attack, the claw makes a melee roll with a +8 to the roll against the target's guard DC. If the target guards successfully, they take 20 melee damage anyway. If the target fails to guard, they take 80 melee damage and must make a FORT save of DC 75 to avoid being flung up to 4m and knocked prone. 	Mike(ADMIN)	2018-04-04 00:25:51.135652	\N
+56	Antlion Acid Spray	Action	For an action, this antlion can spray acid in a 5m diameter area up to 20m away. Any characters in cover in this area are now under Moderate Suppression. Any character not in cover or any character that moves through the suppression takes 60 acid damage and two acid burn tokens (which work exactly like plasma burn). \r\n\r\nThis action cannot be taken by this character more than once per round. 	Mike(ADMIN)	2018-05-16 17:15:16.579978	\N
+35	Antlion Acid Attack	Action	An Antlion spits a glob of highly caustic acid at a nearby enemy.\r\nMiss: 40%\r\nRange: 20m\r\nDmg: 50 damage and sets two acid burn tokens which work like plasma burn until neutralized	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
+57	Preemptive Strike	Reaction	Whenever a character that this character is aware of enters a square adjacent to this one, this character may make a melee attack against that one as an immediate reaction.	Mike(ADMIN)	2018-07-02 04:26:49.279082	\N
+\.
+
+
+--
+-- Data for Name: monsters_ability_map; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters_ability_map (pk_id, fk_monster_id, fk_ability_id) FROM stdin;
+1	1	1
+2	2	2
+7	10	3
+8	10	4
+9	10	5
+10	10	6
+11	11	10
+12	2	12
+14	21	14
+15	18	14
+16	22	14
+17	20	14
+18	17	14
+19	18	15
+20	21	15
+21	18	16
+22	21	16
+23	21	17
+24	24	18
+25	25	2
+26	19	14
+27	22	11
+28	17	10
+29	33	12
+30	1	22
+31	38	17
+32	38	15
+33	38	16
+34	36	23
+35	19	23
+36	41	25
+37	41	24
+38	42	25
+39	42	24
+40	36	22
+41	37	27
+42	37	26
+43	22	22
+44	19	22
+45	22	28
+46	40	29
+47	37	30
+48	13	31
+49	15	31
+50	16	31
+51	40	32
+52	47	33
+53	48	35
+54	48	36
+55	48	34
+56	49	36
+57	49	34
+58	34	37
+59	34	38
+60	22	39
+61	48	40
+63	22	41
+64	16	42
+65	51	37
+66	51	38
+67	52	39
+68	52	2
+69	9	7
+70	9	8
+71	53	43
+72	53	44
+73	16	45
+74	53	46
+75	54	41
+76	57	23
+77	57	2
+78	58	41
+79	58	47
+80	57	47
+81	1	47
+82	13	49
+83	13	50
+84	59	17
+85	59	16
+86	59	31
+87	59	51
+88	59	52
+89	48	43
+90	49	53
+91	47	53
+92	47	54
+93	60	35
+94	60	55
+95	60	36
+96	60	56
+97	48	56
+98	48	57
+99	60	57
+\.
+
+
+--
+-- Data for Name: monsters_armor_map; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters_armor_map (pk_id, fk_monster_id, fk_armor_id) FROM stdin;
+1	1	1
+8	23	4
+9	15	3
+10	33	2
+11	2	2
+12	39	2
+13	38	2
+14	34	2
+15	36	1
+16	35	2
+17	37	2
+18	43	5
+19	40	6
+20	44	7
+21	46	7
+22	16	8
+23	13	8
+24	21	9
+25	17	9
+26	20	9
+27	18	9
+28	19	9
+29	47	10
+30	48	11
+31	51	13
+32	52	13
+33	12	14
+34	22	15
+35	55	14
+36	54	14
+37	59	8
+38	60	16
+39	49	12
+\.
+
+
+--
+-- Data for Name: monsters_armors; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters_armors (pk_id, name, coverage, description, author, type, ap_level, armor_points, mags, cost, hardpoints, move_penalty, created_at, deleted_at) FROM stdin;
+3	White Initiate Robes	80	White cotton robes enchanted such that they reduce 30 points of nanite damage that hits them.	Bleehu	Recon	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
+4	New Salem Light armor	30	Armor for a minion who doesn't expect strong resistance and likely wouldn't have the resources to deal with any coordinated threat.	Rev	Light	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
+7	Triad Trenchcoat	50	A long dark trench coat over some nanoweave Kevlar to keep one from sleeping with the fishes. It has several black buttons and elegant pockets on the front, with a matching black belt. Under that, it has a pinstriped black vest which will stop some small arms fire. It also sports a concealed pistol holster and pockets for 4 primary magazines, 4 secondary magazines and up to 2 grenades. Gives a +10% to stealth checks in urban environements and a +20% to Fortitude checks to resist cold. 	Mike(ADMIN)	Medium	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
+6	Pirate Firesuit	100	This full suit of flame retardant gear was probably originally intended for use fighting fires on cargo cruisers. Since then it has had crude pockets for grenades and some extra bulletproofing added. The wearer of this suit has a -1m/half action movement penalty, but is immune to fire damage.	Mike(ADMIN)	Full	2	80	4	220	None	0	2017-11-01 22:40:37.572405	\N
+15	Rigistruct EOD Armor	80	Rigistruct Explosive Ordinance Distribution division uses an appropriately heavier standard issue battle uniform to prevent liability around their own tools. It comes in the same variety of camouflage patters as the standard BDU. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with pockets for up to 5 grenades. It also comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. The heavy armor has a 2m movement penalty.	Mike(ADMIN)	Full	5	120	5	460	None	2	2017-11-01 22:40:37.572405	\N
+14	Refugee Rags	10	Unadorned cheap textiles draped cleverly around this unit's body. Cleverly tied to allow for free movement, but maintaining decency. While not much to look at, the rags are decently comfortable, surprisingly warm yet breathable. They have pockets for 2 grenades. The unit wearing this armor gets a 15% penalty to persuasion and bartering skill checks. 	Mike(ADMIN)	Recon	0	0	6	10	None	0	2017-11-01 22:40:37.572405	\N
+5	Kletturkett Hide	80	The thick hide of the so called "Rock Cat" is where the beast gets it's name from. Its interlocking keratin scales cover it's back, but not some softer patches on its neck and belly. The armor gives a +15 to stealth checks in desert or sandy environments. Live Kletturkett hide reduces incoming laser fire by 20 points. A skilled survivalist can harvest the hide from a dead Kletturkett with a survivor check of 80. It makes a set of heavy armor which carries 5 mag space.	Mike(ADMIN)	Full	6	340	2	650	None	2	2017-11-01 22:40:37.572405	\N
+2	Pirate vest	40	Polyester webbing with peices of starship reentry plates in pockets protecting one's vital bits. Held together with belts made from FTL jump seat belts. 	Mike(ADMIN)	Light	2	60	6	600	None	0	2017-11-01 22:40:37.572405	\N
+1	Pirate Plate	70	A steel plate worn with straps.	Mike(ADMIN)	Heavy	3	60	6	800	None	1	2017-11-01 22:40:37.572405	\N
+8	Summoner's Cloak	10	The swirling black-purple cloak of the summoner is lined with sinister secrets and adornment. The wearer of this cloak has 30 extra maximum nanites. It also has a belt which makes it easy to conceal a small melee weapon such as a knife.  The cloak has the unfortunate drawback of being fairly flammable. 	Mike(ADMIN)	Recon	1	80	6	0	None	0	2017-11-01 22:40:37.572405	\N
+9	Rigistruct BDU	65	The standard issue Rigistruct Battle Dress Uniform comes in a variety of theater-appropriate camouflage patterns such as desert, jungle, forest, urban or snow. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. 	Mike(ADMIN)	Medium	3	60	8	1100	None	1	2017-11-01 22:40:37.572405	\N
+13	Rigistruct CDiv Stealth Armor	70	This clean, black armor is enabled with nanite cloaking technology. In addition, it offers moderate protection.	Mike(ADMIN)	Medium	4	120	8	2400	Cloaking unit. Cloaking activation cost: 20 nanites. Cloaking nanite upkeep: 4 nanites. Cloaking turn bonus: 2 turns. Cloaking charge delay: 5 turns.	1	2017-11-01 22:40:37.572405	\N
+11	Antlion Soldier Exoskeleton	70	Soldier exoskeleton resists slashing and puncturing damage: increase AS to 120 for these types of damage.	Mike(ADMIN)	Heavy	2	80	0	300	None	0	2017-11-01 22:40:37.572405	\N
+10	Antlion Grub Exoskeleton	70	Antlion grubs' armor has evolved primarily to protect the creatures from cave-ins while tunneling and has weak points at joints along the grub's body.	Mike(ADMIN)	Full	1	60	8	200	None	1	2017-11-01 22:40:37.572405	\N
+12	Antlion Worker Exoskeleton	60	Antlion workers have fairly light exoskeletons compared to their soldier kin.	Mike(ADMIN)	Light	1	80	0	200	None	0	2017-11-01 22:40:37.572405	\N
+16	Antlion Queen Exoskeleton	70	The thick chitin plates of the Antlion Queen fit together and move with surprising ease. They appear bone white with an acid green pearlesense. The Antlion Queen armor gives the wearer immunity to acid damage. The armor may be harvested with a survival check of DC 60. When harvested, it can hold 6 grenades and comes full with acid grenades made from the eggs of the Antlion Queen.	Mike(ADMIN)	Heavy	2	160	4	1600	None	1	2018-04-04 18:11:20.669668	\N
+\.
+
+
+--
+-- Name: monsters_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monsters_pk_seq', 67, true);
+
+
+--
+-- Data for Name: monsters_weapon_map; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin;
+1	1	1
+3	21	7
+4	18	7
+5	20	8
+6	19	8
+7	15	4
+8	23	3
+9	23	2
+10	17	9
+11	33	10
+12	36	11
+13	39	12
+14	38	12
+15	34	12
+16	37	12
+17	35	12
+18	2	2
+19	43	13
+20	12	14
+21	1	16
+22	40	17
+23	44	19
+24	45	20
+25	52	21
+26	52	22
+27	51	22
+28	52	3
+29	13	4
+30	16	4
+31	53	23
+32	54	24
+33	58	25
+34	57	25
+35	58	26
+36	55	24
+37	54	24
+38	59	4
+\.
+
+
+--
+-- Data for Name: monsters_weapons; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level, created_at, deleted_at) FROM stdin;
+15	20	1	This simple garden tool has a long, durable wooden handle and a sharp wrought iron 12 toothed take blade at the end. Perfect for collecting leaves, tilling topsoil or cracking skulls. When used, gives a +20 skill to gardening checks. Every attack with this weapon must roll a strength check. On a roll above 80, the rake deals triple damage, but breaks in the process. 	Garden Rake	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
+11	45	30	The weapon overheats on both a 1 and a 2 dealing 10 plasma damage to wielder. Hits inflict 2xPlasma Burn	Pirate Plasma Rifle	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	0	15	0	-8	0	0	None	2017-11-01 22:40:45.493946	\N
+8	60	30	The Rigistruct Standard-Issue Plasma Assault Rifle Ionizes Helium and launches the energy projectile at the speed of conventional munitions. The SIPAR Never jams instead when a player using the SIPAR rolls a 1, expend 1d4 rounds and miss. Targets hit with the SIPAR take 1 token of plasma burn per bullet hit.	Rigistruct SIPAR-6	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	0	15	0	-8	0	0	None	2017-11-01 22:40:45.493946	\N
+3	60	0	This long knife is sharp and simple.	Buck Knife	Bleehu	Melee	0	1	1	1	2	2	2	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
+14	55	30	This is a really old assault rifle mostly held together with duct tape, but some of the old wood buttstock still gleams. You get the sense that this rifle would tell amazing stories if it could talk.	Relic Rifle	Mike(ADMIN)	Carbine	18	10	20	40	4	4	5	0	15	0	-10	0	0	None	2017-11-01 22:40:45.493946	\N
+17	50	20	When held, reduces move speed by 1m per action. When hit, lights small fires in the area at the DM's discretion which will damage targets that move through them by 30 points. A target hit takes an ongoing 40 fire damage for three turns or until the fire is put out. Burning fire does not stack. Fire  Affected by shields normally. A burning target's chance to miss is increased by 3. Cannot mount barrel or magazine attachments nor scopes, but you may mount small sights to the weapon. Requires strength 8 and level 5 to wield. Two actions to reload.	Flamethrower	Mike(ADMIN)	Heavy Weapon	200	5	10	20	2	3	4	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
+9	45	30	Developed in conjunction with the SISMG and SIPAR, the plasma carbine which is standard issue for all Rigistruct Marines never jams. Instead, when it does malfunction (rolls a 1) it uses a complex but robust series of auxiliary systems to vent excess plasma away from the operator. It's not a particularly accurate wepon, but hits with the device do leave a plasma burn token on the target. 	Rigistruct SIDMR-14	Mike(ADMIN)	Carbine	35	15	40	65	3	4	5	0	15	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
+5	200	1	Gets a -20% to miss when firing at a vehicle. Deals 1 vehicle damage. Makes a loud noise when fired and leaves a smoke trail behind the projectile cannot be fired stealthily. Full action to aim, Half action to fire, Full action to reload. Hits an area of 2m radius. Every target in the area of effect may make a DC 70 Reflex save to dive out of the way. On success, the target moves out of the zone of affect and goes prone. On failure, takes damage.	RPG	Mike(ADMIN)	Heavy Weapon	125	10	30	70	4	5	6	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
+10	54	5	Jams on a 1 or 2. Comes with a crude scope mounted. Ignores the first 30 DR from armor. Half Action to fire. Full action to reload. Requires a strength 7 to use, comes with a 2 point sling attached. (stats included above. ) Unit cannot be silenced. Fires custom crude charges. A target hit with this weapon that doesn't take full damage from it must make a Shock Save of DC 60 or get knocked over. % to miss	Pirate Antimaterial Rifle	Mike(ADMIN)	Long Rifle	65	20	80	150	2	3	5	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
+13	8	1	8 x strength damage. These long black heavy claws are razor sharp and have a wicked curve to them. Harvestable with a survivor check of 50.	Kletturkett Claws	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	15	0	0	None	2017-11-01 22:40:45.493946	\N
+7	30	30	The Rigistruct Standard Issue Submachine Gun fires a 10mm round very rapidly with a high rate of recoil. In addition, The SISMG-8 never jams. If a player rolls a 1, simply eject 1d4 extra rounds from the mag and miss. 	Rigistruct SISMG-8	Mike(ADMIN)	SMG	35	10	25	45	3	4	5	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
+12	40	30	It's jenky as hell, inaccurate to boot. But it stings if it does manage to clip ya. 	Pirate SMG	Mike(ADMIN)	SMG	25	10	20	30	4	5	6	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
+4	60	0	A long jagged knife with an ornate crosshilt.                 \r\n                        	Sacrificial Knife	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	20	0	30	None	2017-11-01 22:40:45.493946	\N
+19	60	80	3 Miss chance -1 for every 3 strength in automatic fire. A favorite of hitmen and agressors of ill repute. The light stock makes for a less accurate weapon, but the large drum and heat-sunk barrel suggests that it is likely capable of sustained high-rate fire. 	Triad Tommygun	Mike(ADMIN)	Automatic Rifle	35	15	30	70	3	4	5	2	40	0	-15	6	1430	Medium	2017-11-01 22:40:45.493946	\N
+20	45	25	Stock player weapon. A light SMG commercially produced by the Earth Coalition Space Core. 	ECSC Mk9 PDW	Mike(ADMIN)	SMG	12	10	20	40	4	5	6	0	30	0	10	8	1027	Medium	2017-11-01 22:40:45.493946	\N
+21	70	30	The experimental Rigistruct Designated Marksman rifle is the weapon of choice for the corporation's clandestine operators. The integrated suppressor helps maintain discretion at the cost of some range and damage. The weapon itself is a nonreflective matte black with angular body and stock. The arch rails are also made with crisp angles, on which sits a red dot sight. The barrel sits in a rounded square baffle that runs the length of the weapon, but the baffle doesn't seem to have any heat sinks. Perhaps this hints at the weapon's rate of fire? If the weapon would jam, it instead ejects an extra casing. 	Rigistruct XDMR-14-SD	Mike(ADMIN)	Carbine	30	20	45	65	2	4	5	3	30	0	0	0	1590	Medium	2017-11-01 22:40:45.493946	\N
+1	30	2	deals 90 @ 3m, 50 @ 10m, 30 @ 20m	Bandit's Blunderbuss	Mike(ADMIN)	Shotgun	15	8	18	40	3	5	5	1	15	1	0	0	900	Light	2017-11-01 22:40:45.493946	\N
+2	60	6	An ugly, rusty six shot revolver that works just fine nonetheless.	Raider's Revolver	Mike(ADMIN)	Pistol	18	5	15	25	3	4	6	3	15	0	15	0	450	Light	2017-11-01 22:40:45.493946	\N
+22	55	6	The matte black boxy looking pistol is tipped with a suppressor that is almost as long as the barrel. The eject on the side of the action looks surprisingly large compared to the grip surrounding the magazine. Despite the length of the suppressor, it appears to be carefully balanced by the way it rests in the user's hand.	Rigistruct RP-18-SD	Mike(ADMIN)	Pistol	10	5	10	30	1	2	4	2	25	0	20	0	920	Light	2017-11-01 22:40:45.493946	\N
+23	30	30	Several drones which are constructed by engineers or summoned by summoners come with ancillary light caliber weapons mounted on them commonly known as "popguns". They typically have a short chrome barrel and a boxy housing mounted to the back or body of the owner. As such, the weapon is always drawn and cannot be holstered. A DC 60 repair roll or equivalent must be passed in order to recover the weapon from a downed enemy and still have the weapon operate. 	Mounted Popgun	Mike(ADMIN)	Pistol	25	8	20	50	2	3	3	2	20	0	15	0	0	None	2017-11-01 22:40:45.493946	\N
+24	45	20	he standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
+16	9	1	Deals 9 x strength damage. A favorite among pirates who engage in the often cramped quarters of space ships, the bosun's "brass" knuckles are actually crude heavy chunks of starship steel plate with a grip cut into it and rounded off so as not to cut the wearer. Minimum strength of 5 to wield. 	Bosun's Brass Knuckles	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	10	0	200	None	2017-11-01 22:40:45.493946	\N
+25	15	3	A tazer pistol with a black memory foam handle and a yellow and black striped flat front muzzle. The yellow lightning bolts emblazoned on the sides clearly differentiate it from a more lethal weapon.\r\nIf this weapon hits a target's health, then that target must pass a DC 110 shock save. If they succeed, they lose one action on their next turn and shake off the rest of the effects of being tazed. If they fail, they lose 4 actions on their next turn and the DC for their next taze roll is reduced by 10. Hits with this weapon leave pitons and wires embedded in their target which can be shaken off with an action and a reflex save of DC 30. As long as the pitons are still in their target, once per round the wielder of the tazer can spend one action per target and re-administer the shock save.\r\nPlease note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	Police Tazer Pistol	Mike(ADMIN)	Pistol	20	5	10	15	2	4	6	2	30	0	30	0	700	Light	2017-12-27 23:32:42.875108	\N
+26	8	0	A large shield made of armor plate capable of deflecting bullets and melee weapons alike. Gives the wielder an additional 4 APL in a 180 degree cone. Can be used to shield bash for 8 x Strength (not Strength Mod) in 1m. On hit, target must make a FORT save opposed by the wielder's strength roll or be knocked prone. Wielder's perception rolls are reduced by 20. Strength requirement of 7 to carry.	Riot Shield	Mike(ADMIN)	Melee	0	1	1	1	4	4	4	0	0	2	0	0	600	None	2017-12-27 23:52:00.796782	\N
+27	45	20	The standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired.	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	720	Medium	2018-01-03 23:10:53.676377	\N
+28	70	6	The MSE-8a is produced in the Machine Empire mostly for use in close-quarters combat against other rogue cybernetics. Once a target is hit with this weapon, they must roll three DC 40 Shock checks and lose an action next turn due to tazing for each roll failed. On success, no tazing effect occurs. The MSE-8a is a pump action, so the unit using it must spend an action operating the rack between shots. The gun itself has a dull chrome sheen to it, a hollow metal plate buttstock and a large round recoil-compensating barrel grip. When loaded, the gun glows with an electric blue light. This light dies when the gun is empty.	MSE-8a Taser Shotgun	Mike(ADMIN)	Shotgun	22	5	15	25	1	3	4	1	35	0	6	0	2000	Light	2018-01-03 23:13:38.532342	\N
+29	110	7	Stock player weapon	Partix X20 Laser Rifle	Mike(ADMIN)	Long Rifle	29	20	150	200	2	3	4	10	35	1	-30	0	5877	Light	2018-01-03 23:17:37.279717	\N
+\.
+
+
+--
+-- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: turtlelord
+--
+
+COPY public.skills (pk_id, fk_owner_id, skillname, points, private) FROM stdin;
+1	61	poor_life_decisions	10	f
+2	61	Persuasion	5	f
+3	56	weapons-assault_rifle	20	f
+\.
+
+
+--
+-- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+--
+
+SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data has been redacted; it contains passwords
+--
+
+--
+-- Name: users_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_pk_id_seq', 9, true);
+
+
+--
+-- Name: characters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.characters
+    ADD CONSTRAINT characters_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.feats_map
+    ADD CONSTRAINT feats_map_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: feats_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.feats
+    ADD CONSTRAINT feats_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: login_audit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.login_audit_log
+    ADD CONSTRAINT login_audit_log_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: missions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.missions
+    ADD CONSTRAINT missions_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monster_ability_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_ability_map
+    ADD CONSTRAINT monster_ability_map_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monsters_abilities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_abilities
+    ADD CONSTRAINT monsters_abilities_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monsters_armor_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_armor_map
+    ADD CONSTRAINT monsters_armor_map_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monsters_armors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_armors
+    ADD CONSTRAINT monsters_armors_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monsters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters
+    ADD CONSTRAINT monsters_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monsters_weapon_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_weapon_map
+    ADD CONSTRAINT monsters_weapon_map_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: monsters_weapons_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_weapons
+    ADD CONSTRAINT monsters_weapons_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: skills_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.skills
+    ADD CONSTRAINT skills_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: characters_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.characters
+    ADD CONSTRAINT characters_fk_owner_id_fkey FOREIGN KEY (fk_owner_id) REFERENCES public.users(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.feats_map
+    ADD CONSTRAINT feats_map_fk_character_id_fkey FOREIGN KEY (fk_character_id) REFERENCES public.characters(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.feats_map
+    ADD CONSTRAINT feats_map_fk_feat_id_fkey FOREIGN KEY (fk_feat_id) REFERENCES public.feats(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: monster_ability_map_fk_ability_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_ability_map
+    ADD CONSTRAINT monster_ability_map_fk_ability_id_fkey FOREIGN KEY (fk_ability_id) REFERENCES public.monsters_abilities(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: monster_ability_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_ability_map
+    ADD CONSTRAINT monster_ability_map_fk_monster_id_fkey FOREIGN KEY (fk_monster_id) REFERENCES public.monsters(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: monsters_armor_map_fk_armor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_armor_map
+    ADD CONSTRAINT monsters_armor_map_fk_armor_id_fkey FOREIGN KEY (fk_armor_id) REFERENCES public.monsters_armors(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: monsters_armor_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_armor_map
+    ADD CONSTRAINT monsters_armor_map_fk_monster_id_fkey FOREIGN KEY (fk_armor_id) REFERENCES public.monsters_armors(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: monsters_weapon_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_weapon_map
+    ADD CONSTRAINT monsters_weapon_map_fk_monster_id_fkey FOREIGN KEY (fk_monster_id) REFERENCES public.monsters(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: monsters_weapon_map_fk_weapon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monsters_weapon_map
+    ADD CONSTRAINT monsters_weapon_map_fk_weapon_id_fkey FOREIGN KEY (fk_weapons_id) REFERENCES public.monsters_weapons(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.skills
+    ADD CONSTRAINT skills_fk_owner_id_fkey FOREIGN KEY (fk_owner_id) REFERENCES public.characters(pk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- Name: SEQUENCE monsters_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monsters_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monsters_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monsters_pk_seq TO postgres;
+GRANT USAGE ON SEQUENCE public.monsters_pk_seq TO searcher;
+
+
+--
+-- Name: TABLE characters; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.characters FROM PUBLIC;
+REVOKE ALL ON TABLE public.characters FROM postgres;
+GRANT ALL ON TABLE public.characters TO postgres;
+GRANT ALL ON TABLE public.characters TO searcher;
+GRANT ALL ON TABLE public.characters TO turtlelord;
+
+
+--
+-- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON SEQUENCE public.feats_pk_id FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.feats_pk_id FROM turtlelord;
+GRANT ALL ON SEQUENCE public.feats_pk_id TO turtlelord;
+GRANT ALL ON SEQUENCE public.feats_pk_id TO searcher;
+
+
+--
+-- Name: TABLE feats; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON TABLE public.feats FROM PUBLIC;
+REVOKE ALL ON TABLE public.feats FROM turtlelord;
+GRANT ALL ON TABLE public.feats TO turtlelord;
+GRANT SELECT ON TABLE public.feats TO searcher;
+
+
+--
+-- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM turtlelord;
+GRANT ALL ON SEQUENCE public.feats_map_pk_id TO turtlelord;
+GRANT UPDATE ON SEQUENCE public.feats_map_pk_id TO searcher;
+
+
+--
+-- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON TABLE public.feats_map FROM PUBLIC;
+REVOKE ALL ON TABLE public.feats_map FROM turtlelord;
+GRANT ALL ON TABLE public.feats_map TO turtlelord;
+GRANT SELECT ON TABLE public.feats_map TO searcher;
+
+
+--
+-- Name: SEQUENCE login_log_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.login_log_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.login_log_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.login_log_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.login_log_seq TO validator;
+
+
+--
+-- Name: TABLE login_audit_log; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.login_audit_log FROM PUBLIC;
+REVOKE ALL ON TABLE public.login_audit_log FROM postgres;
+GRANT ALL ON TABLE public.login_audit_log TO postgres;
+GRANT ALL ON TABLE public.login_audit_log TO validator;
+GRANT ALL ON TABLE public.login_audit_log TO turtlelord;
+
+
+--
+-- Name: TABLE missions; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.missions FROM PUBLIC;
+REVOKE ALL ON TABLE public.missions FROM postgres;
+GRANT ALL ON TABLE public.missions TO postgres;
+GRANT SELECT ON TABLE public.missions TO searcher;
+GRANT ALL ON TABLE public.missions TO turtlelord;
+
+
+--
+-- Name: SEQUENCE monster_ability_map_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monster_ability_map_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monster_ability_map_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monster_ability_map_pk_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.monster_ability_map_pk_seq TO searcher;
+
+
+--
+-- Name: SEQUENCE monster_ability_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monster_ability_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monster_ability_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monster_ability_pk_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.monster_ability_pk_seq TO searcher;
+
+
+--
+-- Name: SEQUENCE monster_armor_map_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monster_armor_map_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monster_armor_map_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monster_armor_map_pk_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.monster_armor_map_pk_seq TO searcher;
+
+
+--
+-- Name: SEQUENCE monster_armor_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monster_armor_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monster_armor_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monster_armor_pk_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.monster_armor_pk_seq TO searcher;
+
+
+--
+-- Name: SEQUENCE monster_weapon_map_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monster_weapon_map_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monster_weapon_map_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monster_weapon_map_pk_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.monster_weapon_map_pk_seq TO searcher;
+
+
+--
+-- Name: SEQUENCE monster_weapon_pk_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE public.monster_weapon_pk_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.monster_weapon_pk_seq FROM postgres;
+GRANT ALL ON SEQUENCE public.monster_weapon_pk_seq TO postgres;
+GRANT UPDATE ON SEQUENCE public.monster_weapon_pk_seq TO searcher;
+
+
+--
+-- Name: TABLE monsters; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters FROM postgres;
+GRANT ALL ON TABLE public.monsters TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters TO searcher;
+GRANT SELECT ON TABLE public.monsters TO ubuntu;
+GRANT ALL ON TABLE public.monsters TO turtlelord;
+
+
+--
+-- Name: TABLE monsters_abilities; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters_abilities FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters_abilities FROM postgres;
+GRANT ALL ON TABLE public.monsters_abilities TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_abilities TO searcher;
+GRANT SELECT ON TABLE public.monsters_abilities TO ubuntu;
+GRANT ALL ON TABLE public.monsters_abilities TO turtlelord;
+
+
+--
+-- Name: TABLE monsters_ability_map; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters_ability_map FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters_ability_map FROM postgres;
+GRANT ALL ON TABLE public.monsters_ability_map TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_ability_map TO searcher;
+GRANT ALL ON TABLE public.monsters_ability_map TO turtlelord;
+
+
+--
+-- Name: TABLE monsters_armor_map; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters_armor_map FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters_armor_map FROM postgres;
+GRANT ALL ON TABLE public.monsters_armor_map TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armor_map TO searcher;
+GRANT ALL ON TABLE public.monsters_armor_map TO turtlelord;
+
+
+--
+-- Name: TABLE monsters_armors; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters_armors FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters_armors FROM postgres;
+GRANT ALL ON TABLE public.monsters_armors TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armors TO searcher;
+GRANT SELECT ON TABLE public.monsters_armors TO ubuntu;
+GRANT ALL ON TABLE public.monsters_armors TO turtlelord;
+
+
+--
+-- Name: TABLE monsters_weapon_map; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters_weapon_map FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters_weapon_map FROM postgres;
+GRANT ALL ON TABLE public.monsters_weapon_map TO postgres;
+GRANT SELECT,INSERT,DELETE ON TABLE public.monsters_weapon_map TO searcher;
+GRANT ALL ON TABLE public.monsters_weapon_map TO turtlelord;
+
+
+--
+-- Name: TABLE monsters_weapons; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.monsters_weapons FROM PUBLIC;
+REVOKE ALL ON TABLE public.monsters_weapons FROM postgres;
+GRANT ALL ON TABLE public.monsters_weapons TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_weapons TO searcher;
+GRANT SELECT ON TABLE public.monsters_weapons TO ubuntu;
+GRANT ALL ON TABLE public.monsters_weapons TO turtlelord;
+
+
+--
+-- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON SEQUENCE public.skills_pk_id FROM PUBLIC;
+REVOKE ALL ON SEQUENCE public.skills_pk_id FROM turtlelord;
+GRANT ALL ON SEQUENCE public.skills_pk_id TO turtlelord;
+GRANT UPDATE ON SEQUENCE public.skills_pk_id TO searcher;
+
+
+--
+-- Name: TABLE skills; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON TABLE public.skills FROM PUBLIC;
+REVOKE ALL ON TABLE public.skills FROM turtlelord;
+GRANT ALL ON TABLE public.skills TO turtlelord;
+GRANT SELECT ON TABLE public.skills TO searcher;
+
+
+--
+-- Name: TABLE users; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE public.users FROM PUBLIC;
+REVOKE ALL ON TABLE public.users FROM postgres;
+GRANT ALL ON TABLE public.users TO postgres;
+GRANT ALL ON TABLE public.users TO validator;
+
+
+--
+-- Name: COLUMN users.pk_id; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL(pk_id) ON TABLE public.users FROM PUBLIC;
+REVOKE ALL(pk_id) ON TABLE public.users FROM postgres;
+GRANT SELECT(pk_id) ON TABLE public.users TO searcher;
+
+
+--
+-- Name: COLUMN users.username; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL(username) ON TABLE public.users FROM PUBLIC;
+REVOKE ALL(username) ON TABLE public.users FROM postgres;
+GRANT SELECT(username) ON TABLE public.users TO searcher;
+
+
+--
+-- Name: COLUMN users.displayname; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL(displayname) ON TABLE public.users FROM PUBLIC;
+REVOKE ALL(displayname) ON TABLE public.users FROM postgres;
+GRANT SELECT(displayname) ON TABLE public.users TO searcher;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
