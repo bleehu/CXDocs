@@ -7,7 +7,7 @@ install:
   - pip install -r travis/requirements.txt
 before_script:
   - psql -c 'create database mydb;' -U postgres
-  - psql -c 'CREATE USER searcher WITH PASSWORD 8SlpOmzM21if;' -U postgres
+  - psql -c 'CREATE USER searcher WITH PASSWORD \'8SlpOmzM21if\';' -U postgres
   - psql -f travis/test.db mydb -U postgres
   - echo pwd
   - cp travis/config_test.cfg config/cxDocs.cfg
