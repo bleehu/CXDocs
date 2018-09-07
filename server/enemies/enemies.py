@@ -4,7 +4,7 @@ import enemy_weapons
 import enemy_abilities
 import enemy_armor
 import enemies_common
-import security
+from ..security import security
 
 def get_monsters(session):
     connection = enemies_common.db_connection()

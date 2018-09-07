@@ -1,6 +1,6 @@
 import characters_common
 import psycopg2
-import security
+from ..security import security
 import pdb
 
 global log

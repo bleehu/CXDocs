@@ -1,4 +1,4 @@
-import guestbook
+from .. import guestbook
 from flask import request, session
 import psycopg2
 
