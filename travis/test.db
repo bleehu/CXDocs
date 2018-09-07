@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.12
--- Dumped by pg_dump version 9.5.12
+-- Dumped from database version 9.5.14
+-- Dumped by pg_dump version 9.5.14
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -27,8 +27,6 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
-CREATE ROLE searcher WITH LOGIN PASSWORD 'SometimesWeWearSombreros';
-CREATE ROLE validator WITH LOGIN PASSWORD 'SometimesWeWearSombreros';
 
 --
 -- Name: character_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -166,6 +164,39 @@ CREATE TABLE public.feats_map (
 
 
 ALTER TABLE public.feats_map OWNER TO turtlelord;
+
+--
+-- Name: inventory_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+--
+
+CREATE SEQUENCE public.inventory_pk_id
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.inventory_pk_id OWNER TO turtlelord;
+
+--
+-- Name: inventory; Type: TABLE; Schema: public; Owner: turtlelord
+--
+
+CREATE TABLE public.inventory (
+    pk_id integer DEFAULT nextval('public.inventory_pk_id'::regclass) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    name text NOT NULL,
+    quantity integer DEFAULT 1,
+    private boolean DEFAULT false,
+    deleted_at timestamp without time zone,
+    fk_character_owner integer NOT NULL,
+    value integer DEFAULT 0 NOT NULL,
+    CONSTRAINT inventory_value_check CHECK ((value >= 0))
+);
+
+
+ALTER TABLE public.inventory OWNER TO turtlelord;
 
 --
 -- Name: login_log_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -506,6 +537,8 @@ CREATE TABLE public.skills (
     skillname text NOT NULL,
     points integer DEFAULT 0,
     private boolean DEFAULT false,
+    created_at timestamp without time zone,
+    deleted_at timestamp without time zone,
     CONSTRAINT skills_points_check CHECK ((points >= 0))
 );
 
@@ -542,10 +575,6 @@ CREATE TABLE public.users (
 
 ALTER TABLE public.users OWNER TO postgres;
 
-COPY public.users (username, displayname, realname, password, role) FROM stdin;
-tester  test    testingbot  4UeT0soqvuMf    admin
-\.
-
 --
 -- Name: character_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -558,14 +587,17 @@ SELECT pg_catalog.setval('public.character_pk_id_seq', 1, true);
 --
 
 COPY public.characters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, level, shock, will, reflex, description, race, class, fk_owner_id, money, created_at, deleted_at, move_speed, carry_ability, skill_gain) FROM stdin;
-56	test	100	110	8	5	6	7	8	6	2	1	12	12	12	\N	Human	Gunslinger	1	0	2017-11-01 22:39:47.070917	\N	3	3	3
-61	Blah	100	100	6	6	6	6	6	6	6	1	12	12	12	bblah	Human	Soldier	1	0	2018-05-11 18:09:10.887437	\N	6	6	6
 62	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	3	0	2018-05-11 19:00:01.759637	\N	6	6	6
 63	Neha Kapoor	100	110	9	6	5	5	6	8	3	4	10	8	16		Human	Soldier	2	0	2018-07-06 21:42:08.22226	\N	8	9	6
 65	Chi'Mer Brea	100	160	5	6	5	3	10	9	6	11	18	4	18		Tundari	Engineer	2	0	2018-07-06 22:00:59.65731	\N	9	5	6
 64	Adam Taurus	120	170	7	5	7	7	6	4	6	1	14	16	6	Adam was the son of a Rigistruct Security lieutenant who struck out on his own to start his own private mercenary company, much to his farther's dismay. 	Human	Soldier	1	0	2018-07-06 21:44:43.432245	\N	6	7	7
 66	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	2	0	2018-07-06 22:19:56.342672	\N	6	6	6
 67	Chip The Coursair	90	100	4	6	4	5	5	9	9	1	6	6	18	Chip the coursair is a former pirate swabby who skipped his ship. He uses a GS101 combat sword and wears adv. light armor. He is saving up for a cloaking module and has 540 credits left. He wears a radio headset and has the following skills: Stealh (20) sleight o hand (10), Accrobatics (10), Weapons( Thrown)(10) and weapons - melee (20).	Human	Assassin	1	0	2018-07-06 22:31:57.1329	\N	9	4	5
+56	test	100	110	8	5	6	7	8	6	2	1	12	12	12	\N	Human	Gunslinger	1	0	2017-11-01 22:39:47.070917	2018-07-16 05:25:28.653783	3	3	3
+61	Blah	100	100	6	6	6	6	6	6	6	1	12	12	12	bblah	Human	Soldier	1	0	2018-05-11 18:09:10.887437	2018-07-16 05:25:59.380485	6	6	6
+68	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	1	0	2018-07-10 23:34:00.856982	2018-07-16 05:26:04.963475	6	6	6
+72	TDDR-1942	110	110	3	8	6	6	6	8	3	1	12	12	20	TDDR-1942 is the leader of the Eagle team created by PARA Corp to do the corporation's dirty work. He was created along with ULYG-1864, AHAM-1789 and AJAX-. \r\nTDDR insists that his team follow the rules of combat:\r\n1. No friendly casualties\r\n2. No bot gets left behind\r\n3. Finish the mission. No matter what.\r\n4. If it's not nailed down well enough, it's ours.\r\n5. Communicate with your team no secrets\r\n\r\nskills:\r\nVehicle(space) - 10\r\nVehicle (land) - 10\r\nPersuasion - 5\r\nInvestigate - 3\r\nRepair - 5\r\n\r\nInventory:\r\n104 credits\r\nrepair kit\r\nsnack cooling rod\r\n2 full SMG mags\r\nIntegrated RVCmodule	Security Drone	Pilot	1	0	2018-07-17 17:46:49.409305	\N	8	6	6
+73	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	8	0	2018-07-20 00:36:33.263674	\N	6	6	6
 \.
 
 
@@ -586,6 +618,7 @@ COPY public.feats (pk_id, feat, prerequisites, description, author, created_at, 
 
 COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
 1	56	3
+2	64	3
 \.
 
 
@@ -593,7 +626,7 @@ COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
 -- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
 --
 
-SELECT pg_catalog.setval('public.feats_map_pk_id', 1, true);
+SELECT pg_catalog.setval('public.feats_map_pk_id', 2, true);
 
 
 --
@@ -604,17 +637,37 @@ SELECT pg_catalog.setval('public.feats_pk_id', 4, true);
 
 
 --
--- Data for Name: login_audit_log; Type: TABLE DATA; Schema: public; Owner: postgres
--- Data has been redacted; contains password attempts
+-- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: turtlelord
 --
 
+COPY public.inventory (pk_id, created_at, name, quantity, private, deleted_at, fk_character_owner, value) FROM stdin;
+2	2018-08-01 02:36:32.736263	MarkAll(TM) Permanent Marker	1	f	\N	64	2
+\.
+
+
+--
+-- Name: inventory_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+--
+
+SELECT pg_catalog.setval('public.inventory_pk_id', 2, true);
+
+
+--
+-- Data for Name: login_audit_log; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.login_audit_log (pk_id, username, password, ip_address, log_time) FROM stdin;
+1	Bleehu	testlog	172.0.0.0	2017-11-08 23:18:21.278566
+2	Bleehu	testlog	172.0.0.0	2017-11-09 22:06:26.332721
+3	Bleehu	testlog	172.0.0.0	2017-11-13 22:04:41.523282
+\.
 
 
 --
 -- Name: login_log_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.login_log_seq', 135, true);
+SELECT pg_catalog.setval('public.login_log_seq', 188, true);
 
 
 --
@@ -637,35 +690,35 @@ SELECT pg_catalog.setval('public.missions_pk_seq', 1, true);
 -- Name: monster_ability_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monster_ability_map_pk_seq', 99, true);
+SELECT pg_catalog.setval('public.monster_ability_map_pk_seq', 105, true);
 
 
 --
 -- Name: monster_ability_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monster_ability_pk_seq', 57, true);
+SELECT pg_catalog.setval('public.monster_ability_pk_seq', 59, true);
 
 
 --
 -- Name: monster_armor_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monster_armor_map_pk_seq', 39, true);
+SELECT pg_catalog.setval('public.monster_armor_map_pk_seq', 40, true);
 
 
 --
 -- Name: monster_armor_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monster_armor_pk_seq', 16, true);
+SELECT pg_catalog.setval('public.monster_armor_pk_seq', 17, true);
 
 
 --
 -- Name: monster_weapon_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monster_weapon_map_pk_seq', 38, true);
+SELECT pg_catalog.setval('public.monster_weapon_map_pk_seq', 40, true);
 
 
 --
@@ -681,7 +734,11 @@ SELECT pg_catalog.setval('public.monster_weapon_pk_seq', 29, true);
 
 COPY public.monsters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level, author, created_at, deleted_at, private) FROM stdin;
 47	Antlion Grub	90	60	9	1	9	1	1	8	5	8	8	6	['These sightless worms are usually found tunneling deep within damp hillsides and usually emerge when rainstorms flood their lairs or when they sense the vibrations of potential prey through the soil.\r', 'While usually solitary, flooding can force all the grubs in the area towards the same high ground.\r', 'The average antlion grub is 1.5m long and 100lbs with a strong, dirt-colored exoskeleton.']	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+69	Flying Antlion	60	60	2	14	3	1	4	14	6	2	-4	44	     The flying antlion has two pair of large gossamer wings that fold behind the chitinous Elytra on their backs. They sport two mouth mandibles dripping in acid with a short but accurate grooved proboscis for projecting acid at longer distances. The flying antlion measures about 1m long by 0.4m by 0.3m tall. \r\n    But perhaps most strikingly, flying antlions have longer palps and antennae along with large compound eyes. Their spindly legs and wings let the flying antlion move with surprising agility. This mobility does come at the cost of the antlion's tough exoskeletal plates however. 	Swarm	5	Mike(ADMIN)	2018-07-15 19:31:36.049766	\N	\N
 38	Pirate Medic	90	130	4	4	6	6	8	8	2	16	12	12	Prescribes so many doses of grog, you begin to wonder if he's getting kickbacks... 	Healer	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
+70	Test Private	90	90	5	5	5	5	5	5	5	5	5	5	test teast	Infantry	1	Mike(ADMIN)	2018-07-16 05:43:24.129369	2018-07-16 05:43:46.033458	t
+71	test	90	90	5	5	5	5	5	5	5	5	5	5	testing public monsters	Infantry	1	Mike(ADMIN)	2018-07-16 05:43:36.008714	2018-07-16 05:43:42.844873	f
+74	Shockray	90	60	2	5	4	2	1	5	3	-2	0	8	\tAn unintelligent aquatic herbivore that often forms a symbiotic bond with much larger aquatic predators alongside others of its kin. They possess internal glands that generate electricity, which it can then administer by physical contact via the two suction cup-tipped appendages. \r\n        \t\t\t\t\t\t	Minion	3	Eryneril	2018-08-03 22:11:01.914854	\N	f
 2	Pirate Gunslinger	110	110	3	9	6	7	6	8	3	12	14	22	Never without his trusty cowboy hat or dual revolvers. Clearly shaves as though he has access to a razor, but doesn't really know how to use it right. Smells of cheap booze and few showers. Wears cowboy boots and a patched-up gas mask. Appears more attentive than most of his compatriots, and seems to keep his head on a swivel.	Infantry	5	Bleehu	2017-11-01 22:40:22.227657	\N	f
 20	Rigistruct Marine PFC	145	90	8	5	8	6	4	8	4	12	16	14	A Rigistruct Naval Marine Private First Class is tougher than his wet-behind-the-ears private underlings. After all, their on their second tour! They've seen action (probably). Perhaps more importantly, they have been through a second round of boot camp and have qualified to use automatic weapons. PFCs usually have a better grip on the reality of war than their younger counterparts. While they may make a mistake here or there, they try and succeed at being more attentive to their commanding officer and more attuned to their squadmates.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
 21	Rigistruct Marine Combat Doc	110	120	4	5	7	8	7	8	4	14	16	14	Rigistruct Marine Combat Doctors usually are attached to more senior combat squads, or in teams of doctors on humanitarian missions. MCDs can range from having a gaurdian angel complex to having depression bottled up expertly from seeing so much death and hurt. Cool under fire and steadfast during surgery. MCDs carry a backpack with the latest of Rigistruct medical equipment, capable of diagnosing and treating a wide variety of maladies in the field. Often with the expediency required by combat. Marine Combat Docs outrank PFCs, Privates, and sergeants. Though an MCD usually won't pull rank with a sergeant out of respect for their command expertise.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
@@ -796,6 +853,8 @@ COPY public.monsters_abilities (pk_id, name, type, description, author, created_
 56	Antlion Acid Spray	Action	For an action, this antlion can spray acid in a 5m diameter area up to 20m away. Any characters in cover in this area are now under Moderate Suppression. Any character not in cover or any character that moves through the suppression takes 60 acid damage and two acid burn tokens (which work exactly like plasma burn). \r\n\r\nThis action cannot be taken by this character more than once per round. 	Mike(ADMIN)	2018-05-16 17:15:16.579978	\N
 35	Antlion Acid Attack	Action	An Antlion spits a glob of highly caustic acid at a nearby enemy.\r\nMiss: 40%\r\nRange: 20m\r\nDmg: 50 damage and sets two acid burn tokens which work like plasma burn until neutralized	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
 57	Preemptive Strike	Reaction	Whenever a character that this character is aware of enters a square adjacent to this one, this character may make a melee attack against that one as an immediate reaction.	Mike(ADMIN)	2018-07-02 04:26:49.279082	\N
+58	Fly Eyes	Passive	This unit has multi-faceted eyes and gets advantage on Perception rolls for spot, investigate and awareness. 	Mike(ADMIN)	2018-08-01 02:43:54.765142	\N
+59	Stimulator Shock	Action	The shockray sends an electrical pulse through the target. This action does not affect creatures that are Huge or larger.\r\nRange: Melee\r\nDMG: 35 + DC 45 FOR saving throw or be stunned for 1 round	Eryneril	2018-08-03 22:11:27.159402	\N
 \.
 
 
@@ -897,6 +956,11 @@ COPY public.monsters_ability_map (pk_id, fk_monster_id, fk_ability_id) FROM stdi
 97	48	56
 98	48	57
 99	60	57
+100	69	35
+101	69	44
+102	69	36
+104	69	58
+105	74	59
 \.
 
 
@@ -938,6 +1002,7 @@ COPY public.monsters_armor_map (pk_id, fk_monster_id, fk_armor_id) FROM stdin;
 37	59	8
 38	60	16
 39	49	12
+40	69	17
 \.
 
 
@@ -949,19 +1014,20 @@ COPY public.monsters_armors (pk_id, name, coverage, description, author, type, a
 3	White Initiate Robes	80	White cotton robes enchanted such that they reduce 30 points of nanite damage that hits them.	Bleehu	Recon	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
 4	New Salem Light armor	30	Armor for a minion who doesn't expect strong resistance and likely wouldn't have the resources to deal with any coordinated threat.	Rev	Light	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
 7	Triad Trenchcoat	50	A long dark trench coat over some nanoweave Kevlar to keep one from sleeping with the fishes. It has several black buttons and elegant pockets on the front, with a matching black belt. Under that, it has a pinstriped black vest which will stop some small arms fire. It also sports a concealed pistol holster and pockets for 4 primary magazines, 4 secondary magazines and up to 2 grenades. Gives a +10% to stealth checks in urban environements and a +20% to Fortitude checks to resist cold. 	Mike(ADMIN)	Medium	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
-6	Pirate Firesuit	100	This full suit of flame retardant gear was probably originally intended for use fighting fires on cargo cruisers. Since then it has had crude pockets for grenades and some extra bulletproofing added. The wearer of this suit has a -1m/half action movement penalty, but is immune to fire damage.	Mike(ADMIN)	Full	2	80	4	220	None	0	2017-11-01 22:40:37.572405	\N
 15	Rigistruct EOD Armor	80	Rigistruct Explosive Ordinance Distribution division uses an appropriately heavier standard issue battle uniform to prevent liability around their own tools. It comes in the same variety of camouflage patters as the standard BDU. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with pockets for up to 5 grenades. It also comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. The heavy armor has a 2m movement penalty.	Mike(ADMIN)	Full	5	120	5	460	None	2	2017-11-01 22:40:37.572405	\N
 14	Refugee Rags	10	Unadorned cheap textiles draped cleverly around this unit's body. Cleverly tied to allow for free movement, but maintaining decency. While not much to look at, the rags are decently comfortable, surprisingly warm yet breathable. They have pockets for 2 grenades. The unit wearing this armor gets a 15% penalty to persuasion and bartering skill checks. 	Mike(ADMIN)	Recon	0	0	6	10	None	0	2017-11-01 22:40:37.572405	\N
-5	Kletturkett Hide	80	The thick hide of the so called "Rock Cat" is where the beast gets it's name from. Its interlocking keratin scales cover it's back, but not some softer patches on its neck and belly. The armor gives a +15 to stealth checks in desert or sandy environments. Live Kletturkett hide reduces incoming laser fire by 20 points. A skilled survivalist can harvest the hide from a dead Kletturkett with a survivor check of 80. It makes a set of heavy armor which carries 5 mag space.	Mike(ADMIN)	Full	6	340	2	650	None	2	2017-11-01 22:40:37.572405	\N
 2	Pirate vest	40	Polyester webbing with peices of starship reentry plates in pockets protecting one's vital bits. Held together with belts made from FTL jump seat belts. 	Mike(ADMIN)	Light	2	60	6	600	None	0	2017-11-01 22:40:37.572405	\N
 1	Pirate Plate	70	A steel plate worn with straps.	Mike(ADMIN)	Heavy	3	60	6	800	None	1	2017-11-01 22:40:37.572405	\N
 8	Summoner's Cloak	10	The swirling black-purple cloak of the summoner is lined with sinister secrets and adornment. The wearer of this cloak has 30 extra maximum nanites. It also has a belt which makes it easy to conceal a small melee weapon such as a knife.  The cloak has the unfortunate drawback of being fairly flammable. 	Mike(ADMIN)	Recon	1	80	6	0	None	0	2017-11-01 22:40:37.572405	\N
-9	Rigistruct BDU	65	The standard issue Rigistruct Battle Dress Uniform comes in a variety of theater-appropriate camouflage patterns such as desert, jungle, forest, urban or snow. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. 	Mike(ADMIN)	Medium	3	60	8	1100	None	1	2017-11-01 22:40:37.572405	\N
 13	Rigistruct CDiv Stealth Armor	70	This clean, black armor is enabled with nanite cloaking technology. In addition, it offers moderate protection.	Mike(ADMIN)	Medium	4	120	8	2400	Cloaking unit. Cloaking activation cost: 20 nanites. Cloaking nanite upkeep: 4 nanites. Cloaking turn bonus: 2 turns. Cloaking charge delay: 5 turns.	1	2017-11-01 22:40:37.572405	\N
 11	Antlion Soldier Exoskeleton	70	Soldier exoskeleton resists slashing and puncturing damage: increase AS to 120 for these types of damage.	Mike(ADMIN)	Heavy	2	80	0	300	None	0	2017-11-01 22:40:37.572405	\N
-10	Antlion Grub Exoskeleton	70	Antlion grubs' armor has evolved primarily to protect the creatures from cave-ins while tunneling and has weak points at joints along the grub's body.	Mike(ADMIN)	Full	1	60	8	200	None	1	2017-11-01 22:40:37.572405	\N
-12	Antlion Worker Exoskeleton	60	Antlion workers have fairly light exoskeletons compared to their soldier kin.	Mike(ADMIN)	Light	1	80	0	200	None	0	2017-11-01 22:40:37.572405	\N
+6	Pirate Firesuit	100	This full suit of flame retardant gear was probably originally intended for use fighting fires on cargo cruisers. Since then it has had crude pockets for grenades and some extra bulletproofing added. The wearer of this suit is immune to fire damage, and has a gas mask cannot be worn with helmets or night vision goggles.	Mike(ADMIN)	Full	2	80	4	220	None	0	2017-11-01 22:40:37.572405	\N
+9	Rigistruct BDU	65	The standard issue Rigistruct Battle Dress Uniform comes in a variety of theater-appropriate camouflage patterns such as desert, jungle, forest, urban or snow. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. 	Mike(ADMIN)	Medium	3	60	8	1100	None	2	2017-11-01 22:40:37.572405	\N
+10	Antlion Grub Exoskeleton	70	Antlion grubs' armor has evolved primarily to protect the creatures from cave-ins while tunneling and has weak points at joints along the grub's body. The plating itself is an off-yellow color with knobby enamel segments that sit over the grub's grayish skin. A survival check of DC 35 can be used to strip and clean the chitin plates for use as a level 1 armor material with Armor Strength of 40. If three grubs are cleaned this way,  a light armor rig can be constructed with the state above. 	Mike(ADMIN)	Light	0	40	4	200	None	0	2017-11-01 22:40:37.572405	\N
+12	Antlion Worker Exoskeleton	60	Antlion workers have fairly light exoskeletons compared to their soldier kin.	Mike(ADMIN)	Medium	1	80	0	200	None	0	2017-11-01 22:40:37.572405	\N
+5	Kletturkett Hide	80	The thick hide of the so called "Rock Cat" is where the beast gets it's name from. Its interlocking keratin scales cover it's back, but not some softer patches on its neck and belly. The armor gives a +15 to stealth checks in desert or sandy environments. Live Kletturkett hide reduces incoming laser fire by 20 points. A skilled survivalist can harvest the hide from a dead Kletturkett with a survivor check of 80. It makes a set of heavy armor which carries 5 mag space.	Mike(ADMIN)	Full	6	340	5	650	None	3	2017-11-01 22:40:37.572405	\N
 16	Antlion Queen Exoskeleton	70	The thick chitin plates of the Antlion Queen fit together and move with surprising ease. They appear bone white with an acid green pearlesense. The Antlion Queen armor gives the wearer immunity to acid damage. The armor may be harvested with a survival check of DC 60. When harvested, it can hold 6 grenades and comes full with acid grenades made from the eggs of the Antlion Queen.	Mike(ADMIN)	Heavy	2	160	4	1600	None	1	2018-04-04 18:11:20.669668	\N
+17	Antlion Aero Carapace	60	Thin, white, hard plates interlock around the joints and body of the antlion, leaving plenty of room to move around and flap wings in. The plates have a subtle acid green sheen to them if viewed in good light or bright muzzle flash.  \r\nThe antlion chitin can be harvested with a Survival check of DC 40. Two samples are needed for either an arm or a leg slot, and four samples are needed to construct a chest slot of armor. Succeeding on the check on a dead flying antlion gives one sample. Success or failure on a check despoils the antlion corpse so that no further checks can be made from that corpse. The material has APL of 1 and AS of 40.	Mike(ADMIN)	Light	1	40	0	500	None	0	2018-08-01 02:40:29.299446	\N
 \.
 
 
@@ -969,7 +1035,7 @@ COPY public.monsters_armors (pk_id, name, coverage, description, author, type, a
 -- Name: monsters_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.monsters_pk_seq', 67, true);
+SELECT pg_catalog.setval('public.monsters_pk_seq', 74, true);
 
 
 --
@@ -1014,6 +1080,8 @@ COPY public.monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin
 36	55	24
 37	54	24
 38	59	4
+39	55	27
+40	54	27
 \.
 
 
@@ -1023,32 +1091,32 @@ COPY public.monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin
 
 COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level, created_at, deleted_at) FROM stdin;
 15	20	1	This simple garden tool has a long, durable wooden handle and a sharp wrought iron 12 toothed take blade at the end. Perfect for collecting leaves, tilling topsoil or cracking skulls. When used, gives a +20 skill to gardening checks. Every attack with this weapon must roll a strength check. On a roll above 80, the rake deals triple damage, but breaks in the process. 	Garden Rake	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
-11	45	30	The weapon overheats on both a 1 and a 2 dealing 10 plasma damage to wielder. Hits inflict 2xPlasma Burn	Pirate Plasma Rifle	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	0	15	0	-8	0	0	None	2017-11-01 22:40:45.493946	\N
-8	60	30	The Rigistruct Standard-Issue Plasma Assault Rifle Ionizes Helium and launches the energy projectile at the speed of conventional munitions. The SIPAR Never jams instead when a player using the SIPAR rolls a 1, expend 1d4 rounds and miss. Targets hit with the SIPAR take 1 token of plasma burn per bullet hit.	Rigistruct SIPAR-6	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	0	15	0	-8	0	0	None	2017-11-01 22:40:45.493946	\N
-3	60	0	This long knife is sharp and simple.	Buck Knife	Bleehu	Melee	0	1	1	1	2	2	2	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
-14	55	30	This is a really old assault rifle mostly held together with duct tape, but some of the old wood buttstock still gleams. You get the sense that this rifle would tell amazing stories if it could talk.	Relic Rifle	Mike(ADMIN)	Carbine	18	10	20	40	4	4	5	0	15	0	-10	0	0	None	2017-11-01 22:40:45.493946	\N
 17	50	20	When held, reduces move speed by 1m per action. When hit, lights small fires in the area at the DM's discretion which will damage targets that move through them by 30 points. A target hit takes an ongoing 40 fire damage for three turns or until the fire is put out. Burning fire does not stack. Fire  Affected by shields normally. A burning target's chance to miss is increased by 3. Cannot mount barrel or magazine attachments nor scopes, but you may mount small sights to the weapon. Requires strength 8 and level 5 to wield. Two actions to reload.	Flamethrower	Mike(ADMIN)	Heavy Weapon	200	5	10	20	2	3	4	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
-9	45	30	Developed in conjunction with the SISMG and SIPAR, the plasma carbine which is standard issue for all Rigistruct Marines never jams. Instead, when it does malfunction (rolls a 1) it uses a complex but robust series of auxiliary systems to vent excess plasma away from the operator. It's not a particularly accurate wepon, but hits with the device do leave a plasma burn token on the target. 	Rigistruct SIDMR-14	Mike(ADMIN)	Carbine	35	15	40	65	3	4	5	0	15	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
-5	200	1	Gets a -20% to miss when firing at a vehicle. Deals 1 vehicle damage. Makes a loud noise when fired and leaves a smoke trail behind the projectile cannot be fired stealthily. Full action to aim, Half action to fire, Full action to reload. Hits an area of 2m radius. Every target in the area of effect may make a DC 70 Reflex save to dive out of the way. On success, the target moves out of the zone of affect and goes prone. On failure, takes damage.	RPG	Mike(ADMIN)	Heavy Weapon	125	10	30	70	4	5	6	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
-10	54	5	Jams on a 1 or 2. Comes with a crude scope mounted. Ignores the first 30 DR from armor. Half Action to fire. Full action to reload. Requires a strength 7 to use, comes with a 2 point sling attached. (stats included above. ) Unit cannot be silenced. Fires custom crude charges. A target hit with this weapon that doesn't take full damage from it must make a Shock Save of DC 60 or get knocked over. % to miss	Pirate Antimaterial Rifle	Mike(ADMIN)	Long Rifle	65	20	80	150	2	3	5	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
-13	8	1	8 x strength damage. These long black heavy claws are razor sharp and have a wicked curve to them. Harvestable with a survivor check of 50.	Kletturkett Claws	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	15	0	0	None	2017-11-01 22:40:45.493946	\N
-7	30	30	The Rigistruct Standard Issue Submachine Gun fires a 10mm round very rapidly with a high rate of recoil. In addition, The SISMG-8 never jams. If a player rolls a 1, simply eject 1d4 extra rounds from the mag and miss. 	Rigistruct SISMG-8	Mike(ADMIN)	SMG	35	10	25	45	3	4	5	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
-12	40	30	It's jenky as hell, inaccurate to boot. But it stings if it does manage to clip ya. 	Pirate SMG	Mike(ADMIN)	SMG	25	10	20	30	4	5	6	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
 4	60	0	A long jagged knife with an ornate crosshilt.                 \r\n                        	Sacrificial Knife	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	20	0	30	None	2017-11-01 22:40:45.493946	\N
 19	60	80	3 Miss chance -1 for every 3 strength in automatic fire. A favorite of hitmen and agressors of ill repute. The light stock makes for a less accurate weapon, but the large drum and heat-sunk barrel suggests that it is likely capable of sustained high-rate fire. 	Triad Tommygun	Mike(ADMIN)	Automatic Rifle	35	15	30	70	3	4	5	2	40	0	-15	6	1430	Medium	2017-11-01 22:40:45.493946	\N
 20	45	25	Stock player weapon. A light SMG commercially produced by the Earth Coalition Space Core. 	ECSC Mk9 PDW	Mike(ADMIN)	SMG	12	10	20	40	4	5	6	0	30	0	10	8	1027	Medium	2017-11-01 22:40:45.493946	\N
 21	70	30	The experimental Rigistruct Designated Marksman rifle is the weapon of choice for the corporation's clandestine operators. The integrated suppressor helps maintain discretion at the cost of some range and damage. The weapon itself is a nonreflective matte black with angular body and stock. The arch rails are also made with crisp angles, on which sits a red dot sight. The barrel sits in a rounded square baffle that runs the length of the weapon, but the baffle doesn't seem to have any heat sinks. Perhaps this hints at the weapon's rate of fire? If the weapon would jam, it instead ejects an extra casing. 	Rigistruct XDMR-14-SD	Mike(ADMIN)	Carbine	30	20	45	65	2	4	5	3	30	0	0	0	1590	Medium	2017-11-01 22:40:45.493946	\N
-1	30	2	deals 90 @ 3m, 50 @ 10m, 30 @ 20m	Bandit's Blunderbuss	Mike(ADMIN)	Shotgun	15	8	18	40	3	5	5	1	15	1	0	0	900	Light	2017-11-01 22:40:45.493946	\N
 2	60	6	An ugly, rusty six shot revolver that works just fine nonetheless.	Raider's Revolver	Mike(ADMIN)	Pistol	18	5	15	25	3	4	6	3	15	0	15	0	450	Light	2017-11-01 22:40:45.493946	\N
 22	55	6	The matte black boxy looking pistol is tipped with a suppressor that is almost as long as the barrel. The eject on the side of the action looks surprisingly large compared to the grip surrounding the magazine. Despite the length of the suppressor, it appears to be carefully balanced by the way it rests in the user's hand.	Rigistruct RP-18-SD	Mike(ADMIN)	Pistol	10	5	10	30	1	2	4	2	25	0	20	0	920	Light	2017-11-01 22:40:45.493946	\N
+14	55	30	This is a really old carbine rifle mostly held together with duct tape, but some of the old wood buttstock still gleams. You get the sense that this rifle would tell amazing stories if it could talk. Has a -3 penalty for firing in full auto, but that can be mitigated if you are strong enough. For every 4 strength a character has, the accuracy penalty for firing in full auto is ameliorated by 1.	Relic Rifle	Mike(ADMIN)	Carbine	18	10	35	55	2	4	5	2	15	0	-10	6	590	Medium	2017-11-01 22:40:45.493946	\N
+11	45	30	The weapon overheats on both a 1 and a 2 dealing 10 plasma damage to wielder. Hits inflict 2xPlasma Burn. Has a 3-round burst and 6-round auto fire mode. Burst fire mode has a -2 to accuracy, with a +1 for each 4 strength. Auto fire has a -3 accuracy penalty, with a +1 for each 3 strength the wielding character has.	Pirate Plasma Rifle	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	3	15	0	-8	6	2000	Medium	2017-11-01 22:40:45.493946	\N
+3	60	0	This long knife is sharp and simple.	Buck Knife	Mike(ADMIN)	Melee	0	1	1	1	2	2	2	0	15	0	10	0	250	None	2017-11-01 22:40:45.493946	\N
+13	8	1	8 x strength damage. These long black heavy claws are razor sharp and have a wicked curve to them. Harvestable with a survivor check of 50.	Kletturkett Claws	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	15	0	420	None	2017-11-01 22:40:45.493946	\N
+12	40	30	It's jenky as hell, inaccurate to boot. But it stings if it does manage to clip ya. Fires 6 shots with full auto mode with a +4 to miss. The full auto accuracy penalty is slightly better if you're dexterous enough. For every 4 dex your character has, the penalty has a -1 to miss.	Pirate SMG	Mike(ADMIN)	SMG	25	10	20	30	4	5	6	0	15	0	10	6	1100	Medium	2017-11-01 22:40:45.493946	\N
+8	60	30	The Rigistruct Standard-Issue Plasma Assault Rifle Ionizes Helium and launches the energy projectile at the speed of conventional munitions. The SIPAR Never jams instead when a player using the SIPAR rolls a 1, expend 1d4 rounds and miss. Targets hit with the SIPAR take 1 token of plasma burn per bullet hit. Firing in Full auto has a -4 accuracy penalty. For every 4 strength a wielder has, that penalty is 1 less.	Rigistruct SIPAR-6	Mike(ADMIN)	Automatic Rifle	24	15	45	75	3	4	5	2	15	0	-8	6	2100	Medium	2017-11-01 22:40:45.493946	\N
+7	30	40	The Rigistruct Standard Issue Submachine Gun fires a 10mm round very rapidly with a high rate of recoil. In addition, The SISMG-8 never jams. If a player rolls a 1, simply eject 1d4 extra rounds from the mag and miss. Has single, 3-round burst and 8-round full auto modes. Burst fire has a -3 accuracy penalty, which is alleviated by 1 with each 5 Dex the wielder has. Auto Fire has a +6 to miss with - 1 for every 4 Dexterity the wielder has.	Rigistruct SISMG-8	Mike(ADMIN)	SMG	20	10	25	45	3	5	7	2	15	0	10	8	0	Medium	2017-11-01 22:40:45.493946	\N
+5	200	1	Gets a -2 to miss when firing at a vehicle. Deals 1 vehicle damage. Makes a loud noise when fired and leaves a smoke trail behind the projectile so it cannot be fired stealthily. Two Actions to aim, One Action to fire. Two Actions to reload. Hits an area of 2m radius. Every target in the area of effect may make a DC 70 Reflex save to dive out of the way. On success, the target moves out of the zone of affect and goes prone. On failure, the target takes damage.	RPG	Mike(ADMIN)	Heavy Weapon	125	10	30	70	4	5	6	10	60	1	-20	0	1800	None	2017-11-01 22:40:45.493946	\N
 23	30	30	Several drones which are constructed by engineers or summoned by summoners come with ancillary light caliber weapons mounted on them commonly known as "popguns". They typically have a short chrome barrel and a boxy housing mounted to the back or body of the owner. As such, the weapon is always drawn and cannot be holstered. A DC 60 repair roll or equivalent must be passed in order to recover the weapon from a downed enemy and still have the weapon operate. 	Mounted Popgun	Mike(ADMIN)	Pistol	25	8	20	50	2	3	3	2	20	0	15	0	0	None	2017-11-01 22:40:45.493946	\N
-24	45	20	he standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
 16	9	1	Deals 9 x strength damage. A favorite among pirates who engage in the often cramped quarters of space ships, the bosun's "brass" knuckles are actually crude heavy chunks of starship steel plate with a grip cut into it and rounded off so as not to cut the wearer. Minimum strength of 5 to wield. 	Bosun's Brass Knuckles	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	10	0	200	None	2017-11-01 22:40:45.493946	\N
 25	15	3	A tazer pistol with a black memory foam handle and a yellow and black striped flat front muzzle. The yellow lightning bolts emblazoned on the sides clearly differentiate it from a more lethal weapon.\r\nIf this weapon hits a target's health, then that target must pass a DC 110 shock save. If they succeed, they lose one action on their next turn and shake off the rest of the effects of being tazed. If they fail, they lose 4 actions on their next turn and the DC for their next taze roll is reduced by 10. Hits with this weapon leave pitons and wires embedded in their target which can be shaken off with an action and a reflex save of DC 30. As long as the pitons are still in their target, once per round the wielder of the tazer can spend one action per target and re-administer the shock save.\r\nPlease note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	Police Tazer Pistol	Mike(ADMIN)	Pistol	20	5	10	15	2	4	6	2	30	0	30	0	700	Light	2017-12-27 23:32:42.875108	\N
 26	8	0	A large shield made of armor plate capable of deflecting bullets and melee weapons alike. Gives the wielder an additional 4 APL in a 180 degree cone. Can be used to shield bash for 8 x Strength (not Strength Mod) in 1m. On hit, target must make a FORT save opposed by the wielder's strength roll or be knocked prone. Wielder's perception rolls are reduced by 20. Strength requirement of 7 to carry.	Riot Shield	Mike(ADMIN)	Melee	0	1	1	1	4	4	4	0	0	2	0	0	600	None	2017-12-27 23:52:00.796782	\N
 27	45	20	The standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired.	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	720	Medium	2018-01-03 23:10:53.676377	\N
 28	70	6	The MSE-8a is produced in the Machine Empire mostly for use in close-quarters combat against other rogue cybernetics. Once a target is hit with this weapon, they must roll three DC 40 Shock checks and lose an action next turn due to tazing for each roll failed. On success, no tazing effect occurs. The MSE-8a is a pump action, so the unit using it must spend an action operating the rack between shots. The gun itself has a dull chrome sheen to it, a hollow metal plate buttstock and a large round recoil-compensating barrel grip. When loaded, the gun glows with an electric blue light. This light dies when the gun is empty.	MSE-8a Taser Shotgun	Mike(ADMIN)	Shotgun	22	5	15	25	1	3	4	1	35	0	6	0	2000	Light	2018-01-03 23:13:38.532342	\N
 29	110	7	Stock player weapon	Partix X20 Laser Rifle	Mike(ADMIN)	Long Rifle	29	20	150	200	2	3	4	10	35	1	-30	0	5877	Light	2018-01-03 23:17:37.279717	\N
+1	65	2	This ramahackle boomstick seems to be crudely held together with epoxy and honest-to-god rivets. The stock seems like it used to be made of wood before it was mostly sawn off to make it easier to use in close combat. The barrels likewise have been cut almost too short. Its wide choke suggests that it deals devastating damage up close. But likely loses accuracy and fire concentration at even medium range. The break action takes 2 Actions to reload. This shotgun deals 90 damage @ 3m, 50 @ 10m, 30 @ 20m.	Bandit's Blunderbuss	Mike(ADMIN)	Shotgun	15	4	8	30	2	3	6	1	15	1	0	0	900	Light	2017-11-01 22:40:45.493946	\N
+24	45	20	he standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	0	None	2017-11-01 22:40:45.493946	2018-07-19 09:27:09.83399
+10	80	5	Jams on a 1 or 2. Comes with a crude scope mounted. Action to fire. Two Actions to reload. Requires a strength 7 to use, comes with a 2 point sling attached. (stats included above. ) Unit cannot be silenced. Fires custom crude charges. A target hit with this weapon that doesn't take full damage from it must make a Shock Save of DC 60 or get knocked over.	Pirate Antimaterial Rifle	Mike(ADMIN)	Long Rifle	65	20	80	150	2	3	5	6	15	1	-20	0	1500	Light	2017-11-01 22:40:45.493946	\N
+9	75	30	Developed in conjunction with the SISMG and SIPAR, the plasma carbine which is standard issue for all Rigistruct Marines never jams. Instead, when it does malfunction (rolls a 1) it uses a complex but robust series of auxiliary systems to vent excess plasma away from the operator. It's not a particularly accurate weapon, but hits with the device do leave a plasma burn token on the target. Has a burst fire mode, but no full auto. Firing in bursts leaves a -2 accuracy penalty that can be alleviated if the wielder is strong enough. For every 4 strength a wielder has, the accuracy penalty is 1 less.	Rigistruct SIDMR-14	Mike(ADMIN)	Carbine	35	15	40	65	3	4	5	4	15	0	2	3	3100	Medium	2017-11-01 22:40:45.493946	\N
 \.
 
 
@@ -1056,10 +1124,12 @@ COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author
 -- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: turtlelord
 --
 
-COPY public.skills (pk_id, fk_owner_id, skillname, points, private) FROM stdin;
-1	61	poor_life_decisions	10	f
-2	61	Persuasion	5	f
-3	56	weapons-assault_rifle	20	f
+COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, deleted_at) FROM stdin;
+1	61	poor_life_decisions	10	f	\N	\N
+2	61	Persuasion	5	f	\N	\N
+3	56	weapons-assault_rifle	20	f	\N	\N
+4	64	test	15	f	2018-08-19 04:41:38.493423	\N
+5	64	blah	11	f	2018-08-19 04:41:49.472237	\N
 \.
 
 
@@ -1072,14 +1142,19 @@ SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
--- Data has been redacted; it contains passwords
 --
+
+COPY public.users (pk_id, username, displayname, realname, password, role) FROM stdin;
+1	Bleehu	Mike(ADMIN)	Mike Hedges	CXCoding	ADMIN
+2	travisTest	travis_test	Travis CLI	travis1tractor	GM
+\.
+
 
 --
 -- Name: users_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_pk_id_seq', 9, true);
+SELECT pg_catalog.setval('public.users_pk_id_seq', 10, true);
 
 
 --
@@ -1104,6 +1179,14 @@ ALTER TABLE ONLY public.feats_map
 
 ALTER TABLE ONLY public.feats
     ADD CONSTRAINT feats_pkey PRIMARY KEY (pk_id);
+
+
+--
+-- Name: inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_pkey PRIMARY KEY (pk_id);
 
 
 --
@@ -1219,6 +1302,14 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
+-- Name: inventory_fk_character_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+--
+
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_fk_character_owner_fkey FOREIGN KEY (fk_character_owner) REFERENCES public.characters(pk_id) ON DELETE CASCADE;
+
+
+--
 -- Name: monster_ability_map_fk_ability_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1303,6 +1394,7 @@ REVOKE ALL ON TABLE public.characters FROM postgres;
 GRANT ALL ON TABLE public.characters TO postgres;
 GRANT ALL ON TABLE public.characters TO searcher;
 GRANT ALL ON TABLE public.characters TO turtlelord;
+GRANT ALL ON TABLE public.characters TO ubuntu;
 
 
 --
@@ -1322,7 +1414,8 @@ GRANT ALL ON SEQUENCE public.feats_pk_id TO searcher;
 REVOKE ALL ON TABLE public.feats FROM PUBLIC;
 REVOKE ALL ON TABLE public.feats FROM turtlelord;
 GRANT ALL ON TABLE public.feats TO turtlelord;
-GRANT SELECT ON TABLE public.feats TO searcher;
+GRANT ALL ON TABLE public.feats TO searcher;
+GRANT ALL ON TABLE public.feats TO ubuntu;
 
 
 --
@@ -1342,7 +1435,18 @@ GRANT UPDATE ON SEQUENCE public.feats_map_pk_id TO searcher;
 REVOKE ALL ON TABLE public.feats_map FROM PUBLIC;
 REVOKE ALL ON TABLE public.feats_map FROM turtlelord;
 GRANT ALL ON TABLE public.feats_map TO turtlelord;
-GRANT SELECT ON TABLE public.feats_map TO searcher;
+GRANT ALL ON TABLE public.feats_map TO searcher;
+GRANT ALL ON TABLE public.feats_map TO ubuntu;
+
+
+--
+-- Name: TABLE inventory; Type: ACL; Schema: public; Owner: turtlelord
+--
+
+REVOKE ALL ON TABLE public.inventory FROM PUBLIC;
+REVOKE ALL ON TABLE public.inventory FROM turtlelord;
+GRANT ALL ON TABLE public.inventory TO turtlelord;
+GRANT ALL ON TABLE public.inventory TO ubuntu;
 
 
 --
@@ -1364,6 +1468,7 @@ REVOKE ALL ON TABLE public.login_audit_log FROM postgres;
 GRANT ALL ON TABLE public.login_audit_log TO postgres;
 GRANT ALL ON TABLE public.login_audit_log TO validator;
 GRANT ALL ON TABLE public.login_audit_log TO turtlelord;
+GRANT ALL ON TABLE public.login_audit_log TO ubuntu;
 
 
 --
@@ -1375,6 +1480,7 @@ REVOKE ALL ON TABLE public.missions FROM postgres;
 GRANT ALL ON TABLE public.missions TO postgres;
 GRANT SELECT ON TABLE public.missions TO searcher;
 GRANT ALL ON TABLE public.missions TO turtlelord;
+GRANT ALL ON TABLE public.missions TO ubuntu;
 
 
 --
@@ -1445,7 +1551,7 @@ REVOKE ALL ON TABLE public.monsters FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters FROM postgres;
 GRANT ALL ON TABLE public.monsters TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters TO searcher;
-GRANT SELECT ON TABLE public.monsters TO ubuntu;
+GRANT ALL ON TABLE public.monsters TO ubuntu;
 GRANT ALL ON TABLE public.monsters TO turtlelord;
 
 
@@ -1457,7 +1563,7 @@ REVOKE ALL ON TABLE public.monsters_abilities FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters_abilities FROM postgres;
 GRANT ALL ON TABLE public.monsters_abilities TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_abilities TO searcher;
-GRANT SELECT ON TABLE public.monsters_abilities TO ubuntu;
+GRANT ALL ON TABLE public.monsters_abilities TO ubuntu;
 GRANT ALL ON TABLE public.monsters_abilities TO turtlelord;
 
 
@@ -1470,6 +1576,7 @@ REVOKE ALL ON TABLE public.monsters_ability_map FROM postgres;
 GRANT ALL ON TABLE public.monsters_ability_map TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_ability_map TO searcher;
 GRANT ALL ON TABLE public.monsters_ability_map TO turtlelord;
+GRANT ALL ON TABLE public.monsters_ability_map TO ubuntu;
 
 
 --
@@ -1481,6 +1588,7 @@ REVOKE ALL ON TABLE public.monsters_armor_map FROM postgres;
 GRANT ALL ON TABLE public.monsters_armor_map TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armor_map TO searcher;
 GRANT ALL ON TABLE public.monsters_armor_map TO turtlelord;
+GRANT ALL ON TABLE public.monsters_armor_map TO ubuntu;
 
 
 --
@@ -1491,7 +1599,7 @@ REVOKE ALL ON TABLE public.monsters_armors FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters_armors FROM postgres;
 GRANT ALL ON TABLE public.monsters_armors TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armors TO searcher;
-GRANT SELECT ON TABLE public.monsters_armors TO ubuntu;
+GRANT ALL ON TABLE public.monsters_armors TO ubuntu;
 GRANT ALL ON TABLE public.monsters_armors TO turtlelord;
 
 
@@ -1504,6 +1612,7 @@ REVOKE ALL ON TABLE public.monsters_weapon_map FROM postgres;
 GRANT ALL ON TABLE public.monsters_weapon_map TO postgres;
 GRANT SELECT,INSERT,DELETE ON TABLE public.monsters_weapon_map TO searcher;
 GRANT ALL ON TABLE public.monsters_weapon_map TO turtlelord;
+GRANT ALL ON TABLE public.monsters_weapon_map TO ubuntu;
 
 
 --
@@ -1514,7 +1623,7 @@ REVOKE ALL ON TABLE public.monsters_weapons FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters_weapons FROM postgres;
 GRANT ALL ON TABLE public.monsters_weapons TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_weapons TO searcher;
-GRANT SELECT ON TABLE public.monsters_weapons TO ubuntu;
+GRANT ALL ON TABLE public.monsters_weapons TO ubuntu;
 GRANT ALL ON TABLE public.monsters_weapons TO turtlelord;
 
 
@@ -1535,7 +1644,8 @@ GRANT UPDATE ON SEQUENCE public.skills_pk_id TO searcher;
 REVOKE ALL ON TABLE public.skills FROM PUBLIC;
 REVOKE ALL ON TABLE public.skills FROM turtlelord;
 GRANT ALL ON TABLE public.skills TO turtlelord;
-GRANT SELECT ON TABLE public.skills TO searcher;
+GRANT ALL ON TABLE public.skills TO searcher;
+GRANT ALL ON TABLE public.skills TO ubuntu;
 
 
 --
@@ -1546,6 +1656,7 @@ REVOKE ALL ON TABLE public.users FROM PUBLIC;
 REVOKE ALL ON TABLE public.users FROM postgres;
 GRANT ALL ON TABLE public.users TO postgres;
 GRANT ALL ON TABLE public.users TO validator;
+GRANT ALL ON TABLE public.users TO ubuntu;
 
 
 --

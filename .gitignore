@@ -8,3 +8,4 @@ usr/*
 *.log
 log/*
 config/*.cfg
+backups/*
