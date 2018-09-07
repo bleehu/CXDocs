@@ -57,6 +57,7 @@ def test_bestiary(client):
         assert 'role' not in session
 
 def test_enemy_database(client):
+    """Tests the selection of monsters """
     with client as c:
         with c.session_transaction() as session:
             session['username'] = 'Travis'
@@ -67,3 +68,9 @@ def test_enemy_database(client):
             new_config.read('config/cxDocs.cfg')
             enemies_common.set_config(new_config)
             monsters = enemies.get_monsters(session)
+            #the default enemy database should contain an enemy called an Antlion Grub.
+            grub_in_monsters = False
+            for monster in monsters:
+                if monster['name'] == 'Antlion Grub':
+                    grub_in_monsters = True
+            assert grub_in_monsters == True
