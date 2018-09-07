@@ -1,7 +1,8 @@
 import pytest #pytest helps us create the testbench and clean up afterwards
 from flask import session
 from ..server import app as cxApp 
-
+from ..server.enemies import enemies, enemies_common 
+import ConfigParser
 
 #the pytest fixtures are a way that the pytest tools keep track of encapsulated
 # components.
@@ -54,3 +55,15 @@ def test_bestiary(client):
         assert 'username' not in session
         assert 'displayname' not in session
         assert 'role' not in session
+
+def test_enemy_database(client):
+    with client as c:
+        with c.session_transaction() as session:
+            session['username'] = 'Travis'
+            session['displayname'] = 'travis_test'
+            session['role'] = 'GM'
+            session['X-CSRF'] = 'foxtrot'
+            new_config = ConfigParser.RawConfigParser()
+            new_config.read('../config/cxDocs.cfg')
+            enemies_common.set_config(new_config)
+            monsters = enemies.get_monsters(session)
