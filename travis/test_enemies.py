@@ -64,6 +64,6 @@ def test_enemy_database(client):
             session['role'] = 'GM'
             session['X-CSRF'] = 'foxtrot'
             new_config = ConfigParser.RawConfigParser()
-            new_config.read('../config/cxDocs.cfg')
+            new_config.read('config/cxDocs.cfg')
             enemies_common.set_config(new_config)
             monsters = enemies.get_monsters(session)
