@@ -171,7 +171,6 @@ def get_users_newest_character(session):
         ORDER BY c.pk_id DESC;" % session['displayname'])
     all_pk_ids = myCursor.fetchall()
     new_pk_id = all_pk_ids[0][0]
-    pdb.set_trace()
     new_character = get_character(new_pk_id)
     return new_character
 
