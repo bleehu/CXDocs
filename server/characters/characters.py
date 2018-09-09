@@ -1,4 +1,4 @@
-import characters_common
+from . import characters_common
 import psycopg2
 from ..security import security
 import pdb
@@ -144,7 +144,7 @@ def get_character(pk_id):
 
 def get_users_characters(session):
     these_characters = None
-    if 'username' not in session.keys():
+    if 'username' not in list(session.keys()):
         return None #if the user isn't signed in, this method should error out
     these_characters = []
     connection = characters_common.db_connection()

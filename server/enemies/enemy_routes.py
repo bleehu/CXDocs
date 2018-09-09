@@ -1,11 +1,11 @@
 #For more info on blueprints, http://flask.pocoo.org/docs/0.12/blueprints/#blueprints
 
-import enemies
-import enemy_abilities
-import enemy_armor
-import enemies_common
-import enemy_routes
-import enemy_weapons
+from . import enemies
+from . import enemy_abilities
+from . import enemy_armor
+from . import enemies_common
+from . import enemy_routes
+from . import enemy_weapons
 
 import os
 
@@ -69,15 +69,15 @@ def show_monsters_stats():
         if not (hasAbs or hasArm or hasWep):
             stats['hasnothingcount'] += 1
             stats['nakedMonsters'].append(monster)
-        if monster['level'] not in stats['levelcount'].keys():
+        if monster['level'] not in list(stats['levelcount'].keys()):
             stats['levelcount'][monster['level']] = 1
         else:
             stats['levelcount'][monster['level']] += 1
-        if monster['author'] not in stats['contributors'].keys():
+        if monster['author'] not in list(stats['contributors'].keys()):
             stats['contributors'][monster['author']] = 1
         else:
             stats['contributors'][monster['author']] += 1
-        if monster['role'] not in stats['roles'].keys():
+        if monster['role'] not in list(stats['roles'].keys()):
             stats['roles'][monster['role']] = 1
         else:
             stats['roles'][monster['role']] += 1
@@ -87,31 +87,31 @@ def show_monsters_stats():
         	stats['private'] = 1 + stats['private']
     stats['weapons']['types'] = {}
     for weapon in weapons:
-          if weapon['type'] not in stats['weapons']['types'].keys():
+          if weapon['type'] not in list(stats['weapons']['types'].keys()):
             stats['weapons']['types'][weapon['type']] = 1
           else:
             stats['weapons']['types'][weapon['type']] += 1
-          if weapon['author'] not in stats['weapons']['contributors'].keys():
+          if weapon['author'] not in list(stats['weapons']['contributors'].keys()):
             stats['weapons']['contributors'][weapon['author']] = 1
           else:
             stats['weapons']['contributors'][weapon['author']] += 1
     stats['abilities']['types'] = {}
     for ability in abilities:
-        if ability['type'] not in stats['abilities']['types'].keys():
+        if ability['type'] not in list(stats['abilities']['types'].keys()):
             stats['abilities']['types'][ability['type']] = 1
         else:
             stats['abilities']['types'][ability['type']] += 1
-        if ability['author'] not in stats['abilities']['contributors'].keys():
+        if ability['author'] not in list(stats['abilities']['contributors'].keys()):
             stats['abilities']['contributors'][ability['author']] = 1
         else:
             stats['abilities']['contributors'][ability['author']] += 1
     stats['armor']['types'] = {}
     for suit in armor:
-          if suit['author'] not in stats['armor']['contributors'].keys():
+          if suit['author'] not in list(stats['armor']['contributors'].keys()):
             stats['armor']['contributors'][suit['author']] = 1
           else:
             stats['armor']['contributors'][suit['author']] += 1
-          if suit['type'] not in stats['armor']['types'].keys():
+          if suit['type'] not in list(stats['armor']['types'].keys()):
             stats['armor']['types'][ suit['type']] = 1
           else:
             stats['armor']['types'][suit['type']] += 1

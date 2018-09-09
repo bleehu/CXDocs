@@ -1,4 +1,4 @@
-import characters_common
+from . import characters_common
 import csv
 import pdb
 import psycopg2

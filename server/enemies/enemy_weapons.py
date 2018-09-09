@@ -1,7 +1,7 @@
 import psycopg2
 import pdb
 from ..security import security
-import enemies_common
+from . import enemies_common
 
 
 def get_monster_weapons_all():

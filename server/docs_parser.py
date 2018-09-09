@@ -45,7 +45,7 @@ def append_token(tokens, new_token):
     """
 def parse(filepath):
     if not os.path.isfile(filepath):
-        print "ERROR!: %s isn't a file!" % filepath
+        print("ERROR!: %s isn't a file!" % filepath)
         return None
     tokens = []
     with open(filepath) as docfile:
@@ -180,4 +180,4 @@ if __name__ == "__main__":
     args = get_args()
     all_the_tokens = parse(args.p)
     for token in all_the_tokens:
-        print token
+        print(token)

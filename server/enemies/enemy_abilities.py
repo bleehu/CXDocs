@@ -1,7 +1,7 @@
 import pdb
 import psycopg2
 from ..security import security
-import enemies_common
+from . import enemies_common
 
 def get_monster_abilities(monster_id):
     monster_abilities = []

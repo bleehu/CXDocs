@@ -1,19 +1,17 @@
-import characters
-import ConfigParser
-import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
+from . import characters
 #these imports are for python files we wrote ourselves. 
-import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
+from . import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
-from enemies.enemy_routes import enemy_blueprint, initialize_enemies
-from characters.character_routes import character_blueprint, initialize_characters
+from .enemies.enemy_routes import enemy_blueprint, initialize_enemies
+from .characters.character_routes import character_blueprint, initialize_characters
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
 from flask import Flask, render_template, request, redirect, session, escape, flash
 
-import guestbook #our custom guestbook for showing who all is on at once.
+from . import guestbook #our custom guestbook for showing who all is on at once.
 import json #sometimes we load or save things in json. This helps with that.
-from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
+from .mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb  #Python Debuger is what I use to fix borked code. It should not be called in production EVER!
 #but it's very helpful when being run locally.
 
@@ -21,7 +19,7 @@ import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets 
 import os   #we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
-from security import security #our custom code that handles common security tasks like SQL sanitization
+from .security import security #our custom code that handles common security tasks like SQL sanitization
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 
@@ -147,10 +145,10 @@ def create_app():
             log.info("%s failed to log in. No password match found. Tried %s." % (saniUser, saniPass))
             return None
         else:
-            print "ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled."
-            print "If you'd like to enable login, you'll need to set up your postgres user database then run:"
-            print "$python start.py -u databaseUsername -p databasePassword"
-            print "Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."
+            print("ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled.")
+            print("If you'd like to enable login, you'll need to set up your postgres user database then run:")
+            print("$python start.py -u databaseUsername -p databasePassword")
+            print("Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages.")
             return None
 
     """ reads the config document to build a list of names of rules documents and their filepath.
@@ -263,13 +261,13 @@ def create_app():
             itemsDocs =  get_items_docs()
             character_docs = get_character_docs()
         else:
-            print "Config file has no [Parser] section; Cannot load rules documents."
-            print "Have you tried running the generate_config.py helper script?"
-            print "See config/README.md for more help configuring your parser."
+            print("Config file has no [Parser] section; Cannot load rules documents.")
+            print("Have you tried running the generate_config.py helper script?")
+            print("See config/README.md for more help configuring your parser.")
             log.warn("Parser Section not configured; cannot load rules documents on index page.")
             log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
 
-        if 'character' in session.keys():   #if player is logged in and has picked a character, we load that character from the session string
+        if 'character' in list(session.keys()):   #if player is logged in and has picked a character, we load that character from the session string
             pc = characters.get_character(session['character']) 
         gb = guestbook.get_guestbook()
         return render_template('index.html', \
@@ -420,7 +418,7 @@ def create_app():
         form = request.form
         uname = escape(form['uname'])
         passwerd = escape(form['password'])
-        if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
+        if 'X-CSRF' in list(form.keys()) and form['X-CSRF'] == session['X-CSRF']:
             session.pop('X-CSRF', None)
         else:
             resp = make_response(render_template("501.html"), 403)
@@ -443,7 +441,7 @@ def create_app():
     @app.route("/logout", methods=['POST'])
     def logout():
         form = request.form
-        if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
+        if 'X-CSRF' in list(form.keys()) and form['X-CSRF'] == session['X-CSRF']:
             log.info("%s logged out" % session['username'])
             session.pop('username', None)
             session.pop('displayname', None)
@@ -484,7 +482,7 @@ def create_app():
     @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python. 
     def borked_it(error):
         uname = "Anonymous"
-        if 'username' in session.keys():
+        if 'username' in list(session.keys()):
             uname = session['username']
         log.error("%s got a 500 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
         return render_template("501.html", error=error)
@@ -492,7 +490,7 @@ def create_app():
     @app.errorhandler(404) # an HTTP 404 Not Found happens if the user searches for a url which doesn't exist. like /fuzzyunicorns
     def missed_it(error):
         uname = "Anonymous"
-        if 'username' in session.keys():
+        if 'username' in list(session.keys()):
             uname = session['username']
         log.warn("%s got a 404 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
         return render_template("404.html", error=error)
@@ -500,7 +498,7 @@ def create_app():
     host = "localhost" #default to local only when running.
     
     global config
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     config.read('../config/cxDocs.cfg')
     
     seconds_away = 60

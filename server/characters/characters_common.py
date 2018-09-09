@@ -1,5 +1,5 @@
 import psycopg2
-import ConfigParser
+import configparser
 
 global config
 

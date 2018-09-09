@@ -20,7 +20,7 @@ def initialize(away_seconds, out_seconds):
 def sign_guestbook(username):
     if not initialized:
         raise Exception('Attempted to sign Guestbook before Guestbook was initialized!')
-    if username not in guestbook.keys():
+    if username not in list(guestbook.keys()):
         guestbook[username] = {}
     guestbook[username]['time'] = time.time()
 
@@ -32,7 +32,7 @@ def get_guestbook():
     global guestbook
     global away
     global out
-    for signature in guestbook.keys():
+    for signature in list(guestbook.keys()):
         difference = time.time() - guestbook[signature]['time']
         if difference < out:
             new_book[signature] = {}

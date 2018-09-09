@@ -1,4 +1,4 @@
-import characters_common
+from . import characters_common
 import psycopg2
 from ..security import security
 import pdb
@@ -22,8 +22,8 @@ def get_skill(pk_id):
             FROM skills WHERE pk_id = %s AND deleted_at IS NULL;" % pk_id)
     except Exception as e:
         errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database." % pk_id
-        print errmsg
-        print str(e)
+        print(errmsg)
+        print(str(e))
         log.error(errmsg)
         log.error(str(e))
         return None

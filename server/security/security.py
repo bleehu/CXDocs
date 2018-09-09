@@ -9,14 +9,14 @@ global log
 """ we call this any time someone checks out a page on the site that should be off-limits to someone who
         hasn't logged in. If they aren't logged in, it returns false, if they are, it returns true."""
 def check_auth(session):
-    if 'username' not in session.keys():
+    if 'username' not in list(session.keys()):
         log.error("Anonymous attempt to access %s! user_agent:%s, remoteIP:%s" % (request.path, request.user_agent.string, request.remote_addr))
         return False
     blacklisted_UA = ['zgrab', 'vas', 'burp']
     for ua in blacklisted_UA:
         if ua in request.user_agent.string.lower():
             return False
-    if 'displayname' in session.keys():
+    if 'displayname' in list(session.keys()):
         guestbook.sign_guestbook(session['displayname'])
     return True
 
@@ -41,7 +41,7 @@ def sql_escape(dirty):
     return sani
 
 def get_user_pkid(session):
-    if 'username' not in session.keys():
+    if 'username' not in list(session.keys()):
         return None
     username = session['username']
     connection = get_login_db_connection()

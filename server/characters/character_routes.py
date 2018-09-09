@@ -1,7 +1,7 @@
-import characters
-import characters_common
-import feats
-import skills
+from . import characters
+from . import characters_common
+from . import feats
+from . import skills
 import pdb
 from ..security import security
 import pdb
@@ -52,7 +52,7 @@ def show_character(pk_id):
         flash("You must be logged in to do that.")
         return redirect("/")
     pc = characters.get_character(pk_id)
-    if 'character' in session.keys():
+    if 'character' in list(session.keys()):
         pc = characters.get_character(pk_id)
     return render_template('characterviewer.html', session=session, pc=pc)
 

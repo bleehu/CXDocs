@@ -1,9 +1,9 @@
 import psycopg2
 import pdb
-import enemy_weapons
-import enemy_abilities
-import enemy_armor
-import enemies_common
+from . import enemy_weapons
+from . import enemy_abilities
+from . import enemy_armor
+from . import enemies_common
 from ..security import security
 
 def get_monsters(session):
@@ -89,7 +89,7 @@ def validate_monster(form, user):
         monster['description'] = security.sql_escape(form['description'])[:3000]
         monster['name'] = security.sql_escape(form['name'])[:46]
         monster['author'] = user
-        if 'private' in form.keys():
+        if 'private' in list(form.keys()):
             monster['private'] = 't'
         else:
             monster['private'] = 'f'
