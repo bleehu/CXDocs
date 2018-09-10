@@ -1,3 +1,5 @@
+"""Flask App for running the CXDocs web application."""
+
 import characters
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
@@ -25,21 +27,6 @@ from security import security #our custom code that handles common security task
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 
-def get_env_vars():
-    username = os.environ.get('FLASK_USER')
-    password = os.environ.get('FLASK_PASS')
-    ip_address = os.environ.get('FLASK_IP')
-    if not username and not password:
-        print("Warning!!!")
-        print("The login username/password has not been set.")
-        print("Some site functionality will be limited.")
-        print(" Try $export FLASK_USER=blah and $export FLASK_PASS=blah")
-        #logging has not been configured at this point.
-    if not ip_address:
-        print("Warning!!! IP Address has not been set! This application will only be available on the local host!")
-        print("Try $export FLASK_IP=##.##.##.##")
-    return (username, password, ip_address)
-
 def create_app():
     app = Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # 1024 bytes x 1024 is a MB. Prevents people from uploading 40 GB pictures
@@ -57,41 +44,19 @@ def create_app():
     #web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
     global whos_on
 
-    """depricated. """
-    def get_levels():
-        levels = []
-        with open('docs/levels.csv', 'r') as csvfile:
-            csv_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-            for line in csv_reader:
-                levels.append(line)
-        return levels
-
-    """ depricated. Used to show dungeons that were actively being run."""
-    def get_missions():
-        connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-        myCursor = connection.cursor()
-        myCursor.execute("SELECT * FROM missions ORDER BY level;")
-        missions = []
-        results = myCursor.fetchall()
-        for miss in results:
-            pk = int(miss[0])
-            name = miss[1]
-            description = miss[2]
-            level = int(miss[3])
-            new_mission = Mission(pk, name, level, description)
-            missions.append(new_mission)
-        return missions
-
-    """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
-     to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
-     straight out of a local git repo, so updating all of the rules is as easy as running `$git pull` on the server.
-
-    config_option: a string containing the name of the flag in the config/cxDocs.cfg file to look up the plain text
-    file for. E.X. "Items_filepath". See config/README.md for more info.
-
-     Returns the flask template of the rules page requested if configured correctly. If it detects an error, flashes
-     an error message and redirects to the home page. """
     def parser_page(config_option):
+        """Render an HTML page corresponding to the configured document.
+
+        CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
+        to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
+        straight out of a local git repo, so updating all of the rules is as easy as running `$git pull` on the server.
+
+        config_option: a string containing the name of the flag in the config/cxDocs.cfg file to look up the plain text
+        file for. E.X. "Items_filepath". See config/README.md for more info.
+
+        Returns the flask template of the rules page requested if configured correctly. If it detects an error, flashes
+        an error message and redirects to the home page. 
+        """
         if config.has_section('Parser') and config.has_option('Parser', config_option):
             rule_filepath = config.get('Parser', config_option)
             if not os.path.isfile(rule_filepath):
@@ -106,52 +71,6 @@ def create_app():
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
             return redirect("/")
-
-    """connect to user login database if said database is set up. uses psychopg2. 
-        
-        username: the string of what the user entered as their username. This can be passed raw;
-            this method will call the security file's SQL sanitize before looking it up.
-        password: the string containing what the user entered as their password. This can be 
-            passed raw; this method will call the security code file's SQL sanitize before 
-            looking it up.
-        Remote IP: This should be the string of the remote IP Address of the user attempting
-            to log in. This is used for logging and for too many tries lockout.
-
-        If user is not found or if posgres database info is not set, returns None. Returns 
-        a tuple with username, displayname, realname and password if login is successful."""
-    def get_user_postgres(username, password, remoteIP):
-        if app.config['username'] != None and app.config['password'] != None:
-            #if postgres username and password is set,
-            #use username lookup to check username and password
-            connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (app.config['username'], app.config['password']))
-            myCursor = connection.cursor()
-            #log the current attempt
-            saniUser = security.sql_escape(username)
-            saniPass = security.sql_escape(password)
-            saniIP = security.sql_escape(remoteIP)
-            myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) VALUES ('%s', '%s', '%s');" \
-                % (saniUser, saniPass, saniIP))
-            connection.commit()
-            #check the number of attempts in the last half hour
-            myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s' AND 'username' LIKE '%s';" % (remoteIP,saniUser))
-            logins = myCursor.fetchall()
-            if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
-                log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
-                return None 
-            myCursor.execute("SELECT pk_id, username, displayname, realname, password, role  FROM users WHERE username LIKE '%s';" % saniUser)
-            results = myCursor.fetchall()
-            for result in results:
-                if password == result[4]:
-                    log.info('logged in: %s. Password matches.' % saniUser )
-                    return result
-            log.info("%s failed to log in. No password match found. Tried %s." % (saniUser, saniPass))
-            return None
-        else:
-            print "ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled."
-            print "If you'd like to enable login, you'll need to set up your postgres user database then run:"
-            print "$python start.py -u databaseUsername -p databasePassword"
-            print "Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."
-            return None
 
     """ reads the config document to build a list of names of rules documents and their filepath.
 
@@ -529,23 +448,72 @@ def create_app():
 
     return app
 
+
+def get_env_vars():
+    username = os.environ.get('FLASK_USER')
+    password = os.environ.get('FLASK_PASS')
+    ip_address = os.environ.get('FLASK_IP')
+    if not username and not password:
+        print("Warning!!!")
+        print("The login username/password has not been set.")
+        print("Some site functionality will be limited.")
+        print(" Try $export FLASK_USER=blah and $export FLASK_PASS=blah")
+    if not ip_address:
+        print("Warning!!! IP Address has not been set! This application will only be available on the local host!")
+        print("Try $export FLASK_IP=##.##.##.##")
+    return (username, password, ip_address)
+
+
+def get_user_postgres(username, password, remoteIP):
+    """check the database to see if this username and password combo is correct.
+
+    Connect to user login database if said database is set up. uses psychopg2.
+    If user is not found or if posgres database info is not set, returns None. Returns 
+    a tuple with username, displayname, realname and password if login is successful.
+    
+    username: the string of what the user entered as their username. This can be passed raw;
+        this method will call the security file's SQL sanitize before looking it up.
+    password: the string containing what the user entered as their password. This can be 
+        passed raw; this method will call the security code file's SQL sanitize before 
+        looking it up.
+    Remote IP: This should be the string of the remote IP Address of the user attempting
+        to log in. This is used for logging and for too many tries lockout.
+    """
+    if app.config['username'] != None and app.config['password'] != None:
+        #if postgres username and password is set,
+        #use username lookup to check username and password
+        connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (app.config['username'], app.config['password']))
+        myCursor = connection.cursor()
+        #log the current attempt
+        saniUser = security.sql_escape(username)
+        saniPass = security.sql_escape(password)
+        saniIP = security.sql_escape(remoteIP)
+        myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) VALUES ('%s', '%s', '%s');" \
+            % (saniUser, saniPass, saniIP))
+        connection.commit()
+        #check the number of attempts in the last half hour
+        myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s' AND 'username' LIKE '%s';" % (remoteIP,saniUser))
+        logins = myCursor.fetchall()
+        if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
+            log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
+            return None 
+        myCursor.execute("SELECT pk_id, username, displayname, realname, password, role  FROM users WHERE username LIKE '%s';" % saniUser)
+        results = myCursor.fetchall()
+        for result in results:
+            if password == result[4]:
+                log.info('logged in: %s. Password matches.' % saniUser )
+                return result
+        log.info("%s failed to log in. No password match found. Tried %s." % (saniUser, saniPass))
+        return None
+    else:
+        print "ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled."
+        print "If you'd like to enable login, you'll need to set up your postgres user database then run:"
+        print "$python start.py -u databaseUsername -p databasePassword"
+        print "Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."
+        return None
+
 if __name__ == "__main__":
 
     app = create_app
     
     app.run(host = host, threaded=True)
-
-"""
-CREATE SEQUENCE login_log_seq NO CYCLE; 
-CREATE TABLE login_audit_log (
-    pk_id int PRIMARY KEY DEFAULT nextval('login_log_seq'),
-    username text NOT NULL,
-    password text NOT NULL,
-    ip_address text NOT NULL,
-    log_time timestamp DEFAULT now()
-);
-GRANT UPDATE ON login_log_seq TO validator;
-GRANT ALL ON login_audit_log TO validator;
-"""
-
-#was 1223 lines before split, is 714 after.
