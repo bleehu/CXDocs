@@ -4,23 +4,20 @@ import pdb
 import psycopg2
 
 def get_feats():
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, feat, prerequisites, description, author,\
+    """Return a list of feats from the database."""
+    query_string = "SELECT pk_id, feat, prerequisites, description, author,\
         created_at, private, nanite_cost\
         FROM feats \
-        WHERE deleted_at IS NULL;")
+        WHERE deleted_at IS NULL;"
+    results = characters_common.fetchall_from_db_query(query_string)
     feats = []
-    results = myCursor.fetchall()
     for line in results:
         newFeat = parse_line_to_feat(line)
         feats.append(newFeat)
     return feats
 
 def get_feat_by_id(pk_id):
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT \
+    query_string = "SELECT \
         pk_id, \
         feat, \
         prerequisites,\
@@ -29,11 +26,9 @@ def get_feat_by_id(pk_id):
         created_at, \
         private, \
         nanite_cost, \
-        FROM feats WHERE pk_id=%s;" % pk_id)
-    myCursor.close()
-    connection.commit()
-    line = myCursor.fetchall[0]
-    my_feat = parse_line_to_feat(line)
+        FROM feats WHERE pk_id=%s;" % pk_id
+    first_database_row = characters_common.fetch_first_from_db_query(query_string)
+    my_feat = parse_line_to_feat(first_database_row)
     return my_feat
 
 def update_feat(newFeat):
@@ -94,13 +89,11 @@ def parse_prereqs(prereq_string):
   
 def get_characters_feats(character_pk_id):
     char_pk_id_int = int(character_pk_id)
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT f.feat, f.prerequisites, f.description, f.author,\
+    query_string = "SELECT f.feat, f.prerequisites, f.description, f.author,\
         f.created_at, f.private, f.nanite_cost, f.pk_id\
         FROM feats_map AS map, feats AS f \
-        WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int)
-    lines = myCursor.fetchall()
+        WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int
+    lines = characters_common.fetchall_from_db_query(query_string)
     characters_feats = []
     for line in lines:
         new_feat = parse_line_to_feat(line)
@@ -127,3 +120,9 @@ def insert_character_feat_map(mapping):
     myCursor.execute("INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring)
     myCursor.close()
     connection.commit()
+
+class feat:
+    """A Character's feat."""
+
+    def __init__(self, line):
+        self.pk_id = pk_id
