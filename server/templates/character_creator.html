@@ -229,9 +229,9 @@
                 {% for feat in character['feats']%}
                 <div id="your_feats">
                     <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
-                      <div class="card-header"> {{feat['feat']}} </div>
+                      <div class="card-header"> {{feat.name}} </div>
                       <div class="card-body">
-                        <p class="card-text">{{feat['description']}} </p>
+                        <p class="card-text">{{feat.description}} </p>
                         <form method="POST" action="/deleteCharacterFeatMap">
                             <input type="hidden" name="feat_id" value="{{feat['pk_id']}}">
                             <input type="hidden" name="character['pk_id']">
@@ -249,17 +249,23 @@
                     <div class="row">
                     {% for feat in feats %}
                     <div class="card text-white bg-dark mb-3" style="max-width: 20rem;">
-                      <div class="card-header">{{ feat['title'] }}
-                        {% if feat['nanite_cost'] != '0' %}
-                        [ {{ feat['nanite_cost'] }} ]
+                      <div class="card-header">{{ feat.name }}
+                        {% if feat.nanite_cost != 0 %}
+                        [ {{ feat.nanite_cost }} ]
                         {% endif %}
                       </div>
                       <div class="card-body">
-                        <p class="card-text"> {{ feat['prerequisites']}} </p>
-                        <p class="card-text">{{ feat['description'] }}</p>
+                        <p class="card-text">
+                            <ul>
+                            {% for req in feat.prerequisites %} 
+                                <li>{{req}}</li>
+                            {% endfor %}
+                            </ul> 
+                        </p>
+                        <p class="card-text">{{ feat.description }}</p>
                         <form method="POST" action="/assignCharacterFeat">
                             <input type="hidden" name="character_id" value="{{character['pk_id']}}">
-                            <input type="hidden" name="feat_id" value="{{feat['pk_id']}}">
+                            <input type="hidden" name="feat_id" value="{{feat.pk_id}}">
                             <button type="submit" class="btn btn-success btn-sm">Take Feat</button>
                         </form>
                       </div>
