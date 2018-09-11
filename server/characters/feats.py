@@ -1,5 +1,4 @@
 import characters_common
-import csv
 import pdb
 import psycopg2
 
@@ -45,12 +44,6 @@ def update_feat(newFeat):
         WHERE pk_id=%s;" % ( featstring,pk_id))
     myCursor.close()
     connection.commit()
-
-def parse_prereqs(prereq_string):
-    prereqs = []
-    parser = csv.reader(prereq_string, delimiter=",", quotechar='"')
-
-    return prereqs
 
 def get_characters_feats(character_pk_id):
     char_pk_id_int = int(character_pk_id)
@@ -116,10 +109,10 @@ class Feat:
 def parse_prereq_list(prereq_string):
     if prereq_string == "[]":
         return []
-    the_splits = prereq_string[1:-1].split(',')
+    the_splits = prereq_string.split(',')
     prereqs = []
     for prereq in the_splits:
-        trimmed = prereq.strip()[1:-1]
+        trimmed = prereq.strip()
         prereqs.append(trimmed)
     return prereqs
 
