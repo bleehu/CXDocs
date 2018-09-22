@@ -25,6 +25,8 @@ from security import security #our custom code that handles common security task
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 
+from cxExceptions import cxExceptions
+
 def get_env_vars():
     username = os.environ.get('FLASK_USER')
     password = os.environ.get('FLASK_PASS')
@@ -119,13 +121,14 @@ def create_app():
 
         If user is not found or if posgres database info is not set, returns None. Returns 
         a tuple with username, displayname, realname and password if login is successful."""
-    def get_user_postgres(username, password, remoteIP):
+    def get_user_postgres(username, password, request):
         if app.config['username'] != None and app.config['password'] != None:
             #if postgres username and password is set,
             #use username lookup to check username and password
             connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (app.config['username'], app.config['password']))
             myCursor = connection.cursor()
             #log the current attempt
+            remoteIP = request.remote_addr
             saniUser = security.sql_escape(username)
             saniPass = security.sql_escape(password)
             saniIP = security.sql_escape(remoteIP)
@@ -144,14 +147,10 @@ def create_app():
                 if password == result[4]:
                     log.info('logged in: %s. Password matches.' % saniUser )
                     return result
-            log.info("%s failed to log in. No password match found. Tried %s." % (saniUser, saniPass))
-            return None
+            userPassTuple = (username, password)
+            raise cxExceptions.NoUserFoundException(userPassTuple, request)
         else:
-            print "ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled."
-            print "If you'd like to enable login, you'll need to set up your postgres user database then run:"
-            print "$python start.py -u databaseUsername -p databasePassword"
-            print "Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."
-            return None
+            raise cxExceptions.ConfigOptionMissingException()
 
     """ reads the config document to build a list of names of rules documents and their filepath.
 
@@ -426,7 +425,7 @@ def create_app():
             resp = make_response(render_template("501.html"), 403)
             log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
             return resp
-        user = get_user_postgres(uname, passwerd, request.remote_addr)
+        user = get_user_postgres(uname, passwerd, request)
         if user != None:
             session['username'] = uname
             session['displayname'] = user[2]
@@ -518,6 +517,7 @@ def create_app():
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
+    cxExceptions.initialize(log)
     (username, password, host) = get_env_vars()
     app.config['username'] = username
     app.config['password'] = password
@@ -534,18 +534,3 @@ if __name__ == "__main__":
     app = create_app
     
     app.run(host = host, threaded=True)
-
-"""
-CREATE SEQUENCE login_log_seq NO CYCLE; 
-CREATE TABLE login_audit_log (
-    pk_id int PRIMARY KEY DEFAULT nextval('login_log_seq'),
-    username text NOT NULL,
-    password text NOT NULL,
-    ip_address text NOT NULL,
-    log_time timestamp DEFAULT now()
-);
-GRANT UPDATE ON login_log_seq TO validator;
-GRANT ALL ON login_audit_log TO validator;
-"""
-
-#was 1223 lines before split, is 714 after.
