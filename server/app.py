@@ -22,9 +22,9 @@ import os   #we need os to read and write files as well as to make our filepaths
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
 from security import security #our custom code that handles common security tasks like SQL sanitization
+from security.auth import AuthSever
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
-
 from cxExceptions import cxExceptions
 
 def get_env_vars():
@@ -108,49 +108,6 @@ def create_app():
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
             return redirect("/")
-
-    """connect to user login database if said database is set up. uses psychopg2. 
-        
-        username: the string of what the user entered as their username. This can be passed raw;
-            this method will call the security file's SQL sanitize before looking it up.
-        password: the string containing what the user entered as their password. This can be 
-            passed raw; this method will call the security code file's SQL sanitize before 
-            looking it up.
-        Remote IP: This should be the string of the remote IP Address of the user attempting
-            to log in. This is used for logging and for too many tries lockout.
-
-        If user is not found or if posgres database info is not set, returns None. Returns 
-        a tuple with username, displayname, realname and password if login is successful."""
-    def get_user_postgres(username, password, request):
-        if app.config['username'] != None and app.config['password'] != None:
-            #if postgres username and password is set,
-            #use username lookup to check username and password
-            connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (app.config['username'], app.config['password']))
-            myCursor = connection.cursor()
-            #log the current attempt
-            remoteIP = request.remote_addr
-            saniUser = security.sql_escape(username)
-            saniPass = security.sql_escape(password)
-            saniIP = security.sql_escape(remoteIP)
-            myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) VALUES ('%s', '%s', '%s');" \
-                % (saniUser, saniPass, saniIP))
-            connection.commit()
-            #check the number of attempts in the last half hour
-            myCursor.execute("SELECT * FROM login_audit_log WHERE age(log_time) < '30 minutes' AND ip_address LIKE '%s' AND 'username' LIKE '%s';" % (remoteIP,saniUser))
-            logins = myCursor.fetchall()
-            if len(logins) > 4: #there have been more than 4 login attempts in the last 30 minutes
-                log.error('RATE LIMIT LOGIN ATTEMPTS FROM %s, %s, %s' % (saniUser, saniPass, remoteIP))
-                return None 
-            myCursor.execute("SELECT pk_id, username, displayname, realname, password, role  FROM users WHERE username LIKE '%s';" % saniUser)
-            results = myCursor.fetchall()
-            for result in results:
-                if password == result[4]:
-                    log.info('logged in: %s. Password matches.' % saniUser )
-                    return result
-            userPassTuple = (username, password)
-            raise cxExceptions.NoUserFoundException(userPassTuple, request)
-        else:
-            raise cxExceptions.ConfigOptionMissingException()
 
     """ reads the config document to build a list of names of rules documents and their filepath.
 
@@ -425,17 +382,15 @@ def create_app():
             resp = make_response(render_template("501.html"), 403)
             log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
             return resp
-        user = get_user_postgres(uname, passwerd, request)
-        if user != None:
-            session['username'] = uname
-            session['displayname'] = user[2]
-            session['role'] = user[5]
-            log.info("%s logged in" % uname)
-            flash('Logged in.')
-            guestbook.sign_guestbook(user[2])
-        else:
-            log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
-            flash('Failed to log in; username or password incorrect.')
+        try:
+            user = self.authServer.login(uname, passwerd, request.remote_addr)
+        except cxExceptions.CxException as exception:
+            exception.provideFeedback()
+            return redirect("/")
+        session['username'] = uname
+        session['displayname'] = user.displayname
+        session['role'] = user.role
+        guestbook.sign_guestbook(user.displayname)
         return redirect("/")
 
     """ Logs the user out. Doesn't terminate the session, only empties the session of its info. """
@@ -443,12 +398,7 @@ def create_app():
     def logout():
         form = request.form
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
-            log.info("%s logged out" % session['username'])
-            session.pop('username', None)
-            session.pop('displayname', None)
-            session.pop('character', None)
-            session.pop('role', None)
-            session.pop('character', None)
+            app.authServer.logout(session)
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])
@@ -500,7 +450,7 @@ def create_app():
     
     global config
     config = ConfigParser.RawConfigParser()
-    config.read('../config/cxDocs.cfg')
+    config.read('config/cxDocs.cfg')
     
     seconds_away = 60
     seconds_out = 3600
@@ -524,10 +474,29 @@ def create_app():
     app.config['ip_address'] = host
 
     security.initialize(username, password, log)
+    authConfigMap = auth_config_seam((username, password),config)
+    app.authServer = auth.AuthServer(authConfigMap, log)
 
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 
     return app
+
+"""This is ugly code. 
+
+    In a subsequent cleaning pull, I'm going to abstract and DRY out our 
+    configuration process so that we only rely on the 3rd party ConfigParser
+    in one file. This pull is only for eliminating None returns..."""
+def auth_config_seam(unpw_tuple, config):
+    returnMe = {"username":unpw_tuple[0],
+        "password":unpw_tuple[1]}
+    if config.has_section("auth"):
+        if config.has_option("auth", "port"):
+            returnMe['port'] = config.get('auth', 'port')
+        if config.has_option("auth", "db_name"):
+            returnMe['name'] = config.get('auth', 'db_name')
+        if config.has_option("auth", "host"):
+            returnMe['host'] = config.get('auth', 'host')
+    return returnMe
 
 if __name__ == "__main__":
 

@@ -1,5 +1,5 @@
 import logging
-from Flask import session, flash
+from flask import session, flash
 
 global log
 
@@ -19,15 +19,12 @@ class CXException(Exception):
         self.printToConsole()
         self.flash()
 
-    @abstractmethod
     def log(self):
         pass
 
-    @abstractmethod
     def printToConsole():
         pass
 
-    @abstractmethod
     def flash():
         pass
 
@@ -89,11 +86,36 @@ class PermissionViolationException(CXException):
     def flash(self):
         flash("Sorry, it looks like you don't have permission to do that.")
 
+class RateLimitExceededException(CXException):
+    LOG_MESSAGE = "User %s exceded %s tries to %s in %s minutes. IP: %s"
+
+    def __init__(self, username, action, acts, interval, ipAddress):
+        self.action = action
+        self.remote_addr = ipAddress
+        self.acts = acts
+        self.interval = interval
+        self.username = username
+        self.message = self.LOG_MESSAGE % (username, acts, action, interval, ipAddress)
+
+    def printToConsole(self):
+        print(self.message)
+
+    def log(self):
+        log.warn(self.message)
+
+    def flash(self):
+        #we don't tell an attacker how many attempts they can get away with in what timeframe.
+        flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % action)
+
 class ConfigOptionMissingException(CXException):
-    LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started with login enabled."
+    LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started \
+        with login configured. Missing the %s parameter."
     ADVICE = """If you'd like to enable login, you'll need to set up your postgres user database 
     then run: $python start.py -u databaseUsername -p databasePassword 
     Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."""
+
+    def __init__(self, missingOption):
+        self.message = LOG_MESSAGE % missingOption
 
     def printToConsole(self):
         print(self.message)
