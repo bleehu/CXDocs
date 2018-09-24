@@ -9,7 +9,7 @@ from characters.character_routes import character_blueprint, initialize_characte
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
-from flask import Flask, render_template, request, redirect, session, escape, flash
+from flask import Flask, render_template, make_response, request, redirect, session, escape, flash
 
 import guestbook #our custom guestbook for showing who all is on at once.
 import json #sometimes we load or save things in json. This helps with that.
@@ -398,7 +398,7 @@ def create_app():
     def logout():
         form = request.form
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
-            app.authServer.logout(session)
+            app.authServer.logout()
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])
