@@ -1,5 +1,5 @@
 from ..cxExceptions import cxExceptions
-from security import sql_escape
+from ..security.security import sql_escape
 import psycopg2
 
 class User:
@@ -12,7 +12,7 @@ class User:
         self.password = params_tuple[4]
         self.role = params_tuple[5]
 
-class AuthSever:
+class AuthServer:
 
     def __init__(self, config, log):
         if 'username' in config:

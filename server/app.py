@@ -21,8 +21,8 @@ import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets 
 import os   #we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
+from auth.auth import AuthServer
 from security import security #our custom code that handles common security tasks like SQL sanitization
-from security.auth import AuthSever
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 from cxExceptions import cxExceptions
@@ -475,7 +475,7 @@ def create_app():
 
     security.initialize(username, password, log)
     authConfigMap = auth_config_seam((username, password),config)
-    app.authServer = auth.AuthServer(authConfigMap, log)
+    app.authServer = AuthServer(authConfigMap, log)
 
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 
