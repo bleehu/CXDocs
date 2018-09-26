@@ -14,17 +14,8 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-DO
-$do$
-BEGIN
-   IF NOT EXISTS (
-      SELECT                       -- SELECT list can stay empty for this
-      FROM   pg_catalog.pg_roles
-      WHERE  rolname = 'tractorman') THEN
-      CREATE ROLE tractorman LOGIN PASSWORD 'I4ksfgBq8eEu';
-   END IF;
-END
-$do$;
+CREATE ROLE tractorman LOGIN PASSWORD 'I4ksfgBq8eEu';
+
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
