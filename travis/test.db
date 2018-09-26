@@ -1149,7 +1149,7 @@ SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
 
 COPY public.users (pk_id, username, displayname, realname, password, role) FROM stdin;
 1	Bleehu	Mike(ADMIN)	Mike Hedges	CXCoding	ADMIN
-2	travisTest	travis_test	Travis CLI	travis1tractor	GM
+2	travisTest	travis_test	Travis CLI	travis1Tractor	GM
 \.
 
 
