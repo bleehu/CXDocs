@@ -21,7 +21,7 @@ BEGIN
       SELECT                       -- SELECT list can stay empty for this
       FROM   pg_catalog.pg_roles
       WHERE  rolname = 'tractorman') THEN
-      CREATE ROLE my_user LOGIN PASSWORD 'I4ksfgBq8eEu';
+      CREATE ROLE tractorman LOGIN PASSWORD 'I4ksfgBq8eEu';
    END IF;
 END
 $do$;
