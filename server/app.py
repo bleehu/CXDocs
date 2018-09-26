@@ -380,14 +380,15 @@ def create_app():
             session.pop('X-CSRF', None)
         else:
             resp = make_response(render_template("501.html"), 403)
-            log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
+            log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" \
+                % (uname, passwerd, request.user_agent.string, request.remote_addr))
             return resp
         try:
-            user = self.authServer.login(uname, passwerd, request.remote_addr)
-        except cxExceptions.CxException as exception:
+            user = app.authServer.login(uname, passwerd, request)
+        except cxExceptions.CXException as exception:
             exception.provideFeedback()
             return redirect("/")
-        session['username'] = uname
+        session['username'] = user.username
         session['displayname'] = user.displayname
         session['role'] = user.role
         guestbook.sign_guestbook(user.displayname)
@@ -398,7 +399,7 @@ def create_app():
     def logout():
         form = request.form
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
-            app.authServer.logout()
+            app.authServer.logout(session)
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])

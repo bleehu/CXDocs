@@ -47,57 +47,51 @@ class AuthServer:
             self.max_tries_minutes = 30
         self.log = log
 
-    def login(self, username, password, remoteIP):
-        if authServer == None:
-            raise cxExceptions.ConfigOptionMissingException()
-        remoteIP = request.remote_addr
+    def login(self, username, password, request):
         saniUser = sql_escape(username)
         saniPass = sql_escape(password)
-        saniIP = sql_escape(remoteIP)
-        logRateLimitedAction(saniUser, saniPass, saniIP)
-        if overRateLimit(saniUser, saniPass, saniIP):
+        self.logRateLimitedAction(saniUser, saniPass, request.remote_addr)
+        if self.overRateLimit(saniUser, saniPass, request.remote_addr):
             actionString = "login(%s, %s)" % (saniUser, saniPass)
-            raise cxExceptions.rateLimitExcededException(saniUser, actionString, 3, 30, saniIP)
+            raise cxExceptions.RateLimitExceededException(saniUser, actionString, 3, 30, request.remote_addr)
         queryString = "SELECT pk_id, username, displayname, realname, password, role  \
             FROM users WHERE username LIKE '%s';" % saniUser
         results = self.fetchall(queryString)
         for result in results:
             if password == result[4]:
                 self.log.info('logged in: %s. Password matches.' % saniUser )
-                return result
+                newUser = User(result)
+                return newUser
         userPassTuple = (username, password)
         raise cxExceptions.NoUserFoundException(userPassTuple, request)
 
 
-    def logout(session):
+    def logout(self, session):
         self.log.info("%s logged out." % session['username'])
         session.clear()
 
-    def logRateLimitedAction(username, password, ipAddress):
-        myCursor = getCursor() 
+    def logRateLimitedAction(self, username, password, ipAddress):
+        myCursor = self.getCursor()
         myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) \
             VALUES ('%s', '%s', '%s');" % (username, password, ipAddress))
         myCursor.connection.commit()
 
     def overRateLimit(self, username, password, ipAddress):
         #check the number of attempts in the last half hour
-        logins = fetchall("SELECT * FROM login_audit_log \
+        logins = self.fetchall("SELECT * FROM login_audit_log \
             WHERE age(log_time) < '%s minutes' AND \
             ip_address LIKE '%s' AND \
             'username' LIKE '%s';" % \
             (self.max_tries_minutes, ipAddress, username))
-        return len(logins > self.max_tries)
+        return len(logins) > self.max_tries
 
     def fetchall(self, searchString):
-        myCursor = getCursor()
+        myCursor = self.getCursor()
         myCursor.execute(searchString)
         returnMe = myCursor.fetchall()
         return returnMe
 
-    def logAttempt():
-        myCursor = getCursor()
-
-    def getCursor():
+    def getCursor(self):
         connection = psycopg2.connect("dbname=%s user=%s password=%s host=%s port=%s" % \
             (self.db_name, self.db_user, self.db_pass, self.db_address, self.db_port))
         myCursor = connection.cursor()

@@ -15,17 +15,17 @@ def initialize(newlog):
 class CXException(Exception):
 
     def provideFeedback(self):
-        self.log(log)
+        self.log()
         self.printToConsole()
         self.flash()
 
     def log(self):
         pass
 
-    def printToConsole():
+    def printToConsole(self):
         pass
 
-    def flash():
+    def flash(self):
         pass
 
 class NoMatchFoundException(CXException):
@@ -105,7 +105,7 @@ class RateLimitExceededException(CXException):
 
     def flash(self):
         #we don't tell an attacker how many attempts they can get away with in what timeframe.
-        flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % action)
+        flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % self.action)
 
 class ConfigOptionMissingException(CXException):
     LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started \
