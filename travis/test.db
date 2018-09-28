@@ -1145,8 +1145,19 @@ SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
 --
 
 COPY public.users (pk_id, username, displayname, realname, password, role) FROM stdin;
-1	Bleehu	Mike(ADMIN)	Mike Hedges	CXCoding	ADMIN
-2	travisTest	travis_test	Travis CLI	travis1tractor	GM
+2   Reveraine774    Rev Sarah Slater    redacted   GM
+3   Turtlelord  James   James Talbott   redacted Player
+4   Rositalagata    ROSE    Rose Brallier   redacted   GM
+5   trowl223    bourne223   Taylor Rowland  redacted    GM
+6   holitt  Wildlovelies    Stephen Little  redacted   GM
+7   alex    1sourcecontrol  Alex Lindahl    redacted  DM
+8   dfuchs  Shrub   Derek Fuchs redacted   Player
+9   chrismetcalf    krezel  Chris Metcalf   redacted  User
+10  Daemonsteel Eryneril    Will Talbott    redacted   GM
+11  Ryu Austin  Austin King redacted    ADMIN
+1   Bleehu  Mike(ADMIN) Mike Hedges redacted    ADMIN
+12  TourGroup   Tour Group  Show off what we can do redacted    Player
+14	travisTest	travis_test	Travis CLI	travis1tractor	GM
 \.
 
 
@@ -1684,7 +1695,6 @@ GRANT SELECT(username) ON TABLE public.users TO searcher;
 REVOKE ALL(displayname) ON TABLE public.users FROM PUBLIC;
 REVOKE ALL(displayname) ON TABLE public.users FROM postgres;
 GRANT SELECT(displayname) ON TABLE public.users TO searcher;
-
 
 --
 -- PostgreSQL database dump complete

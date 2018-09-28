@@ -63,7 +63,7 @@ set which are detailed in /config/Readme.md
 
 ## Setting up postgres database for login, bestiary, and character creation
 
-you will need Postgres 9.5.x 
+you will need Postgres 9.5.x or 10.x
 
 ### On Ubuntu 16.04  
 
@@ -105,15 +105,22 @@ To start with, you'll need to add an entry to postgres's authentication config
 file. It _usually_ lives at `/etc/postgresql/10/main/pg_hba.conf` but your version
 number may vary. The file is always called `pg_hba.conf` though. You'll need 
 `sudo` to modify it. Read the comments in the file; they're brief and helpful, 
-and as they direct, add an entry at the bottom for 
-```local all yourusername ident
+and as they direct, add an entry at the bottom for each of the following.
+```
+local dbname yourusername ident
+local template1 yourusername ident
 local dbname searcher password
-local dbname validator password```
+local dbname validator password
+```
 
-You will need to configure postgres to accept CXDocs to login with a username and 
-password. To do this, you'll need to edit /etc/postgresql/9.5/main/pg_hba.conf 
-and add something like 
-to the file. 
+In our example, `searcher` is the name of the application account that looks
+for characters and enemies for the bestiary and character editors. `validator`
+is name of the account with special permissions that searches for user logins.
+
+These usernames (except your kernel username) are configurable. You can change 
+them to whatever you'd like them to be. And you should! Standard logins are a 
+security vulnerability. See the cxDocs/config/readme.md for more information on 
+configurations.
 
 Once you've modified the pg_hba.conf file, you'll need to restart postgres with the new configs.
 
@@ -128,12 +135,31 @@ do that here:
 `https://www.postgresql.org/docs/9.5/static/auth-methods.html#AUTH-PASSWORD`
 
 
+We keep a backup database in the travis/ directory, but the secrets (such
+as user's passwords) have been redacted. If you're doing a restore, you'll have
+to remember the old passwords or ask for new ones.  If you're building the database
+for your first time on your home machine, you may be tempted to just wipe their
+accounts. Since the database contains relations between the users and the enemies
+they've created, this will break the application. You're better off replacing the
+redacted passwords with random ASCII garbage by modifying the .db file before
+restore. 
 
-### On both
+One last step before tell the database to go live, add this SQL command to the
+bottom of the restore script to give your username access to all of the tables
+in the backend.
 
-Once you have postgres installed and configured to let you log in, use the 
-default database config from /config/default_db.db using the pg_restore command
+`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO bleehu;`
 
+Once you've done that, upload the new database using these commands:
+
+`createdb databasename`
+
+`psql -f databasename /travis/test.db`
+
+There shouldn't be any errors. If you log into the database using 
+`psql databasename`
+you should be able to run SQL queries to look at all of the information on the
+database. For example, `\dt` should list the available tables.
 
 # What's in this Direcory and why is it here?
 
@@ -181,3 +207,4 @@ We use a couple of different technologies in this project. You can find document
 * Jinja: http://jinja.pocoo.org/docs/dev/
 * Compound X: https://github.com/trowl223/Compound_X/tree/master/play
 * for style example, use: http://bootswatch.com/cyborg/
+* Postgres: https://www.postgresql.org/docs/10/static/index.html
