@@ -61,17 +61,17 @@ Generating a config is as easy as running
 That should write a file in /config/cxDocs.cfg which will have useful options 
 set which are detailed in /config/Readme.md
 
-## Setting up postgres for bestiary
+## Setting up postgres database for login, bestiary, and character creation
 
 you will need Postgres 9.5.x 
 
-###On Ubuntu 16.04  
+### On Ubuntu 16.04  
 
 Postgres should be already installed. To check, try typing into the console: 
 
 `psql --version`
 
-### If it's not installed
+If it's not installed
 
 `sudo apt-get install postgresql` 
 
@@ -81,34 +81,38 @@ and
 
 `sudo apt-get install postgresql-client-9.5`
 
-### To initialize the database
+### On Windows
 
-`$sudo su postgres`
+Windows doesn't come with postgres standard. It's almost like they didn't expect 
+you to run a webserver off of your office box. 
 
-`postgres$ createdb mydb`
+To download Postgres, go here: https://www.postgresql.org/download/windows/
 
-`postgres$ psql mydb`
+Not really sure how to set the database up after that, but we'll work on it!
 
-you are now in the postgreSQL console, not the bash command console
+Likely on Windows, you'll want to use the (PGAdmin III GUI)[https://www.pgadmin.org/download/] 
+to work with the database rather than the Command Line Interface that the penguins 
+using linux will use. 
 
-`mydb=# CREATE ROLE searcher LOGIN PASSWORD 'the password must be surrounded in single quotes';`
+There should be documentation on how to use pgAdmin3 to restore a database 
+(in this direction.)[https://www.pgadmin.org/docs/pgadmin3/1.22/restore.html] 
+but most of our devs use linux, and we haven't figured out how to do this on
+Windows for sure yet.
 
-`mydb=# CREATE ROLE validator LOGIN PASSWORD 'PutPasswordsInLastpass';`
+### To initialize the database (Linux/Ubuntu)
 
-`mydb=#\q`
+To start with, you'll need to add an entry to postgres's authentication config
+file. It _usually_ lives at `/etc/postgresql/10/main/pg_hba.conf` but your version
+number may vary. The file is always called `pg_hba.conf` though. You'll need 
+`sudo` to modify it. Read the comments in the file; they're brief and helpful, 
+and as they direct, add an entry at the bottom for 
+```local all yourusername ident
+local dbname searcher password
+local dbname validator password```
 
-now with the roles you've created, you should be able to restore from backup.
-
-`postgres$ psql mydb < db_backup.db`
-
-`postgres$ exit`
-
-You will need to configure postres to accept CXDocs to login with a username and 
+You will need to configure postgres to accept CXDocs to login with a username and 
 password. To do this, you'll need to edit /etc/postgresql/9.5/main/pg_hba.conf 
 and add something like 
-
-`local mydb searcher password`
-
 to the file. 
 
 Once you've modified the pg_hba.conf file, you'll need to restart postgres with the new configs.
@@ -123,14 +127,7 @@ do that here:
 
 `https://www.postgresql.org/docs/9.5/static/auth-methods.html#AUTH-PASSWORD`
 
-### On Windows
 
-Windows doesn't come with postgres standard. It's almost like they didn't expect 
-you to run a webserver off of your office box. 
-
-To download Postgres, go here: https://www.postgresql.org/download/windows/
-
-Not really sure how to set the database up after that, but we'll work on it!
 
 ### On both
 
