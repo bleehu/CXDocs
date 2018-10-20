@@ -14,6 +14,9 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
+CREATE ROLE tractorman LOGIN PASSWORD 'I4ksfgBq8eEu';
+
+
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
@@ -106,7 +109,7 @@ CREATE TABLE public.characters (
 ALTER TABLE public.characters OWNER TO postgres;
 
 --
--- Name: feats_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+-- Name: feats_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.feats_pk_id
@@ -117,10 +120,10 @@ CREATE SEQUENCE public.feats_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.feats_pk_id OWNER TO turtlelord;
+ALTER TABLE public.feats_pk_id OWNER TO postgres;
 
 --
--- Name: feats; Type: TABLE; Schema: public; Owner: turtlelord
+-- Name: feats; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.feats (
@@ -136,10 +139,10 @@ CREATE TABLE public.feats (
 );
 
 
-ALTER TABLE public.feats OWNER TO turtlelord;
+ALTER TABLE public.feats OWNER TO postgres;
 
 --
--- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+-- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.feats_map_pk_id
@@ -150,10 +153,10 @@ CREATE SEQUENCE public.feats_map_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.feats_map_pk_id OWNER TO turtlelord;
+ALTER TABLE public.feats_map_pk_id OWNER TO postgres;
 
 --
--- Name: feats_map; Type: TABLE; Schema: public; Owner: turtlelord
+-- Name: feats_map; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.feats_map (
@@ -163,10 +166,10 @@ CREATE TABLE public.feats_map (
 );
 
 
-ALTER TABLE public.feats_map OWNER TO turtlelord;
+ALTER TABLE public.feats_map OWNER TO postgres;
 
 --
--- Name: inventory_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+-- Name: inventory_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.inventory_pk_id
@@ -177,10 +180,10 @@ CREATE SEQUENCE public.inventory_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.inventory_pk_id OWNER TO turtlelord;
+ALTER TABLE public.inventory_pk_id OWNER TO postgres;
 
 --
--- Name: inventory; Type: TABLE; Schema: public; Owner: turtlelord
+-- Name: inventory; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.inventory (
@@ -196,7 +199,7 @@ CREATE TABLE public.inventory (
 );
 
 
-ALTER TABLE public.inventory OWNER TO turtlelord;
+ALTER TABLE public.inventory OWNER TO postgres;
 
 --
 -- Name: login_log_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -514,7 +517,7 @@ CREATE TABLE public.monsters_weapons (
 ALTER TABLE public.monsters_weapons OWNER TO postgres;
 
 --
--- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: turtlelord
+-- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.skills_pk_id
@@ -525,10 +528,10 @@ CREATE SEQUENCE public.skills_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.skills_pk_id OWNER TO turtlelord;
+ALTER TABLE public.skills_pk_id OWNER TO postgres;
 
 --
--- Name: skills; Type: TABLE; Schema: public; Owner: turtlelord
+-- Name: skills; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.skills (
@@ -543,7 +546,7 @@ CREATE TABLE public.skills (
 );
 
 
-ALTER TABLE public.skills OWNER TO turtlelord;
+ALTER TABLE public.skills OWNER TO postgres;
 
 --
 -- Name: users_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -602,18 +605,18 @@ COPY public.characters (pk_id, name, health, nanites, strength, perception, fort
 
 
 --
--- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: turtlelord
+-- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.feats (pk_id, feat, prerequisites, description, author, created_at, deleted_at, private, nanite_cost) FROM stdin;
-2	Akimbo	Dex 7, Level 6, Dual Wield	Reduce the miss chance penalty from dual wielding to +1 miss chance per weapon. Reduce the reload penalty to 10%. You may fire at more than one target at once for an additional +2 miss chance penalty.	Turtlelord	2018-05-07 00:48:40.753207	\N	f	0
-3	Bulltrue	Proficiency: Shotguns	If an enemy moves from being at least 4m from you to within 3m of you and you have a loaded shotgun drawn, you may fire at them as a free action (negate the pump of the shotgun if applicable). If the target is bloodied after the attack, they may not make a melee attack against you with their next action.	Turtlelord	2018-05-07 00:53:26.791258	\N	f	0
-4	Concussive Maintenance	20 points in Repair OR Engineer Class, STR 4	+20 to Repair Skill. For 1 Action, you may whack something broken to try to fix it. You can use Concussive Maintenance even after you have already failed to repair something. You can use Concussive Maintenance once per target per encounter.	Turtlelord	2018-05-07 00:57:39.33935	\N	f	0
+2	Akimbo	Dex 7, Level 6, Dual Wield	Reduce the miss chance penalty from dual wielding to +1 miss chance per weapon. Reduce the reload penalty to 10%. You may fire at more than one target at once for an additional +2 miss chance penalty.	postgres	2018-05-07 00:48:40.753207	\N	f	0
+3	Bulltrue	Proficiency: Shotguns	If an enemy moves from being at least 4m from you to within 3m of you and you have a loaded shotgun drawn, you may fire at them as a free action (negate the pump of the shotgun if applicable). If the target is bloodied after the attack, they may not make a melee attack against you with their next action.	postgres	2018-05-07 00:53:26.791258	\N	f	0
+4	Concussive Maintenance	20 points in Repair OR Engineer Class, STR 4	+20 to Repair Skill. For 1 Action, you may whack something broken to try to fix it. You can use Concussive Maintenance even after you have already failed to repair something. You can use Concussive Maintenance once per target per encounter.	postgres	2018-05-07 00:57:39.33935	\N	f	0
 \.
 
 
 --
--- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: turtlelord
+-- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
@@ -623,21 +626,21 @@ COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
 
 
 --
--- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+-- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.feats_map_pk_id', 2, true);
 
 
 --
--- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+-- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.feats_pk_id', 4, true);
 
 
 --
--- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: turtlelord
+-- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.inventory (pk_id, created_at, name, quantity, private, deleted_at, fk_character_owner, value) FROM stdin;
@@ -646,7 +649,7 @@ COPY public.inventory (pk_id, created_at, name, quantity, private, deleted_at, f
 
 
 --
--- Name: inventory_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+-- Name: inventory_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.inventory_pk_id', 2, true);
@@ -1121,7 +1124,7 @@ COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author
 
 
 --
--- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: turtlelord
+-- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, deleted_at) FROM stdin;
@@ -1134,7 +1137,7 @@ COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, 
 
 
 --
--- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: turtlelord
+-- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
@@ -1145,19 +1148,8 @@ SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
 --
 
 COPY public.users (pk_id, username, displayname, realname, password, role) FROM stdin;
-2   Reveraine774    Rev Sarah Slater    redacted   GM
-3   Turtlelord  James   James Talbott   redacted Player
-4   Rositalagata    ROSE    Rose Brallier   redacted   GM
-5   trowl223    bourne223   Taylor Rowland  redacted    GM
-6   holitt  Wildlovelies    Stephen Little  redacted   GM
-7   alex    1sourcecontrol  Alex Lindahl    redacted  DM
-8   dfuchs  Shrub   Derek Fuchs redacted   Player
-9   chrismetcalf    krezel  Chris Metcalf   redacted  User
-10  Daemonsteel Eryneril    Will Talbott    redacted   GM
-11  Ryu Austin  Austin King redacted    ADMIN
-1   Bleehu  Mike(ADMIN) Mike Hedges redacted    ADMIN
-12  TourGroup   Tour Group  Show off what we can do redacted    Player
-14	travisTest	travis_test	Travis CLI	travis1tractor	GM
+1	Bleehu	Mike(ADMIN)	Mike Hedges	CXCoding	ADMIN
+2	travisTest	travis_test	Travis CLI	travis1Tractor	GM
 \.
 
 
@@ -1177,7 +1169,7 @@ ALTER TABLE ONLY public.characters
 
 
 --
--- Name: feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1185,7 +1177,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: feats_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: feats_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats
@@ -1193,7 +1185,7 @@ ALTER TABLE ONLY public.feats
 
 
 --
--- Name: inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.inventory
@@ -1273,7 +1265,7 @@ ALTER TABLE ONLY public.monsters_weapons
 
 
 --
--- Name: skills_pkey; Type: CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: skills_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.skills
@@ -1297,7 +1289,7 @@ ALTER TABLE ONLY public.characters
 
 
 --
--- Name: feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1305,7 +1297,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1313,7 +1305,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: inventory_fk_character_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: inventory_fk_character_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.inventory
@@ -1369,7 +1361,7 @@ ALTER TABLE ONLY public.monsters_weapon_map
 
 
 --
--- Name: skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: turtlelord
+-- Name: skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.skills
@@ -1404,59 +1396,59 @@ REVOKE ALL ON TABLE public.characters FROM PUBLIC;
 REVOKE ALL ON TABLE public.characters FROM postgres;
 GRANT ALL ON TABLE public.characters TO postgres;
 GRANT ALL ON TABLE public.characters TO searcher;
-GRANT ALL ON TABLE public.characters TO turtlelord;
+GRANT ALL ON TABLE public.characters TO postgres;
 GRANT ALL ON TABLE public.characters TO ubuntu;
 
 
 --
--- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON SEQUENCE public.feats_pk_id FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.feats_pk_id FROM turtlelord;
-GRANT ALL ON SEQUENCE public.feats_pk_id TO turtlelord;
+REVOKE ALL ON SEQUENCE public.feats_pk_id FROM postgres;
+GRANT ALL ON SEQUENCE public.feats_pk_id TO postgres;
 GRANT ALL ON SEQUENCE public.feats_pk_id TO searcher;
 
 
 --
--- Name: TABLE feats; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: TABLE feats; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON TABLE public.feats FROM PUBLIC;
-REVOKE ALL ON TABLE public.feats FROM turtlelord;
-GRANT ALL ON TABLE public.feats TO turtlelord;
+REVOKE ALL ON TABLE public.feats FROM postgres;
+GRANT ALL ON TABLE public.feats TO postgres;
 GRANT ALL ON TABLE public.feats TO searcher;
 GRANT ALL ON TABLE public.feats TO ubuntu;
 
 
 --
--- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM turtlelord;
-GRANT ALL ON SEQUENCE public.feats_map_pk_id TO turtlelord;
+REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM postgres;
+GRANT ALL ON SEQUENCE public.feats_map_pk_id TO postgres;
 GRANT UPDATE ON SEQUENCE public.feats_map_pk_id TO searcher;
 
 
 --
--- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON TABLE public.feats_map FROM PUBLIC;
-REVOKE ALL ON TABLE public.feats_map FROM turtlelord;
-GRANT ALL ON TABLE public.feats_map TO turtlelord;
+REVOKE ALL ON TABLE public.feats_map FROM postgres;
+GRANT ALL ON TABLE public.feats_map TO postgres;
 GRANT ALL ON TABLE public.feats_map TO searcher;
 GRANT ALL ON TABLE public.feats_map TO ubuntu;
 
 
 --
--- Name: TABLE inventory; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: TABLE inventory; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON TABLE public.inventory FROM PUBLIC;
-REVOKE ALL ON TABLE public.inventory FROM turtlelord;
-GRANT ALL ON TABLE public.inventory TO turtlelord;
+REVOKE ALL ON TABLE public.inventory FROM postgres;
+GRANT ALL ON TABLE public.inventory TO postgres;
 GRANT ALL ON TABLE public.inventory TO ubuntu;
 
 
@@ -1468,7 +1460,7 @@ REVOKE ALL ON SEQUENCE public.login_log_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE public.login_log_seq FROM postgres;
 GRANT ALL ON SEQUENCE public.login_log_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.login_log_seq TO validator;
-
+GRANT UPDATE ON SEQUENCE public.login_log_seq TO tractorman;
 
 --
 -- Name: TABLE login_audit_log; Type: ACL; Schema: public; Owner: postgres
@@ -1478,7 +1470,8 @@ REVOKE ALL ON TABLE public.login_audit_log FROM PUBLIC;
 REVOKE ALL ON TABLE public.login_audit_log FROM postgres;
 GRANT ALL ON TABLE public.login_audit_log TO postgres;
 GRANT ALL ON TABLE public.login_audit_log TO validator;
-GRANT ALL ON TABLE public.login_audit_log TO turtlelord;
+GRANT ALL ON TABLE public.login_audit_log TO tractorman;
+GRANT ALL ON TABLE public.login_audit_log TO postgres;
 GRANT ALL ON TABLE public.login_audit_log TO ubuntu;
 
 
@@ -1490,7 +1483,7 @@ REVOKE ALL ON TABLE public.missions FROM PUBLIC;
 REVOKE ALL ON TABLE public.missions FROM postgres;
 GRANT ALL ON TABLE public.missions TO postgres;
 GRANT SELECT ON TABLE public.missions TO searcher;
-GRANT ALL ON TABLE public.missions TO turtlelord;
+GRANT ALL ON TABLE public.missions TO postgres;
 GRANT ALL ON TABLE public.missions TO ubuntu;
 
 
@@ -1519,7 +1512,6 @@ GRANT UPDATE ON SEQUENCE public.monster_ability_pk_seq TO searcher;
 --
 
 REVOKE ALL ON SEQUENCE public.monster_armor_map_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monster_armor_map_pk_seq FROM postgres;
 GRANT ALL ON SEQUENCE public.monster_armor_map_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_armor_map_pk_seq TO searcher;
 
@@ -1563,7 +1555,7 @@ REVOKE ALL ON TABLE public.monsters FROM postgres;
 GRANT ALL ON TABLE public.monsters TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters TO searcher;
 GRANT ALL ON TABLE public.monsters TO ubuntu;
-GRANT ALL ON TABLE public.monsters TO turtlelord;
+GRANT ALL ON TABLE public.monsters TO postgres;
 
 
 --
@@ -1575,7 +1567,7 @@ REVOKE ALL ON TABLE public.monsters_abilities FROM postgres;
 GRANT ALL ON TABLE public.monsters_abilities TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_abilities TO searcher;
 GRANT ALL ON TABLE public.monsters_abilities TO ubuntu;
-GRANT ALL ON TABLE public.monsters_abilities TO turtlelord;
+GRANT ALL ON TABLE public.monsters_abilities TO postgres;
 
 
 --
@@ -1586,7 +1578,7 @@ REVOKE ALL ON TABLE public.monsters_ability_map FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters_ability_map FROM postgres;
 GRANT ALL ON TABLE public.monsters_ability_map TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_ability_map TO searcher;
-GRANT ALL ON TABLE public.monsters_ability_map TO turtlelord;
+GRANT ALL ON TABLE public.monsters_ability_map TO postgres;
 GRANT ALL ON TABLE public.monsters_ability_map TO ubuntu;
 
 
@@ -1598,7 +1590,7 @@ REVOKE ALL ON TABLE public.monsters_armor_map FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters_armor_map FROM postgres;
 GRANT ALL ON TABLE public.monsters_armor_map TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armor_map TO searcher;
-GRANT ALL ON TABLE public.monsters_armor_map TO turtlelord;
+GRANT ALL ON TABLE public.monsters_armor_map TO postgres;
 GRANT ALL ON TABLE public.monsters_armor_map TO ubuntu;
 
 
@@ -1611,7 +1603,7 @@ REVOKE ALL ON TABLE public.monsters_armors FROM postgres;
 GRANT ALL ON TABLE public.monsters_armors TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armors TO searcher;
 GRANT ALL ON TABLE public.monsters_armors TO ubuntu;
-GRANT ALL ON TABLE public.monsters_armors TO turtlelord;
+GRANT ALL ON TABLE public.monsters_armors TO postgres;
 
 
 --
@@ -1622,7 +1614,7 @@ REVOKE ALL ON TABLE public.monsters_weapon_map FROM PUBLIC;
 REVOKE ALL ON TABLE public.monsters_weapon_map FROM postgres;
 GRANT ALL ON TABLE public.monsters_weapon_map TO postgres;
 GRANT SELECT,INSERT,DELETE ON TABLE public.monsters_weapon_map TO searcher;
-GRANT ALL ON TABLE public.monsters_weapon_map TO turtlelord;
+GRANT ALL ON TABLE public.monsters_weapon_map TO postgres;
 GRANT ALL ON TABLE public.monsters_weapon_map TO ubuntu;
 
 
@@ -1635,26 +1627,26 @@ REVOKE ALL ON TABLE public.monsters_weapons FROM postgres;
 GRANT ALL ON TABLE public.monsters_weapons TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_weapons TO searcher;
 GRANT ALL ON TABLE public.monsters_weapons TO ubuntu;
-GRANT ALL ON TABLE public.monsters_weapons TO turtlelord;
+GRANT ALL ON TABLE public.monsters_weapons TO postgres;
 
 
 --
--- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON SEQUENCE public.skills_pk_id FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.skills_pk_id FROM turtlelord;
-GRANT ALL ON SEQUENCE public.skills_pk_id TO turtlelord;
+REVOKE ALL ON SEQUENCE public.skills_pk_id FROM postgres;
+GRANT ALL ON SEQUENCE public.skills_pk_id TO postgres;
 GRANT UPDATE ON SEQUENCE public.skills_pk_id TO searcher;
 
 
 --
--- Name: TABLE skills; Type: ACL; Schema: public; Owner: turtlelord
+-- Name: TABLE skills; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON TABLE public.skills FROM PUBLIC;
-REVOKE ALL ON TABLE public.skills FROM turtlelord;
-GRANT ALL ON TABLE public.skills TO turtlelord;
+REVOKE ALL ON TABLE public.skills FROM postgres;
+GRANT ALL ON TABLE public.skills TO postgres;
 GRANT ALL ON TABLE public.skills TO searcher;
 GRANT ALL ON TABLE public.skills TO ubuntu;
 
@@ -1667,6 +1659,7 @@ REVOKE ALL ON TABLE public.users FROM PUBLIC;
 REVOKE ALL ON TABLE public.users FROM postgres;
 GRANT ALL ON TABLE public.users TO postgres;
 GRANT ALL ON TABLE public.users TO validator;
+GRANT ALL ON TABLE public.users TO tractorman;
 GRANT ALL ON TABLE public.users TO ubuntu;
 
 
