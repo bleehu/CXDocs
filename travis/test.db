@@ -1689,7 +1689,6 @@ REVOKE ALL(displayname) ON TABLE public.users FROM PUBLIC;
 REVOKE ALL(displayname) ON TABLE public.users FROM postgres;
 GRANT SELECT(displayname) ON TABLE public.users TO searcher;
 
-
 --
 -- PostgreSQL database dump complete
 --
