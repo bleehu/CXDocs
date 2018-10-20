@@ -1,39 +1,21 @@
 import characters_common
-import csv
 import pdb
 import psycopg2
 
 def get_feats():
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, feat, prerequisites, description, author,\
-        created_at, private, nanite_cost\
-        FROM feats \
-        WHERE deleted_at IS NULL;")
+    """Return a list of feats from the database."""
+    query_string = "%s WHERE deleted_at IS NULL;" % Feat.Select_predicate
+    results = characters_common.fetchall_from_db_query(query_string)
     feats = []
-    results = myCursor.fetchall()
     for line in results:
-        newFeat = parse_line_to_feat(line)
+        newFeat = Feat(line)
         feats.append(newFeat)
     return feats
 
 def get_feat_by_id(pk_id):
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT \
-        pk_id, \
-        feat, \
-        prerequisites,\
-        description, \
-        author, \
-        created_at, \
-        private, \
-        nanite_cost, \
-        FROM feats WHERE pk_id=%s;" % pk_id)
-    myCursor.close()
-    connection.commit()
-    line = myCursor.fetchall[0]
-    my_feat = parse_line_to_feat(line)
+    query_string = "%s WHERE pk_id=%s;" % (Feat.Select_predicate, pk_id)
+    first_database_row = characters_common.fetch_first_from_db_query(query_string)
+    my_feat = Feat(first_database_row)
     return my_feat
 
 def update_feat(newFeat):
@@ -63,47 +45,16 @@ def update_feat(newFeat):
     myCursor.close()
     connection.commit()
 
-def parse_line_to_feat(line):
-    feat = {}
-    feat['pk_id'] = line[0]
-    feat['feat'] = line[1]
-    feat['name'] = line[1]
-    feat['title'] = line[1]
-    if line[2] == "[]":
-        feat['prerequisites'] = []
-    else:
-        prereq_string = line[2][1:-1]
-        the_splits = prereq_string.split(',')
-        prereqs = []
-        for prereq in the_splits:
-            trimmed = prereq.strip()[1:-1]
-            prereqs.append(trimmed)
-        feat['prerequisites'] = prereqs
-    feat['description'] = line[3]
-    feat['author'] = line[4]
-    feat['created_at'] = line[5]
-    feat['private'] = line[6]
-    feat['nanite_cost'] = line[7]
-    return feat
-
-def parse_prereqs(prereq_string):
-    prereqs = []
-    parser = csv.reader(prereq_string, delimiter=",", quotechar='"')
-
-    return prereqs
-  
 def get_characters_feats(character_pk_id):
     char_pk_id_int = int(character_pk_id)
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT f.feat, f.prerequisites, f.description, f.author,\
-        f.created_at, f.private, f.nanite_cost, f.pk_id\
+    query_string = "SELECT f.pk_id, f.feat, f.prerequisites, f.description, f.author,\
+        f.created_at, f.private, f.nanite_cost\
         FROM feats_map AS map, feats AS f \
-        WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int)
-    lines = myCursor.fetchall()
+        WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int
+    lines = characters_common.fetchall_from_db_query(query_string)
     characters_feats = []
     for line in lines:
-        new_feat = parse_line_to_feat(line)
+        new_feat = Feat(line)
         characters_feats.append(new_feat)
     return characters_feats
 
@@ -127,3 +78,41 @@ def insert_character_feat_map(mapping):
     myCursor.execute("INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring)
     myCursor.close()
     connection.commit()
+
+class Feat:
+    """A Character's feat."""
+
+    Select_predicate = "SELECT \
+        pk_id, \
+        feat, \
+        prerequisites,\
+        description, \
+        author, \
+        created_at, \
+        private, \
+        nanite_cost \
+        FROM feats"
+
+    def __init__(self, line):
+        self.pk_id = int(line[0])
+        self.name = line[1]
+        self.title = line[1]
+        prereqs = parse_prereq_list(line[2])
+        self.prerequisites = prereqs
+        self.description = line[3]
+        self.author = line[4]
+        self.created_at = line[5]
+        self.private = line[6]
+        self.nanite_cost = int(line[7])
+
+
+def parse_prereq_list(prereq_string):
+    if prereq_string == "[]":
+        return []
+    the_splits = prereq_string.split(',')
+    prereqs = []
+    for prereq in the_splits:
+        trimmed = prereq.strip()
+        prereqs.append(trimmed)
+    return prereqs
+
