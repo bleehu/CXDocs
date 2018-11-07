@@ -11,7 +11,7 @@ from characters.character_routes import character_blueprint, initialize_characte
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our 
 #main web app. It's how we respond to HTTP requests, etc.
-from flask import Flask, render_template, request, redirect, session, escape, flash
+from flask import Flask, render_template, make_response, request, redirect, session, escape, flash
 
 import guestbook #our custom guestbook for showing who all is on at once.
 import json #sometimes we load or save things in json. This helps with that.
@@ -23,9 +23,11 @@ import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets 
 import os   #we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
+from auth.auth import AuthServer
 from security import security #our custom code that handles common security tasks like SQL sanitization
 import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
+from cxExceptions import cxExceptions
 
 def create_app():
     app = Flask(__name__)
@@ -343,19 +345,18 @@ def create_app():
             session.pop('X-CSRF', None)
         else:
             resp = make_response(render_template("501.html"), 403)
-            log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
+            log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" \
+                % (uname, passwerd, request.user_agent.string, request.remote_addr))
             return resp
-        user = get_user_postgres(uname, passwerd, request.remote_addr)
-        if user != None:
-            session['username'] = uname
-            session['displayname'] = user[2]
-            session['role'] = user[5]
-            log.info("%s logged in" % uname)
-            flash('Logged in.')
-            guestbook.sign_guestbook(user[2])
-        else:
-            log.warn("%s failed to log in with password %s. user_agent:%s, remoteIP:%s" % (uname, passwerd, request.user_agent.string, request.remote_addr))
-            flash('Failed to log in; username or password incorrect.')
+        try:
+            user = app.authServer.login(uname, passwerd, request)
+        except cxExceptions.CXException as exception:
+            exception.provideFeedback()
+            return redirect("/")
+        session['username'] = user.username
+        session['displayname'] = user.displayname
+        session['role'] = user.role
+        guestbook.sign_guestbook(user.displayname)
         return redirect("/")
 
     """ Logs the user out. Doesn't terminate the session, only empties the session of its info. """
@@ -363,12 +364,7 @@ def create_app():
     def logout():
         form = request.form
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
-            log.info("%s logged out" % session['username'])
-            session.pop('username', None)
-            session.pop('displayname', None)
-            session.pop('character', None)
-            session.pop('role', None)
-            session.pop('character', None)
+            app.authServer.logout(session)
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])
@@ -420,7 +416,7 @@ def create_app():
     
     global config
     config = ConfigParser.RawConfigParser()
-    config.read('../config/cxDocs.cfg')
+    config.read('config/cxDocs.cfg')
     
     seconds_away = 60
     seconds_out = 3600
@@ -437,17 +433,19 @@ def create_app():
     log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
+    cxExceptions.initialize(log)
     (username, password, host) = get_env_vars()
     app.config['username'] = username
     app.config['password'] = password
     app.config['ip_address'] = host
 
     security.initialize(username, password, log)
+    authConfigMap = auth_config_seam((username, password),config)
+    app.authServer = AuthServer(authConfigMap, log)
 
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 
     return app
-
 
 def get_env_vars():
     username = os.environ.get('FLASK_USER')
@@ -511,6 +509,23 @@ def get_user_postgres(username, password, remoteIP):
         print "$python start.py -u databaseUsername -p databasePassword"
         print "Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."
         return None
+      
+"""This is ugly code. 
+
+    In a subsequent cleaning pull, I'm going to abstract and DRY out our 
+    configuration process so that we only rely on the 3rd party ConfigParser
+    in one file. This pull is only for eliminating None returns..."""
+def auth_config_seam(unpw_tuple, config):
+    returnMe = {"username":unpw_tuple[0],
+        "password":unpw_tuple[1]}
+    if config.has_section("auth"):
+        if config.has_option("auth", "port"):
+            returnMe['port'] = config.get('auth', 'port')
+        if config.has_option("auth", "db_name"):
+            returnMe['name'] = config.get('auth', 'db_name')
+        if config.has_option("auth", "host"):
+            returnMe['host'] = config.get('auth', 'host')
+    return returnMe
 
 if __name__ == "__main__":
 

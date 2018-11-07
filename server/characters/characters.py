@@ -167,9 +167,10 @@ def get_users_newest_character(session):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT c.pk_id FROM characters AS c, users AS u \
-        WHERE u.displayname LIKE '%s' ORDER BY c.pk_id DESC;" % session['displayname'])
+        WHERE u.displayname LIKE '%s' AND c.fk_owner_id = u.pk_id \
+        ORDER BY c.pk_id DESC;" % session['displayname'])
     all_pk_ids = myCursor.fetchall()
-    new_pk_id = all_pk_ids[0]
+    new_pk_id = all_pk_ids[0][0]
     new_character = get_character(new_pk_id)
     return new_character
 
