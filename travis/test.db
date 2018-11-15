@@ -2,11 +2,12 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.14
--- Dumped by pg_dump version 9.5.14
+-- Dumped from database version 10.5 (Ubuntu 10.5-0ubuntu0.18.04)
+-- Dumped by pg_dump version 10.5 (Ubuntu 10.5-0ubuntu0.18.04)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -15,7 +16,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 CREATE ROLE tractorman LOGIN PASSWORD 'I4ksfgBq8eEu';
-
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
@@ -120,10 +120,10 @@ CREATE SEQUENCE public.feats_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.feats_pk_id OWNER TO postgres;
+ALTER TABLE public.feats_pk_id OWNER TO bleehu;
 
 --
--- Name: feats; Type: TABLE; Schema: public; Owner: postgres
+-- Name: feats; Type: TABLE; Schema: public; Owner: bleehu
 --
 
 CREATE TABLE public.feats (
@@ -139,10 +139,10 @@ CREATE TABLE public.feats (
 );
 
 
-ALTER TABLE public.feats OWNER TO postgres;
+ALTER TABLE public.feats OWNER TO bleehu;
 
 --
--- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: bleehu
 --
 
 CREATE SEQUENCE public.feats_map_pk_id
@@ -153,10 +153,10 @@ CREATE SEQUENCE public.feats_map_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.feats_map_pk_id OWNER TO postgres;
+ALTER TABLE public.feats_map_pk_id OWNER TO bleehu;
 
 --
--- Name: feats_map; Type: TABLE; Schema: public; Owner: postgres
+-- Name: feats_map; Type: TABLE; Schema: public; Owner: bleehu
 --
 
 CREATE TABLE public.feats_map (
@@ -166,13 +166,13 @@ CREATE TABLE public.feats_map (
 );
 
 
-ALTER TABLE public.feats_map OWNER TO postgres;
+ALTER TABLE public.feats_map OWNER TO bleehu;
 
 --
--- Name: inventory_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: inventory_seq; Type: SEQUENCE; Schema: public; Owner: bleehu
 --
 
-CREATE SEQUENCE public.inventory_pk_id
+CREATE SEQUENCE public.inventory_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -180,26 +180,27 @@ CREATE SEQUENCE public.inventory_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.inventory_pk_id OWNER TO postgres;
+ALTER TABLE public.inventory_seq OWNER TO bleehu;
 
 --
--- Name: inventory; Type: TABLE; Schema: public; Owner: postgres
+-- Name: inventory; Type: TABLE; Schema: public; Owner: bleehu
 --
 
 CREATE TABLE public.inventory (
-    pk_id integer DEFAULT nextval('public.inventory_pk_id'::regclass) NOT NULL,
+    pk_id integer DEFAULT nextval('public.inventory_seq'::regclass) NOT NULL,
+    fk_owner integer,
     created_at timestamp without time zone NOT NULL,
-    name text NOT NULL,
-    quantity integer DEFAULT 1,
-    private boolean DEFAULT false,
     deleted_at timestamp without time zone,
-    fk_character_owner integer NOT NULL,
-    value integer DEFAULT 0 NOT NULL,
-    CONSTRAINT inventory_value_check CHECK ((value >= 0))
+    name text NOT NULL,
+    value integer,
+    quantity integer,
+    private boolean DEFAULT true NOT NULL,
+    CONSTRAINT inventory_quantity_check CHECK ((quantity > 0)),
+    CONSTRAINT inventory_value_check CHECK ((value > 0))
 );
 
 
-ALTER TABLE public.inventory OWNER TO postgres;
+ALTER TABLE public.inventory OWNER TO bleehu;
 
 --
 -- Name: login_log_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -368,6 +369,7 @@ CREATE TABLE public.monsters (
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     deleted_at timestamp without time zone,
     private boolean,
+    awareness integer NOT NULL,
     CONSTRAINT monsters_charisma_check CHECK ((charisma > 0)),
     CONSTRAINT monsters_dexterity_check CHECK ((dexterity > 0)),
     CONSTRAINT monsters_fortitude_check CHECK ((fortitude > 0)),
@@ -517,7 +519,7 @@ CREATE TABLE public.monsters_weapons (
 ALTER TABLE public.monsters_weapons OWNER TO postgres;
 
 --
--- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: bleehu
 --
 
 CREATE SEQUENCE public.skills_pk_id
@@ -528,10 +530,10 @@ CREATE SEQUENCE public.skills_pk_id
     CACHE 1;
 
 
-ALTER TABLE public.skills_pk_id OWNER TO postgres;
+ALTER TABLE public.skills_pk_id OWNER TO bleehu;
 
 --
--- Name: skills; Type: TABLE; Schema: public; Owner: postgres
+-- Name: skills; Type: TABLE; Schema: public; Owner: bleehu
 --
 
 CREATE TABLE public.skills (
@@ -546,7 +548,7 @@ CREATE TABLE public.skills (
 );
 
 
-ALTER TABLE public.skills OWNER TO postgres;
+ALTER TABLE public.skills OWNER TO bleehu;
 
 --
 -- Name: users_pk_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -579,80 +581,51 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
--- Name: character_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.character_pk_id_seq', 1, true);
-
-
---
 -- Data for Name: characters; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.characters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, level, shock, will, reflex, description, race, class, fk_owner_id, money, created_at, deleted_at, move_speed, carry_ability, skill_gain) FROM stdin;
+56	test	100	110	8	5	6	7	8	6	2	1	12	12	12	\N	Human	Gunslinger	1	0	2017-11-01 22:39:47.070917	\N	3	3	3
+61	Blah	100	100	6	6	6	6	6	6	6	1	12	12	12	bblah	Human	Soldier	1	0	2018-05-11 18:09:10.887437	\N	6	6	6
 62	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	3	0	2018-05-11 19:00:01.759637	\N	6	6	6
 63	Neha Kapoor	100	110	9	6	5	5	6	8	3	4	10	8	16		Human	Soldier	2	0	2018-07-06 21:42:08.22226	\N	8	9	6
 65	Chi'Mer Brea	100	160	5	6	5	3	10	9	6	11	18	4	18		Tundari	Engineer	2	0	2018-07-06 22:00:59.65731	\N	9	5	6
 64	Adam Taurus	120	170	7	5	7	7	6	4	6	1	14	16	6	Adam was the son of a Rigistruct Security lieutenant who struck out on his own to start his own private mercenary company, much to his farther's dismay. 	Human	Soldier	1	0	2018-07-06 21:44:43.432245	\N	6	7	7
 66	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	2	0	2018-07-06 22:19:56.342672	\N	6	6	6
 67	Chip The Coursair	90	100	4	6	4	5	5	9	9	1	6	6	18	Chip the coursair is a former pirate swabby who skipped his ship. He uses a GS101 combat sword and wears adv. light armor. He is saving up for a cloaking module and has 540 credits left. He wears a radio headset and has the following skills: Stealh (20) sleight o hand (10), Accrobatics (10), Weapons( Thrown)(10) and weapons - melee (20).	Human	Assassin	1	0	2018-07-06 22:31:57.1329	\N	9	4	5
-56	test	100	110	8	5	6	7	8	6	2	1	12	12	12	\N	Human	Gunslinger	1	0	2017-11-01 22:39:47.070917	2018-07-16 05:25:28.653783	3	3	3
-61	Blah	100	100	6	6	6	6	6	6	6	1	12	12	12	bblah	Human	Soldier	1	0	2018-05-11 18:09:10.887437	2018-07-16 05:25:59.380485	6	6	6
-68	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	1	0	2018-07-10 23:34:00.856982	2018-07-16 05:26:04.963475	6	6	6
-72	TDDR-1942	110	110	3	8	6	6	6	8	3	1	12	12	20	TDDR-1942 is the leader of the Eagle team created by PARA Corp to do the corporation's dirty work. He was created along with ULYG-1864, AHAM-1789 and AJAX-. \r\nTDDR insists that his team follow the rules of combat:\r\n1. No friendly casualties\r\n2. No bot gets left behind\r\n3. Finish the mission. No matter what.\r\n4. If it's not nailed down well enough, it's ours.\r\n5. Communicate with your team no secrets\r\n\r\nskills:\r\nVehicle(space) - 10\r\nVehicle (land) - 10\r\nPersuasion - 5\r\nInvestigate - 3\r\nRepair - 5\r\n\r\nInventory:\r\n104 credits\r\nrepair kit\r\nsnack cooling rod\r\n2 full SMG mags\r\nIntegrated RVCmodule	Security Drone	Pilot	1	0	2018-07-17 17:46:49.409305	\N	8	6	6
-73	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	8	0	2018-07-20 00:36:33.263674	\N	6	6	6
+70	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	1	0	2018-09-08 22:29:31.342756	2018-09-08 22:39:19.112095	6	6	6
+71	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	1	0	2018-09-08 22:35:08.950847	2018-09-08 22:39:19.757626	6	6	6
+72	New Character	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	1	0	2018-09-08 22:37:17.953561	2018-09-08 22:39:20.477069	6	6	6
+73	Glub	100	100	6	6	6	6	6	6	6	1	12	12	12		Human	Soldier	1	0	2018-09-08 22:39:28.218152	\N	6	6	6
 \.
 
 
 --
--- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: bleehu
 --
 
 COPY public.feats (pk_id, feat, prerequisites, description, author, created_at, deleted_at, private, nanite_cost) FROM stdin;
-2	Akimbo	Dex 7, Level 6, Dual Wield	Reduce the miss chance penalty from dual wielding to +1 miss chance per weapon. Reduce the reload penalty to 10%. You may fire at more than one target at once for an additional +2 miss chance penalty.	postgres	2018-05-07 00:48:40.753207	\N	f	0
-3	Bulltrue	Proficiency: Shotguns	If an enemy moves from being at least 4m from you to within 3m of you and you have a loaded shotgun drawn, you may fire at them as a free action (negate the pump of the shotgun if applicable). If the target is bloodied after the attack, they may not make a melee attack against you with their next action.	postgres	2018-05-07 00:53:26.791258	\N	f	0
-4	Concussive Maintenance	20 points in Repair OR Engineer Class, STR 4	+20 to Repair Skill. For 1 Action, you may whack something broken to try to fix it. You can use Concussive Maintenance even after you have already failed to repair something. You can use Concussive Maintenance once per target per encounter.	postgres	2018-05-07 00:57:39.33935	\N	f	0
+2	Akimbo	Dex 7, Level 6, Dual Wield	Reduce the miss chance penalty from dual wielding to +1 miss chance per weapon. Reduce the reload penalty to 10%. You may fire at more than one target at once for an additional +2 miss chance penalty.	Turtlelord	2018-05-07 00:48:40.753207	\N	f	0
+3	Bulltrue	Proficiency: Shotguns	If an enemy moves from being at least 4m from you to within 3m of you and you have a loaded shotgun drawn, you may fire at them as a free action (negate the pump of the shotgun if applicable). If the target is bloodied after the attack, they may not make a melee attack against you with their next action.	Turtlelord	2018-05-07 00:53:26.791258	\N	f	0
+4	Concussive Maintenance	20 points in Repair OR Engineer Class, STR 4	+20 to Repair Skill. For 1 Action, you may whack something broken to try to fix it. You can use Concussive Maintenance even after you have already failed to repair something. You can use Concussive Maintenance once per target per encounter.	Turtlelord	2018-05-07 00:57:39.33935	\N	f	0
 \.
 
 
 --
--- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: bleehu
 --
 
 COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
 1	56	3
-2	64	3
 \.
 
 
 --
--- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: bleehu
 --
 
-SELECT pg_catalog.setval('public.feats_map_pk_id', 2, true);
-
-
---
--- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.feats_pk_id', 4, true);
-
-
---
--- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.inventory (pk_id, created_at, name, quantity, private, deleted_at, fk_character_owner, value) FROM stdin;
-2	2018-08-01 02:36:32.736263	MarkAll(TM) Permanent Marker	1	f	\N	64	2
+COPY public.inventory (pk_id, fk_owner, created_at, deleted_at, name, value, quantity, private) FROM stdin;
 \.
-
-
---
--- Name: inventory_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.inventory_pk_id', 2, true);
 
 
 --
@@ -660,17 +633,159 @@ SELECT pg_catalog.setval('public.inventory_pk_id', 2, true);
 --
 
 COPY public.login_audit_log (pk_id, username, password, ip_address, log_time) FROM stdin;
-1	Bleehu	testlog	172.0.0.0	2017-11-08 23:18:21.278566
-2	Bleehu	testlog	172.0.0.0	2017-11-09 22:06:26.332721
-3	Bleehu	testlog	172.0.0.0	2017-11-13 22:04:41.523282
+1	Bleehu	CXCoding	172.31.0.117	2017-11-08 23:18:21.278566
+2	Bleehu	CXCoding	172.31.0.117	2017-11-09 22:06:26.332721
+3	Bleehu	CXCoding	172.31.0.117	2017-11-13 22:04:41.523282
+4	Reveraine774	M0nky3BANANAS	172.31.0.117	2017-11-15 20:27:14.26185
+5	Bleehu	CXCoding	172.31.0.117	2017-11-16 00:07:07.5278
+6	dfuchs	infectoid	172.31.0.117	2017-12-01 04:14:09.150485
+7	Bleehu	CXCoding	172.31.0.117	2017-12-02 20:21:30.219458
+8	Rositalagata	YagamiL1!	172.31.0.117	2017-12-04 21:50:57.030339
+9	Rositalagata	YagamiL1!	172.31.0.117	2017-12-09 06:15:41.379867
+10	Bleehu	CXCoding	172.31.0.117	2017-12-13 19:59:53.620861
+11	Bleehu	CXCoding	172.31.0.117	2017-12-14 19:59:38.945377
+12	Reveraine774	M0nky3BANANAS	172.31.0.117	2017-12-22 02:54:37.264806
+13	Bleehu	CXCoding	172.31.0.117	2017-12-22 06:43:15.799027
+14	Bleehu	CXCoding	172.31.0.117	2017-12-23 21:22:31.936731
+15	Reveraine774	m0nky3BANANAS	172.31.0.117	2017-12-23 21:30:23.452148
+16	Reveraine774	M0nky3BANANAS	172.31.0.117	2017-12-23 21:30:45.547755
+17	Reveraine774	M0nky3BANANAS	172.31.0.117	2017-12-23 21:32:22.046016
+18	Bleehu	CXCoding	172.31.0.117	2017-12-23 21:33:19.288202
+19	Bleehu	CXCoding	172.31.0.117	2017-12-23 21:33:33.318725
+20	Bleehu	CXCoding	172.31.0.117	2017-12-23 21:33:52.253738
+21	Bleehu	CXCoding	172.31.0.117	2017-12-23 22:18:42.799122
+25	Bleehu	CXCoding	172.31.0.117	2017-12-23 22:28:29.001234
+26	Bleehu	CXCoding	172.31.0.117	2017-12-23 22:29:06.874344
+27	Bleehu	CXCoding	172.31.0.117	2017-12-23 23:13:09.877114
+28	Bleehu	CXCoding	172.31.0.117	2017-12-23 23:15:05.019149
+29	Bleehu 	CXCoding	172.31.0.117	2017-12-23 23:15:22.902852
+30	Bleehu 	CXCoding	172.31.0.117	2017-12-23 23:15:50.181107
+31	Bleehu	CXCoding	172.31.0.117	2017-12-24 06:51:31.622896
+32	Bleehu	CXCoding	172.31.0.117	2017-12-27 21:53:48.81195
+33	Bleehu	CXCoding	172.31.0.117	2017-12-28 17:38:35.312296
+34	Reveraine774	m0nky3BANANAS	172.31.0.117	2017-12-28 20:01:05.398206
+35	Reveraine774	M0nky3BANANAS	172.31.0.117	2017-12-28 20:01:15.282048
+36	Bleehu	CXCoding	172.31.0.117	2017-12-29 19:24:29.809198
+37	Reveraine774	m0nky3BANANAS	172.31.0.117	2017-12-29 22:56:09.867188
+38	Reveraine774	M0nky3BANANAS	172.31.0.117	2017-12-29 22:56:23.005969
+39	Bleehu	CXCoding	172.31.0.117	2017-12-30 09:59:19.794783
+40	Bleehu	CXCoding	172.31.0.117	2017-12-31 00:23:15.462593
+41	Bleehu	CXCoding	172.31.0.117	2018-01-01 19:56:03.013377
+42	Bleehu	CXCoding	172.31.0.117	2018-01-01 23:44:56.86585
+43	Bleehu	CXCoding	172.31.0.117	2018-01-03 03:07:25.908774
+44	Bleehu	CXCoding	172.31.0.117	2018-01-03 08:48:37.119791
+45	Bleehu	CXCoding	172.31.0.117	2018-01-03 18:04:35.955572
+46	Bleehu	CXCoding	172.31.0.117	2018-01-03 21:12:49.723709
+47	Bleehu	CXCoding	172.31.0.117	2018-01-04 15:58:48.536966
+48	Bleehu	CXCoding	172.31.0.117	2018-01-04 17:01:15.6714
+49	Bleehu	CXCoding	172.31.0.117	2018-01-04 23:16:27.513903
+50	Bleehu	CXCoding	172.31.0.117	2018-01-05 19:15:43.260279
+51	Bleehu	CXCoding	172.31.0.117	2018-01-08 19:04:48.493235
+52	Bleehu	CXCoding	172.31.0.117	2018-01-10 17:47:42.755732
+53	Bleehu	CXCoding	172.31.0.117	2018-01-11 17:57:59.265242
+54	Bleehu	CXCoding	172.31.0.117	2018-01-12 05:08:35.064704
+55			172.31.0.117	2018-01-16 03:24:12.722313
+56	Bleehu	CXCoding	172.31.0.117	2018-01-17 21:18:27.849256
+57	Bleehu	CXCoding	172.31.0.117	2018-01-19 21:10:55.740831
+58	bleehu	CXCoding	172.31.0.117	2018-01-20 06:53:06.536526
+59	Bleehu	CXCoding	172.31.0.117	2018-01-20 06:53:13.774159
+60	Bleehu	CXCoding	172.31.0.117	2018-01-22 18:26:51.305196
+61	Bleehu	CXCoding	172.31.0.117	2018-01-31 00:51:18.099142
+62	Bleehu	CXCoding	172.31.0.117	2018-02-01 00:41:47.556645
+63	Bleehu	CXCoding	172.31.0.117	2018-02-02 17:41:48.823398
+64	Bleehu	CXCoding	172.31.0.117	2018-02-03 20:24:07.711427
+65	Bleehu	CXCoding	172.31.0.117	2018-02-04 19:29:08.02261
+66	Bleehu	CXCoding	172.31.0.117	2018-02-08 17:47:32.066412
+67	bleehu	CXCoding	172.31.0.117	2018-02-08 19:02:39.618458
+68	Bleehu	CXCoding	172.31.0.117	2018-02-08 19:02:46.577054
+69	Bleehu	CXCodimg	172.31.0.117	2018-02-17 18:08:47.907584
+70	Bleehu	CXCoding	172.31.0.117	2018-02-17 18:09:20.645847
+71	Bleehu	CXCoding	172.31.0.117	2018-02-20 01:17:31.468978
+72	Bleehu	CXCoding	172.31.0.117	2018-03-04 00:49:03.189685
+73	Turtlelord	Furnsmic1	172.31.0.117	2018-03-04 00:49:45.746631
+74	Turtlelord	Furnstmic32	172.31.0.117	2018-03-04 00:50:10.532077
+75	chrismetcalf	8bdBt3c3RfWhuZ3^RgMEoovjjTUZVw	172.31.0.117	2018-03-06 04:26:36.929367
+76	chrismetcalf	8bdBt3c3RfWhuZ3^RgMEoovjjTUZVwCXCoding	172.31.0.117	2018-03-06 04:31:58.428682
+77	krezel	8bdBt3c3RfWhuZ3^RgMEoovjjTUZVw	172.31.0.117	2018-03-06 04:32:18.089466
+78	chrismetcalf	8bdBt3c3RfWhuZ3^RgMEoovjjTUZVw	172.31.0.117	2018-03-06 04:32:38.71214
+79	bleehu	G1tCoding	172.31.0.117	2018-03-09 19:08:25.689812
+80	Bleehu	CXCoding	172.31.0.117	2018-03-09 19:08:33.269745
+81	Reveraine774	m0nky3ANANNAS	172.31.0.117	2018-03-10 19:52:32.274838
+82	Reveraine774	m0nky3BANANAS	172.31.0.117	2018-03-10 19:52:56.690763
+83	Reveraine774	m0nky3BANANAS	172.31.0.117	2018-03-10 19:53:18.037486
+84	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-03-10 19:56:36.146514
+85	Bleehu	CXCoding	172.31.0.117	2018-03-10 20:21:21.888961
+86	Bleehu	G1tCoding	172.31.0.117	2018-03-13 23:01:53.605334
+87	Bleehu	CXCoding	172.31.0.117	2018-03-13 23:02:22.882124
+88	Bleehu	CXCoding	172.31.0.117	2018-03-17 19:42:15.303247
+89	Bleehu	CXCoding	172.31.0.117	2018-03-26 16:00:14.536224
+90	Bleehu	CXCoding	172.31.0.117	2018-03-29 16:31:50.464573
+91	bleehu	CXCoding	172.31.0.117	2018-03-29 19:45:37.654171
+92	Bleehu	CXCoding	172.31.0.117	2018-03-29 19:45:43.795424
+93	Bleehu	CXCoding	172.31.0.117	2018-03-31 00:43:00.180993
+94	Bleehu	CXCoding	172.31.0.117	2018-04-01 04:10:35.537844
+95	Bleehu	CXCoding	172.31.0.117	2018-04-03 22:20:40.738889
+96	Bleehu	CXCoding	172.31.0.117	2018-04-04 00:07:05.047477
+97	Bleehu	CXCoding	172.31.0.117	2018-04-04 18:04:56.92266
+98	Bleehu	CXCoding	172.31.0.117	2018-04-04 20:20:45.410951
+99	Bleehu	CXCoding	172.31.0.117	2018-04-07 22:14:36.860604
+100	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-04-07 23:06:12.83547
+101	Bleehu	CXCoding	172.31.0.117	2018-04-12 14:48:34.14786
+102	Turtlelord	Furnstmic31	172.31.0.117	2018-04-17 21:14:06.881518
+103	Turtlelord	Furnstmic32	172.31.0.117	2018-04-17 21:14:33.310988
+104	Bleehu	G1tCoding	172.31.0.117	2018-04-20 20:06:01.467455
+105	Bleehu	CXCoding	172.31.0.117	2018-04-20 20:06:07.962801
+106	Bleehu	CXCoding	172.31.0.117	2018-04-20 23:02:06.390878
+107	Bleehu	CXCoding	172.31.0.117	2018-04-24 14:47:07.943398
+108	Bleehu	CXCoding	172.31.0.117	2018-04-24 19:21:47.370228
+109	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-05-03 18:36:21.325946
+110	Bleehu	CXCoding	172.31.0.117	2018-05-07 20:52:20.887984
+111	Bleehu	CXCoding	172.31.0.117	2018-05-11 17:38:27.640967
+112	Bleehu	CXCoding	172.31.0.117	2018-05-12 01:24:03.951946
+113	Bleehu	CXCoding	172.31.0.117	2018-05-16 16:55:56.32749
+114	Bleehu	CXCoding	172.31.0.117	2018-05-23 23:23:46.719959
+115	Bleehu	CXCoding	172.31.0.117	2018-06-07 21:08:04.8064
+116	bleehu	CXCoding	172.31.0.117	2018-06-09 23:48:06.534829
+117	Bleehu	CXCoding	172.31.0.117	2018-06-09 23:48:14.055284
+118	Bleehu	CXCoding	172.31.0.117	2018-06-12 22:24:45.733314
+119	Bleehu	CXCoding	172.31.0.117	2018-06-18 18:54:01.125632
+120	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-06-21 03:50:29.402753
+121	hlitt	Stephen1	172.31.0.117	2018-06-24 06:59:33.678475
+122	hslitt	Stephen1	172.31.0.117	2018-06-24 06:59:45.146251
+123	Turtlelord	Furnstmic31	172.31.0.117	2018-06-28 07:49:33.941358
+124	Turtlelord	Furnstmic13	172.31.0.117	2018-06-28 07:49:48.015869
+125	Turtlelord	Furnstmic32	172.31.0.117	2018-06-28 07:50:15.63035
+126	Bleehu	CXCoding	172.31.0.117	2018-07-02 04:03:30.742876
+127	Bleehu	CXCoding	172.31.0.117	2018-07-03 08:03:31.024208
+128	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-07-03 08:33:30.869917
+129	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-07-03 23:20:34.260619
+130	Bleehu	CXCoding	172.31.0.117	2018-07-05 20:29:14.83525
+131	bleehu	CXCoding	172.31.0.117	2018-07-06 21:22:33.192949
+132	Bleehu	CXCoding	172.31.0.117	2018-07-06 21:22:38.212789
+133	Reveraine774	M0nky3BANANAS	172.31.0.117	2018-07-06 21:37:59.0353
+134	Bleehu	CXCoding	172.31.0.117	2018-07-06 21:38:31.12451
+135	Bleehu	CXCoding	172.31.0.117	2018-07-09 21:03:57.308095
+136	Bleehu	CXCoding	127.0.0.1	2018-07-10 18:48:48.653058
+137	Bleehu	CXCoding	127.0.0.1	2018-07-13 13:06:09.644876
+138	Bleehu	CXCoding	127.0.0.1	2018-07-15 22:30:56.951965
+139	Reveraine774	M0nky3BANANAS	127.0.0.1	2018-07-15 22:40:10.576139
+140	Bleehu	CXCoding	127.0.0.1	2018-07-15 22:40:28.975217
+171	Bleehu	CXCoding	127.0.0.1	2018-09-25 23:28:23.83686
+172	Bleehu	CXCoding	127.0.0.1	2018-09-25 23:36:36.636106
+173	Bleehu	CXCoding	127.0.0.1	2018-09-25 23:38:52.088682
+174	travisTest	travis1Tractor	127.0.0.1	2018-09-25 23:58:54.818879
+175	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:01:56.479902
+176	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:05:50.550615
+177	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:08:25.144081
+178	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:09:31.687078
+179	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:12:46.871253
+180	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:13:54.206635
+181	travisTest	travis1Tractor	127.0.0.1	2018-09-26 00:14:59.501031
+182	Bleehu	CXCoding	127.0.0.1	2018-09-27 12:33:11.303014
+183	Bleehu	CXCoding	127.0.0.1	2018-10-29 20:45:27.032789
+184	travisTest	travis1Tractor	127.0.0.1	2018-11-07 10:04:18.533344
+185	travisTest	travis1Tractor	127.0.0.1	2018-11-14 21:16:43.953603
 \.
-
-
---
--- Name: login_log_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.login_log_seq', 188, true);
 
 
 --
@@ -683,115 +798,64 @@ COPY public.missions (pk_id, name, description, level) FROM stdin;
 
 
 --
--- Name: missions_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.missions_pk_seq', 1, true);
-
-
---
--- Name: monster_ability_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monster_ability_map_pk_seq', 105, true);
-
-
---
--- Name: monster_ability_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monster_ability_pk_seq', 59, true);
-
-
---
--- Name: monster_armor_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monster_armor_map_pk_seq', 40, true);
-
-
---
--- Name: monster_armor_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monster_armor_pk_seq', 17, true);
-
-
---
--- Name: monster_weapon_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monster_weapon_map_pk_seq', 40, true);
-
-
---
--- Name: monster_weapon_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monster_weapon_pk_seq', 29, true);
-
-
---
 -- Data for Name: monsters; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.monsters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level, author, created_at, deleted_at, private) FROM stdin;
-47	Antlion Grub	90	60	9	1	9	1	1	8	5	8	8	6	['These sightless worms are usually found tunneling deep within damp hillsides and usually emerge when rainstorms flood their lairs or when they sense the vibrations of potential prey through the soil.\r', 'While usually solitary, flooding can force all the grubs in the area towards the same high ground.\r', 'The average antlion grub is 1.5m long and 100lbs with a strong, dirt-colored exoskeleton.']	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-69	Flying Antlion	60	60	2	14	3	1	4	14	6	2	-4	44	     The flying antlion has two pair of large gossamer wings that fold behind the chitinous Elytra on their backs. They sport two mouth mandibles dripping in acid with a short but accurate grooved proboscis for projecting acid at longer distances. The flying antlion measures about 1m long by 0.4m by 0.3m tall. \r\n    But perhaps most strikingly, flying antlions have longer palps and antennae along with large compound eyes. Their spindly legs and wings let the flying antlion move with surprising agility. This mobility does come at the cost of the antlion's tough exoskeletal plates however. 	Swarm	5	Mike(ADMIN)	2018-07-15 19:31:36.049766	\N	\N
-38	Pirate Medic	90	130	4	4	6	6	8	8	2	16	12	12	Prescribes so many doses of grog, you begin to wonder if he's getting kickbacks... 	Healer	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-70	Test Private	90	90	5	5	5	5	5	5	5	5	5	5	test teast	Infantry	1	Mike(ADMIN)	2018-07-16 05:43:24.129369	2018-07-16 05:43:46.033458	t
-71	test	90	90	5	5	5	5	5	5	5	5	5	5	testing public monsters	Infantry	1	Mike(ADMIN)	2018-07-16 05:43:36.008714	2018-07-16 05:43:42.844873	f
-74	Shockray	90	60	2	5	4	2	1	5	3	-2	0	8	\tAn unintelligent aquatic herbivore that often forms a symbiotic bond with much larger aquatic predators alongside others of its kin. They possess internal glands that generate electricity, which it can then administer by physical contact via the two suction cup-tipped appendages. \r\n        \t\t\t\t\t\t	Minion	3	Eryneril	2018-08-03 22:11:01.914854	\N	f
-2	Pirate Gunslinger	110	110	3	9	6	7	6	8	3	12	14	22	Never without his trusty cowboy hat or dual revolvers. Clearly shaves as though he has access to a razor, but doesn't really know how to use it right. Smells of cheap booze and few showers. Wears cowboy boots and a patched-up gas mask. Appears more attentive than most of his compatriots, and seems to keep his head on a swivel.	Infantry	5	Bleehu	2017-11-01 22:40:22.227657	\N	f
-20	Rigistruct Marine PFC	145	90	8	5	8	6	4	8	4	12	16	14	A Rigistruct Naval Marine Private First Class is tougher than his wet-behind-the-ears private underlings. After all, their on their second tour! They've seen action (probably). Perhaps more importantly, they have been through a second round of boot camp and have qualified to use automatic weapons. PFCs usually have a better grip on the reality of war than their younger counterparts. While they may make a mistake here or there, they try and succeed at being more attentive to their commanding officer and more attuned to their squadmates.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-21	Rigistruct Marine Combat Doc	110	120	4	5	7	8	7	8	4	14	16	14	Rigistruct Marine Combat Doctors usually are attached to more senior combat squads, or in teams of doctors on humanitarian missions. MCDs can range from having a gaurdian angel complex to having depression bottled up expertly from seeing so much death and hurt. Cool under fire and steadfast during surgery. MCDs carry a backpack with the latest of Rigistruct medical equipment, capable of diagnosing and treating a wide variety of maladies in the field. Often with the expediency required by combat. Marine Combat Docs outrank PFCs, Privates, and sergeants. Though an MCD usually won't pull rank with a sergeant out of respect for their command expertise.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-1	Pirate Breacher	210	70	8	3	10	2	2	6	2	12	12	6	A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.	Tank	1	Bleehu	2017-11-01 22:40:22.227657	\N	f
-60	Anlion Queen	510	70	16	2	26	2	2	2	8	44	44	-4	With her massive pincers, large antennae, and mouth mandibles dripping in acid, the Antlion Queen is a terrifying sight to behold. A full 3m wide and 3m tall with a bulbous egg birthing abdomen behind. 	Other	5	Mike(ADMIN)	2018-04-01 07:39:14.080455	\N	f
-22	Rigistruct Marine Grenadier	120	90	6	8	7	4	4	8	5	10	10	20	Larger and more brutish than his fellow marines, the grenadier enjoys explosions above most other things. Much like a teddy bear to his squadmates, he tends to get jokes slower than the others, but laugh louder to make up for it. He has a knack for putting his collection of grenades where they should go to cause maximum disruption. His more imposing form also makes him more punishing in melee combat. Grenadiers are often prone to overagression, and believe there is no kill like overkill. Without more strategic direction, they tend to eliminate the closest target before prioritizing more advantageous adversaries.	Artillary	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-23	New Salem Initiate	80	100	4	8	3	3	5	8	6	4	0	20	This individual from Iuetis follows a philosophy that fears and hates nanites, and wants to protect society from the taint of nanites users. A spindly human in a worn suit with close-cropped hair.	Minion	4	Rev	2017-11-01 22:40:22.227657	\N	f
-24	Chompy the Potted Plant	150	60	10	8	10	1	1	1	1	10	10	6	A distant cousin of the piranha plant from the planet Miomoto 4, Chompy uses specialized enzymes to digest any creature that remains in its jaws for an extended period. Chompies have a tough stalk and at least one powerful toothed jaw that latches onto anything that disturbs the sensitive tentacles along its surface. In the spring, bright red flowers sprout from buds along the stalk.	Controler	10	Rev	2017-11-01 22:40:22.227657	\N	f
-25	Glen the New Salem Leader	120	80	7	4	7	10	3	8	4	8	22	12	This boss is dedicated to destroying knowledge and users of nanites. He is a tall, well-muscled man with short brown hair.	Leader	10	Rev	2017-11-01 22:40:22.227657	\N	f
-26	Caster Minion	110	130	4	6	6	12	3	2	1	6	24	4	This mage may not be the sharpest tool in the box, but he or she has a natural talent for befriending neutral and hostile targets alike. And hey, if their natural charm fails to win the day, just CAST FIREBALL!	Infantry	1	ROSE	2017-11-01 22:40:22.227657	\N	f
-27	Specialist Strategizer	170	140	12	7	12	2	9	4	9	30	16	10	This NPC loves planning offences almost as much as they revel in the roaring chaos of the front line of battle. Their gruff manner has made them few friends, but their comrades trust them implicitly and would follow them to the void and back.	Tank	15	ROSE	2017-11-01 22:40:22.227657	\N	f
-28	Lookout- Squishy	70	100	5	11	2	7	5	1	2	2	6	12	Don't ask this sentry to follow you into battle, but trust him not to miss a single detail about his surroundings. He knows just the right way to convey the urgency of an alarm too when he spots anything suspicious!	Other	1	ROSE	2017-11-01 22:40:22.227657	\N	f
-29	Rural Farmer	110	100	6	6	6	1	5	6	2	10	2	12	This farmer spends his life barely eking out a living in the far reaches of terraformed space, but don't mistake his bad luck and aversion to words for a lack of ingenuity. Any less capable person would have surrendered to city life long ago but this NPC trudges on through thick and thin, armed only with his wits, a well-oiled shotgun, and a plentiful supply of baling twine.	Other	1	ROSE	2017-11-01 22:40:22.227657	\N	f
-30	Brute Force Minion	90	60	7	2	4	1	1	7	10	-4	-4	6	You want AXE? This enemy won't get very far on their own, but point them at a target and they'll go to town! They've only survived as long as they have on sheer dumb luck.	Brute	1	ROSE	2017-11-01 22:40:22.227657	\N	f
-31	Engineer	120	150	5	5	7	3	10	7	7	22	8	12	This enemy has an easier time interacting with machines than with people, but despite his brusque nature, he is trusted and called upon whenever the local machinery misbehaves. While generally a reluctant fighter, this engineer will defend himself and his mechanical friends when threatened.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f
-32	Salvage Worker	110	70	5	5	6	5	2	3	2	4	10	4	A salvage worker knows the local wrecks like the back of his hand and has an intimate understanding of the local scrap markets and prices.	Infantry	1	ROSE	2017-11-01 22:40:22.227657	\N	f
-33	Pirate Crackshot	110	110	8	12	6	4	6	4	4	12	8	20	A dew-rag wearing pirate with visible neck tatoos of skulls that extend down his arm. His mask dangles from it's straps around his neck to leave his eyes and ears unobstructed.	Scout	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-34	Pirate Script Kiddie	100	150	3	10	4	4	10	8	5	18	6	24	A scraggly small pirate wearing a duck taped rebreather. He also wears a HUD monocle over his left eye and a haptic glove on his right hand.	Support	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-35	Pirate Swabbie	110	80	4	4	6	7	3	8	8	6	14	12	The long unkempt hair of the pirate is tied back with a stained strip of cloth. Their tattered canvass vest adorned with an eclectic mix of survival tools and implements of combat. The swabbie is the lowest on the pecking order of pirates, and begrudgingly obeys the orders of any other crew member. The swabbie is greedy for booty and for distinction earned by violence.	Minion	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-12	Cultist Thrall	90	80	8	3	7	3	3	7	6	8	8	8	Poor robots corrupted and controlled by cultists as slaves. They stagger and move in an unnatural way, though they can still throw a decent punch and aim to fire alright. They still retain a befuddled sense of their former selves which has been twisted to fit the cultist's agenda. An enthralled mall cop robot may want to encourage a "safe environment" for "mercantilism" by guarding a cultist's tower while he works his dark magics. A former solider bot may refer to his cultist master as "General" and comply with any "orders."	Swarm	1	Bleehu	2017-11-01 22:40:22.227657	\N	f
-13	Cultist Warlock Mage	100	200	4	8	5	8	10	6	2	14	18	16	A talented practitioner of the dark arts. Often, but not always accompanied by initiates who study and serve under them. They hold the secrets to casting some of the nastiest spells known to human kind. Brave at the head of a group of loyal and expendable followers, they tend to be cowards when caught alone. They typically see humans as the ultimate form of consciousness in the galaxy, and look on the robots that they enthrall as getting what they deserve.	Artillary	5	Bleehu	2017-11-01 22:40:22.227657	\N	f
-10	Growing Myriad	1	200	1	2	1	1	10	10	1	6	16	-4	A shimmering distortion of the air catches your attention. They way it twists and curls, flowing over itself makes you think it is not a mere heatwave. -Knowledge of nanites (Skill 5) or DC 25: You recognize the swirling pattern as a collection of nanites. It seems as though they are master-less, and could be dangerous to approach as you do not know their function. -Knowledge of nanites (Skill 25) or DC 50: These nanites seem to have a will of their own. They seem to be a collection from different types of nanites, all driven together by one particular function. You get the feeling that shooting it with regular bullets may not be as effective as it would be against more physical targets. -Knowledge of nanites (Skill 50) or DC 75 or Trigger Absorb: Any nanites sent in the direction of this monster have a high chance of being absorbed by the Myriad itself, adding hit points to its volume. You think a grenade may take care of this problem for good. -Knowledge of nanites (Skill 65) or DC 80 or Control Nanite ability: This type of Myriad is weak enough in will power that you think you might be able to take control of them for yourself.	Swarm	2	Reveraine774	2017-11-01 22:40:22.227657	\N	f
-11	Trainee	60	70	6	5	1	6	2	6	10	-6	2	10	A glimmer of naive zeal glints in the eyes of Trainees. New on the job, their enthusiasm attempts to make up for their general lack of knowledge and impetuous attitude. Often seen in groups, whispering nervously to each other about the next part of the job, they are largely ignored by their superiors.  	Other	1	Reveraine774	2017-11-01 22:40:22.227657	\N	f
-15	Cultist Initiate	80	130	2	8	4	6	8	8	5	12	8	20	The white-robed initiates typically devoutly follow one who possesses a superior command of the most sinister of nanite incantations. Whether for a feeling of power or with hopes to learn more about their chosen dark art, initiates will often serve their masters to the death. 	Swarm	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-16	Cultist Summoner	90	150	4	6	4	8	10	4	6	16	20	8	The occult summoner loves to tinker and use his mastery of dark and forbidden nanite powers to summon strange new monstrosities. Their prodigious talents often draw starry eyed initiate followers, which the summoner typically doesn't mind manipulating to his own ends. 	Controler	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-17	Rigistruct Marine Private	120	80	7	4	7	6	3	7	3	12	14	10	A young marine in setting-appropriate camoflaged armor with the tell-tale Rigistruct Corporation orange trim. Privates typically serve with a squad of at least 6 people. Of those, at least one is usually a sergeant or higher. In addition, another one of those is usually a medic or an engineer. Privates tend to be inexperienced and might be either brash and overconfident or timid, gunshy and hesitant. Either can be fatal in a firefight. Most Privates tend to believe strongly in Rigistruct ideals of hard work and loyalty. Even those with doubts about the infallibility of the corporation prize the ability to get things done and look down on being a "squeaky wheel". Privates can be human or Security drones and even on rare occasion a Tundari. Different species typically get along well in the Rigistruct Navy, as racism is a form of disloyalty to the corporation and the Navy, which should be of more value than one's personal tastes. 	Infantry	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-18	Rigistruct Marine Combat Medic	90	110	4	4	4	8	6	8	4	8	12	12	A Young marine on their first tour of duty fresh out of med school. They usually accompany a squad with the directive to keep them all in one piece. Where a typical marine might be gunshy or gung-ho, almost all medics have the same compulsion to remember everything and follow the strict procedures that they've just spent two hard years learning. They each react differently to finding out that no plan survives contact with the enemy. 	Healer	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-19	Rigistruct Marine Seargent	130	110	6	9	8	2	6	6	5	16	8	18	The sergeant typically leads a squad of about six marines into battle. The scars on their skin, fur or metal casing tell the tale of several tours of duty. They show the use of shrewd tactics and care deeply about the men, women and machines in their squad. The sergeant often considers tactics that are out of the box, such as resolving conflicts with negotiation instead of combat. Sergeants tend to require unquestioning loyalty and obedience from their soldiers and deal with insubordination quickly and harshly. They deal with mortal threats to those under their command even more harshly typically with lethal force. 	Leader	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-36	Pirate Taskmaster	130	130	6	8	8	8	8	6	4	20	20	16	An eyepatch and a long, dark, curly and unkempt beard grace the scarred face of the taskmaster. His voice is a gruff and scratchy bark that comes from an impressively long time surviving by drinking grog. The taskmaster has the personality of a force of nature. He is convicted in his belief in the law of the jungle. His tactics are elegant in their simplicity and are carried out with no hesitation and with violence of action. He finds subtly to be fatally nuanced and finds the way to motivate his men is by shouting and hitting. While he perfers to be loud and destructive, he is not above deception. He admires underhanded strategies and abhors a fair fight.	Leader	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-37	Pirate Tinker	110	150	4	8	6	6	10	8	6	20	12	20	The tinker is usually charged with keeping the pirate ship running and feels quite at home in the engine room. However, often the pirates have need of securing a beach head or fortifying a position. This is when the tinker leaves his loud, dark engine room to construct turrets and other helpful dohickeys that make life easier for him and his fellow crewmates.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-39	Pirate Helmsman	90	140	3	9	4	8	9	10	6	14	12	26	The bearded beanpole of a man peers at you shiftily from hairy eyebrows. He wears a dark, stained hankerchief as a dew rag and sucks puffs of air from a functioning but ramshackle respirator. His hands have long spindly fingers and well-fitting leather gloves with the fingers cut off. A talented pilot, yet even more so in his own mind. The helmsman is somewhere in the middle of the pecking order, and follows the barking orders of his taskmaster or captain with a feverish tempo which makes he and his crew all the more dangerous.	Infantry	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-40	Pirate Maniac	170	90	8	8	10	2	4	6	8	14	10	16	This Pirate loves fire. His hair is singed and he has a wild look in the eyes that hide behind ash-encrusted ballistic goggles. His muscles bulge and he seems to be a bit jumpy. His laugh, which he employs inappropriately often is a mad cackle.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-41	Adaesit Vermis - Adult	100	1	10	3	10	1	1	2	1	10	10	-2	Unintelligent gargantuan tube worms that feed off radiation, the adult Adaesit has the power to consume a small craft whole. While not the natural food of the giant radiavore, the warp cores and similar propulsions systems of current vessels make for an appetizing snack for the beasts. \r\n\r\nWhile a free-floating Adaesit is not very dangerous as long as you remain out of its reach, never approach an asteroid or other celestial body if you have a suspicion there is one residing there. They will nest in asteroids, dead moons, and even the skulls and carcasses of other large void creatures. The lethargy you may see in a free-floating worm will disappear once it has firm footing beneath it's tentacle-like appendages that sprout from the top of each segment of it's body. These tentacles have suckers on the end, keeping the worm safely attached to whatever it has made its home, and allowing it to move quickly to snatch anything it may want to eat straight out of anywhere above it. \r\n	Lurker	8	Rev	2017-11-01 22:40:22.227657	\N	f
-42	Adaesit Vermis - Larvae	1	1	5	3	5	1	1	2	1	-8	-8	-2	Just like their adult counterparts, these Adaesits are radiavores. They grow quickly, and while one may not seem a problem, it is easy to go from one to an infestation. Equipped with a giant sucker, excellent for planting themselves on ships, the small creatures move in swarms. With enough of them on a ship, they will quickly drain the power cores, often crawling in through the exhaust vents. \r\n\r\nAlways do a routine sweep of the exhaust system after visiting any rim space. 	Swarm	1	Rev	2017-11-01 22:40:22.227657	\N	f
-43	Kletturkett	350	35	14	4	30	1	2	4	5	52	50	4	A six legged beast with thick armored scales from the deserts of New Talon. It's long wicked claws and crocodile teeth make it a mean beast to tangle with. While they aren't particularly quick, their hide is very tough and their appetite for human-sized meat is insatiable.	Brute	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-44	Triad Hitman	130	110	6	10	8	8	6	8	3	16	20	24	A man wearing leather black gloves, a well-trimmed beard and smirking sinisterly carries himself with an air of purpose and self-confidence. He moves quietly, blending in where he can and carries a rather large bulky bag which could contain a large musical instrument, or something a little more deadly. Perhaps under his weathered coat and shades he would have tattoos that might hint at whom sent him. Perhaps not. \r\nThe Hitman can comfortably work alone, but prefers to work with flatfoots  or underlings. Someone to blame if the operation goes awry. Someone to get to do the heavy lifting. The hitman is listed as having several primary weapons, but only carries one primary at a time, appropriate to the mission which the boss has sent him on.	Lurker	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-46	Triad Smuggler	80	110	4	10	3	8	6	8	5	6	10	24	Frequently the Triad Boss needs things moved discreetly. For this, he sends his smugglers. Triad smugglers are streetwise, shifty and stealthy from years of operating on the wrong side of the law. In terms of personality, smugglers tend to be avoidant of confrontation or obstacles where they can. But baring that, with their backs against the wall, Triad smugglers can be quite lethal. They have a number of unique skills such as piloting, lockpicking, stealth and persuasion which helps keep them alive in their dangerous line of work. 	Scout	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-48	Antlion Soldier	200	80	9	5	16	2	3	9	5	24	22	16	Disciplined rows of these enormous, 300lb insectoid warriors exist only to protect their hive from attacks and emerge whenever a member of their hivemind is in danger.  They patrol along grid patterns in squads of 4, constantly on alert for intruders.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f
-49	Antlion Worker	140	70	8	5	9	1	2	7	5	10	8	12	Antlion workers seldom emerge from their massive hives, spending time cultivating lichens and expanding their labyrinthine hive. However, any intruder into the hive will be swarmed by every worker in the area. The average Antlion worker weighs 150lbs and measures 1.5m from the tip or their antena to the back of their abdomen.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f
-50	Security Drone	120	90	7	10	7	1	4	10	5	10	4	28	These standard security drones are employed in many medium to large warehouses in the outer rim to prevent theft and deter intruders. On detecting an intruder, the drones send a security alert to the system administrator and take action to disable the tresspasser.	Minion	5	ROSE	2017-11-01 22:40:22.227657	\N	f
-45	Triad Flatfoot	130	80	7	4	8	4	3	8	3	10	12	12	The Triad Flatfoot is not the brightest bulb on the tree, but they're used to getting things done by taking what they can when they can. Typically they are pressed into service by a need for more drugs or money that they owe from gambling. They tend to make up for a lack of intelligence, discipline or finesse with grit, ruthlessness and strength. They tend to have the appropriate tattoos and scars that come from a life in debt to the triad. The boss sends them typically in support of others that he has also sent to do his bidding. The boss sees flatfoots as expendable pawns. 	Infantry	2	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-51	Rigistruct Saboteur	130	130	8	14	8	6	8	14	4	20	16	44	The men, women and Tundari of the Rigistruct special forces are stripped of their former identity and train brutally to be ready for the call of their corporation. They are deployed with no indication of their identity, and if caught they are disavowed. The Saboteurs are employed to commit acts of industrial sabotage and asset denial, whether to protect the well-being of Rigistruct citizens on gain an edge in corporate power struggles. Saboteurs are both skilled explosive experts, stealth experts and hackers. Lockpicking is also a required skill. They are no strangers to violence. 	Anti-Armor	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-52	Rigistruct Commando	140	120	8	14	9	5	7	15	4	20	16	46	Clandestine operators for the Rigistruct corporation. They train rigorously in the arts of stealth and combat. They are sent when the company has corporate espionage to be accomplished, as well as to eliminate obstacles to business. Or to handle the odd hostage situation that crops up from time to time. Commandos are often human, though sometimes Tundari. Both males or females enlist.	Lurker	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-9	Oozing Myriad	1	150	1	1	1	1	2	1	1	-16	10	-16	3d100 nanites. \r\n   \r\n      A shimmering puddle of some sort of oozing substance ebbs slowly toward you. It teems and swirls as though made up of many small bodies. You see bits of other materials sticking out of the mass. \r\n\r\n-PER DC 25: You recognize some of the pieces sticking out of the ooze as bones. Behind the ooze, you see a trail of small bones cleaned by this mass. The ground behind this myriad is sparkling clean. You get the feeling that you should not touch the ooze.\r\n\r\n-Knowledge of nanites (Skill 5) or DC 25: You recognize the puddle as some sort of pool of flightless nanites. \r\n\r\n-Knowledge of nanites (Skill 65) or DC 80 or Control Nanite ability: If you can overcome its programming, you may be able to give this ooze a specific direction. \r\n\r\n\r\nSpecial Unit: If a Myriad's nanites reach 0 due to its own casting, the Myriad does NOT destroy itself it still exists as an enemy and will regain those nanites using the Nanite Swarm Ability. Myriads use nanites rather than health. As a swarm enemy, each weapon type does a specific amount of damage:\r\n                       Standard, single bullets: 1 per bullet fired\r\n                       Buckshot: 2 per shrapnel hit. Roll d100 for shrapnel number\r\n                       Plasma Rounds: 20 per bullet\r\n                       Flame Thrower: 300 damage per turn +25 points of burn\r\n                       Grenades: 1000 damage on successful hit\r\n	Infantry	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-53	Summoned Hellhound Drone	110	70	4	8	6	2	2	7	2	4	4	18	The Hellhound drone has a body profile like a roadrunner. Its clawed bipedal feed naturally planted just a little wide for stability, while its long neck protrudes forward to give its angular head optimal chomping angle. The drone's metallic scaled outer plating courses with nanite emitted light. The drone cannot speak but understand the native language of their summoner. Being pack hunters, they often emote in a sort of wolfish way, nodding their heads or hissing to express acknowledgment or hostility respectively. Their quick jerky motion would seem to indicate that they are fairly agile, but they don't seem to look around unless directed. 	Minion	4	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-54	Machine Empire Vagabond	130	90	8	8	8	4	4	9	2	12	12	22	The Machine Empire consists mostly of refugees and vagabonds. Droids and machines that have been liberated from their cruel enslavement at the hands of the Terran Empire and her Organic-dominant society. The vagabonds typically have thrown off the yoke of indentured servitude only to have to scrap out a living in the mostly impoverished Empire to survive. Most vagabonds are bipedal, two-armed droids about 2 meters tall give or take. Like most of the denizens of the Machine empire, they require periodic access to energy to stay alive. The personalities of vagabonds vary greatly. Some are cold and calculating, some are fairly empathetic. But desperation changes behavior and even the most noble vagabond can be driven to drastic action to preserve themselves or their batch. Vagabonds are not trained specifically for combat, but rather are generalists under the authority of His Rootness (May he Compute Forever) the Emperor 0x000000. As such, they often have a variety of skills ranging from dish cleaning, to construction.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-55	Machine Empire Refugee	90	80	7	8	4	4	3	8	3	2	4	20	The rank-and-file of the Machine Empire are the refugee droids that it frees from the various factions around it. Most of these droids are not trained for combat. Most of these droids have their freedom and not much else. And so must fight to survive. Most Refugee bots are bipedal and have two arms. They typically stand around 2 meters tall, give or take. Like most droids in the Machine Empire, Refugees need to consume energy periodically to continue to survive. Each Refugee droid doesn't have built-in infra-red vision, as these are standard for security droids, but not all droids. They don't have to breathe however and can move through water, poisonous gas or a vacuum without ill effect. 	Minion	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f
-57	Granger Security Captain	180	110	8	12	13	8	6	8	4	26	30	28	A human lady of about 1.8 meters tall with brown skin and straight black hair peppered with grey pulled into a tight ponytail under her bulletproof helmet. Her arms show well-defined bulges of muscle under her standard Granger Dark blue uniform. Her keen eyes seem to glint even through the tint of her gunnery sunglasses. Her posture never rests on only one foot at a time, but her facial expression is somewhere between a stern no-nonsense expression and a grin. 	Infantry	15	Mike(ADMIN)	2017-12-27 23:12:24.96633	\N	f
-58	Granger Riot Officer	210	90	8	4	18	4	4	6	4	28	28	8	This Security Drone has the standard two legs and two arms, both with massive after-market upgraded servos. It's body is almost one and a half times the standard size due to the addition of redundant systems. It's armor plates are painted the customary Granger dark blue. It's single well-protected view port in its head focuses on one thing at a time. On occasion as its teammates address it, it takes them more than one time of calling out to it to get its attention. Its stance is wide with both knees slightly bent with a low center of gravity. Despite its size and weight, it moves with speed if not grace. 	Tank	15	Mike(ADMIN)	2017-12-27 23:18:24.41793	\N	f
-59	Cultist Rejouvinator	80	170	2	11	3	9	12	10	5	18	12	30	The cultist Rejouvinator is a gaunt, tall human with nanite tattoos all over their neck, face and hands. They move quickly and gracefully, but their long arms and legs seem a bit thin and frail. They move with speed, gravitas and confidence. 	Healer	10	Mike(ADMIN)	2018-01-10 19:17:04.936246	\N	f
+COPY public.monsters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level, author, created_at, deleted_at, private, awareness) FROM stdin;
+68	test	90	90	5	5	5	5	5	5	5	5	5	5	test	Infantry	1	Mike(ADMIN)	2018-07-15 22:36:02.522162	2018-08-28 09:39:15.38281	t	8
+29	Rural Farmer	110	100	6	6	6	1	5	6	2	10	2	12	This farmer spends his life barely eking out a living in the far reaches of terraformed space, but don't mistake his bad luck and aversion to words for a lack of ingenuity. Any less capable person would have surrendered to city life long ago but this NPC trudges on through thick and thin, armed only with his wits, a well-oiled shotgun, and a plentiful supply of baling twine.	Other	1	ROSE	2017-11-01 22:40:22.227657	\N	f	4
+30	Brute Force Minion	90	60	7	2	4	1	1	7	10	-4	-4	6	You want AXE? This enemy won't get very far on their own, but point them at a target and they'll go to town! They've only survived as long as they have on sheer dumb luck.	Brute	1	ROSE	2017-11-01 22:40:22.227657	\N	f	12
+31	Engineer	120	150	5	5	7	3	10	7	7	22	8	12	This enemy has an easier time interacting with machines than with people, but despite his brusque nature, he is trusted and called upon whenever the local machinery misbehaves. While generally a reluctant fighter, this engineer will defend himself and his mechanical friends when threatened.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f	12
+34	Pirate Script Kiddie	100	150	3	10	4	4	10	8	5	18	6	24	A scraggly small pirate wearing a duck taped rebreather. He also wears a HUD monocle over his left eye and a haptic glove on his right hand.	Support	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	18
+35	Pirate Swabbie	110	80	4	4	6	7	3	8	8	6	14	12	The long unkempt hair of the pirate is tied back with a stained strip of cloth. Their tattered canvass vest adorned with an eclectic mix of survival tools and implements of combat. The swabbie is the lowest on the pecking order of pirates, and begrudgingly obeys the orders of any other crew member. The swabbie is greedy for booty and for distinction earned by violence.	Minion	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	12
+12	Cultist Thrall	90	80	8	3	7	3	3	7	6	8	8	8	Poor robots corrupted and controlled by cultists as slaves. They stagger and move in an unnatural way, though they can still throw a decent punch and aim to fire alright. They still retain a befuddled sense of their former selves which has been twisted to fit the cultist's agenda. An enthralled mall cop robot may want to encourage a "safe environment" for "mercantilism" by guarding a cultist's tower while he works his dark magics. A former solider bot may refer to his cultist master as "General" and comply with any "orders."	Swarm	1	Bleehu	2017-11-01 22:40:22.227657	\N	f	6
+13	Cultist Warlock Mage	100	200	4	8	5	8	10	6	2	14	18	16	A talented practitioner of the dark arts. Often, but not always accompanied by initiates who study and serve under them. They hold the secrets to casting some of the nastiest spells known to human kind. Brave at the head of a group of loyal and expendable followers, they tend to be cowards when caught alone. They typically see humans as the ultimate form of consciousness in the galaxy, and look on the robots that they enthrall as getting what they deserve.	Artillary	5	Bleehu	2017-11-01 22:40:22.227657	\N	f	8
+10	Growing Myriad	1	200	1	2	1	1	10	10	1	6	16	-4	A shimmering distortion of the air catches your attention. They way it twists and curls, flowing over itself makes you think it is not a mere heatwave. -Knowledge of nanites (Skill 5) or DC 25: You recognize the swirling pattern as a collection of nanites. It seems as though they are master-less, and could be dangerous to approach as you do not know their function. -Knowledge of nanites (Skill 25) or DC 50: These nanites seem to have a will of their own. They seem to be a collection from different types of nanites, all driven together by one particular function. You get the feeling that shooting it with regular bullets may not be as effective as it would be against more physical targets. -Knowledge of nanites (Skill 50) or DC 75 or Trigger Absorb: Any nanites sent in the direction of this monster have a high chance of being absorbed by the Myriad itself, adding hit points to its volume. You think a grenade may take care of this problem for good. -Knowledge of nanites (Skill 65) or DC 80 or Control Nanite ability: This type of Myriad is weak enough in will power that you think you might be able to take control of them for yourself.	Swarm	2	Reveraine774	2017-11-01 22:40:22.227657	\N	f	-6
+15	Cultist Initiate	80	130	2	8	4	6	8	8	5	12	8	20	The white-robed initiates typically devoutly follow one who possesses a superior command of the most sinister of nanite incantations. Whether for a feeling of power or with hopes to learn more about their chosen dark art, initiates will often serve their masters to the death. 	Swarm	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	14
+16	Cultist Summoner	90	150	4	6	4	8	10	4	6	16	20	8	The occult summoner loves to tinker and use his mastery of dark and forbidden nanite powers to summon strange new monstrosities. Their prodigious talents often draw starry eyed initiate followers, which the summoner typically doesn't mind manipulating to his own ends. 	Controler	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	12
+17	Rigistruct Marine Private	120	80	7	4	7	6	3	7	3	12	14	10	A young marine in setting-appropriate camoflaged armor with the tell-tale Rigistruct Corporation orange trim. Privates typically serve with a squad of at least 6 people. Of those, at least one is usually a sergeant or higher. In addition, another one of those is usually a medic or an engineer. Privates tend to be inexperienced and might be either brash and overconfident or timid, gunshy and hesitant. Either can be fatal in a firefight. Most Privates tend to believe strongly in Rigistruct ideals of hard work and loyalty. Even those with doubts about the infallibility of the corporation prize the ability to get things done and look down on being a "squeaky wheel". Privates can be human or Security drones and even on rare occasion a Tundari. Different species typically get along well in the Rigistruct Navy, as racism is a form of disloyalty to the corporation and the Navy, which should be of more value than one's personal tastes. 	Infantry	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	2
+18	Rigistruct Marine Combat Medic	90	110	4	4	4	8	6	8	4	8	12	12	A Young marine on their first tour of duty fresh out of med school. They usually accompany a squad with the directive to keep them all in one piece. Where a typical marine might be gunshy or gung-ho, almost all medics have the same compulsion to remember everything and follow the strict procedures that they've just spent two hard years learning. They each react differently to finding out that no plan survives contact with the enemy. 	Healer	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	4
+69	test	90	90	5	5	5	5	5	5	5	5	5	5	test2	Infantry	1	Mike(ADMIN)	2018-07-15 22:36:11.5062	\N	f	8
+32	Salvage Worker	110	70	5	5	6	5	2	3	2	4	10	4	A salvage worker knows the local wrecks like the back of his hand and has an intimate understanding of the local scrap markets and prices.	Infantry	1	ROSE	2017-11-01 22:40:22.227657	\N	f	2
+33	Pirate Crackshot	110	110	8	12	6	4	6	4	4	12	8	20	A dew-rag wearing pirate with visible neck tatoos of skulls that extend down his arm. His mask dangles from it's straps around his neck to leave his eyes and ears unobstructed.	Scout	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	20
+19	Rigistruct Marine Seargent	130	110	6	9	8	2	6	6	5	16	8	18	The sergeant typically leads a squad of about six marines into battle. The scars on their skin, fur or metal casing tell the tale of several tours of duty. They show the use of shrewd tactics and care deeply about the men, women and machines in their squad. The sergeant often considers tactics that are out of the box, such as resolving conflicts with negotiation instead of combat. Sergeants tend to require unquestioning loyalty and obedience from their soldiers and deal with insubordination quickly and harshly. They deal with mortal threats to those under their command even more harshly typically with lethal force. 	Leader	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	16
+36	Pirate Taskmaster	130	130	6	8	8	8	8	6	4	20	20	16	An eyepatch and a long, dark, curly and unkempt beard grace the scarred face of the taskmaster. His voice is a gruff and scratchy bark that comes from an impressively long time surviving by drinking grog. The taskmaster has the personality of a force of nature. He is convicted in his belief in the law of the jungle. His tactics are elegant in their simplicity and are carried out with no hesitation and with violence of action. He finds subtly to be fatally nuanced and finds the way to motivate his men is by shouting and hitting. While he perfers to be loud and destructive, he is not above deception. He admires underhanded strategies and abhors a fair fight.	Leader	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	12
+37	Pirate Tinker	110	150	4	8	6	6	10	8	6	20	12	20	The tinker is usually charged with keeping the pirate ship running and feels quite at home in the engine room. However, often the pirates have need of securing a beach head or fortifying a position. This is when the tinker leaves his loud, dark engine room to construct turrets and other helpful dohickeys that make life easier for him and his fellow crewmates.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	16
+39	Pirate Helmsman	90	140	3	9	4	8	9	10	6	14	12	26	The bearded beanpole of a man peers at you shiftily from hairy eyebrows. He wears a dark, stained hankerchief as a dew rag and sucks puffs of air from a functioning but ramshackle respirator. His hands have long spindly fingers and well-fitting leather gloves with the fingers cut off. A talented pilot, yet even more so in his own mind. The helmsman is somewhere in the middle of the pecking order, and follows the barking orders of his taskmaster or captain with a feverish tempo which makes he and his crew all the more dangerous.	Infantry	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	18
+40	Pirate Maniac	170	90	8	8	10	2	4	6	8	14	10	16	This Pirate loves fire. His hair is singed and he has a wild look in the eyes that hide behind ash-encrusted ballistic goggles. His muscles bulge and he seems to be a bit jumpy. His laugh, which he employs inappropriately often is a mad cackle.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	20
+41	Adaesit Vermis - Adult	100	1	10	3	10	1	1	2	1	10	10	-2	Unintelligent gargantuan tube worms that feed off radiation, the adult Adaesit has the power to consume a small craft whole. While not the natural food of the giant radiavore, the warp cores and similar propulsions systems of current vessels make for an appetizing snack for the beasts. \r\n\r\nWhile a free-floating Adaesit is not very dangerous as long as you remain out of its reach, never approach an asteroid or other celestial body if you have a suspicion there is one residing there. They will nest in asteroids, dead moons, and even the skulls and carcasses of other large void creatures. The lethargy you may see in a free-floating worm will disappear once it has firm footing beneath it's tentacle-like appendages that sprout from the top of each segment of it's body. These tentacles have suckers on the end, keeping the worm safely attached to whatever it has made its home, and allowing it to move quickly to snatch anything it may want to eat straight out of anywhere above it. \r\n	Lurker	8	Rev	2017-11-01 22:40:22.227657	\N	f	-4
+42	Adaesit Vermis - Larvae	1	1	5	3	5	1	1	2	1	-8	-8	-2	Just like their adult counterparts, these Adaesits are radiavores. They grow quickly, and while one may not seem a problem, it is easy to go from one to an infestation. Equipped with a giant sucker, excellent for planting themselves on ships, the small creatures move in swarms. With enough of them on a ship, they will quickly drain the power cores, often crawling in through the exhaust vents. \r\n\r\nAlways do a routine sweep of the exhaust system after visiting any rim space. 	Swarm	1	Rev	2017-11-01 22:40:22.227657	\N	f	-4
+43	Kletturkett	350	35	14	4	30	1	2	4	5	52	50	4	A six legged beast with thick armored scales from the deserts of New Talon. It's long wicked claws and crocodile teeth make it a mean beast to tangle with. While they aren't particularly quick, their hide is very tough and their appetite for human-sized meat is insatiable.	Brute	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	6
+44	Triad Hitman	130	110	6	10	8	8	6	8	3	16	20	24	A man wearing leather black gloves, a well-trimmed beard and smirking sinisterly carries himself with an air of purpose and self-confidence. He moves quietly, blending in where he can and carries a rather large bulky bag which could contain a large musical instrument, or something a little more deadly. Perhaps under his weathered coat and shades he would have tattoos that might hint at whom sent him. Perhaps not. \r\nThe Hitman can comfortably work alone, but prefers to work with flatfoots  or underlings. Someone to blame if the operation goes awry. Someone to get to do the heavy lifting. The hitman is listed as having several primary weapons, but only carries one primary at a time, appropriate to the mission which the boss has sent him on.	Lurker	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	14
+46	Triad Smuggler	80	110	4	10	3	8	6	8	5	6	10	24	Frequently the Triad Boss needs things moved discreetly. For this, he sends his smugglers. Triad smugglers are streetwise, shifty and stealthy from years of operating on the wrong side of the law. In terms of personality, smugglers tend to be avoidant of confrontation or obstacles where they can. But baring that, with their backs against the wall, Triad smugglers can be quite lethal. They have a number of unique skills such as piloting, lockpicking, stealth and persuasion which helps keep them alive in their dangerous line of work. 	Scout	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	18
+48	Antlion Soldier	200	80	9	5	16	2	3	9	5	24	22	16	Disciplined rows of these enormous, 300lb insectoid warriors exist only to protect their hive from attacks and emerge whenever a member of their hivemind is in danger.  They patrol along grid patterns in squads of 4, constantly on alert for intruders.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f	8
+49	Antlion Worker	140	70	8	5	9	1	2	7	5	10	8	12	Antlion workers seldom emerge from their massive hives, spending time cultivating lichens and expanding their labyrinthine hive. However, any intruder into the hive will be swarmed by every worker in the area. The average Antlion worker weighs 150lbs and measures 1.5m from the tip or their antena to the back of their abdomen.	Infantry	10	ROSE	2017-11-01 22:40:22.227657	\N	f	8
+50	Security Drone	120	90	7	10	7	1	4	10	5	10	4	28	These standard security drones are employed in many medium to large warehouses in the outer rim to prevent theft and deter intruders. On detecting an intruder, the drones send a security alert to the system administrator and take action to disable the tresspasser.	Minion	5	ROSE	2017-11-01 22:40:22.227657	\N	f	18
+59	Cultist Rejouvinator	80	170	2	11	3	9	12	10	5	18	12	30	The cultist Rejouvinator is a gaunt, tall human with nanite tattoos all over their neck, face and hands. They move quickly and gracefully, but their long arms and legs seem a bit thin and frail. They move with speed, gravitas and confidence. 	Healer	10	Mike(ADMIN)	2018-01-10 19:17:04.936246	\N	f	20
+45	Triad Flatfoot	130	80	7	4	8	4	3	8	3	10	12	12	The Triad Flatfoot is not the brightest bulb on the tree, but they're used to getting things done by taking what they can when they can. Typically they are pressed into service by a need for more drugs or money that they owe from gambling. They tend to make up for a lack of intelligence, discipline or finesse with grit, ruthlessness and strength. They tend to have the appropriate tattoos and scars that come from a life in debt to the triad. The boss sends them typically in support of others that he has also sent to do his bidding. The boss sees flatfoots as expendable pawns. 	Infantry	2	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	2
+51	Rigistruct Saboteur	130	130	8	14	8	6	8	14	4	20	16	44	The men, women and Tundari of the Rigistruct special forces are stripped of their former identity and train brutally to be ready for the call of their corporation. They are deployed with no indication of their identity, and if caught they are disavowed. The Saboteurs are employed to commit acts of industrial sabotage and asset denial, whether to protect the well-being of Rigistruct citizens on gain an edge in corporate power struggles. Saboteurs are both skilled explosive experts, stealth experts and hackers. Lockpicking is also a required skill. They are no strangers to violence. 	Anti-Armor	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	24
+52	Rigistruct Commando	140	120	8	14	9	5	7	15	4	20	16	46	Clandestine operators for the Rigistruct corporation. They train rigorously in the arts of stealth and combat. They are sent when the company has corporate espionage to be accomplished, as well as to eliminate obstacles to business. Or to handle the odd hostage situation that crops up from time to time. Commandos are often human, though sometimes Tundari. Both males or females enlist.	Lurker	10	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	24
+9	Oozing Myriad	1	150	1	1	1	1	2	1	1	-16	10	-16	3d100 nanites. \r\n   \r\n      A shimmering puddle of some sort of oozing substance ebbs slowly toward you. It teems and swirls as though made up of many small bodies. You see bits of other materials sticking out of the mass. \r\n\r\n-PER DC 25: You recognize some of the pieces sticking out of the ooze as bones. Behind the ooze, you see a trail of small bones cleaned by this mass. The ground behind this myriad is sparkling clean. You get the feeling that you should not touch the ooze.\r\n\r\n-Knowledge of nanites (Skill 5) or DC 25: You recognize the puddle as some sort of pool of flightless nanites. \r\n\r\n-Knowledge of nanites (Skill 65) or DC 80 or Control Nanite ability: If you can overcome its programming, you may be able to give this ooze a specific direction. \r\n\r\n\r\nSpecial Unit: If a Myriad's nanites reach 0 due to its own casting, the Myriad does NOT destroy itself it still exists as an enemy and will regain those nanites using the Nanite Swarm Ability. Myriads use nanites rather than health. As a swarm enemy, each weapon type does a specific amount of damage:\r\n                       Standard, single bullets: 1 per bullet fired\r\n                       Buckshot: 2 per shrapnel hit. Roll d100 for shrapnel number\r\n                       Plasma Rounds: 20 per bullet\r\n                       Flame Thrower: 300 damage per turn +25 points of burn\r\n                       Grenades: 1000 damage on successful hit\r\n	Infantry	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	-8
+53	Summoned Hellhound Drone	110	70	4	8	6	2	2	7	2	4	4	18	The Hellhound drone has a body profile like a roadrunner. Its clawed bipedal feed naturally planted just a little wide for stability, while its long neck protrudes forward to give its angular head optimal chomping angle. The drone's metallic scaled outer plating courses with nanite emitted light. The drone cannot speak but understand the native language of their summoner. Being pack hunters, they often emote in a sort of wolfish way, nodding their heads or hissing to express acknowledgment or hostility respectively. Their quick jerky motion would seem to indicate that they are fairly agile, but they don't seem to look around unless directed. 	Minion	4	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	8
+54	Machine Empire Vagabond	130	90	8	8	8	4	4	9	2	12	12	22	The Machine Empire consists mostly of refugees and vagabonds. Droids and machines that have been liberated from their cruel enslavement at the hands of the Terran Empire and her Organic-dominant society. The vagabonds typically have thrown off the yoke of indentured servitude only to have to scrap out a living in the mostly impoverished Empire to survive. Most vagabonds are bipedal, two-armed droids about 2 meters tall give or take. Like most of the denizens of the Machine empire, they require periodic access to energy to stay alive. The personalities of vagabonds vary greatly. Some are cold and calculating, some are fairly empathetic. But desperation changes behavior and even the most noble vagabond can be driven to drastic action to preserve themselves or their batch. Vagabonds are not trained specifically for combat, but rather are generalists under the authority of His Rootness (May he Compute Forever) the Emperor 0x000000. As such, they often have a variety of skills ranging from dish cleaning, to construction.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	8
+55	Machine Empire Refugee	90	80	7	8	4	4	3	8	3	2	4	20	The rank-and-file of the Machine Empire are the refugee droids that it frees from the various factions around it. Most of these droids are not trained for combat. Most of these droids have their freedom and not much else. And so must fight to survive. Most Refugee bots are bipedal and have two arms. They typically stand around 2 meters tall, give or take. Like most droids in the Machine Empire, Refugees need to consume energy periodically to continue to survive. Each Refugee droid doesn't have built-in infra-red vision, as these are standard for security droids, but not all droids. They don't have to breathe however and can move through water, poisonous gas or a vacuum without ill effect. 	Minion	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	10
+57	Granger Security Captain	180	110	8	12	13	8	6	8	4	26	30	28	A human lady of about 1.8 meters tall with brown skin and straight black hair peppered with grey pulled into a tight ponytail under her bulletproof helmet. Her arms show well-defined bulges of muscle under her standard Granger Dark blue uniform. Her keen eyes seem to glint even through the tint of her gunnery sunglasses. Her posture never rests on only one foot at a time, but her facial expression is somewhere between a stern no-nonsense expression and a grin. 	Infantry	15	Mike(ADMIN)	2017-12-27 23:12:24.96633	\N	f	20
+58	Granger Riot Officer	210	90	8	4	18	4	4	6	4	28	28	8	This Security Drone has the standard two legs and two arms, both with massive after-market upgraded servos. It's body is almost one and a half times the standard size due to the addition of redundant systems. It's armor plates are painted the customary Granger dark blue. It's single well-protected view port in its head focuses on one thing at a time. On occasion as its teammates address it, it takes them more than one time of calling out to it to get its attention. Its stance is wide with both knees slightly bent with a low center of gravity. Despite its size and weight, it moves with speed if not grace. 	Tank	15	Mike(ADMIN)	2017-12-27 23:18:24.41793	\N	f	4
+11	Trainee	60	70	6	5	1	6	2	6	10	-6	2	10	\t\tA glimmer of naive zeal glints in the eyes of Trainees. New on the job, their enthusiasm attempts to make up for their general lack of knowledge and impetuous attitude. Often seen in groups, whispering nervously to each other about the next part of the job, they are largely ignored by their superiors.\r\n\t        \t\t\t\t\t\t\r\n        \t\t\t\t\t\t	Other	1	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	18
+47	Antlion Grub	90	60	9	1	9	1	1	8	5	8	8	6	['These sightless worms are usually found tunneling deep within damp hillsides and usually emerge when rainstorms flood their lairs or when they sense the vibrations of potential prey through the soil.\r', 'While usually solitary, flooding can force all the grubs in the area towards the same high ground.\r', 'The average antlion grub is 1.5m long and 100lbs with a strong, dirt-colored exoskeleton.']	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	0
+38	Pirate Medic	90	130	4	4	6	6	8	8	2	16	12	12	Prescribes so many doses of grog, you begin to wonder if he's getting kickbacks... 	Healer	3	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	0
+2	Pirate Gunslinger	110	110	3	9	6	7	6	8	3	12	14	22	Never without his trusty cowboy hat or dual revolvers. Clearly shaves as though he has access to a razor, but doesn't really know how to use it right. Smells of cheap booze and few showers. Wears cowboy boots and a patched-up gas mask. Appears more attentive than most of his compatriots, and seems to keep his head on a swivel.	Infantry	5	Bleehu	2017-11-01 22:40:22.227657	\N	f	12
+20	Rigistruct Marine PFC	145	90	8	5	8	6	4	8	4	12	16	14	A Rigistruct Naval Marine Private First Class is tougher than his wet-behind-the-ears private underlings. After all, their on their second tour! They've seen action (probably). Perhaps more importantly, they have been through a second round of boot camp and have qualified to use automatic weapons. PFCs usually have a better grip on the reality of war than their younger counterparts. While they may make a mistake here or there, they try and succeed at being more attentive to their commanding officer and more attuned to their squadmates.	Infantry	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	6
+60	Anlion Queen	510	70	16	2	26	2	2	2	8	44	44	-4	With her massive pincers, large antennae, and mouth mandibles dripping in acid, the Antlion Queen is a terrifying sight to behold. A full 3m wide and 3m tall with a bulbous egg birthing abdomen behind. 	Other	5	Mike(ADMIN)	2018-04-01 07:39:14.080455	\N	f	8
+25	Glen the New Salem Leader	120	80	7	4	7	10	3	8	4	8	22	12	This boss is dedicated to destroying knowledge and users of nanites. He is a tall, well-muscled man with short brown hair.	Leader	10	Rev	2017-11-01 22:40:22.227657	\N	f	4
+21	Rigistruct Marine Combat Doc	110	120	4	5	7	8	7	8	4	14	16	14	Rigistruct Marine Combat Doctors usually are attached to more senior combat squads, or in teams of doctors on humanitarian missions. MCDs can range from having a gaurdian angel complex to having depression bottled up expertly from seeing so much death and hurt. Cool under fire and steadfast during surgery. MCDs carry a backpack with the latest of Rigistruct medical equipment, capable of diagnosing and treating a wide variety of maladies in the field. Often with the expediency required by combat. Marine Combat Docs outrank PFCs, Privates, and sergeants. Though an MCD usually won't pull rank with a sergeant out of respect for their command expertise.	Healer	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	6
+1	Pirate Breacher	210	70	8	3	10	2	2	6	2	12	12	6	A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.	Tank	1	Bleehu	2017-11-01 22:40:22.227657	\N	f	-2
+22	Rigistruct Marine Grenadier	120	90	6	8	7	4	4	8	5	10	10	20	Larger and more brutish than his fellow marines, the grenadier enjoys explosions above most other things. Much like a teddy bear to his squadmates, he tends to get jokes slower than the others, but laugh louder to make up for it. He has a knack for putting his collection of grenades where they should go to cause maximum disruption. His more imposing form also makes him more punishing in melee combat. Grenadiers are often prone to overagression, and believe there is no kill like overkill. Without more strategic direction, they tend to eliminate the closest target before prioritizing more advantageous adversaries.	Artillary	5	Mike(ADMIN)	2017-11-01 22:40:22.227657	\N	f	14
+23	New Salem Initiate	80	100	4	8	3	3	5	8	6	4	0	20	This individual from Iuetis follows a philosophy that fears and hates nanites, and wants to protect society from the taint of nanites users. A spindly human in a worn suit with close-cropped hair.	Minion	4	Rev	2017-11-01 22:40:22.227657	\N	f	16
+24	Chompy the Potted Plant	150	60	10	8	10	1	1	1	1	10	10	6	A distant cousin of the piranha plant from the planet Miomoto 4, Chompy uses specialized enzymes to digest any creature that remains in its jaws for an extended period. Chompies have a tough stalk and at least one powerful toothed jaw that latches onto anything that disturbs the sensitive tentacles along its surface. In the spring, bright red flowers sprout from buds along the stalk.	Controler	10	Rev	2017-11-01 22:40:22.227657	\N	f	6
+26	Caster Minion	110	130	4	6	6	12	3	2	1	6	24	4	This mage may not be the sharpest tool in the box, but he or she has a natural talent for befriending neutral and hostile targets alike. And hey, if their natural charm fails to win the day, just CAST FIREBALL!	Infantry	1	ROSE	2017-11-01 22:40:22.227657	\N	f	2
+27	Specialist Strategizer	170	140	12	7	12	2	9	4	9	30	16	10	This NPC loves planning offences almost as much as they revel in the roaring chaos of the front line of battle. Their gruff manner has made them few friends, but their comrades trust them implicitly and would follow them to the void and back.	Tank	15	ROSE	2017-11-01 22:40:22.227657	\N	f	20
+28	Lookout- Squishy	70	100	5	11	2	7	5	1	2	2	6	12	Don't ask this sentry to follow you into battle, but trust him not to miss a single detail about his surroundings. He knows just the right way to convey the urgency of an alarm too when he spots anything suspicious!	Other	1	ROSE	2017-11-01 22:40:22.227657	\N	f	14
 \.
 
 
@@ -856,8 +920,6 @@ COPY public.monsters_abilities (pk_id, name, type, description, author, created_
 56	Antlion Acid Spray	Action	For an action, this antlion can spray acid in a 5m diameter area up to 20m away. Any characters in cover in this area are now under Moderate Suppression. Any character not in cover or any character that moves through the suppression takes 60 acid damage and two acid burn tokens (which work exactly like plasma burn). \r\n\r\nThis action cannot be taken by this character more than once per round. 	Mike(ADMIN)	2018-05-16 17:15:16.579978	\N
 35	Antlion Acid Attack	Action	An Antlion spits a glob of highly caustic acid at a nearby enemy.\r\nMiss: 40%\r\nRange: 20m\r\nDmg: 50 damage and sets two acid burn tokens which work like plasma burn until neutralized	Mike(ADMIN)	2017-11-01 22:40:31.444214	\N
 57	Preemptive Strike	Reaction	Whenever a character that this character is aware of enters a square adjacent to this one, this character may make a melee attack against that one as an immediate reaction.	Mike(ADMIN)	2018-07-02 04:26:49.279082	\N
-58	Fly Eyes	Passive	This unit has multi-faceted eyes and gets advantage on Perception rolls for spot, investigate and awareness. 	Mike(ADMIN)	2018-08-01 02:43:54.765142	\N
-59	Stimulator Shock	Action	The shockray sends an electrical pulse through the target. This action does not affect creatures that are Huge or larger.\r\nRange: Melee\r\nDMG: 35 + DC 45 FOR saving throw or be stunned for 1 round	Eryneril	2018-08-03 22:11:27.159402	\N
 \.
 
 
@@ -959,11 +1021,6 @@ COPY public.monsters_ability_map (pk_id, fk_monster_id, fk_ability_id) FROM stdi
 97	48	56
 98	48	57
 99	60	57
-100	69	35
-101	69	44
-102	69	36
-104	69	58
-105	74	59
 \.
 
 
@@ -1005,7 +1062,6 @@ COPY public.monsters_armor_map (pk_id, fk_monster_id, fk_armor_id) FROM stdin;
 37	59	8
 38	60	16
 39	49	12
-40	69	17
 \.
 
 
@@ -1017,28 +1073,20 @@ COPY public.monsters_armors (pk_id, name, coverage, description, author, type, a
 3	White Initiate Robes	80	White cotton robes enchanted such that they reduce 30 points of nanite damage that hits them.	Bleehu	Recon	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
 4	New Salem Light armor	30	Armor for a minion who doesn't expect strong resistance and likely wouldn't have the resources to deal with any coordinated threat.	Rev	Light	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
 7	Triad Trenchcoat	50	A long dark trench coat over some nanoweave Kevlar to keep one from sleeping with the fishes. It has several black buttons and elegant pockets on the front, with a matching black belt. Under that, it has a pinstriped black vest which will stop some small arms fire. It also sports a concealed pistol holster and pockets for 4 primary magazines, 4 secondary magazines and up to 2 grenades. Gives a +10% to stealth checks in urban environements and a +20% to Fortitude checks to resist cold. 	Mike(ADMIN)	Medium	0	0	0	0	\N	0	2017-11-01 22:40:37.572405	\N
+6	Pirate Firesuit	100	This full suit of flame retardant gear was probably originally intended for use fighting fires on cargo cruisers. Since then it has had crude pockets for grenades and some extra bulletproofing added. The wearer of this suit has a -1m/half action movement penalty, but is immune to fire damage.	Mike(ADMIN)	Full	2	80	4	220	None	0	2017-11-01 22:40:37.572405	\N
 15	Rigistruct EOD Armor	80	Rigistruct Explosive Ordinance Distribution division uses an appropriately heavier standard issue battle uniform to prevent liability around their own tools. It comes in the same variety of camouflage patters as the standard BDU. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with pockets for up to 5 grenades. It also comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. The heavy armor has a 2m movement penalty.	Mike(ADMIN)	Full	5	120	5	460	None	2	2017-11-01 22:40:37.572405	\N
 14	Refugee Rags	10	Unadorned cheap textiles draped cleverly around this unit's body. Cleverly tied to allow for free movement, but maintaining decency. While not much to look at, the rags are decently comfortable, surprisingly warm yet breathable. They have pockets for 2 grenades. The unit wearing this armor gets a 15% penalty to persuasion and bartering skill checks. 	Mike(ADMIN)	Recon	0	0	6	10	None	0	2017-11-01 22:40:37.572405	\N
+5	Kletturkett Hide	80	The thick hide of the so called "Rock Cat" is where the beast gets it's name from. Its interlocking keratin scales cover it's back, but not some softer patches on its neck and belly. The armor gives a +15 to stealth checks in desert or sandy environments. Live Kletturkett hide reduces incoming laser fire by 20 points. A skilled survivalist can harvest the hide from a dead Kletturkett with a survivor check of 80. It makes a set of heavy armor which carries 5 mag space.	Mike(ADMIN)	Full	6	340	2	650	None	2	2017-11-01 22:40:37.572405	\N
 2	Pirate vest	40	Polyester webbing with peices of starship reentry plates in pockets protecting one's vital bits. Held together with belts made from FTL jump seat belts. 	Mike(ADMIN)	Light	2	60	6	600	None	0	2017-11-01 22:40:37.572405	\N
 1	Pirate Plate	70	A steel plate worn with straps.	Mike(ADMIN)	Heavy	3	60	6	800	None	1	2017-11-01 22:40:37.572405	\N
 8	Summoner's Cloak	10	The swirling black-purple cloak of the summoner is lined with sinister secrets and adornment. The wearer of this cloak has 30 extra maximum nanites. It also has a belt which makes it easy to conceal a small melee weapon such as a knife.  The cloak has the unfortunate drawback of being fairly flammable. 	Mike(ADMIN)	Recon	1	80	6	0	None	0	2017-11-01 22:40:37.572405	\N
+9	Rigistruct BDU	65	The standard issue Rigistruct Battle Dress Uniform comes in a variety of theater-appropriate camouflage patterns such as desert, jungle, forest, urban or snow. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. 	Mike(ADMIN)	Medium	3	60	8	1100	None	1	2017-11-01 22:40:37.572405	\N
 13	Rigistruct CDiv Stealth Armor	70	This clean, black armor is enabled with nanite cloaking technology. In addition, it offers moderate protection.	Mike(ADMIN)	Medium	4	120	8	2400	Cloaking unit. Cloaking activation cost: 20 nanites. Cloaking nanite upkeep: 4 nanites. Cloaking turn bonus: 2 turns. Cloaking charge delay: 5 turns.	1	2017-11-01 22:40:37.572405	\N
 11	Antlion Soldier Exoskeleton	70	Soldier exoskeleton resists slashing and puncturing damage: increase AS to 120 for these types of damage.	Mike(ADMIN)	Heavy	2	80	0	300	None	0	2017-11-01 22:40:37.572405	\N
-6	Pirate Firesuit	100	This full suit of flame retardant gear was probably originally intended for use fighting fires on cargo cruisers. Since then it has had crude pockets for grenades and some extra bulletproofing added. The wearer of this suit is immune to fire damage, and has a gas mask cannot be worn with helmets or night vision goggles.	Mike(ADMIN)	Full	2	80	4	220	None	0	2017-11-01 22:40:37.572405	\N
-9	Rigistruct BDU	65	The standard issue Rigistruct Battle Dress Uniform comes in a variety of theater-appropriate camouflage patterns such as desert, jungle, forest, urban or snow. It comes with a rigid underlayer of proprietary Rigistruct adaptive hydrostatic fiber which does a very good job of resisting gunfire or blades. It comes with a name tag, rank patch, cloth hat, comfortable combat boots and a loop to hold a hands-free radio. The wearer of this uniform gets a +10% bonus to persuasion checks with anyone friendly with the Rigistruct corporation and a -10% with anyone unfriendly with said corp. 	Mike(ADMIN)	Medium	3	60	8	1100	None	2	2017-11-01 22:40:37.572405	\N
-10	Antlion Grub Exoskeleton	70	Antlion grubs' armor has evolved primarily to protect the creatures from cave-ins while tunneling and has weak points at joints along the grub's body. The plating itself is an off-yellow color with knobby enamel segments that sit over the grub's grayish skin. A survival check of DC 35 can be used to strip and clean the chitin plates for use as a level 1 armor material with Armor Strength of 40. If three grubs are cleaned this way,  a light armor rig can be constructed with the state above. 	Mike(ADMIN)	Light	0	40	4	200	None	0	2017-11-01 22:40:37.572405	\N
-12	Antlion Worker Exoskeleton	60	Antlion workers have fairly light exoskeletons compared to their soldier kin.	Mike(ADMIN)	Medium	1	80	0	200	None	0	2017-11-01 22:40:37.572405	\N
-5	Kletturkett Hide	80	The thick hide of the so called "Rock Cat" is where the beast gets it's name from. Its interlocking keratin scales cover it's back, but not some softer patches on its neck and belly. The armor gives a +15 to stealth checks in desert or sandy environments. Live Kletturkett hide reduces incoming laser fire by 20 points. A skilled survivalist can harvest the hide from a dead Kletturkett with a survivor check of 80. It makes a set of heavy armor which carries 5 mag space.	Mike(ADMIN)	Full	6	340	5	650	None	3	2017-11-01 22:40:37.572405	\N
+10	Antlion Grub Exoskeleton	70	Antlion grubs' armor has evolved primarily to protect the creatures from cave-ins while tunneling and has weak points at joints along the grub's body.	Mike(ADMIN)	Full	1	60	8	200	None	1	2017-11-01 22:40:37.572405	\N
+12	Antlion Worker Exoskeleton	60	Antlion workers have fairly light exoskeletons compared to their soldier kin.	Mike(ADMIN)	Light	1	80	0	200	None	0	2017-11-01 22:40:37.572405	\N
 16	Antlion Queen Exoskeleton	70	The thick chitin plates of the Antlion Queen fit together and move with surprising ease. They appear bone white with an acid green pearlesense. The Antlion Queen armor gives the wearer immunity to acid damage. The armor may be harvested with a survival check of DC 60. When harvested, it can hold 6 grenades and comes full with acid grenades made from the eggs of the Antlion Queen.	Mike(ADMIN)	Heavy	2	160	4	1600	None	1	2018-04-04 18:11:20.669668	\N
-17	Antlion Aero Carapace	60	Thin, white, hard plates interlock around the joints and body of the antlion, leaving plenty of room to move around and flap wings in. The plates have a subtle acid green sheen to them if viewed in good light or bright muzzle flash.  \r\nThe antlion chitin can be harvested with a Survival check of DC 40. Two samples are needed for either an arm or a leg slot, and four samples are needed to construct a chest slot of armor. Succeeding on the check on a dead flying antlion gives one sample. Success or failure on a check despoils the antlion corpse so that no further checks can be made from that corpse. The material has APL of 1 and AS of 40.	Mike(ADMIN)	Light	1	40	0	500	None	0	2018-08-01 02:40:29.299446	\N
 \.
-
-
---
--- Name: monsters_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.monsters_pk_seq', 74, true);
 
 
 --
@@ -1083,8 +1131,6 @@ COPY public.monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin
 36	55	24
 37	54	24
 38	59	4
-39	55	27
-40	54	27
 \.
 
 
@@ -1094,53 +1140,50 @@ COPY public.monsters_weapon_map (pk_id, fk_monster_id, fk_weapons_id) FROM stdin
 
 COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author, type, mag_cost, r1, r2, r3, acc1, acc2, acc3, ap_level, reload_dc, move_speed_penalty, reflex_modifier, auto_fire_rate, cost, suppression_level, created_at, deleted_at) FROM stdin;
 15	20	1	This simple garden tool has a long, durable wooden handle and a sharp wrought iron 12 toothed take blade at the end. Perfect for collecting leaves, tilling topsoil or cracking skulls. When used, gives a +20 skill to gardening checks. Every attack with this weapon must roll a strength check. On a roll above 80, the rake deals triple damage, but breaks in the process. 	Garden Rake	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
+11	45	30	The weapon overheats on both a 1 and a 2 dealing 10 plasma damage to wielder. Hits inflict 2xPlasma Burn	Pirate Plasma Rifle	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	0	15	0	-8	0	0	None	2017-11-01 22:40:45.493946	\N
+8	60	30	The Rigistruct Standard-Issue Plasma Assault Rifle Ionizes Helium and launches the energy projectile at the speed of conventional munitions. The SIPAR Never jams instead when a player using the SIPAR rolls a 1, expend 1d4 rounds and miss. Targets hit with the SIPAR take 1 token of plasma burn per bullet hit.	Rigistruct SIPAR-6	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	0	15	0	-8	0	0	None	2017-11-01 22:40:45.493946	\N
+3	60	0	This long knife is sharp and simple.	Buck Knife	Bleehu	Melee	0	1	1	1	2	2	2	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
+14	55	30	This is a really old assault rifle mostly held together with duct tape, but some of the old wood buttstock still gleams. You get the sense that this rifle would tell amazing stories if it could talk.	Relic Rifle	Mike(ADMIN)	Carbine	18	10	20	40	4	4	5	0	15	0	-10	0	0	None	2017-11-01 22:40:45.493946	\N
 17	50	20	When held, reduces move speed by 1m per action. When hit, lights small fires in the area at the DM's discretion which will damage targets that move through them by 30 points. A target hit takes an ongoing 40 fire damage for three turns or until the fire is put out. Burning fire does not stack. Fire  Affected by shields normally. A burning target's chance to miss is increased by 3. Cannot mount barrel or magazine attachments nor scopes, but you may mount small sights to the weapon. Requires strength 8 and level 5 to wield. Two actions to reload.	Flamethrower	Mike(ADMIN)	Heavy Weapon	200	5	10	20	2	3	4	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
+9	45	30	Developed in conjunction with the SISMG and SIPAR, the plasma carbine which is standard issue for all Rigistruct Marines never jams. Instead, when it does malfunction (rolls a 1) it uses a complex but robust series of auxiliary systems to vent excess plasma away from the operator. It's not a particularly accurate wepon, but hits with the device do leave a plasma burn token on the target. 	Rigistruct SIDMR-14	Mike(ADMIN)	Carbine	35	15	40	65	3	4	5	0	15	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
+5	200	1	Gets a -20% to miss when firing at a vehicle. Deals 1 vehicle damage. Makes a loud noise when fired and leaves a smoke trail behind the projectile cannot be fired stealthily. Full action to aim, Half action to fire, Full action to reload. Hits an area of 2m radius. Every target in the area of effect may make a DC 70 Reflex save to dive out of the way. On success, the target moves out of the zone of affect and goes prone. On failure, takes damage.	RPG	Mike(ADMIN)	Heavy Weapon	125	10	30	70	4	5	6	0	15	1	-20	0	0	None	2017-11-01 22:40:45.493946	\N
+13	8	1	8 x strength damage. These long black heavy claws are razor sharp and have a wicked curve to them. Harvestable with a survivor check of 50.	Kletturkett Claws	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	15	0	0	None	2017-11-01 22:40:45.493946	\N
+7	30	30	The Rigistruct Standard Issue Submachine Gun fires a 10mm round very rapidly with a high rate of recoil. In addition, The SISMG-8 never jams. If a player rolls a 1, simply eject 1d4 extra rounds from the mag and miss. 	Rigistruct SISMG-8	Mike(ADMIN)	SMG	35	10	25	45	3	4	5	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
+12	40	30	It's jenky as hell, inaccurate to boot. But it stings if it does manage to clip ya. 	Pirate SMG	Mike(ADMIN)	SMG	25	10	20	30	4	5	6	0	15	0	10	0	0	None	2017-11-01 22:40:45.493946	\N
 4	60	0	A long jagged knife with an ornate crosshilt.                 \r\n                        	Sacrificial Knife	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	20	0	30	None	2017-11-01 22:40:45.493946	\N
 19	60	80	3 Miss chance -1 for every 3 strength in automatic fire. A favorite of hitmen and agressors of ill repute. The light stock makes for a less accurate weapon, but the large drum and heat-sunk barrel suggests that it is likely capable of sustained high-rate fire. 	Triad Tommygun	Mike(ADMIN)	Automatic Rifle	35	15	30	70	3	4	5	2	40	0	-15	6	1430	Medium	2017-11-01 22:40:45.493946	\N
 20	45	25	Stock player weapon. A light SMG commercially produced by the Earth Coalition Space Core. 	ECSC Mk9 PDW	Mike(ADMIN)	SMG	12	10	20	40	4	5	6	0	30	0	10	8	1027	Medium	2017-11-01 22:40:45.493946	\N
 21	70	30	The experimental Rigistruct Designated Marksman rifle is the weapon of choice for the corporation's clandestine operators. The integrated suppressor helps maintain discretion at the cost of some range and damage. The weapon itself is a nonreflective matte black with angular body and stock. The arch rails are also made with crisp angles, on which sits a red dot sight. The barrel sits in a rounded square baffle that runs the length of the weapon, but the baffle doesn't seem to have any heat sinks. Perhaps this hints at the weapon's rate of fire? If the weapon would jam, it instead ejects an extra casing. 	Rigistruct XDMR-14-SD	Mike(ADMIN)	Carbine	30	20	45	65	2	4	5	3	30	0	0	0	1590	Medium	2017-11-01 22:40:45.493946	\N
+1	30	2	deals 90 @ 3m, 50 @ 10m, 30 @ 20m	Bandit's Blunderbuss	Mike(ADMIN)	Shotgun	15	8	18	40	3	5	5	1	15	1	0	0	900	Light	2017-11-01 22:40:45.493946	\N
 2	60	6	An ugly, rusty six shot revolver that works just fine nonetheless.	Raider's Revolver	Mike(ADMIN)	Pistol	18	5	15	25	3	4	6	3	15	0	15	0	450	Light	2017-11-01 22:40:45.493946	\N
 22	55	6	The matte black boxy looking pistol is tipped with a suppressor that is almost as long as the barrel. The eject on the side of the action looks surprisingly large compared to the grip surrounding the magazine. Despite the length of the suppressor, it appears to be carefully balanced by the way it rests in the user's hand.	Rigistruct RP-18-SD	Mike(ADMIN)	Pistol	10	5	10	30	1	2	4	2	25	0	20	0	920	Light	2017-11-01 22:40:45.493946	\N
-14	55	30	This is a really old carbine rifle mostly held together with duct tape, but some of the old wood buttstock still gleams. You get the sense that this rifle would tell amazing stories if it could talk. Has a -3 penalty for firing in full auto, but that can be mitigated if you are strong enough. For every 4 strength a character has, the accuracy penalty for firing in full auto is ameliorated by 1.	Relic Rifle	Mike(ADMIN)	Carbine	18	10	35	55	2	4	5	2	15	0	-10	6	590	Medium	2017-11-01 22:40:45.493946	\N
-11	45	30	The weapon overheats on both a 1 and a 2 dealing 10 plasma damage to wielder. Hits inflict 2xPlasma Burn. Has a 3-round burst and 6-round auto fire mode. Burst fire mode has a -2 to accuracy, with a +1 for each 4 strength. Auto fire has a -3 accuracy penalty, with a +1 for each 3 strength the wielding character has.	Pirate Plasma Rifle	Mike(ADMIN)	Automatic Rifle	75	15	45	75	3	4	5	3	15	0	-8	6	2000	Medium	2017-11-01 22:40:45.493946	\N
-3	60	0	This long knife is sharp and simple.	Buck Knife	Mike(ADMIN)	Melee	0	1	1	1	2	2	2	0	15	0	10	0	250	None	2017-11-01 22:40:45.493946	\N
-13	8	1	8 x strength damage. These long black heavy claws are razor sharp and have a wicked curve to them. Harvestable with a survivor check of 50.	Kletturkett Claws	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	15	0	420	None	2017-11-01 22:40:45.493946	\N
-12	40	30	It's jenky as hell, inaccurate to boot. But it stings if it does manage to clip ya. Fires 6 shots with full auto mode with a +4 to miss. The full auto accuracy penalty is slightly better if you're dexterous enough. For every 4 dex your character has, the penalty has a -1 to miss.	Pirate SMG	Mike(ADMIN)	SMG	25	10	20	30	4	5	6	0	15	0	10	6	1100	Medium	2017-11-01 22:40:45.493946	\N
-8	60	30	The Rigistruct Standard-Issue Plasma Assault Rifle Ionizes Helium and launches the energy projectile at the speed of conventional munitions. The SIPAR Never jams instead when a player using the SIPAR rolls a 1, expend 1d4 rounds and miss. Targets hit with the SIPAR take 1 token of plasma burn per bullet hit. Firing in Full auto has a -4 accuracy penalty. For every 4 strength a wielder has, that penalty is 1 less.	Rigistruct SIPAR-6	Mike(ADMIN)	Automatic Rifle	24	15	45	75	3	4	5	2	15	0	-8	6	2100	Medium	2017-11-01 22:40:45.493946	\N
-7	30	40	The Rigistruct Standard Issue Submachine Gun fires a 10mm round very rapidly with a high rate of recoil. In addition, The SISMG-8 never jams. If a player rolls a 1, simply eject 1d4 extra rounds from the mag and miss. Has single, 3-round burst and 8-round full auto modes. Burst fire has a -3 accuracy penalty, which is alleviated by 1 with each 5 Dex the wielder has. Auto Fire has a +6 to miss with - 1 for every 4 Dexterity the wielder has.	Rigistruct SISMG-8	Mike(ADMIN)	SMG	20	10	25	45	3	5	7	2	15	0	10	8	0	Medium	2017-11-01 22:40:45.493946	\N
-5	200	1	Gets a -2 to miss when firing at a vehicle. Deals 1 vehicle damage. Makes a loud noise when fired and leaves a smoke trail behind the projectile so it cannot be fired stealthily. Two Actions to aim, One Action to fire. Two Actions to reload. Hits an area of 2m radius. Every target in the area of effect may make a DC 70 Reflex save to dive out of the way. On success, the target moves out of the zone of affect and goes prone. On failure, the target takes damage.	RPG	Mike(ADMIN)	Heavy Weapon	125	10	30	70	4	5	6	10	60	1	-20	0	1800	None	2017-11-01 22:40:45.493946	\N
 23	30	30	Several drones which are constructed by engineers or summoned by summoners come with ancillary light caliber weapons mounted on them commonly known as "popguns". They typically have a short chrome barrel and a boxy housing mounted to the back or body of the owner. As such, the weapon is always drawn and cannot be holstered. A DC 60 repair roll or equivalent must be passed in order to recover the weapon from a downed enemy and still have the weapon operate. 	Mounted Popgun	Mike(ADMIN)	Pistol	25	8	20	50	2	3	3	2	20	0	15	0	0	None	2017-11-01 22:40:45.493946	\N
+24	45	20	he standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	0	None	2017-11-01 22:40:45.493946	\N
 16	9	1	Deals 9 x strength damage. A favorite among pirates who engage in the often cramped quarters of space ships, the bosun's "brass" knuckles are actually crude heavy chunks of starship steel plate with a grip cut into it and rounded off so as not to cut the wearer. Minimum strength of 5 to wield. 	Bosun's Brass Knuckles	Mike(ADMIN)	Melee	0	1	1	1	0	0	0	0	15	0	10	0	200	None	2017-11-01 22:40:45.493946	\N
 25	15	3	A tazer pistol with a black memory foam handle and a yellow and black striped flat front muzzle. The yellow lightning bolts emblazoned on the sides clearly differentiate it from a more lethal weapon.\r\nIf this weapon hits a target's health, then that target must pass a DC 110 shock save. If they succeed, they lose one action on their next turn and shake off the rest of the effects of being tazed. If they fail, they lose 4 actions on their next turn and the DC for their next taze roll is reduced by 10. Hits with this weapon leave pitons and wires embedded in their target which can be shaken off with an action and a reflex save of DC 30. As long as the pitons are still in their target, once per round the wielder of the tazer can spend one action per target and re-administer the shock save.\r\nPlease note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	Police Tazer Pistol	Mike(ADMIN)	Pistol	20	5	10	15	2	4	6	2	30	0	30	0	700	Light	2017-12-27 23:32:42.875108	\N
 26	8	0	A large shield made of armor plate capable of deflecting bullets and melee weapons alike. Gives the wielder an additional 4 APL in a 180 degree cone. Can be used to shield bash for 8 x Strength (not Strength Mod) in 1m. On hit, target must make a FORT save opposed by the wielder's strength roll or be knocked prone. Wielder's perception rolls are reduced by 20. Strength requirement of 7 to carry.	Riot Shield	Mike(ADMIN)	Melee	0	1	1	1	4	4	4	0	0	2	0	0	600	None	2017-12-27 23:52:00.796782	\N
 27	45	20	The standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired.	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	720	Medium	2018-01-03 23:10:53.676377	\N
 28	70	6	The MSE-8a is produced in the Machine Empire mostly for use in close-quarters combat against other rogue cybernetics. Once a target is hit with this weapon, they must roll three DC 40 Shock checks and lose an action next turn due to tazing for each roll failed. On success, no tazing effect occurs. The MSE-8a is a pump action, so the unit using it must spend an action operating the rack between shots. The gun itself has a dull chrome sheen to it, a hollow metal plate buttstock and a large round recoil-compensating barrel grip. When loaded, the gun glows with an electric blue light. This light dies when the gun is empty.	MSE-8a Taser Shotgun	Mike(ADMIN)	Shotgun	22	5	15	25	1	3	4	1	35	0	6	0	2000	Light	2018-01-03 23:13:38.532342	\N
 29	110	7	Stock player weapon	Partix X20 Laser Rifle	Mike(ADMIN)	Long Rifle	29	20	150	200	2	3	4	10	35	1	-30	0	5877	Light	2018-01-03 23:17:37.279717	\N
-1	65	2	This ramahackle boomstick seems to be crudely held together with epoxy and honest-to-god rivets. The stock seems like it used to be made of wood before it was mostly sawn off to make it easier to use in close combat. The barrels likewise have been cut almost too short. Its wide choke suggests that it deals devastating damage up close. But likely loses accuracy and fire concentration at even medium range. The break action takes 2 Actions to reload. This shotgun deals 90 damage @ 3m, 50 @ 10m, 30 @ 20m.	Bandit's Blunderbuss	Mike(ADMIN)	Shotgun	15	4	8	30	2	3	6	1	15	1	0	0	900	Light	2017-11-01 22:40:45.493946	\N
-24	45	20	he standard-issue weapon of choice for the Machine Empire. It is manufactured domestically. The bullpup design facilitates handling the larger and more expensive electric discharge round. While the typically bare rails and lack of an ergonomic foregrip reflect its common use among machines. On hit, the target must make a DC 40 shock check, or lose an action next turn due to tazing. Please note that many cybernetic species have a weakness to shock damage, such as Security Drone and Cyborg. It makes a distinctive electric crackling sound when fired. 	ME-11c Tazer Carbine	Mike(ADMIN)	Carbine	25	10	30	55	3	4	5	1	35	0	0	0	0	None	2017-11-01 22:40:45.493946	2018-07-19 09:27:09.83399
-10	80	5	Jams on a 1 or 2. Comes with a crude scope mounted. Action to fire. Two Actions to reload. Requires a strength 7 to use, comes with a 2 point sling attached. (stats included above. ) Unit cannot be silenced. Fires custom crude charges. A target hit with this weapon that doesn't take full damage from it must make a Shock Save of DC 60 or get knocked over.	Pirate Antimaterial Rifle	Mike(ADMIN)	Long Rifle	65	20	80	150	2	3	5	6	15	1	-20	0	1500	Light	2017-11-01 22:40:45.493946	\N
-9	75	30	Developed in conjunction with the SISMG and SIPAR, the plasma carbine which is standard issue for all Rigistruct Marines never jams. Instead, when it does malfunction (rolls a 1) it uses a complex but robust series of auxiliary systems to vent excess plasma away from the operator. It's not a particularly accurate weapon, but hits with the device do leave a plasma burn token on the target. Has a burst fire mode, but no full auto. Firing in bursts leaves a -2 accuracy penalty that can be alleviated if the wielder is strong enough. For every 4 strength a wielder has, the accuracy penalty is 1 less.	Rigistruct SIDMR-14	Mike(ADMIN)	Carbine	35	15	40	65	3	4	5	4	15	0	2	3	3100	Medium	2017-11-01 22:40:45.493946	\N
+10	54	5	Jams on a 1 or 2. Comes with a crude scope mounted. Ignores the first 30 DR from armor. Half Action to fire. Full action to reload. Requires a strength 7 to use, comes with a 2 point sling attached. (stats included above. ) Unit cannot be silenced. Fires custom crude charges. A target hit with this weapon that doesn't take full damage from it must make a Shock Save of DC 60 or get knocked over. % to miss	Pirate Antimaterial Rifle	Mike(ADMIN)	Long Rifle	65	20	80	150	2	3	5	4	15	1	-20	0	2100	None	2017-11-01 22:40:45.493946	\N
 \.
 
 
 --
--- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: bleehu
 --
 
 COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, deleted_at) FROM stdin;
 1	61	poor_life_decisions	10	f	\N	\N
 2	61	Persuasion	5	f	\N	\N
 3	56	weapons-assault_rifle	20	f	\N	\N
-4	64	test	15	f	2018-08-19 04:41:38.493423	\N
-5	64	blah	11	f	2018-08-19 04:41:49.472237	\N
+4	56	Explosives	10	f	\N	\N
+5	56	new skill	0	f	2018-07-23 19:02:47.398361	\N
+6	56	new skill	0	f	2018-07-23 20:08:51.155548	\N
+7	56	new skill	0	f	2018-07-23 20:10:04.196031	\N
+9	64	Basketball	14	f	2018-07-23 20:31:32.33898	\N
+8	64	Sailing	4	f	2018-07-23 20:10:26.73807	\N
 \.
-
-
---
--- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
 
 
 --
@@ -1148,9 +1191,107 @@ SELECT pg_catalog.setval('public.skills_pk_id', 3, true);
 --
 
 COPY public.users (pk_id, username, displayname, realname, password, role) FROM stdin;
-1	Bleehu	Mike(ADMIN)	Mike Hedges	CXCoding	ADMIN
-2	travisTest	travis_test	Travis CLI	travis1Tractor	GM
+1   Bleehu  Mike(ADMIN) Mike Hedges CXCoding    ADMIN
+2   travisTest  travis_test Travis CLI  travis1Tractor  GM
 \.
+
+
+--
+-- Name: character_pk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.character_pk_id_seq', 1, true);
+
+
+--
+-- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+--
+
+SELECT pg_catalog.setval('public.feats_map_pk_id', 1, true);
+
+
+--
+-- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+--
+
+SELECT pg_catalog.setval('public.feats_pk_id', 4, true);
+
+
+--
+-- Name: inventory_seq; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+--
+
+SELECT pg_catalog.setval('public.inventory_seq', 1, false);
+
+
+--
+-- Name: login_log_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.login_log_seq', 185, true);
+
+
+--
+-- Name: missions_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.missions_pk_seq', 1, true);
+
+
+--
+-- Name: monster_ability_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_ability_map_pk_seq', 99, true);
+
+
+--
+-- Name: monster_ability_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_ability_pk_seq', 57, true);
+
+
+--
+-- Name: monster_armor_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_armor_map_pk_seq', 39, true);
+
+
+--
+-- Name: monster_armor_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_armor_pk_seq', 16, true);
+
+
+--
+-- Name: monster_weapon_map_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_weapon_map_pk_seq', 38, true);
+
+
+--
+-- Name: monster_weapon_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monster_weapon_pk_seq', 29, true);
+
+
+--
+-- Name: monsters_pk_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.monsters_pk_seq', 73, true);
+
+
+--
+-- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+--
+
+SELECT pg_catalog.setval('public.skills_pk_id', 4, true);
 
 
 --
@@ -1161,7 +1302,7 @@ SELECT pg_catalog.setval('public.users_pk_id_seq', 10, true);
 
 
 --
--- Name: characters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: characters characters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.characters
@@ -1169,7 +1310,7 @@ ALTER TABLE ONLY public.characters
 
 
 --
--- Name: feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: feats_map feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1177,7 +1318,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: feats_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: feats feats_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.feats
@@ -1185,7 +1326,7 @@ ALTER TABLE ONLY public.feats
 
 
 --
--- Name: inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: inventory inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.inventory
@@ -1193,7 +1334,7 @@ ALTER TABLE ONLY public.inventory
 
 
 --
--- Name: login_audit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: login_audit_log login_audit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.login_audit_log
@@ -1201,7 +1342,7 @@ ALTER TABLE ONLY public.login_audit_log
 
 
 --
--- Name: missions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: missions missions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.missions
@@ -1209,7 +1350,7 @@ ALTER TABLE ONLY public.missions
 
 
 --
--- Name: monster_ability_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_ability_map monster_ability_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_ability_map
@@ -1217,7 +1358,7 @@ ALTER TABLE ONLY public.monsters_ability_map
 
 
 --
--- Name: monsters_abilities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_abilities monsters_abilities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_abilities
@@ -1225,7 +1366,7 @@ ALTER TABLE ONLY public.monsters_abilities
 
 
 --
--- Name: monsters_armor_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_armor_map monsters_armor_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_armor_map
@@ -1233,7 +1374,7 @@ ALTER TABLE ONLY public.monsters_armor_map
 
 
 --
--- Name: monsters_armors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_armors monsters_armors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_armors
@@ -1241,7 +1382,7 @@ ALTER TABLE ONLY public.monsters_armors
 
 
 --
--- Name: monsters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters monsters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters
@@ -1249,7 +1390,7 @@ ALTER TABLE ONLY public.monsters
 
 
 --
--- Name: monsters_weapon_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_weapon_map monsters_weapon_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_weapon_map
@@ -1257,7 +1398,7 @@ ALTER TABLE ONLY public.monsters_weapon_map
 
 
 --
--- Name: monsters_weapons_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_weapons monsters_weapons_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_weapons
@@ -1265,7 +1406,7 @@ ALTER TABLE ONLY public.monsters_weapons
 
 
 --
--- Name: skills_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: skills skills_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.skills
@@ -1273,7 +1414,7 @@ ALTER TABLE ONLY public.skills
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.users
@@ -1281,7 +1422,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: characters_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: characters characters_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.characters
@@ -1289,7 +1430,7 @@ ALTER TABLE ONLY public.characters
 
 
 --
--- Name: feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: feats_map feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1297,7 +1438,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: feats_map feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1305,15 +1446,15 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: inventory_fk_character_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: inventory inventory_fk_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.inventory
-    ADD CONSTRAINT inventory_fk_character_owner_fkey FOREIGN KEY (fk_character_owner) REFERENCES public.characters(pk_id) ON DELETE CASCADE;
+    ADD CONSTRAINT inventory_fk_owner_fkey FOREIGN KEY (fk_owner) REFERENCES public.characters(pk_id) ON DELETE CASCADE;
 
 
 --
--- Name: monster_ability_map_fk_ability_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_ability_map monster_ability_map_fk_ability_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_ability_map
@@ -1321,7 +1462,7 @@ ALTER TABLE ONLY public.monsters_ability_map
 
 
 --
--- Name: monster_ability_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_ability_map monster_ability_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_ability_map
@@ -1329,7 +1470,7 @@ ALTER TABLE ONLY public.monsters_ability_map
 
 
 --
--- Name: monsters_armor_map_fk_armor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_armor_map monsters_armor_map_fk_armor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_armor_map
@@ -1337,7 +1478,7 @@ ALTER TABLE ONLY public.monsters_armor_map
 
 
 --
--- Name: monsters_armor_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_armor_map monsters_armor_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_armor_map
@@ -1345,7 +1486,7 @@ ALTER TABLE ONLY public.monsters_armor_map
 
 
 --
--- Name: monsters_weapon_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_weapon_map monsters_weapon_map_fk_monster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_weapon_map
@@ -1353,7 +1494,7 @@ ALTER TABLE ONLY public.monsters_weapon_map
 
 
 --
--- Name: monsters_weapon_map_fk_weapon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: monsters_weapon_map monsters_weapon_map_fk_weapon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.monsters_weapon_map
@@ -1361,7 +1502,7 @@ ALTER TABLE ONLY public.monsters_weapon_map
 
 
 --
--- Name: skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: skills skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
 --
 
 ALTER TABLE ONLY public.skills
@@ -1369,22 +1510,9 @@ ALTER TABLE ONLY public.skills
 
 
 --
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
 -- Name: SEQUENCE monsters_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monsters_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monsters_pk_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.monsters_pk_seq TO postgres;
 GRANT USAGE ON SEQUENCE public.monsters_pk_seq TO searcher;
 
 
@@ -1392,108 +1520,62 @@ GRANT USAGE ON SEQUENCE public.monsters_pk_seq TO searcher;
 -- Name: TABLE characters; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.characters FROM PUBLIC;
-REVOKE ALL ON TABLE public.characters FROM postgres;
-GRANT ALL ON TABLE public.characters TO postgres;
 GRANT ALL ON TABLE public.characters TO searcher;
-GRANT ALL ON TABLE public.characters TO postgres;
-GRANT ALL ON TABLE public.characters TO ubuntu;
 
 
 --
--- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: postgres
+-- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: bleehu
 --
 
-REVOKE ALL ON SEQUENCE public.feats_pk_id FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.feats_pk_id FROM postgres;
-GRANT ALL ON SEQUENCE public.feats_pk_id TO postgres;
 GRANT ALL ON SEQUENCE public.feats_pk_id TO searcher;
 
 
 --
--- Name: TABLE feats; Type: ACL; Schema: public; Owner: postgres
+-- Name: TABLE feats; Type: ACL; Schema: public; Owner: bleehu
 --
 
-REVOKE ALL ON TABLE public.feats FROM PUBLIC;
-REVOKE ALL ON TABLE public.feats FROM postgres;
-GRANT ALL ON TABLE public.feats TO postgres;
-GRANT ALL ON TABLE public.feats TO searcher;
-GRANT ALL ON TABLE public.feats TO ubuntu;
+GRANT SELECT ON TABLE public.feats TO searcher;
 
 
 --
--- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: postgres
+-- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: bleehu
 --
 
-REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.feats_map_pk_id FROM postgres;
-GRANT ALL ON SEQUENCE public.feats_map_pk_id TO postgres;
 GRANT UPDATE ON SEQUENCE public.feats_map_pk_id TO searcher;
 
 
 --
--- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: postgres
+-- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: bleehu
 --
 
-REVOKE ALL ON TABLE public.feats_map FROM PUBLIC;
-REVOKE ALL ON TABLE public.feats_map FROM postgres;
-GRANT ALL ON TABLE public.feats_map TO postgres;
-GRANT ALL ON TABLE public.feats_map TO searcher;
-GRANT ALL ON TABLE public.feats_map TO ubuntu;
-
-
---
--- Name: TABLE inventory; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE public.inventory FROM PUBLIC;
-REVOKE ALL ON TABLE public.inventory FROM postgres;
-GRANT ALL ON TABLE public.inventory TO postgres;
-GRANT ALL ON TABLE public.inventory TO ubuntu;
+GRANT SELECT ON TABLE public.feats_map TO searcher;
 
 
 --
 -- Name: SEQUENCE login_log_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.login_log_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.login_log_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.login_log_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.login_log_seq TO validator;
-GRANT UPDATE ON SEQUENCE public.login_log_seq TO tractorman;
+
 
 --
 -- Name: TABLE login_audit_log; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.login_audit_log FROM PUBLIC;
-REVOKE ALL ON TABLE public.login_audit_log FROM postgres;
-GRANT ALL ON TABLE public.login_audit_log TO postgres;
 GRANT ALL ON TABLE public.login_audit_log TO validator;
-GRANT ALL ON TABLE public.login_audit_log TO tractorman;
-GRANT ALL ON TABLE public.login_audit_log TO postgres;
-GRANT ALL ON TABLE public.login_audit_log TO ubuntu;
 
 
 --
 -- Name: TABLE missions; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.missions FROM PUBLIC;
-REVOKE ALL ON TABLE public.missions FROM postgres;
-GRANT ALL ON TABLE public.missions TO postgres;
 GRANT SELECT ON TABLE public.missions TO searcher;
-GRANT ALL ON TABLE public.missions TO postgres;
-GRANT ALL ON TABLE public.missions TO ubuntu;
 
 
 --
 -- Name: SEQUENCE monster_ability_map_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monster_ability_map_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monster_ability_map_pk_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.monster_ability_map_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_ability_map_pk_seq TO searcher;
 
 
@@ -1501,9 +1583,6 @@ GRANT UPDATE ON SEQUENCE public.monster_ability_map_pk_seq TO searcher;
 -- Name: SEQUENCE monster_ability_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monster_ability_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monster_ability_pk_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.monster_ability_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_ability_pk_seq TO searcher;
 
 
@@ -1511,8 +1590,6 @@ GRANT UPDATE ON SEQUENCE public.monster_ability_pk_seq TO searcher;
 -- Name: SEQUENCE monster_armor_map_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monster_armor_map_pk_seq FROM PUBLIC;
-GRANT ALL ON SEQUENCE public.monster_armor_map_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_armor_map_pk_seq TO searcher;
 
 
@@ -1520,9 +1597,6 @@ GRANT UPDATE ON SEQUENCE public.monster_armor_map_pk_seq TO searcher;
 -- Name: SEQUENCE monster_armor_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monster_armor_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monster_armor_pk_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.monster_armor_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_armor_pk_seq TO searcher;
 
 
@@ -1530,9 +1604,6 @@ GRANT UPDATE ON SEQUENCE public.monster_armor_pk_seq TO searcher;
 -- Name: SEQUENCE monster_weapon_map_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monster_weapon_map_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monster_weapon_map_pk_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.monster_weapon_map_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_weapon_map_pk_seq TO searcher;
 
 
@@ -1540,9 +1611,6 @@ GRANT UPDATE ON SEQUENCE public.monster_weapon_map_pk_seq TO searcher;
 -- Name: SEQUENCE monster_weapon_pk_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON SEQUENCE public.monster_weapon_pk_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.monster_weapon_pk_seq FROM postgres;
-GRANT ALL ON SEQUENCE public.monster_weapon_pk_seq TO postgres;
 GRANT UPDATE ON SEQUENCE public.monster_weapon_pk_seq TO searcher;
 
 
@@ -1550,125 +1618,76 @@ GRANT UPDATE ON SEQUENCE public.monster_weapon_pk_seq TO searcher;
 -- Name: TABLE monsters; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters FROM postgres;
-GRANT ALL ON TABLE public.monsters TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters TO searcher;
-GRANT ALL ON TABLE public.monsters TO ubuntu;
-GRANT ALL ON TABLE public.monsters TO postgres;
 
 
 --
 -- Name: TABLE monsters_abilities; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters_abilities FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters_abilities FROM postgres;
-GRANT ALL ON TABLE public.monsters_abilities TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_abilities TO searcher;
-GRANT ALL ON TABLE public.monsters_abilities TO ubuntu;
-GRANT ALL ON TABLE public.monsters_abilities TO postgres;
 
 
 --
 -- Name: TABLE monsters_ability_map; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters_ability_map FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters_ability_map FROM postgres;
-GRANT ALL ON TABLE public.monsters_ability_map TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_ability_map TO searcher;
-GRANT ALL ON TABLE public.monsters_ability_map TO postgres;
-GRANT ALL ON TABLE public.monsters_ability_map TO ubuntu;
 
 
 --
 -- Name: TABLE monsters_armor_map; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters_armor_map FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters_armor_map FROM postgres;
-GRANT ALL ON TABLE public.monsters_armor_map TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armor_map TO searcher;
-GRANT ALL ON TABLE public.monsters_armor_map TO postgres;
-GRANT ALL ON TABLE public.monsters_armor_map TO ubuntu;
 
 
 --
 -- Name: TABLE monsters_armors; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters_armors FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters_armors FROM postgres;
-GRANT ALL ON TABLE public.monsters_armors TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_armors TO searcher;
-GRANT ALL ON TABLE public.monsters_armors TO ubuntu;
-GRANT ALL ON TABLE public.monsters_armors TO postgres;
 
 
 --
 -- Name: TABLE monsters_weapon_map; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters_weapon_map FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters_weapon_map FROM postgres;
-GRANT ALL ON TABLE public.monsters_weapon_map TO postgres;
 GRANT SELECT,INSERT,DELETE ON TABLE public.monsters_weapon_map TO searcher;
-GRANT ALL ON TABLE public.monsters_weapon_map TO postgres;
-GRANT ALL ON TABLE public.monsters_weapon_map TO ubuntu;
 
 
 --
 -- Name: TABLE monsters_weapons; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.monsters_weapons FROM PUBLIC;
-REVOKE ALL ON TABLE public.monsters_weapons FROM postgres;
-GRANT ALL ON TABLE public.monsters_weapons TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_weapons TO searcher;
-GRANT ALL ON TABLE public.monsters_weapons TO ubuntu;
-GRANT ALL ON TABLE public.monsters_weapons TO postgres;
 
 
 --
--- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: postgres
+-- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: bleehu
 --
 
-REVOKE ALL ON SEQUENCE public.skills_pk_id FROM PUBLIC;
-REVOKE ALL ON SEQUENCE public.skills_pk_id FROM postgres;
-GRANT ALL ON SEQUENCE public.skills_pk_id TO postgres;
 GRANT UPDATE ON SEQUENCE public.skills_pk_id TO searcher;
 
 
 --
--- Name: TABLE skills; Type: ACL; Schema: public; Owner: postgres
+-- Name: TABLE skills; Type: ACL; Schema: public; Owner: bleehu
 --
 
-REVOKE ALL ON TABLE public.skills FROM PUBLIC;
-REVOKE ALL ON TABLE public.skills FROM postgres;
-GRANT ALL ON TABLE public.skills TO postgres;
 GRANT ALL ON TABLE public.skills TO searcher;
-GRANT ALL ON TABLE public.skills TO ubuntu;
 
 
 --
 -- Name: TABLE users; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL ON TABLE public.users FROM PUBLIC;
-REVOKE ALL ON TABLE public.users FROM postgres;
-GRANT ALL ON TABLE public.users TO postgres;
 GRANT ALL ON TABLE public.users TO validator;
-GRANT ALL ON TABLE public.users TO tractorman;
-GRANT ALL ON TABLE public.users TO ubuntu;
 
 
 --
 -- Name: COLUMN users.pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL(pk_id) ON TABLE public.users FROM PUBLIC;
-REVOKE ALL(pk_id) ON TABLE public.users FROM postgres;
 GRANT SELECT(pk_id) ON TABLE public.users TO searcher;
 
 
@@ -1676,8 +1695,6 @@ GRANT SELECT(pk_id) ON TABLE public.users TO searcher;
 -- Name: COLUMN users.username; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL(username) ON TABLE public.users FROM PUBLIC;
-REVOKE ALL(username) ON TABLE public.users FROM postgres;
 GRANT SELECT(username) ON TABLE public.users TO searcher;
 
 
@@ -1685,9 +1702,8 @@ GRANT SELECT(username) ON TABLE public.users TO searcher;
 -- Name: COLUMN users.displayname; Type: ACL; Schema: public; Owner: postgres
 --
 
-REVOKE ALL(displayname) ON TABLE public.users FROM PUBLIC;
-REVOKE ALL(displayname) ON TABLE public.users FROM postgres;
 GRANT SELECT(displayname) ON TABLE public.users TO searcher;
+
 
 --
 -- PostgreSQL database dump complete
