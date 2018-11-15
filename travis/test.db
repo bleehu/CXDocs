@@ -1408,6 +1408,9 @@ GRANT SELECT ON TABLE public.feats_map TO searcher;
 --
 
 GRANT UPDATE ON SEQUENCE public.login_log_seq TO validator;
+GRANT ALL ON TABLE public.login_log_seq TO tractorman;
+GRANT ALL ON TABLE public.login_log_seq TO postgres;
+GRANT ALL ON TABLE public.login_log_seq TO ubuntu;
 
 
 --
