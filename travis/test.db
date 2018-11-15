@@ -123,7 +123,7 @@ CREATE SEQUENCE public.feats_pk_id
 ALTER TABLE public.feats_pk_id OWNER TO bleehu;
 
 --
--- Name: feats; Type: TABLE; Schema: public; Owner: bleehu
+-- Name: feats; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.feats (
@@ -142,7 +142,7 @@ CREATE TABLE public.feats (
 ALTER TABLE public.feats OWNER TO bleehu;
 
 --
--- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: bleehu
+-- Name: feats_map_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.feats_map_pk_id
@@ -156,7 +156,7 @@ CREATE SEQUENCE public.feats_map_pk_id
 ALTER TABLE public.feats_map_pk_id OWNER TO bleehu;
 
 --
--- Name: feats_map; Type: TABLE; Schema: public; Owner: bleehu
+-- Name: feats_map; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.feats_map (
@@ -169,7 +169,7 @@ CREATE TABLE public.feats_map (
 ALTER TABLE public.feats_map OWNER TO bleehu;
 
 --
--- Name: inventory_seq; Type: SEQUENCE; Schema: public; Owner: bleehu
+-- Name: inventory_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.inventory_seq
@@ -183,7 +183,7 @@ CREATE SEQUENCE public.inventory_seq
 ALTER TABLE public.inventory_seq OWNER TO bleehu;
 
 --
--- Name: inventory; Type: TABLE; Schema: public; Owner: bleehu
+-- Name: inventory; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.inventory (
@@ -519,7 +519,7 @@ CREATE TABLE public.monsters_weapons (
 ALTER TABLE public.monsters_weapons OWNER TO postgres;
 
 --
--- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: bleehu
+-- Name: skills_pk_id; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.skills_pk_id
@@ -533,7 +533,7 @@ CREATE SEQUENCE public.skills_pk_id
 ALTER TABLE public.skills_pk_id OWNER TO bleehu;
 
 --
--- Name: skills; Type: TABLE; Schema: public; Owner: bleehu
+-- Name: skills; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.skills (
@@ -601,7 +601,7 @@ COPY public.characters (pk_id, name, health, nanites, strength, perception, fort
 
 
 --
--- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: bleehu
+-- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.feats (pk_id, feat, prerequisites, description, author, created_at, deleted_at, private, nanite_cost) FROM stdin;
@@ -612,7 +612,7 @@ COPY public.feats (pk_id, feat, prerequisites, description, author, created_at, 
 
 
 --
--- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: bleehu
+-- Data for Name: feats_map; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
@@ -621,7 +621,7 @@ COPY public.feats_map (pk_id, fk_character_id, fk_feat_id) FROM stdin;
 
 
 --
--- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: bleehu
+-- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.inventory (pk_id, fk_owner, created_at, deleted_at, name, value, quantity, private) FROM stdin;
@@ -1022,7 +1022,7 @@ COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author
 
 
 --
--- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: bleehu
+-- Data for Name: skills; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, deleted_at) FROM stdin;
@@ -1056,21 +1056,21 @@ SELECT pg_catalog.setval('public.character_pk_id_seq', 1, true);
 
 
 --
--- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+-- Name: feats_map_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.feats_map_pk_id', 1, true);
 
 
 --
--- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+-- Name: feats_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.feats_pk_id', 4, true);
 
 
 --
--- Name: inventory_seq; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+-- Name: inventory_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.inventory_seq', 1, false);
@@ -1140,7 +1140,7 @@ SELECT pg_catalog.setval('public.monsters_pk_seq', 73, true);
 
 
 --
--- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: bleehu
+-- Name: skills_pk_id; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.skills_pk_id', 4, true);
@@ -1162,7 +1162,7 @@ ALTER TABLE ONLY public.characters
 
 
 --
--- Name: feats_map feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: feats_map feats_map_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1170,7 +1170,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: feats feats_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: feats feats_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats
@@ -1178,7 +1178,7 @@ ALTER TABLE ONLY public.feats
 
 
 --
--- Name: inventory inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: inventory inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.inventory
@@ -1258,7 +1258,7 @@ ALTER TABLE ONLY public.monsters_weapons
 
 
 --
--- Name: skills skills_pkey; Type: CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: skills skills_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.skills
@@ -1282,7 +1282,7 @@ ALTER TABLE ONLY public.characters
 
 
 --
--- Name: feats_map feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: feats_map feats_map_fk_character_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1290,7 +1290,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: feats_map feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: feats_map feats_map_fk_feat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feats_map
@@ -1298,7 +1298,7 @@ ALTER TABLE ONLY public.feats_map
 
 
 --
--- Name: inventory inventory_fk_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: inventory inventory_fk_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.inventory
@@ -1354,7 +1354,7 @@ ALTER TABLE ONLY public.monsters_weapon_map
 
 
 --
--- Name: skills skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bleehu
+-- Name: skills skills_fk_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.skills
@@ -1376,28 +1376,28 @@ GRANT ALL ON TABLE public.characters TO searcher;
 
 
 --
--- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: bleehu
+-- Name: SEQUENCE feats_pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT ALL ON SEQUENCE public.feats_pk_id TO searcher;
 
 
 --
--- Name: TABLE feats; Type: ACL; Schema: public; Owner: bleehu
+-- Name: TABLE feats; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT SELECT ON TABLE public.feats TO searcher;
 
 
 --
--- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: bleehu
+-- Name: SEQUENCE feats_map_pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT UPDATE ON SEQUENCE public.feats_map_pk_id TO searcher;
 
 
 --
--- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: bleehu
+-- Name: TABLE feats_map; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT SELECT ON TABLE public.feats_map TO searcher;
@@ -1415,7 +1415,9 @@ GRANT UPDATE ON SEQUENCE public.login_log_seq TO validator;
 --
 
 GRANT ALL ON TABLE public.login_audit_log TO validator;
-
+GRANT ALL ON TABLE public.login_audit_log TO tractorman;
+GRANT ALL ON TABLE public.login_audit_log TO postgres;
+GRANT ALL ON TABLE public.login_audit_log TO ubuntu;
 
 --
 -- Name: TABLE missions; Type: ACL; Schema: public; Owner: postgres
@@ -1516,14 +1518,14 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.monsters_weapons TO searcher;
 
 
 --
--- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: bleehu
+-- Name: SEQUENCE skills_pk_id; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT UPDATE ON SEQUENCE public.skills_pk_id TO searcher;
 
 
 --
--- Name: TABLE skills; Type: ACL; Schema: public; Owner: bleehu
+-- Name: TABLE skills; Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT ALL ON TABLE public.skills TO searcher;
