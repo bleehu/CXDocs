@@ -1152,6 +1152,7 @@ SELECT pg_catalog.setval('public.skills_pk_id', 4, true);
 
 SELECT pg_catalog.setval('public.users_pk_id_seq', 10, true);
 
+GRANT UPDATE ON SEQUENCE public.users_pk_id_seq TO tractorman;
 
 --
 -- Name: characters characters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
@@ -1539,6 +1540,8 @@ GRANT ALL ON TABLE public.skills TO searcher;
 --
 
 GRANT ALL ON TABLE public.users TO validator;
+GRANT ALL ON TABLE public.users TO tractorman;
+GRANT ALL ON TABLE public.users TO ubuntu;
 
 
 --
