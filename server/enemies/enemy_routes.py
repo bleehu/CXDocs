@@ -14,7 +14,7 @@ from ..security import security
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 #we use this to prevent nasty ../home/.bashrc overwrite attacks etc.
 #only currently used in /newmonsterpic route
-from werkzeug.utils import secure_filename 
+from werkzeug.utils import secure_filename
 
 enemy_blueprint = Blueprint('enemy_blueprint', __name__, template_folder='templates')
 
@@ -34,7 +34,7 @@ def show_monsters():
     if not security.check_auth(session):
         return redirect("/")
     munsters = enemies.get_monsters(session)
-    return render_template("monsters.html", monsters = munsters, session=session)
+    return render_template("enemies/monsters.html", monsters = munsters, session=session)
 
 @enemy_blueprint.route("/monsterstats")
 def show_monsters_stats():
@@ -115,14 +115,14 @@ def show_monsters_stats():
             stats['armor']['types'][ suit['type']] = 1
           else:
             stats['armor']['types'][suit['type']] += 1
-    return render_template("monster_meta.html", monsters=munsters, stats=stats, session=session)
+    return render_template("enemies/monster_meta.html", monsters=munsters, stats=stats, session=session)
 
 @enemy_blueprint.route("/monstereditor")
 def show_monster_editor():
     if not security.check_auth(session):
         return redirect("/")
     monsters = enemies.get_monsters(session)
-    return render_template("monster_smith.html", session=session, monsters=monsters)
+    return render_template("enemies/monster_smith.html", session=session, monsters=monsters)
 
 @enemy_blueprint.route("/monsterupdate/<pk_id>")
 def show_monster_updater(pk_id):
@@ -135,9 +135,9 @@ def show_monster_updater(pk_id):
             myMonster = monster
     if myMonster == None:
         flash('Could not find the enemy you wanted to update!')
-        return redirect('monsters.html')
-    return render_template("monster_update.html", session=session, monsters=monsters, pk_id=pk_id, myMonster=myMonster)
-    
+        return redirect('enemies/monsters.html')
+    return render_template("enemies/monster_update.html", session=session, monsters=monsters, pk_id=pk_id, myMonster=myMonster)
+
 @enemy_blueprint.route("/monsterweaponupdate/<pk_id>")
 def show_monster_weapon_updater(pk_id):
     if not security.check_auth(session):
@@ -151,7 +151,7 @@ def show_monster_weapon_updater(pk_id):
     if myWeapon == None:
         flash("Could not find the weapon you wanted to update!")
         return redirect("/monstersweapons")
-    return render_template("monster_weapon_update.html", session=session, monsters=monsters, weapons=weapons, pk_id=pk_id, myWeapon=myWeapon)
+    return render_template("enemies/monster_weapon_update.html", session=session, monsters=monsters, weapons=weapons, pk_id=pk_id, myWeapon=myWeapon)
 
 @enemy_blueprint.route("/monsterarmorupdate/<pk_id>")
 def show_monster_armor_updater(pk_id):
@@ -166,7 +166,7 @@ def show_monster_armor_updater(pk_id):
     if myArmor == None:
         flash("Could not find the armor you wanted to update!")
         return redirect("/monstersarmors")
-    return render_template("monster_armor_update.html", monsters=monsters, session=session, pk_id=pk_id, myArmor=myArmor, armors=armors)
+    return render_template("enemies/monster_armor_update.html", monsters=monsters, session=session, pk_id=pk_id, myArmor=myArmor, armors=armors)
 
 @enemy_blueprint.route("/monsterabilityupdate/<pk_id>")
 def show_monster_ability_updater(pk_id):
@@ -182,7 +182,7 @@ def show_monster_ability_updater(pk_id):
     if myAbility == None:
         flash("Could not find that ability!")
         return redirect("/monsterabilities")
-    return render_template("monster_ability_update.html", monsters=monsters, session=session, pk_id=pk_id, myAbility=myAbility, abilities=abilities)
+    return render_template("enemies/monster_ability_update.html", monsters=monsters, session=session, pk_id=pk_id, myAbility=myAbility, abilities=abilities)
 
 @enemy_blueprint.route("/monsterpic")
 def show_monster_photographer():
@@ -191,7 +191,7 @@ def show_monster_photographer():
         log.warn("%s attempted to view monsterpic without logging in." % request.remote_addr)
         return redirect("/")
     monsters = enemies.get_monsters(session)
-    return render_template("monster_photographer.html", monsters=monsters)
+    return render_template("enemies/monster_photographer.html", monsters=monsters)
 
 @enemy_blueprint.route("/newMonster", methods=['POST'])
 def make_monster():
@@ -218,11 +218,11 @@ def update_monster(pk_id):
     if not monster:
         flash("Enemy invalid. Could not add.")
         return redirect("/monsterupdate/%s" % pk_id)
-    enemies.update_monster(monster, pk_id)  
+    enemies.update_monster(monster, pk_id)
     log.info('User %s updated monster: %s.', user, monster['name'])
     flash("Enemy updated!")
     return redirect("/monster")
-        
+
 @enemy_blueprint.route("/updateMonsterWeapon/<pk_id>", methods=['POST'])
 def update_monster_weapon(pk_id):
     if not security.check_auth(session):
@@ -416,7 +416,7 @@ def delete_monster(pk_id):
     myCursor.execute("UPDATE monsters SET deleted_at=now() WHERE pk_id = %s;" % monster_id)
     myCursor.close()
     connection.commit()
-    
+
     flash('Enemy deleted!')
     return redirect("/monstereditor")
 
@@ -426,7 +426,7 @@ def delete_monster_ability(pk_id):
         flash("Must be logged in to do that. This incident will be logged.")
         return redirect("/")
     monster_ability_id = None
-    try: 
+    try:
         monster_ability_id = int(pk_id)
     except Exception(e):
         flash("Error Parsing ID of monster. This incident will be logged.")
@@ -436,7 +436,7 @@ def delete_monster_ability(pk_id):
     myCursor.execute("UPDATE monsters_abilities SET deleted_at=now() WHERE pk_id = %s;" % pk_id)
     myCursor.close()
     connection.commit()
-    
+
     flash('ability Deleted')
     return redirect("/monsterabilityeditor")
 
@@ -456,7 +456,7 @@ def delete_monster_weapon(pk_id):
     myCursor.execute("UPDATE monsters_weapons SET deleted_at=now() WHERE pk_id = %s;" % pk_id)
     myCursor.close()
     connection.commit()
-    
+
     flash('weapon Deleted successfuly!')
     return redirect("/monsterweaponeditor")
 
@@ -466,7 +466,7 @@ def delete_monster_armor(pk_id):
         flash("You must be logged in to do that. This incident will be looged.")
         return redirect("/")
     monster_armor_id = None
-    try: 
+    try:
         monster_armor_id = int(pk_id)
     except:
         flash("error parsing ID of monster. This incident will be logged.")
@@ -476,7 +476,7 @@ def delete_monster_armor(pk_id):
     myCursor.execute("UPDATE monsters_armors SET deleted_at=now() WHERE pk_id = %s;" % pk_id)
     myCursor.close()
     connection.commit()
-    
+
     flash('armor Deleted successfuly!')
     return redirect("/monsterarmoreditor")
 
@@ -517,7 +517,7 @@ def show_monster_abilities():
     for ability in mAbilities:
         maps = enemy_abilities.get_abilitys_monsters(ability['pk_id'])
         ability['maps'] = maps
-    return render_template("monster_abilities.html", abilities=mAbilities, monsters=munsters)
+    return render_template("enemies/monster_abilities.html", abilities=mAbilities, monsters=munsters)
 
 @enemy_blueprint.route("/monsterweapons")
 def show_monster_weapons():
@@ -529,7 +529,7 @@ def show_monster_weapons():
     for weapon in mWeapons:
         maps = enemy_weapons.get_weapons_monsters(weapon['pk_id'])
         weapon['maps'] = maps
-    return render_template("monster_weapons.html", weapons=mWeapons, monsters=munsters)
+    return render_template("enemies/monster_weapons.html", weapons=mWeapons, monsters=munsters)
 
 @enemy_blueprint.route("/monsterarmor")
 def show_monster_armor():
@@ -541,7 +541,7 @@ def show_monster_armor():
     for suit in mArmor:
         maps = enemy_armor.get_armors_monsters(suit['pk_id'])
         suit['maps'] = maps
-    return render_template("monster_armor.html", armor=mArmor, monsters=munsters)
+    return render_template("enemies/monster_armor.html", armor=mArmor, monsters=munsters)
 
 @enemy_blueprint.route("/monsterabilityeditor")
 def show_monster_ability_editor():
@@ -550,7 +550,7 @@ def show_monster_ability_editor():
         return redirect("/")
     mAbilities = enemy_abilities.get_monster_abilities_all()
     munsters = enemies.get_monsters(session)
-    return render_template("monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
+    return render_template("enemies/monster_ability_smith.html", session=session, abilities=mAbilities, monsters=munsters)
 
 @enemy_blueprint.route("/monsterweaponeditor")
 def show_monster_weapon_editor():
@@ -559,7 +559,7 @@ def show_monster_weapon_editor():
         return redirect("/")
     mWeps = enemy_weapons.get_monster_weapons_all()
     munsters = enemies.get_monsters(session)
-    return render_template("monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
+    return render_template("enemies/monster_weapon_smith.html", session=session, weapons=mWeps, monsters=munsters)
 
 @enemy_blueprint.route("/monsterarmoreditor")
 def show_monster_armor_editor():
@@ -568,4 +568,4 @@ def show_monster_armor_editor():
         return redirect("/")
     mArmor = enemy_armor.get_monster_armor_all()
     munsters = enemies.get_monsters(session)
-    return render_template("monster_armor_smith.html", session=session, armor=mArmor, monsters=munsters)
+    return render_template("enemies/monster_armor_smith.html", session=session, armor=mArmor, monsters=munsters)

@@ -44,7 +44,7 @@ def show_my_characters():
     if (len(my_characters) < 1):
         flash("You don't have any characters yet. Would you like to make one?")
         return redirect("/character/new")
-    return render_template("character_select.html", characters=my_characters)
+    return render_template("characters/character_select.html", characters=my_characters)
 
 @character_blueprint.route("/showcharacter/<pk_id>")
 def show_character(pk_id):
@@ -54,7 +54,7 @@ def show_character(pk_id):
     pc = characters.get_character(pk_id)
     if 'character' in session.keys():
         pc = characters.get_character(pk_id)
-    return render_template('characterviewer.html', session=session, pc=pc)
+    return render_template('characters/characterviewer.html', session=session, pc=pc)
 
 """ Delete Character endpoint  """
 @character_blueprint.route("/character/modify/<pk_id>", methods=['DELETE'])
@@ -77,7 +77,7 @@ def delete_character(pk_id):
     flash("Deleted Character successfully.")
     return redirect("/character/mine")
 
-""" Endpoint for updating an existing character. Attempting to emulate a 
+""" Endpoint for updating an existing character. Attempting to emulate a
 RESTful API endpoint where the route is the same to add new, update existing,
 delete existing or view existing character. """
 @character_blueprint.route("/character/modify/<pk_id>", methods=['POST'])
@@ -104,17 +104,17 @@ def update_character(pk_id):
     flash("Successfully updated character.")
     return redirect("/modifycharacter/%s" % pk_id)
 
-""" Show all player characters for community and display metadata to see if one 
+""" Show all player characters for community and display metadata to see if one
 class is getting much more play than another. """
-#show all of the player characters. For game designers to get a feel for the distribution. 
+#show all of the player characters. For game designers to get a feel for the distribution.
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
     #SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
     pcs = characters.get_characters()
     return render_template("player_characters.html", pcs = pcs)
 
-""" If a User has more than one character, then they should be able to select 
-one character that they are using at a time. Dynamic pages will be able to do 
+""" If a User has more than one character, then they should be able to select
+one character that they are using at a time. Dynamic pages will be able to do
 things like display only weapons and armor that character can use. """
 
 #API endpoint to select a character
@@ -160,7 +160,7 @@ def char_modify(pk):
         log.error("Intruder! %s attempted to update a character other than their own! un: %s IP: %s char_id: %s" \
             % (session['displayname'], request.remote_addr, pk_id_int))
         return redirect("/character/mine")
-    return render_template("character_creator.html", character=my_character, feats=all_feats)
+    return render_template("characters/character_creator.html", character=my_character, feats=all_feats)
 
 @character_blueprint.route("/assignCharacterFeat", methods=['POST'])
 def make_character_feat_mapping():
@@ -205,7 +205,7 @@ def make_new_skill(pk_id):
     new_skill_pk_id = skills.get_newest_skill(sani_character_pk_id)
     return "%s" % new_skill_pk_id
 
-""" The pk_id here is for the skill that you wish to delete. Note that is a different 
+""" The pk_id here is for the skill that you wish to delete. Note that is a different
     convention from the creation of a skill above. """
 @character_blueprint.route("/skills/delete/<pk_id>", methods=['POST'])
 def delete_skill():

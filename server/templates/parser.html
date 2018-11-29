@@ -2,7 +2,7 @@
 	{%block head%}
 		<title>CX Docs - {{ elements[0]['content'] }}</title>
 	{% endblock %}
-	{% block body %}
+	{% block content %}
 		<div class="container">
 			<div class="page-header">
 				<h1> {{ elements[0]['content'] }} </h1>
@@ -15,11 +15,11 @@
 							<a class="list-group-item text-primary" href="#{{ element['id'] }}">
 								{{ element['content'] }}</a>
 							{% elif element['type'] == 'h2' %}
-							<a class="list-group-item text-info" href="#{{element['id']}}"> 
+							<a class="list-group-item text-info" href="#{{element['id']}}">
 								{{element['content']}} </a>
 							{% elif element['type'] == 'h3' %}
-							<a class="list-group-item text-white" href="#{{element['id']}}"> 
-								{{element['content']}} 
+							<a class="list-group-item text-white" href="#{{element['id']}}">
+								{{element['content']}}
 							</a>
 							{% endif %}
 						{% endfor %}
@@ -39,7 +39,7 @@
 							<div class="card-body">
 								<dl>
 									{% for deff in element['content'] %}
-										<dt><strong class="text-primary">{{ deff[0] }}</strong></dt> 
+										<dt><strong class="text-primary">{{ deff[0] }}</strong></dt>
 										<dd>{{ deff[1] }}</dd>
 									{% endfor %}
 								</dl>
@@ -53,8 +53,8 @@
 							</div> <!-- put card body ending  -->
 							</div> <!-- put card end first to handle fencepost error -->
 						{% endif %}
-						<h1 id="{{element['id']}}" class="text-primary"> 
-							{{element['content']}} 
+						<h1 id="{{element['id']}}" class="text-primary">
+							{{element['content']}}
 						</h1>
 						<div class="card border-primary"> <!-- card start after card end to handle fencepost error -->
 							<div class="card-body">
@@ -63,8 +63,8 @@
 						<h2 class="text-info card-title" id="{{ element['id'] }}"> {{element['content']}} </h2>
 						</div>
 					{% elif element['type'] == 'h3' %}
-						<h3 id="{{element['id']}}" class="text-primary card-title"> 
-							{{element['content']}} 
+						<h3 id="{{element['id']}}" class="text-primary card-title">
+							{{element['content']}}
 						</h3>
 					{% elif element['type'] == 'p' %}
 						<p class="card-text"> {{element['content']}} </p>
@@ -99,4 +99,3 @@
 			</div>
 		</div>
 	{% endblock %}
-	
