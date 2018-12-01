@@ -23,11 +23,11 @@ def check_auth(session):
 def get_login_db_connection():
     global user_user
     global user_password
-    connection = psycopg2.connect("dbname=mydb user=%s password=%s" % (user_user, user_password))
+    connection = psycopg2.connect("dbname=mydb user=%s password=%s host=localhost" % (user_user, user_password))
     return connection
 
 
-""" we use this when we use player input to check postgres for a search. For instance, we don't want 
+""" we use this when we use player input to check postgres for a search. For instance, we don't want
            badguys trying to log in with SQL injection - that could lead to damage to login data."""
 def sql_escape(dirty):
     #string.replace(new, old)

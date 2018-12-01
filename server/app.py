@@ -1,13 +1,13 @@
 import characters
 import ConfigParser
 import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
-#these imports are for python files we wrote ourselves. 
+#these imports are for python files we wrote ourselves.
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
 from characters.character_routes import character_blueprint, initialize_characters
 
-#flask is a python webserver built on Werkzeug. This is what is in charge of our 
+#flask is a python webserver built on Werkzeug. This is what is in charge of our
 #main web app. It's how we respond to HTTP requests, etc.
 from flask import Flask, render_template, make_response, request, redirect, session, escape, flash
 
@@ -208,7 +208,7 @@ def create_app():
     """handles the display of the main page for the site. """
     @app.route("/") #tells flask what url to trigger this behavior for. In this case, the main page of the site.
     def hello():            #tells flask what method to use when you hit a particular route. Same as regular python function definition.
-        session['X-CSRF'] = "foxtrot"   #set a session token. This helps prevent session takeover hacks. 
+        session['X-CSRF'] = "foxtrot"   #set a session token. This helps prevent session takeover hacks.
         pc = None   #player character defaults to None if user isn't logged in.
         docs = None
         rulesDocs = None
@@ -226,17 +226,17 @@ def create_app():
             log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
 
         if 'character' in session.keys():   #if player is logged in and has picked a character, we load that character from the session string
-            pc = characters.get_character(session['character']) 
+            pc = characters.get_character(session['character'])
         gb = guestbook.get_guestbook()
-        return render_template('index.html', \
+        return render_template('home.html', \
             session=session, \
             character=pc, \
             rulesDocs=rulesDocs, \
             itemsDocs= itemsDocs, \
             character_docs=character_docs, \
-            guestbook = gb) #the flask method render_template() shows a jinja template 
+            guestbook = gb) #the flask method render_template() shows a jinja template
         #jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
-        #dynamically. 
+        #dynamically.
 
     """ The /whoshere endpoint shows a .json blob of how many users are logged into the site. This is called by the javascript from repo/static/whoshere.js
         to show the guestbook.  """
@@ -347,8 +347,8 @@ def create_app():
 
     @app.route("/docs/trees")
     def docs_skill_trees():
-        return render_template("skilltrees.html")
-        
+        return render_template("skills/skilltrees.html")
+
     @app.route("/files")
     def show_files():
         return render_template("files.html")
@@ -356,16 +356,16 @@ def create_app():
     @app.route("/missions")
     def show_missions():
         missions = get_missions()
-        return render_template("missions.html", missions = missions)
-        
+        return render_template("missions/missions.html", missions = missions)
+
     @app.route("/missionfiles")
     def show_mission_files():
-        return render_template("mission_files.html")
+        return render_template("missions/mission_files.html")
 
-    """ the /login route expects the POST request from the login form in the repo/templates/index.html file. It expects 
-        strings from the "uname" and "password" fields. 
+    """ the /login route expects the POST request from the login form in the repo/templates/index.html file. It expects
+        strings from the "uname" and "password" fields.
 
-        If the login information is correct, it signs the guestbook and adds the user's username, displayname 
+        If the login information is correct, it signs the guestbook and adds the user's username, displayname
         and role to flask's session object. Then it returns to the index/login page, which should now show the user as
         logged in.
 
@@ -379,7 +379,7 @@ def create_app():
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
             session.pop('X-CSRF', None)
         else:
-            resp = make_response(render_template("501.html"), 403)
+            resp = make_response(render_template("errors/501.html"), 403)
             log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" \
                 % (uname, passwerd, request.user_agent.string, request.remote_addr))
             return resp
@@ -406,7 +406,7 @@ def create_app():
     def npcgen():
         return render_template("npcgen.html")
 
-    """Most legitimate web scrapers check a text file in /robots.txt to see 
+    """Most legitimate web scrapers check a text file in /robots.txt to see
         where they should be allowed to look. This is how google, bing and bindu
         catalogue pages available to search. By default, we tell these robots to
         leave us alone."""
@@ -424,35 +424,35 @@ def create_app():
 
     @app.route("/monsterweaponshowto")
     def show_monster_weapons_howto():
-        return render_template("monster_weapon_how_to.html")
+        return render_template("enemies/monster_weapon_how_to.html")
 
     @app.route("/monsterarmorhowto")
     def show_monster_armor_howto():
-        return render_template("monster_armor_how_to.html")
+        return render_template("enemies/monster_armor_how_to.html")
 
     """ set generic handlers for common errors."""
-    @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python. 
+    @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python.
     def borked_it(error):
         uname = "Anonymous"
         if 'username' in session.keys():
             uname = session['username']
         log.error("%s got a 500 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
-        return render_template("501.html", error=error)
-        
+        return render_template("errors/501.html", error=error)
+
     @app.errorhandler(404) # an HTTP 404 Not Found happens if the user searches for a url which doesn't exist. like /fuzzyunicorns
     def missed_it(error):
         uname = "Anonymous"
         if 'username' in session.keys():
             uname = session['username']
         log.warn("%s got a 404 looking for %s. User Agent: %s, remote IP: %s" % (uname, request.path, request.user_agent.string, request.remote_addr))
-        return render_template("404.html", error=error)
+        return render_template("errors/404.html", error=error)
 
     host = "localhost" #default to local only when running.
-    
+
     global config
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
-    
+
     seconds_away = 60
     seconds_out = 3600
     if config.has_option('WhosHere', 'Seconds_away'):
@@ -482,9 +482,9 @@ def create_app():
 
     return app
 
-"""This is ugly code. 
+"""This is ugly code.
 
-    In a subsequent cleaning pull, I'm going to abstract and DRY out our 
+    In a subsequent cleaning pull, I'm going to abstract and DRY out our
     configuration process so that we only rely on the 3rd party ConfigParser
     in one file. This pull is only for eliminating None returns..."""
 def auth_config_seam(unpw_tuple, config):
@@ -502,5 +502,5 @@ def auth_config_seam(unpw_tuple, config):
 if __name__ == "__main__":
 
     app = create_app
-    
+
     app.run(host = host, threaded=True)

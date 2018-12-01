@@ -1,0 +1,44 @@
+// BOOTSTRAP CLASSES
+.navbar {
+  background: $black;
+  border: solid 2px $silver;
+  border-radius: $std-b-radius;
+
+  margin: 0.5rem 0.5rem 0 0.5rem;
+  padding: 0;
+}
+
+.navbar-brand {
+  font-size: 2rem;
+  color: $white;
+  background-color: $black;
+
+  border-radius: $std-b-radius;
+
+  margin: 0;
+  padding: 0;
+  padding-left: 0.5rem;
+}
+
+.navbar-nav {
+  width: 100%;
+  align-content: space-around;
+}
+
+.nav-item {
+  background-color: $gray-200;
+  border-radius: 10px;
+
+  margin: .25rem auto;
+}
+
+// OUR CLASSES
+.navbar-screen {
+  font-size: 1.5rem;
+  background-color: $white;
+
+  border: 0;
+  border-right: solid 0.5rem black;
+  border-left: solid 0.5rem black;
+  border-radius: $std-b-radius;
+}

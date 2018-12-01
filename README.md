@@ -3,13 +3,13 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 
 # set up
 ## Python module instalation
-### On Ubuntu 16.04 
+### On Ubuntu 16.04
 1) $sudo apt-get install python
 2) $sudo apt-get install build-essentials
 2) $sudo apt-get install python-pip
 4) $pip install --upgrade pip
 1) $git clone https://github.com/bleehu/CXDocs.git
-2) $sudo pip install flask 
+2) $sudo pip install flask
 3) $sudo pip install pipenv
 4) $pipenv install -r travis/requirements.txt
 
@@ -38,42 +38,42 @@ For sharing dev over LAN (for one house), use:
 
 `$python start.py -i local.ip.goes.here`
 
-to find your local ip address on linux, use ifconfig in a terminal. 
+to find your local ip address on linux, use ifconfig in a terminal.
 
 to find your local ip address on windows, use ipconfig in bash.
 
 For WWW use:
 
-CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are 
-still some improvements that should be made in order to keep it safe. Feel free 
-to contact bleehu@uw.edu for information about how to stand up your own public 
+CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are
+still some improvements that should be made in order to keep it safe. Feel free
+to contact bleehu@uw.edu for information about how to stand up your own public
 instance of CX Docs.
 
 
 ## Setting up configs
 
-Compound X comes with a handy little script for generating appropriate config 
-files that help it do things like save pictures for the monster bestiary, etc. 
-Generating a config is as easy as running 
+Compound X comes with a handy little script for generating appropriate config
+files that help it do things like save pictures for the monster bestiary, etc.
+Generating a config is as easy as running
 
 `$python generate_config.py`
 
-That should write a file in /config/cxDocs.cfg which will have useful options 
+That should write a file in /config/cxDocs.cfg which will have useful options
 set which are detailed in /config/Readme.md
 
 ## Setting up postgres database for login, bestiary, and character creation
 
 you will need Postgres 9.5.x or 10.x
 
-### On Ubuntu 16.04  
+### On Ubuntu 16.04
 
-Postgres should be already installed. To check, try typing into the console: 
+Postgres should be already installed. To check, try typing into the console:
 
 `psql --version`
 
 If it's not installed
 
-`sudo apt-get install postgresql` 
+`sudo apt-get install postgresql`
 
 `sudo apt-get install postgresql-client-common`
 
@@ -83,19 +83,19 @@ and
 
 ### On Windows
 
-Windows doesn't come with postgres standard. It's almost like they didn't expect 
-you to run a webserver off of your office box. 
+Windows doesn't come with postgres standard. It's almost like they didn't expect
+you to run a webserver off of your office box.
 
 To download Postgres, go here: https://www.postgresql.org/download/windows/
 
 Not really sure how to set the database up after that, but we'll work on it!
 
-Likely on Windows, you'll want to use the (PGAdmin III GUI)[https://www.pgadmin.org/download/] 
-to work with the database rather than the Command Line Interface that the penguins 
-using linux will use. 
+Likely on Windows, you'll want to use the (PGAdmin III GUI)[https://www.pgadmin.org/download/]
+to work with the database rather than the Command Line Interface that the penguins
+using linux will use.
 
-There should be documentation on how to use pgAdmin3 to restore a database 
-(in this direction.)[https://www.pgadmin.org/docs/pgadmin3/1.22/restore.html] 
+There should be documentation on how to use pgAdmin3 to restore a database
+(in this direction.)[https://www.pgadmin.org/docs/pgadmin3/1.22/restore.html]
 but most of our devs use linux, and we haven't figured out how to do this on
 Windows for sure yet.
 
@@ -103,8 +103,8 @@ Windows for sure yet.
 
 To start with, you'll need to add an entry to postgres's authentication config
 file. It _usually_ lives at `/etc/postgresql/10/main/pg_hba.conf` but your version
-number may vary. The file is always called `pg_hba.conf` though. You'll need 
-`sudo` to modify it. Read the comments in the file; they're brief and helpful, 
+number may vary. The file is always called `pg_hba.conf` though. You'll need
+`sudo` to modify it. Read the comments in the file; they're brief and helpful,
 and as they direct, add an entry at the bottom for each of the following.
 ```
 local dbname yourusername ident
@@ -117,9 +117,9 @@ In our example, `searcher` is the name of the application account that looks
 for characters and enemies for the bestiary and character editors. `validator`
 is name of the account with special permissions that searches for user logins.
 
-These usernames (except your kernel username) are configurable. You can change 
-them to whatever you'd like them to be. And you should! Standard logins are a 
-security vulnerability. See the cxDocs/config/readme.md for more information on 
+These usernames (except your kernel username) are configurable. You can change
+them to whatever you'd like them to be. And you should! Standard logins are a
+security vulnerability. See the cxDocs/config/readme.md for more information on
 configurations.
 
 Once you've modified the pg_hba.conf file, you'll need to restart postgres with the new configs.
@@ -128,8 +128,8 @@ Once you've modified the pg_hba.conf file, you'll need to restart postgres with 
 
 ## To configure the db
 
-Before CXDocs is able to log in, you will need to also create the appropriate 
-user on your particular database and declare it's password. Details on how to 
+Before CXDocs is able to log in, you will need to also create the appropriate
+user on your particular database and declare it's password. Details on how to
 do that here:
 
 `https://www.postgresql.org/docs/9.5/static/auth-methods.html#AUTH-PASSWORD`
@@ -142,7 +142,7 @@ for your first time on your home machine, you may be tempted to just wipe their
 accounts. Since the database contains relations between the users and the enemies
 they've created, this will break the application. You're better off replacing the
 redacted passwords with random ASCII garbage by modifying the .db file before
-restore. 
+restore.
 
 One last step before tell the database to go live, add this SQL command to the
 bottom of the restore script to give your username access to all of the tables
@@ -156,10 +156,30 @@ Once you've done that, upload the new database using these commands:
 
 `psql -f databasename /travis/test.db`
 
-There shouldn't be any errors. If you log into the database using 
+There shouldn't be any errors. If you log into the database using
 `psql databasename`
 you should be able to run SQL queries to look at all of the information on the
 database. For example, `\dt` should list the available tables.
+
+## Install Sass and Compile into CSS
+
+NOTE: You will only need to install Sass if you're going to make front-end style changes.
+(Without Sass, you can still use Bootstrap classes and our classes in HTML, but you won't be able to manipulate them or make your own.
+This also means you SHOULD NOT EDIT `styles.css`; it is a generated file, and your changes will be overwritten by Sass users.)
+
+Go to [http://sass-lang.com/install](http://sass-lang.com/install) and install Sass for your system. Installing for the command line is recommended.
+
+When you have Sass installed, you can run it to compile a CSS file.
+The output should ALWAYS be to `server/static/styles.css` until further notice.
+The file `server/assets/scss/index.scss` should always be the input file and the only input file, as it imports the rest of the .scss files.
+
+As an example, here is the command for Linux:
+
+`sass --watch server/assets/scss/index.scss server/static/styles.css`
+
+Using a watch command is recommended so that changes to .scss files are automatically recompiled.
+
+Even with the watch command, Flask won't update `styles.css` on the page, so you'll have to refresh and probably clear the cache too (CTRL + F5).
 
 # What's in this Direcory and why is it here?
 
@@ -184,7 +204,7 @@ right now is the readme file.
 
 ## The generate_config.py script
 
-A helpful little script that writes a valid config file for you. It makes 
+A helpful little script that writes a valid config file for you. It makes
 setting up a new instance of CXDocs much quicker.
 
 ## The Server directory
@@ -193,7 +213,7 @@ We put the code for the CXDocs web application in here.
 
 ## The Travis directory
 
-We put the tests that travis runs in here. It is helpful for making sure what 
+We put the tests that travis runs in here. It is helpful for making sure what
 we write doesn't break anything.
 
 ## The .travis.yml file
