@@ -1,0 +1,13 @@
+// BOOTSTRAP CLASSES
+
+.list-group:before {
+  content: "";
+  border: solid 100px;
+  border-color: $holobeam transparent;
+  border-top: 0;
+}
+
+.list-group-item {
+  background: $holomenu;
+  color: $dark;
+}

@@ -1,0 +1,35 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Error</title>
+		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
+	{% endblock %}
+	{% block content %}
+		<div class="container">
+			<div class="page-header">
+				<h1> Error </h1>
+			</div>
+			<div class="col-lg-8">
+				<h1>404</h1>
+				<p>Oh snap! It looks like this page isn't here!</p>
+				<p>Some of these pages are still being crafted, and some are a little buggy. </p>
+				<p>If Michael isn't around and you beleive you've found a new error, please create an issue on <a href="https://github.com/bleehu/CXDocs/issues">Github</a>.</p>
+				<p>
+					when leaving an issue on github, please make sure to include the following:
+					<ul>
+						<li>What you were trying to view:</li>
+						<li>What you clicked on:</li>
+						<li>What you saw instead of what you were expecting:</li>
+						<li>If you were running the server on your local machine or connected to our publi site:</li>
+						<li>If you were logged in(simple yes/no):</li>
+						<li>Which browser you are using (Firefox, Chrome, Safari, Edge):</li>
+					</ul>
+					Do not under any circumstances include:
+					<ul>
+						<li>your username for CXDocs</li>
+						<li>your password for <em>anything ever</em>!!!!</li>
+						<li>your IP address</li>
+					</ul>
+				</p>
+			</div>
+		</div>
+	{% endblock %}

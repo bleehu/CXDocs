@@ -1,0 +1,54 @@
+{%extends "layout.html"%}
+	{%block head%}
+		<title>CX Docs - Character Viewer</title>
+	{% endblock %}
+	{% block content %}
+
+	<div class = "row">
+		<div class="container">
+			<div class="page-header">
+				<h1> Compound X Character Viewer</h1>
+			</div>
+			<div class="col-lg-6">
+				<div class="jumbotron">
+					<h1 class="display-3">CompoundX Character Viewer</h1>
+						<p class="lead">Currently Viewing {{pc['name']}}.</p>
+						<hr class="my-4">
+						<p> Level {{pc['level']}} {{pc['race']}} {{pc['class']}}.</p>
+	</div>
+	<div>
+		<div class = "row">
+			<section>
+					<div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+  <div class="card-header">Stats</div>
+  <div class="card-body">
+    <h4 class="card-title">Stats</h4>
+    <p class="card-text"><DL>
+						<LH>Stats</LH>
+						<DT>Health<dd>{{pc['health']}}
+						<DT>Nanites<dd> {{pc['nanites']}}
+						<DT>Strength<dd>{{pc['strength']}}
+						<DT>Perception<dd>{{pc['perception']}}
+						<DT>Fortitude<dd>{{pc['fortitude']}}
+						<DT>Charisma<dd>{{pc['charisma']}}
+						<DT>Intelligence<dd>{{pc['intelligence']}}
+						<DT>Dexterity<dd>{{pc['dexterity']}}
+						<DT>Luck<dd>{{pc['luck']}}
+						<DT>Will<dd>{{pc['will']}}
+						<DT>Shock<dd>{{pc['shock']}}
+						<DT>Reflex<dd>{{pc['reflex']}}
+						<DT>Money<dd>to be added
+
+					</DL>
+					</p>
+  </div>
+</div>
+
+
+
+
+
+			</section>
+			</div>
+		</div>
+		{% endblock %}

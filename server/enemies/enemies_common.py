@@ -17,7 +17,7 @@ def db_connection():
     token = 'allDatSQL'
     if config.has_option('Enemies', 'enemies_psql_pass'):
         token = config.get('Enemies', 'enemies_psql_pass')
-    connection = psycopg2.connect("dbname=%s user=%s password=%s" % (db, username, token))
+    connection = psycopg2.connect("dbname=%s user=%s password=%s host=localhost" % (db, username, token))
     return connection
 
 def check_has_pic(pk_id):

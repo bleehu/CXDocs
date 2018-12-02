@@ -1,5 +1,5 @@
-"""This Module contains methods used by many of the character code files. It is 
-    not intended for standalone use. 
+"""This Module contains methods used by many of the character code files. It is
+    not intended for standalone use.
     """
 import psycopg2
 import ConfigParser
@@ -9,8 +9,8 @@ global config
 def set_config(new_config):
     """Set the config file for character database interactions.
 
-    This method sets the configuration for database connections. It should be 
-    called during the initialization of whatever program is using it. For more 
+    This method sets the configuration for database connections. It should be
+    called during the initialization of whatever program is using it. For more
     on cxdocs configs, see repo/config/README.md
 
     new_config: the ConfigParser config object to send logs to."""
@@ -31,7 +31,7 @@ def db_connection():
     db_pass = "allDatSQL"
     if config.has_option('Characters','characters_psql_pass'):
         db_pass = config.get('Characters','characters_psql_pass')
-    connection = psycopg2.connect("dbname=%s user=%s password=%s" % (db, username,db_pass))
+    connection = psycopg2.connect("dbname=%s user=%s password=%s host=localhost" % (db, username, db_pass))
     return connection
 
 def fetchall_from_db_query(query):

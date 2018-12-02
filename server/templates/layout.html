@@ -1,92 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<!-- Bootstrap uses popper to control the extending and hiding of dropdown menus -->
-		<script type="text/javascript" src="../static/popper.min.js"></script>
-		<!-- This line links to the Cascading Style Sheet (CSS) which dictates the color, alignment and style of the page. -->
-		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
-        <!-- Since our custom css sheet is lower than the bootstrap, our custom css should override the bootstrap -->
-        <link rel="stylesheet" type="text/css" href="../static/custom.css">
-        <!-- Let's get some jquery! -->
-        <script src="../static/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="../static/bootstrap.min.js"></script>
-        <script src="../static/whoshere.js"></script>
-		{%block head%}{%endblock%}
-	</head>
-	<body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<a href="../" class="navbar-brand">CX Docs</a>
-			<div class="navbar-collapse" id="navbar-main">
-			  <ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-				  <a class="nav-link" href="https://github.com/bleehu/Compound_X/tree/play">Compound X Game</a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="https://github.com/bleehu/cxdocs/issues">Report an Issue with Docs</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="https://github.com/trowl223/Compound_X/issues"> Gripe about game rules </a>
-				</li>
-			  </ul>
+<head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{% block title %}{% endblock %} - Compound X</title>
+  <!-- Bootstrap uses popper to control the extending and hiding of dropdown menus -->
+  <script type="text/javascript" src="../static/popper.min.js"></script>
 
-			  <ul class="nav navbar-nav navbar-right">
-				<li class="nav-item">
-					<a class="nav-link" href="http://builtwithbootstrap.com/" target="_blank">Built With Bootstrap</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="https://wrapbootstrap.com/?ref=bsw" target="_blank">WrapBootstrap</a>
-				</li>
-			  </ul>
-			<li class="nav-item dropdown">
-				<a id="whosHereToggle" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-					<span id="hereCount">Who is Here?</span>
-					<span class="caret"></span>
-				</a>
-			  <div class="dropdown-menu" id="whosHereDiv">
-			  </div>
-			</li>
-			</div>
-		</nav>
-		{% with messages = get_flashed_messages() %}
+  <link rel="stylesheet" type="text/css" href="../static/styles.css">
+
+  <!-- Let's get some jquery! -->
+  <script src="../static/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../static/bootstrap.min.js"></script>
+  <script src="../static/whoshere.js"></script>
+
+  {% block head %}
+  {% endblock %}
+</head>
+<body>
+  {% block header %}
+  <h1 class="text-center">Compound X</h1>
+  {% endblock %}
+
+  <nav class="navbar navbar-expand-lg">
+    {% block nav %}
+      <a href="/" class="navbar-brand">CX</a>
+
+      <button class="navbar-toggler" type="button"
+        data-toggle="collapse" data-target="#navbarMain"
+        aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse navbar-screen" id="navbarMain">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Getting Started</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">The Game</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Report Issues</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Game Feedback</a>
+          </li>
+        </ul>
+      </div>
+    {% endblock %}
+  </nav>
+
+  <div class="container content">
+    {% with messages = get_flashed_messages() %}
         <!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
         <!-- See bootstrap.js docs here for how we get them to fade out http://v4-alpha.getbootstrap.com/components/alerts/ -->
-		  {% if messages %}
-		  <div class="container" id="flashcontainer">
-			{% for message in range(messages|length) %}
-			<div class="alert alert-dismissible alert-success" role="alert" id="alert{{message}}">
-			  <button type="button" class="close" data-dismiss="alert" data-target="#alert{{message}}" aria-label="close">&times;</button>
-			  {{ messages[message] }}.
-			</div>
-			{% endfor %}
-		</div>
-		  {% endif %}
-		{% endwith %}
-		{%block body%}{%endblock%}
-	</body>
-<footer>
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<small>
-			//===================================================================<br />
-			//Copyright 2016 Taylor Rowland<br />
-			//
-			//Licensed under the Apache License, Version 2.0 (the "License");<br />
-			//you may not use this file except in compliance with the License.<br />
-			//You may obtain a copy of the License at<br />
-			//
-			//   http://www.apache.org/licenses/LICENSE-2.0<br />
-			//
-			//Unless required by applicable law or agreed to in writing, software<br />
-			//distributed under the License is distributed on an "AS IS" BASIS,<br />
-			//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br />
-			//See the License for the specific language governing permissions and<br />
-			//limitations under the License.<br />
-			//===================================================================
-				</small>
-			</div>
-		</div>
-	</div>
-</footer>
+      {% if messages %}
+      <div id="flashcontainer">
+        {% for message in range(messages|length) %}
+        <div class="alert alert-dismissible alert-warning" role="alert" id="alert{{message}}">
+          <button type="button" class="close" data-dismiss="alert" data-target="#alert{{message}}" aria-label="close">&times;</button>
+          <p class="text-center mb-0">{{ messages[message] }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    {%block content%}{%endblock%}
+
+  </div>
+  <footer>
+  {% block footer %}
+    <p class="text-center">
+      &copy; Copyright 2018 [Compound X authors/company]
+    </p class="text-center">
+  {% endblock %}
+  </footer>
+</body>
 </html>

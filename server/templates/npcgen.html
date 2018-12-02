@@ -4,14 +4,14 @@
 		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
 		<script  src="../static/npcgen.js"></script>
 	{% endblock %}
-	{% block body %}
+	{% block content %}
 		<div class="container">
 			<div class="page-header">
 				<h1> NPC Generator </h1>
 			</div>
 			<div class="col-lg-12">
 			<p>Click the button to generate new stats at random. Or Enter Ability Score numbers
-					and the rest of the stats should automatically update to match. You cannot adjust 
+					and the rest of the stats should automatically update to match. You cannot adjust
 					modifiers directly, and entereing anything that is not an integer will result in an error.</p>
 				<form>
 					<div class="row">
@@ -19,7 +19,7 @@
 							<fieldset>
 								<legend>Role Information</legend>
 								<div class="form-group row">
-									<label for="unit_name" class="col-form-label"> Name: </label> 
+									<label for="unit_name" class="col-form-label"> Name: </label>
 									<input class="form-control" id="unit_name" name="unit_name">
 									<label for="unit_level" class="col-form-label"> Level: </label>
 									<input class="form-control" id="unit_level" name="unit_level" value="1"/>
@@ -69,7 +69,7 @@
 										</label>
 									</div>
 									<div class="col-lg-6">
-										<label for="strMod form-check-label"> Mod: 
+										<label for="strMod form-check-label"> Mod:
 										<input class="form-control" id="strMod" disabled >
 										</label>
 									</div>
@@ -77,7 +77,7 @@
 								<div class="form-group row">
 									<div class="col-lg-6">
 										<label for="Perception"> Perception:</label>
-										<input class="form-control" id="Perception" value="5" > 
+										<input class="form-control" id="Perception" value="5" >
 									</div>
 									<div class="col-lg-6">
 										<label for="perMod"> Mod: </label>
@@ -87,7 +87,7 @@
 								<div class="form-group row">
 									<div class="col-lg-6">
 										<label for="Fortitude"> Fortitude: </label>
-										<input class="form-control" id="Fortitude" value="5" > 
+										<input class="form-control" id="Fortitude" value="5" >
 									</div>
 									<div class="col-lg-6">
 										<label for="fortMod"> Mod: </label>
@@ -98,23 +98,23 @@
 									<div class="col-lg-6">
 										<label for="Charisma">
 										Charisma:
-										<input class="form-control" id="Charisma" value="5" > 
+										<input class="form-control" id="Charisma" value="5" >
 										</label>
 									</div>
 									<div class="col-lg-6">
-										<label for="chaMod"> Mod: 
+										<label for="chaMod"> Mod:
 										<input class="form-control" id="chaMod" disabled >
 										</label>
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-lg-6">
-										<label for="Intelligence"> Intelligence: 
+										<label for="Intelligence"> Intelligence:
 										<input class="form-control" id="Intelligence" value="5" >
-										</label> 
+										</label>
 									</div>
 									<div class="col-lg-6">
-										<label for="intMod"> Mod: 
+										<label for="intMod"> Mod:
 										<input class="form-control" id="intMod" disabled >
 										</label>
 									</div>
@@ -122,7 +122,7 @@
 								<div class="form-group row">
 									<div class="col-lg-6">
 										<label for="Dexterity"> Dexterity:
-										<input class="form-control" id="Dexterity" value="5" > 
+										<input class="form-control" id="Dexterity" value="5" >
 										</label>
 									</div>
 									<div class="col-lg-6">
@@ -132,20 +132,20 @@
 								</div>
 								<div class="form-group row">
 									<div class="col-lg-6">
-										<label for="Luck"> Luck: 
-										<input class="form-control" id="Luck" value="5" > 
+										<label for="Luck"> Luck:
+										<input class="form-control" id="Luck" value="5" >
 										</label>
 									</div>
 									<div class="col-lg-6">
-										<label for="lukMod"> Mod: 
+										<label for="lukMod"> Mod:
 										<input class="form-control" id="lukMod" disabled>
 										</label>
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-lg-12">
-										<label for="TotalStats"> Total: 
-										<input class="form-control" id="TotalStats" value="35"> 
+										<label for="TotalStats"> Total:
+										<input class="form-control" id="TotalStats" value="35">
 										</label>
 									</div>
 								</div>
@@ -204,4 +204,3 @@
 			</div>
 		</div>
 	{% endblock %}
-	
