@@ -1022,7 +1022,7 @@ COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, 
 
 COPY public.users (pk_id, username, displayname, realname, password, role) FROM stdin;
 1	Bleehu	Mike(ADMIN)	Mike H	CXCoding	ADMIN
-2	travis_test	Travis	CLI	travis1Tractor	GM
+2	travisTest	Travis	CLI	travis1Tractor	GM
 \.
 
 
