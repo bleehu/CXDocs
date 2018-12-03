@@ -61,6 +61,7 @@ function updateStats(){
 	shk = document.getElementById("Shock");
 	will = document.getElementById("Will");
 	ref = document.getElementById("Reflex");
+	awe = document.getElementById("Awareness");
 	
 	strength = parseInt(str.value);
 	perception = parseInt(per.value);
@@ -73,12 +74,14 @@ function updateStats(){
 	shock = 2 * (intelligence + fortitude - 6);
 	willsave =  2 * (charisma + fortitude - 6);
 	reflex =  2 * (perception + dexterity - 6);
+	awareness = 2 * (perception + luck - 6);
 	
 	total = strength + perception + dexterity + fortitude + charisma + intelligence + luck;
 	
 	shk.value = shock;
 	ref.value = reflex;
 	will.value = willsave;
+	awe.value = awareness;
 	
 	tot = document.getElementById("TotalStats");
 	tot.value = total;
