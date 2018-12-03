@@ -1,33 +1,34 @@
 {%extends "layout.html"%}
-	{%block head%}
-		<title>CX Docs - Enemy Picture Editor</title>
-		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
-		<script  src="../static/npcgen.js"></script>
-	{% endblock %}
-	{% block content %}
-		<div class="container">
-			<div class="page-header">
-				<h1> Enemy Picture Editor </h1>
-			</div>
-			<div class="col-lg-8">
-			<p>Upload a picture for your monster. We only .png filetype at the moment. Please only upload
-				4 MB files or smaller.</p>
-				<form class="form-horizontal" action="/newMonsterpic" method="post" autocomplete="off" enctype=multipart/form-data>
-					<div class="col-lg-4">
-						<fieldset>
-							Monster:
-							<Select name="monster_id" id="monsterselect">
-							{% for monster in monsters %}
-								<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
-							{% endfor %}
-							</select>
-							<input type="file" name="monster_pic">
-						</fieldset>
-						<fieldset>
-							<input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" ></input>
-						</fieldset>
-					</div>
-				</form>
-			</div>
-		</div>
-	{% endblock %}
+
+{% block title %}Enemy Picture Editor{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>Enemy Picture Editor</h1>
+  </div>
+
+  <div class="col-lg-8">
+    <p>Upload a picture for your monster. We only .png filetype at the moment. Please only upload 4 MB files or smaller.</p>
+
+    <form class="form-horizontal" action="/newMonsterpic" method="post" autocomplete="off" enctype=multipart/form-data>
+      <div class="col-lg-4">
+        <fieldset>
+          Monster:
+          <select name="monster_id" id="monsterselect">
+            {% for monster in monsters %}
+            <option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+            {% endfor %}
+          </select>
+          <input type="file" name="monster_pic" />
+        </fieldset>
+
+        <fieldset>
+          <input class="form-button btn btn-success" type="submit" id="textButton" value="Submit To DB" />
+        </fieldset>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

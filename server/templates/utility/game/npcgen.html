@@ -1,0 +1,230 @@
+{%extends "layout.html"%}
+
+{% block title %}NPC Generator{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>NPC Generator</h1>
+  </div>
+
+  <div class="col-lg-12">
+    <p>
+      Click the button to generate new stats at random. Or Enter Ability Score numbers
+      and the rest of the stats should automatically update to match. You cannot adjust
+      modifiers directly, and entereing anything that is not an integer will result in an error.
+    </p>
+
+    <form>
+      <div class="row">
+        <div class="col-lg-3">
+          <fieldset>
+            <legend>Role Information</legend>
+
+            <div class="form-group row">
+              <label for="unit_name" class="col-form-label"> Name: </label>
+              <input class="form-control" id="unit_name" name="unit_name">
+
+              <label for="unit_level" class="col-form-label"> Level: </label>
+              <input class="form-control" id="unit_level" name="unit_level" value="1"/>
+            </div>
+
+            <div class="form-group row">
+              <label for="size" class="col-form-label"> Size: </label>
+
+              <select name="size" id="size">
+                <option>Medium</option>
+                <option>Tiny</option>
+                <option>Small</option>
+                <option>Large</option>
+                <option>Huge</option>
+                <option>Mamoth</option>
+                <option>Gargantuan</option>
+                <option>Titanic</option>
+              </select>
+            </div>
+
+            <div class="form-group row">
+              <label for="unit_label" class="col-form-label"> Label: </label>
+              <input class="form-control" id="unit_label" name="unit_label">
+            </div>
+
+            <div class="form-group row">
+              <label for="role" class="col-form-label"> Role: </label>
+
+              <select name="role" id="role">
+                <option>Infantry</option>
+                <option>Support</option>
+                <option>Healer</option>
+                <option>Leader</option>
+                <option>Brute</option>
+                <option>Artillary</option>
+                <option>Lurker</option>
+                <option>Controler</option>
+                <option>Tank</option>
+                <option>Swarm</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+          </fieldset>
+        </div>
+
+        <div class="col-lg-3">
+          <fieldset>
+            <legend> Ability Scores </legend>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Strength form-check-label">Strength:</label>
+                <input class="form-control" id="Strength" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="strMod form-check-label"> Mod:</label>
+                <input class="form-control" id="strMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Perception"> Perception:</label>
+                <input class="form-control" id="Perception" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="perMod"> Mod: </label>
+                <input class="form-control" id="perMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Fortitude"> Fortitude: </label>
+                <input class="form-control" id="Fortitude" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="fortMod"> Mod: </label>
+                <input class="form-control" id="fortMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Charisma">Charisma:</label>
+                <input class="form-control" id="Charisma" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="chaMod"> Mod:</label>
+                <input class="form-control" id="chaMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Intelligence"> Intelligence:</label>
+                <input class="form-control" id="Intelligence" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="intMod"> Mod:</label>
+                <input class="form-control" id="intMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Dexterity"> Dexterity:</label>
+                <input class="form-control" id="Dexterity" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="dexMod"> Mod: </label>
+                <input class="form-control" id="dexMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-6">
+                <label for="Luck"> Luck:</label>
+                <input class="form-control" id="Luck" value="5" />
+              </div>
+
+              <div class="col-lg-6">
+                <label for="lukMod"> Mod:</label>
+                <input class="form-control" id="lukMod" disabled />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-lg-12">
+                <label for="TotalStats"> Total:</label>
+                <input class="form-control" id="TotalStats" value="35" />
+              </div>
+            </div>
+
+          </fieldset>
+        </div> <!-- end ability score column -->
+
+        <div class="col-lg-3">
+          <fieldset>
+            <legend> Attributes </legend>
+
+            <p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
+
+            Health:
+            <input class="form-control" id="Health" value="90" disabled />
+            Nanites:
+            <input class="form-control" id="Nanites" value="90" disabled />
+            Speed per full action:
+            <input class="form-control" id="Speed" value="5" disabled />
+            Initiative Bonus:
+            <input class="form-control" id="Initiative" value="0" />
+            Extra Senses:
+            <input class="form-control" id="Senses" value="None" />
+            Resistances:
+            <input class="form-control" id="Resistances" value="None" />
+            Weaknesses:
+            <input class="form-control" id="Weaknesses" value="None" />
+          </fieldset>
+        </div>
+
+        <div class="col-lg-3">
+          <fieldset>
+            <legend> Saving Throws </legend>
+
+            <p>These are dynamically generated based on ability scores. You can't edit these directly.</p>
+
+            Shock:
+            <input class="form-control" id="Shock" value="5" disabled />
+            Will:
+            <input class="form-control" id="Will" value="5" disabled />
+            Reflex:
+            <input class="form-control" id="Reflex" value="5" disabled />
+          </fieldset>
+        </div>
+
+        <div class="col-lg-4">
+          <!-- extra senses, resistances, weakneses-->
+        </div>
+
+        <div class="col-lg-12">
+          <input class="form-button btn btn-primary" type="button" id="RandomButton" value="New NPC" />
+          <input class="form-button btn btn-success" type="button" id="textButton" value="Export to Short Text" />
+          <input class="form-button btn " type="button" id="textLongButton" value="Export to Full Text" disabled=true />
+          <input class="form-button btn " type="button" id="xmlButton" value="Export to XML" disabled=true />
+        </div>
+      </div> <!-- end row -->
+    </form>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <textarea class="form-control" hidden=true id="exportArea" rows=20></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

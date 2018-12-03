@@ -1,0 +1,80 @@
+{%extends "layout.html"%}
+
+{% block title %}General Design Philosophies{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>How To: General Design Philosophies</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-3 col-md-4">
+      <div class="list-group table-of-contents">
+        <a class="list-group-item" href="#power_curve"> Power Curve </a>
+        <a class="list-group-item" href="#diff_kind"> Difference in Kind </a>
+        <a class="list-group-item" href="#telegraphing"> Telegraphing </a>
+        <a class="list-group-item" href="#cost"> Cost </a>
+      </div>
+    </div>
+
+    <div class="col-lg-8 col-md-6">
+      <div class="card mb-3">
+        <div class="card-header" id="power_curve">
+          <h4 class="card-title"> Power Curve </h4>
+        </div>
+
+        <div class="card-body">
+          <p class="card-text"> The statistics of weapons as plotted against their level requirement defines a curve that is concave-up. Mathematically, a level 10 weapon does more than 2 x the damage of a level 5 weapon of the same type, given similar range, accuracy and capacity. This is because there are many factors that make up both enemies and allies. As the game progresses and players level up, each of these factors increase quasi-linearly. Thus to maintain balance, the aggregate performance of a level-appropriate weapon must increase geometrically. </p>
+          <p class="card-text"> So when giving other developers feedback on their enemies, weapons, etc., we say that something that underperforms all others is <strong class="text-info">Below the Power Curve</strong>. We can balance that back out by either increasing the entity's stats, or by lowering its level so that players encounter the weak entity earlier. This adjustment, one that increases a weapon or enemy's power is called <strong class="text-info">Buffing</strong> that weapon or enemy.</p>
+          <p class="card-text"> By the same measure, an entity that is better than similar entities at its level is said to be <strong class="text-info">Above the Power Curve</strong>. This is a big problem. For example, if there is one weapon at any level that is better than all the rest, then all of the players will want to/need to use that one, even if they have to kill an enemy to acquire it. This leads toward all of the other weapons at that level being wasted. To fix an item that is above the Power Curve, we have two choices. On the one hand, we can bump the power of every other item at that level up. This is very bad, because that leads to a design problem known as <strong><a href="https://www.youtube.com/watch?v=Bxszx60ZwGw&t=22s">Power Creep</a></strong>. Power Creep makes it very hard to balance the rest of the game and invalidates rewards given to players before the power bump. On the other hand, the better solution is to <strong class="text-info">Nerf</strong> the item that is Above the Power Curve. Nerfing is an adjustment that lowers the power of the item.</p>
+          <p class="card-text"> Enemies above the power curve are less economy-breaking than items, but have the potential to do damage anyway by mowing down players to the surprise of their GM. Even if the players manage to survive their ordeal, the rewards won't necessarily match the challenge if the enemy was rated lower than it deserved. As with items, we can nerf something about the enemy and/or increase its level rating.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4 class="card-title" id="diff_kind"> Differences in Kind </h4>
+        </div>
+
+        <div class="card-body">
+          <p> Extra Credits has a <a href="https://www.youtube.com/watch?v=TlBR1z-ue-I">fantastic 7 minute youtube video</a> about differences in scale and differences in kind. They do a better job of explaining it than I could do. </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4 class="card-title" id="telegraphing"> Telegraphing </h4>
+        </div>
+
+        <div class="card-body">
+          <p> Having a frail-looking little girl kick the player's asses with her 800 health and sick ninja moves may feel great to you, but it's terrible design. To avoid play that isn't fun for the players, we use a design technique called <strong class="text-info">Telegraphing</strong>. </p>
+          <p> Your best tool for helping the GM running your enemies out is to put good wording into your descriptions. In the ideal case, a GM could simply read from your description (perhaps only a part of the description, if you'd like the GM to know something about the enemy that the players might not). That description should have good telegraphing to pass on to the players so that smart players who are paying attention can intuit what's coming their way. </p>
+          <p> Extra Credits has a great video on <a href="https://youtu.be/ea6UuRTjkKs?t=1m59s"> Difficulty and Telegraphing</a> that takes only 7 and a half minutes to watch. </p>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="card mb-3">
+        <div class="card-heading">
+          <h4 class="card-title" id="cost"> Cost </h4>
+        </div>
+
+        <div class="card-body">
+          <p>As players play against your enemies, hopefully they will win! Which means that the character guided by an enlightened sense of self-interest will collect a bunch of the equipment that you've given to the enemies that they vanquished. Maybe you can see where this is going. In general, you will want enemy equipment to have a cheaper base price than their market-available counterparts. That way when players liquidate the loot that they've accrued, the wealth spike that they receive stays moderately under control. </p>
+          <p>On the other hand, equipment shouldn't be priced below 60% of market value for basic cost. That would be cheating the players out of value that they earned, as well as raise the question, "if these are so cheap, but so good, why doesn't everyone use 'em?". It would ruin the verisimilitude of the universe's economy. Furthermore, this stat is the base cost. Don't forget that whomever is going to buy weapons shipments from the players will likely be a businessman NPC who has quite a lot of skill in haggle to oppose the selling player. They will probably also notice battle damage.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div> <!-- end row -->
+</div>
+{% endblock %}

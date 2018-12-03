@@ -1,0 +1,102 @@
+{%extends "layout.html"%}
+
+{% block title %}How To Enemy Weapons{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+      <h1>How To: Make Enemy Weapons</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-3 col-md-4">
+      <div class="list-group table-of-contents">
+        <a class="list-group-item" href="#damage"> Damage </a>
+        <a class="list-group-item" href="#range"> Range </a>
+        <a class="list-group-item" href="#move_penalty"> Movement Penalty </a>
+      	<a class="list-group-item" href="#firerate"> Rate of Fire </a><!-- Unimplemented! -->
+      	<a class="list-group-item" href="#mag_reload"> Magazine Size and Reloading </a><!-- Unimplemented! -->
+      	<a class="list-group-item" href="#damage_types"> Damage Types </a><!-- Unimplemented! -->
+      	<a class="list-group-item" href="#miss_chance"> Miss Chance </a><!-- Unimplemented! -->
+      	<a class="list-group-item" href="#attachments"> Attachments </a><!-- Unimplemented! -->
+        <a class="list-group-item" href="#ap_level"> AP Level </a>
+        <a class="list-group-item" href="#tool"> How to use our Generator </a>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+      <img src="static/images/Halo-4-Battle-Rifle.jpg" style="max-width:95%" alt="Battle Rifle Picture" />
+
+      <h2 id="damage">Damage</h2>
+
+      <p>This is the amount of damage that your weapon does per shot. When calculating the power of a weapon, take into account this damage per bullet, the gun's rate of fire, magazine size, reload speed and difficulty, damage type, range, miss chance, AP level, movement penalty, and available attachments. It may be helpful to refer to existing weapons when gauging the power of new creations.</p>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+      <h2 id="range">Range</h2>
+
+      <p> Long range is, of course better. But there is a much bigger difference between giving a gun that has a 2m range a 5m buff, than giving a gun that has a 70m range a 2m buff. Range extension is nonlinear and has diminishing returns. This is due to the inherent tactical risk of needing to maneuver your character (be they a player character or an enemy you are designing) into range to engage. </p>
+    </div>
+
+    <div class="col-lg-6 col-md-12 col-sm-12">
+      <img src="static/images/UT1999-RL.jpg" style="max-width:95%" alt="Rocket Launcher Picture" />
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+      <h2 id="move_penalty">Movement Penalty</h2>
+
+      <p> Heavier weapons tend to have much better stats. To compensate, these weapons are given a strength requirement known as a movement penalty. Please see the Combat 2.0 rules about mitigating movement speed for more information. </p>
+      <p> Please note that by convention, a positive number 2 in our form translates to a -2 meter per action movement penalty in play. Negative movement penalties would therefore translate to wielding a weapon giving you a bonus to move. This is prevented by our system and will cause your weapon to fail our validation check. Because contrary to Counterstrike logic, wielding a knife does not make you go faster. </p>
+    </div>
+
+    <div class="col-lg-6 col-md-12 col-sm-12">
+      <h2 id="ap_level">AP Level</h2>
+
+      <p>AP Level stands for Armor Piercing level. It is a stat for each weapon that measures what material of armor it can defeat. For more information, check out the combat 2.0 weapon rules in our github repo. Guidelines for level-appropriate Armor Piercing levels are listed below. </p>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <td></td>
+            <td>Level 1-4</td>
+            <td>Level 5-9</td>
+            <td>Level 10-14</td>
+            <td>Level 15-19</td>
+            <td>Level 20</td>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td> Recommended APLs </td>
+            <td> 0-2 </td>
+            <td> 0-4 </td>
+            <td> 0-6 </td>
+            <td> 0-8 </td>
+            <td> 0-10 </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-lg-4 col-md-6 col-sm-6">
+      <h2 id="tool">How to use our Tool</h2>
+
+      <p>More detailed instructions and pictures to follow. </p>
+
+      <ol>
+        <li> Start with an idea! </li>
+        <li> Enter the weapon into the web form </li>
+        <li> Review your work! </li>
+        <li> Use the update button to fix any mistakes, or to tune your weapon even better! </li>
+        <li> If it really isn't working out, use the delete button to forever remove the weapon from time and space </li>
+      </ol>
+    </div>
+
+    <div class="col-lg-6 col-md-12 col-md-12">
+      <img src="static/images/UT2011SR.jpg" style="max-width:95%" alt="Sniper Rifle Picture" />
+    </div>
+
+  </div> <!-- end row -->
+</div>
+{% endblock %}

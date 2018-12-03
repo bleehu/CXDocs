@@ -1,77 +1,91 @@
 {%extends "layout.html"%}
-	{%block head%}
-		<title>CX Docs - Enemy Armor</title>
-		<link rel=stylesheet type=text/css href="../static/bootstrap.min.css">
-	{% endblock %}
-	{% block content %}
-		<div class="container">
-			<div class="page-header">
-				<h1 id="top"> Enemy Armor </h1>
-			</div>
-			<div class="row">
-				<div class="col-lg-2"> <!-- table of contents div -->
-					<div class="list-group table-of-contents">
-						{% for suit in armor %}
-						<a class="list-group-item" href="#{{suit['name']}}panel"> {{suit['name']}} </a>
-						{% endfor %}
-	                    <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
-					</div>
-				</div>	<!-- end table of contents div -->
-				<div class="col-lg-10" id="armor">
-					<p>There are {{armor | count}} kinds of armor for enemies to choose from.</p>
-					<div class="row">
-					{% for suit in armor %}
-						<div class="col-lg-6 col-md-12 col-sm-12">
-							<div class="card border-warning" id="{{suit['name']}}panel">
-								<div class="card-header">
-									<h3 id="breacherheading" class="card-title">{{suit['name']}}</h3>
-								</div>
-								<div class="card-body row">
-									<p> {{suit['description']}} </p>
-									<dl class="col-lg-6 col-md-12 col-sm-12 text-warning">
-										<dt>Coverage</dt><dd>{{suit['coverage']}} %</dd>
-										<dt>AP Level</dt><dd>{{suit['ap_level']}}</dd>
-										<dt>Armor Points</dt><dd>{{suit['armor_points']}} Points</dd>
-										<dt>Type:</dt><dd>{{suit['type']}}</dd>
-										<dt>Mags</dt><dd>{{suit['mags']}}</dd>
-										<dt>Move Penalty</dt><dd>{{suit['ap_level']}} m/action</dd>
-										<dt>Cost</dt><dd>${{suit['cost']}}</dd>
-										<dt>Author</dt><dd> {{suit['author']}} </dd>
-									</dl>
-									<div class="col-lg-6 col-md-12 col-sm-12">
-										<form action="/deletemonsterarmor/{{suit['pk_id']}}" method="post">
-											<input type="submit" class="form-button btn btn-danger" value="Delete Armor">
-										</form>
-										<form action="/assignMonsterArmor" method="POST">
-											<legend> Give suit to: </legend>
-											<select name="monster_id">
-												{% for monster in monsters %}
-												<option value="{{monster['pk_id']}}">{{monster['name']}}</option>
-												{% endfor %}
-											</select>
-											<input type="hidden" name="armor_id" value="{{suit['pk_id']}}">
-											<input class="form-button btn btn-success" type="submit" Value="Give">
-										</form>
-										<!-- Remove suit mapping -->
-										<form action="/deletemonsterarmormap" method="POST">
-											<legend>Take Armor Away From:</legend>
-											<select name="pk_id">
-												{% for monster in suit['maps'] %}
-												<option value="{{monster[0]}}">{{monster[1]}}</option>
-												{% endfor %}
-											</select>
-											<input class="form-button btn btn-danger" type="submit" Value="Take">
-										</form>
-									</div>
-									<p> This suit proudly presented by {{ suit['author'] }}</p>
-									<p><a href="/monsterarmorupdate/{{suit['pk_id']}}" class="btn btn-warning btn-xs">Update this Armor</a></p>
-									<p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
-								</div> <!-- end panel-body -->
-							</div><!-- end card -->
-						</div> <!-- end card column -->
-						{% endfor %}
-					</div>
-				</div> <!-- end armor column -->
-			</div><!-- end row -->
-		</div><!-- end container -->
-	{% endblock %}
+
+{% block title %}Enemy Armor{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1 id="top">Enemy Armor</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-2"> <!-- table of contents div -->
+      <div class="list-group table-of-contents">
+        {% for suit in armor %}
+        <a class="list-group-item" href="#{{suit['name']}}panel"> {{suit['name']}} </a>
+        {% endfor %}
+
+        <a class="list-group-item list-group-item-info" href="monsterstats"> Meta Data </a>
+      </div>
+    </div>  <!-- end table of contents div -->
+
+    <div class="col-lg-10" id="armor">
+      <p>There are {{armor | count}} kinds of armor for enemies to choose from.</p>
+
+      <div class="row">
+        {% for suit in armor %}
+        <div class="col-lg-6 col-md-12 col-sm-12">
+          <div class="card border-warning" id="{{suit['name']}}panel">
+            <div class="card-header">
+              <h3 id="breacherheading" class="card-title">{{suit['name']}}</h3>
+            </div>
+
+            <div class="card-body row">
+              <p> {{suit['description']}} </p>
+
+              <dl class="col-lg-6 col-md-12 col-sm-12 text-warning">
+                <dt>Coverage</dt><dd>{{suit['coverage']}} %</dd>
+                <dt>AP Level</dt><dd>{{suit['ap_level']}}</dd>
+                <dt>Armor Points</dt><dd>{{suit['armor_points']}} Points</dd>
+                <dt>Type:</dt><dd>{{suit['type']}}</dd>
+                <dt>Mags</dt><dd>{{suit['mags']}}</dd>
+                <dt>Move Penalty</dt><dd>{{suit['ap_level']}} m/action</dd>
+                <dt>Cost</dt><dd>${{suit['cost']}}</dd>
+                <dt>Author</dt><dd> {{suit['author']}} </dd>
+              </dl>
+
+              <div class="col-lg-6 col-md-12 col-sm-12">
+                <form action="/deletemonsterarmor/{{suit['pk_id']}}" method="post">
+                  <input type="submit" class="form-button btn btn-danger" value="Delete Armor">
+                </form>
+
+                <form action="/assignMonsterArmor" method="POST">
+                  <legend> Give suit to: </legend>
+
+                  <select name="monster_id">
+                    {% for monster in monsters %}
+                    <option value="{{monster['pk_id']}}">{{monster['name']}}</option>
+                    {% endfor %}
+                  </select>
+
+                  <input type="hidden" name="armor_id" value="{{suit['pk_id']}}">
+                  <input class="form-button btn btn-success" type="submit" Value="Give">
+                </form>
+
+                <!-- Remove suit mapping -->
+                <form action="/deletemonsterarmormap" method="POST">
+                  <legend>Take Armor Away From:</legend>
+
+                  <select name="pk_id">
+                    {% for monster in suit['maps'] %}
+                    <option value="{{monster[0]}}">{{monster[1]}}</option>
+                    {% endfor %}
+                  </select>
+
+                  <input class="form-button btn btn-danger" type="submit" Value="Take">
+                </form>
+              </div>
+
+              <p> This suit proudly presented by {{ suit['author'] }}</p>
+              <p><a href="/monsterarmorupdate/{{suit['pk_id']}}" class="btn btn-warning btn-xs">Update this Armor</a></p>
+              <p><a href="#top" class="btn btn-info btn-xs">back to top</a></p>
+            </div> <!-- end panel-body -->
+          </div><!-- end card -->
+        </div> <!-- end card column -->
+        {% endfor %}
+      </div>
+    </div> <!-- end armor column -->
+
+  </div><!-- end row -->
+</div><!-- end container -->
+{% endblock %}

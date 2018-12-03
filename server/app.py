@@ -103,7 +103,7 @@ def create_app():
                 return redirect("/")
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
-            return render_template("parser.html", elements = tokens)
+            return render_template("utility/site/parser.html", elements = tokens)
         else:
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
@@ -351,7 +351,7 @@ def create_app():
 
     @app.route("/files")
     def show_files():
-        return render_template("files.html")
+        return render_template("utility/game/files.html")
 
     @app.route("/missions")
     def show_missions():
@@ -404,7 +404,7 @@ def create_app():
 
     @app.route("/npcgen", methods=['GET'])
     def npcgen():
-        return render_template("npcgen.html")
+        return render_template("utility/game/npcgen.html")
 
     """Most legitimate web scrapers check a text file in /robots.txt to see
         where they should be allowed to look. This is how google, bing and bindu
@@ -420,15 +420,15 @@ def create_app():
 
     @app.route("/designhowto")
     def show_design_howto():
-        return render_template("design_how_to.html")
+        return render_template("creation_manuals/design_how_to.html")
 
     @app.route("/monsterweaponshowto")
     def show_monster_weapons_howto():
-        return render_template("enemies/monster_weapon_how_to.html")
+        return render_template("creation_manuals/monster_weapon_how_to.html")
 
     @app.route("/monsterarmorhowto")
     def show_monster_armor_howto():
-        return render_template("enemies/monster_armor_how_to.html")
+        return render_template("creation_manuals/monster_armor_how_to.html")
 
     """ set generic handlers for common errors."""
     @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python.
