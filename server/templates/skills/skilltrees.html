@@ -1,45 +1,51 @@
 {%extends "layout.html"%}
-	{%block head%}
-		<title>CX Docs - Skill Trees</title>
-	{% endblock %}
-	{% block content %}
-		<div class="container">
-			<div class="page-header">
-				<h1 id="top"> Skill Trees </h1>
-			</div>
-			<div class="row">
-				<div class="col-lg-2">
-					<div class="list-group table-of-contents">
-						<a class="list-group-item text-primary"
-						href="#malpractice"> Doctor's Malpractice Tree </a>
-						<a class="list-group-item text-primary"
-						href="#hippocratic"> Doctor's Hippocratic Tree </a>
-						<a class="list-group-item text-primary"
-						href="#build"> Engineer's Build Tree </a>
-						<a class="list-group-item text-primary"
-						href="#repair"> Engineer's Repair Tree </a>
-					</div>
-				</div>
-				<div class="col-lg-10"> <!-- main column -->
-					<div class="row">
-						<h2 id="malpractice"> Doctor's Malpractice Tree </h2>
-						<img src="/static/images/Doctor Procedure Tree - Malpractice.png" style="width:80%">
-					</div> <!-- end content row -->
-					<div class="row">
-						<h2 id="hippocratic"> Doctor's Hippocratic Tree </h2>
-						<img src="/static/images/Doctor Procedure Tree - Hippocratic.png" style="width:80%">
-					</div> <!-- end content row -->
-					<div class="row">
-						<h2 id="build"> Engineer Build Tree </h2>
-						<img src="/static/images/Engineer Process Tree - Build.png"
-						 style="width:80%">
-					</div> <!-- end content row -->
-					<div class="row">
-						<h2 id="repair"> Doctor's Repair Tree </h2>
-						<img src="/static/images/Engineer Process Tree - Repair.png"
-						 style="width:80%">
-					</div> <!-- end content row -->
-					<a href="#top" class="btn btn-primary btn-sm"> Back to top </a>
-				</div> <!-- end main column -->
-		</div>
-	{% endblock %}
+
+{% block title %}Skill Trees{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1 id="top">Skill Trees</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-2">
+      <div class="list-group table-of-contents">
+        <a class="list-group-item text-primary"
+        href="#malpractice"> Doctor's Malpractice Tree </a>
+        <a class="list-group-item text-primary"
+        href="#hippocratic"> Doctor's Hippocratic Tree </a>
+        <a class="list-group-item text-primary"
+        href="#build"> Engineer's Build Tree </a>
+        <a class="list-group-item text-primary"
+        href="#repair"> Engineer's Repair Tree </a>
+      </div>
+    </div>
+
+    <div class="col-lg-10"> <!-- main column -->
+      <div class="row">
+        <h2 id="malpractice"> Doctor's Malpractice Tree </h2>
+        <img src="/static/images/Doctor Procedure Tree - Malpractice.png" style="width:80%">
+      </div> <!-- end content row -->
+
+      <div class="row">
+        <h2 id="hippocratic"> Doctor's Hippocratic Tree </h2>
+        <img src="/static/images/Doctor Procedure Tree - Hippocratic.png" style="width:80%">
+      </div> <!-- end content row -->
+
+      <div class="row">
+        <h2 id="build"> Engineer Build Tree </h2>
+        <img src="/static/images/Engineer Process Tree - Build.png" style="width:80%">
+      </div> <!-- end content row -->
+
+      <div class="row">
+        <h2 id="repair"> Doctor's Repair Tree </h2>
+        <img src="/static/images/Engineer Process Tree - Repair.png" style="width:80%">
+      </div> <!-- end content row -->
+
+      <a href="#top" class="btn btn-primary btn-sm"> Back to top </a>
+
+    </div> <!-- end main column -->
+  </div>
+</div>
+{% endblock %}

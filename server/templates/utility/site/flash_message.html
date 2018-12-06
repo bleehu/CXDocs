@@ -1,0 +1,14 @@
+{% with messages = get_flashed_messages() %}
+  <!-- code from poco.com which does the lifting for displaying flash messages for user feedback -->
+  <!-- See bootstrap.js docs here for how we get them to fade out http://v4-alpha.getbootstrap.com/components/alerts/ -->
+  {% if messages %}
+  <div id="flashcontainer">
+    {% for message in range(messages|length) %}
+    <div class="alert alert-dismissible alert-warning" role="alert" id="alert{{message}}">
+      <button type="button" class="close" data-dismiss="alert" data-target="#alert{{message}}" aria-label="close">&times;</button>
+      <p class="text-center mb-0">{{ messages[message] }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}

@@ -111,7 +111,7 @@ class is getting much more play than another. """
 def show_player_characters():
     #SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
     pcs = characters.get_characters()
-    return render_template("player_characters.html", pcs = pcs)
+    return render_template("characters/player_characters.html", pcs = pcs)
 
 """ If a User has more than one character, then they should be able to select
 one character that they are using at a time. Dynamic pages will be able to do
