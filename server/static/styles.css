@@ -9526,4 +9526,8 @@ footer {
   border-radius: 15px;
 }
 
+a {
+  color: inherit;
+}
+
 /*# sourceMappingURL=styles.css.map */
