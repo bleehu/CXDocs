@@ -1,7 +1,10 @@
 html {
-  height: 100vh;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 body {
-  background: radial-gradient(circle at 0px 0px, white, white 1%, #ffee22 3%, #ffffee 7%, #2a2a2a 10%, black 100%);
+  background:
+    radial-gradient(circle at 0px 0px, white, white 10px, #ffee22 30px, #ffffee 60px, #ffcc00 76px, #ffffff 85px, transparent 200px, transparent),
+    url('../../../../static/images/cx_bg1.png');
 }
