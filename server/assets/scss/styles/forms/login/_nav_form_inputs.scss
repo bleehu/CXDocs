@@ -1,0 +1,26 @@
+.nav-form-input {
+  display: inline-block;
+
+  border: 2px solid $gray-200;
+  border-radius: $nav-select-b-radius;
+
+  margin: 0.25rem 0.5rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.nav-form-button {
+  @extend .nav-link;
+  background-color: $blue;
+
+  border: none;
+  border-radius: $nav-select-b-radius;
+
+  margin: 0.25rem 0.5rem;
+}
+
+.nav-logout-button {
+  @extend .nav-form-button;
+
+  margin-right: 0;
+  margin-left: auto;
+}

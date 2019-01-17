@@ -1,0 +1,24 @@
+<ul class="navbar-nav w-100" id="loginNav">
+  <li class="nav-item">
+    <a class="nav-link" href="#navbarMain" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span> Back
+    </a>
+  </li>
+
+  <form class="d-inline-flex" id="loginForm" action="login" method="post">
+    <label class="d-none" for="uname" aria-hidden="true">Username</label>
+    <input class="nav-form-input" id="uname" type="text" placeholder="Username" autocomplete="off" name="uname" />
+
+
+    <label class="d-none" for="inputPassword" aria-hidden="true">Password</label>
+    <input class="nav-form-input" id="inputPassword" type="password" placeholder="Password"  autocomplete="off" name="password" />
+
+    <button class="nav-form-button" type="submit">Login</button>
+
+    <input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
+  </form>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#">Register</a>
+  </li>
+</ul>

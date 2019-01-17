@@ -10,15 +10,7 @@
 
       <p>Welcome, {{session['username']}}!</p>
 
-      <form class="form-group" action="logout" method="post">
-        <div class="form-group">
-          <div class="col-lg-10 col-lg-offset-2">
-            <button type="submit" class="btn btn-primary">Logout</button>
-
-            <input type="hidden" name="X-CSRF" value="{{session['X-CSRF']}}" />
-          </div>
-        </div>
-      </form>
+      {% include './users/login/logout_button.html' %}
 
       {% else %}
       <form action="login" method="post" class="form-horizontal">
