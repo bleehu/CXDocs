@@ -28,9 +28,16 @@ Compound X rules displayed as web pages. Written in Python 2.7, served with Flas
 to test navigate to the root directory and, use:
 
 `$export FLASK_APP=sever/app.py` or on Windows: `$set FLASK_APP=server/app.py`
-`$export FLASK_ENV=development` or on Windows: `$set FLASK_ENV=development`
-`$flask run`
 
+`$export FLASK_ENV=development` or on Windows: `$set FLASK_ENV=development`
+
+`$flask run` will start the application. 
+
+In order to use the database to do things like login, you'll also need to set
+the [auth] config settings. See the /config/Readme.md for more info. You'll also
+need to set `$export FLASK_PASS=blah` and `$export FLASK_USER=blah`, but instead
+of "blah", substitute the actual username and password for logging into the auth
+server.
 
 then in a web browser, go to localhost:5000/levelup
 
