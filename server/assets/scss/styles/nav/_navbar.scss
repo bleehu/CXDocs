@@ -23,14 +23,25 @@
 .navbar-nav {
   width: 100%;
   align-content: space-around;
+
+  & > *:first-child {
+    margin-left: 1rem;
+    margin-right: auto;
+  }
+
+  & > *:last-child {
+    margin-left: auto;
+    margin-right: 1rem;
+  }
 }
 
 .nav-item {
   background-color: $gray-200;
-  border-radius: 10px;
+  border-radius: $nav-select-b-radius;
 
   margin: .25rem auto;
 }
+
 
 // OUR CLASSES
 .navbar-screen {
