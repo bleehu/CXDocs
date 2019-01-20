@@ -115,7 +115,7 @@ class ConfigOptionMissingException(CXException):
     Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."""
 
     def __init__(self, missingOption):
-        self.message = LOG_MESSAGE % missingOption
+        self.message = self.LOG_MESSAGE % missingOption
 
     def printToConsole(self):
         print(self.message)

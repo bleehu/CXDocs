@@ -8,20 +8,49 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse navbar-screen" id="navbarMain">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Getting Started</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">The Game</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Report Issues</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Game Feedback</a>
-      </li>
-    </ul>
+  <div class="collapse navbar-collapse navbar-screen carousel slide"
+    id="navbarMain" data-wrap="false" data-interval="false"
+  >
+    <div class="carousel-inner" role="listbox">
+
+      <div class="carousel-item active">
+        <ul class="navbar-nav w-100">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Getting Started</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">The Game</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Report Issues</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Game Feedback</a>
+          </li>
+
+          {% if 'username' in session %}
+
+          {% include './users/login/logout_button.html' %}
+
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="#navbarMain" data-slide="next"
+              aria-controls="loginNav" aria-expanded="false" aria-label="Toggle Login"
+            >
+              Login <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </a>
+          </li>
+          {% endif %}
+
+        </ul>
+
+      </div>
+
+      <div class="carousel-item">
+        {% include './users/login/login_form.html' %}
+
+      </div>
+
+    </div>
   </div>
 </nav>
