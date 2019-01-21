@@ -1,6 +1,24 @@
 # Config Files
 
-Put helpful configurations here. To generate a new config file, run the python 2.7 script called "generate_config.py" in the main directory.
+Put helpful configurations here. To generate a new config file, run the python 
+2.7 script called "generate_config.py" in the main directory. The command to run
+the script should just be `$python generate_config.py`. Some command-line input
+will be required.
+
+## Auth Section
+
+The auth section should be completely filled out by the gen_config.py script. If
+not, you can set it manually. See below for an example. The auth section should
+point to the SQL server that has the usernames and passwords set up. PostgreSQL
+is free and works fine if you'd like to build one yourself. *Make sure not to 
+commit any passwords or secrets in code!*
+
+```
+[auth]
+db_name = mydb
+port = 5432
+host = localhost
+```
 
 ## Enemies Section
 
