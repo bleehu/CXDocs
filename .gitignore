@@ -9,3 +9,4 @@ usr/*
 log/*
 config/*.cfg
 backups/*
+server/static/styles.css.map

@@ -30,7 +30,7 @@
 
     <div class="col-lg-10" id="monsters">
     {% for monster in monsters %}
-      <div class="card text-white bg-secondary mb-3" id="{{monster['name']}}panel">
+      <div class="card text-dark bg-secondary mb-3" id="{{monster['name']}}panel">
         <div class="card-header">
           <h3 id="breacherheading" class="card-title">{{monster['name']}}</h3>
 
@@ -179,7 +179,7 @@
                     aria-haspopup="true" aria-expanded="false"></a>
                 </div>
 
-                <div class="card-body text-white collapse" aria-expanded="false">
+                <div class="card-body text-dark collapse" aria-expanded="false">
                   <p><strong>Type: {{ability['type']}}</strong></p>
                   <p class="card-text">{{ability['description']}}</p>
                 </div>
