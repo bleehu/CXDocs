@@ -33,6 +33,12 @@ to test navigate to the root directory and, use:
 
 `$flask run` will start the application. 
 
+At this stage, if you get an error along the lines of "Failed to find application 
+in module "CX_Docs_Local.server.app".", it is possible that you need to update 
+Flask, as factories were added in 1.0. You can check your flask version by 
+opening a python terminal (`$python`), then `$import flask` and `$flask.__version__`. 
+Use `$pip install --upgrade Flask` (outside the python terminal) to update. 
+
 In order to use the database to do things like login, you'll also need to set
 the [auth] config settings. See the /config/Readme.md for more info. You'll also
 need to set `$export FLASK_PASS=blah` and `$export FLASK_USER=blah`, but instead
