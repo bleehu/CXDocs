@@ -6,6 +6,7 @@ if not os.path.exists('config'):
     os.mkdir('config')
 config = ConfigParser.RawConfigParser()
 
+config.add_section('auth')
 config.add_section('Enemies')
 config.add_section('Characters')
 config.add_section('WhosHere')
@@ -43,6 +44,24 @@ if pwd != 'N':
 	config.set('Parser', 'cloaking_filepath', "%s/01_07_Cloaking_Rules.txt" % pwd)
 	config.set('Parser', 'new_player_walkthrough_filepath', "%s/00_New_Player_Walkthrough.txt" % pwd)
 	config.set('Parser', 'Engineer_filepath', "%s/CharacterCreation/Class-Specific Documentation/Engineer Processes.txt" % pwd)
+
+print "Do you have an auth server (SQL) set up? (Y/N)"
+response = raw_input("\n")
+answer = response.strip()
+if answer.lower() == 'y':
+	response = raw_input("What is the hostname? Default is localhost.")
+	config.set('auth', 'host', response.strip())
+	response = raw_input("What is the port number? Default is 5432.")
+	config.set('auth', 'port', response.strip())
+	response = raw_input("What is the name of the database? Default is mydb.")
+	config.set('auth', 'db_name', response.strip())
+	print "\nSucessfully configured auth database.\n"
+else:
+	config.set('auth', 'db_name', 'unknown')
+	config.set('auth', 'port', '5432')
+	config.set('auth', 'host', 'localhost')
+
+print "You may need to set enemies_psql_pass and characters_psql_pass manually."
 
 with open('config/cxDocs.cfg', 'wb') as configfile:
     config.write(configfile)
