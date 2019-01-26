@@ -1,6 +1,5 @@
 import characters
 import ConfigParser
-import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves.
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
