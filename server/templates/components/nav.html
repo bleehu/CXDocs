@@ -1,0 +1,35 @@
+{% macro navItem(title, hrefLink) -%}
+
+<li class="nav-item"><a class="nav-link" href="{{ hrefLink }}">{{ title }}</a></li>
+
+{%- endmacro %}
+
+
+
+{% macro navbarList(options) -%}
+
+<ul class="navbar-nav">
+{% for link in options %}
+
+  {{ navItem(link[0], link[1]) }}
+
+{% endfor %}
+
+{% if 'username' in session %}
+
+  {% include './users/login/logout_button.html' %}
+
+{% else %}
+
+  <li class="nav-item">
+    <a class="nav-link" href="#navbarCarousel" data-slide="next"
+      aria-controls="loginNav" aria-expanded="false" aria-label="Toggle Login"
+    >
+      Login <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </a>
+  </li>
+
+{% endif %}
+</ul>
+
+{%- endmacro %}
