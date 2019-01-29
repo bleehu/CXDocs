@@ -146,7 +146,7 @@ def char_modify(pk):
     my_character['skills'] = skills.get_characters_skills(my_character['pk_id'])
     all_feats = feats.get_feats()
     #check to make sure the user updating the character actually owns that character.
-    if not owns_character(character, session)
+    if not owns_character(my_character, session):
         return redirect("/character/mine")
     return render_template("characters/character_creator.html", character=my_character, feats=all_feats)
 
@@ -188,7 +188,7 @@ def create_skill(pk_id):
         return redirect("/characters/mine")
     #check if the integer they sent was a character that they own
     user_id = security.get_user_pkid(session)
-    if not owns_character(character, session)
+    if not owns_character(character, session):
         return redirect("/")
     #looks good. make a new skill and send its ID back to 'em.
     new_skill_pk_id = skills.get_newest_skill(sani_character_pk_id)
@@ -210,7 +210,7 @@ def delete_skill(pk_id):
         return redirect("/characters/mine")
     #check if the integer they sent was a character that they own
     user_id = security.get_user_pkid(session)
-    if not owns_character(character, session)
+    if not owns_character(character, session):
         return redirect("/")
     #looks good. delete that skill.
     skills.delete_skill(sani_skill_pk_id)
