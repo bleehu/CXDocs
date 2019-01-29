@@ -1,5 +1,3 @@
-
-//This file uses AJAX to reach out to the github API to retrieve and display news on recent development.
 (function(){
     $(document).ready(initialize)
 
@@ -340,7 +338,6 @@
                 console.log("updated skill pk_id:" + id);
             }
         });
-
     }
 
 })();
