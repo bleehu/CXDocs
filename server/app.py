@@ -1,6 +1,5 @@
 import characters
 import ConfigParser
-import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves.
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
@@ -58,31 +57,6 @@ def create_app():
     #whos_on is a list of tuples with displaynames and last-action timestamps that we use to show who's currently using this
     #web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
     global whos_on
-
-    """depricated. """
-    def get_levels():
-        levels = []
-        with open('docs/levels.csv', 'r') as csvfile:
-            csv_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-            for line in csv_reader:
-                levels.append(line)
-        return levels
-
-    """ depricated. Used to show dungeons that were actively being run."""
-    def get_missions():
-        connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-        myCursor = connection.cursor()
-        myCursor.execute("SELECT * FROM missions ORDER BY level;")
-        missions = []
-        results = myCursor.fetchall()
-        for miss in results:
-            pk = int(miss[0])
-            name = miss[1]
-            description = miss[2]
-            level = int(miss[3])
-            new_mission = Mission(pk, name, level, description)
-            missions.append(new_mission)
-        return missions
 
     """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
      to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
