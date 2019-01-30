@@ -5,6 +5,7 @@ import docs_parser #our custom plaintext parser for reading CX rules straight fr
 
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
 from characters.character_routes import character_blueprint, initialize_characters
+from navigation.nav_dict import initialize_nav, create_routes_dict, generate_navbar_options_for_page, generate_navLists_for_page
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our
 #main web app. It's how we respond to HTTP requests, etc.
@@ -62,6 +63,10 @@ def create_app():
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
 
+    # Create the routes dictionary for generating/referencing endpoints and labels for navigation
+    initialize_nav(config)
+    allRoutes = create_routes_dict();
+
     """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
      to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
      straight out of a local git repo, so updating all of the rules is as easy as running `$git pull` on the server.
@@ -82,266 +87,11 @@ def create_app():
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
             return render_template("utility/site/parser.html", elements = tokens, \
-              navOptions = generate_navbar_options_for_page(allRoutes['/']['navbar']))
+              navOptions = generate_navbar_options_for_page(allRoutes['/']['navbar'], allRoutes))
         else:
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
             return redirect("/")
-
-    """ reads the config document to build a list of names of rules documents and their filepath.
-
-    returns a list of tuples, where the first field is the name of the document and the second is the
-        filepath to the document. Assumed to be the rules for the game Compound X from github.bleehu/Compound_X"""
-    def get_rules_docs():
-        rulesDocs = {}
-        if config.has_option('Parser', 'basic_rules_filepath'):
-            rulesDocs['/rules/overview'] = {
-                'cfgOptionForFilePath': 'basic_rules_filepath',
-                'label': "Overview"
-            }
-
-        if config.has_option('Parser', 'combat_rules_filepath'):
-            rulesDocs['/rules/combat'] = {
-                'cfgOptionForFilePath': 'combat_rules_filepath',
-                'label': "Combat"
-            }
-
-        if config.has_option('Parser', 'conditions_filepath'):
-            rulesDocs['/rules/conditions'] = {
-                'cfgOptionForFilePath': 'conditions_filepath',
-                'label': "Ailments"
-            }
-
-        if config.has_option('Parser', 'level_up_filepath'):
-            rulesDocs['/rules/levelup'] = {
-                'cfgOptionForFilePath': 'level_up_filepath',
-                'label': "Leveling Up"
-            }
-
-        if config.has_option('Parser', 'cloaking_filepath'):
-            rulesDocs['/rules/cloaking'] = {
-                'cfgOptionForFilePath': 'cloaking_filepath',
-                'label': "Cloaking"
-            }
-
-        if config.has_option('Parser', 'glossary_filepath'):
-            rulesDocs['/rules/glossary'] = {
-                'cfgOptionForFilePath': 'glossary_filepath',
-                'label': "Glossary"
-            }
-
-        if len(rulesDocs) < 1:
-            log.warn("Looked for Rules documents, but didn't find any. See config/README.md to configure rules docs.")
-            return None
-
-        return rulesDocs
-
-    def get_items_docs():
-        itemsDocs = {}
-        if config.has_option('Parser', 'melee_weapons_filepath'):
-            itemsDocs['/items/meleeWeapons'] = {
-                'cfgOptionForFilePath': 'melee_weapons_filepath',
-                'label': "Melee Weapons"
-            }
-
-        if config.has_option('Parser', 'pistols_filepath'):
-            itemsDocs['/items/pistols'] = {
-                'cfgOptionForFilePath': 'pistols_filepath',
-                'label': "Pistols"
-            }
-
-        if config.has_option('Parser', 'smgs_filepath'):
-            itemsDocs['/items/smgs'] = {
-                'cfgOptionForFilePath': 'smgs_filepath',
-                'label': "SMGs"
-            }
-
-        if config.has_option('Parser', 'carbines_filepath'):
-            itemsDocs['/items/carbines'] = {
-                'cfgOptionForFilePath': 'carbines_filepath',
-                'label': "Carbines"
-            }
-
-        if config.has_option('Parser', 'long_rifles_filepath'):
-            itemsDocs['/items/longRifles'] = {
-                'cfgOptionForFilePath': 'long_rifles_filepath',
-                'label': "Long Rifles"
-            }
-
-        if config.has_option('Parser', 'machineguns_filepath'):
-            itemsDocs['/items/machineguns'] = {
-                'cfgOptionForFilePath': 'machineguns_filepath',
-                'label': "Heavy Guns"
-            }
-
-        if config.has_option('Parser', 'weapon_attachments_filepath'):
-            itemsDocs['/items/weaponAttachments'] = {
-                'cfgOptionForFilePath': 'weapon_attachments_filepath',
-                'label': "Weapon Attachments"
-            }
-
-        if config.has_option('Parser', 'armor_filepath'):
-            itemsDocs['/items/armor'] = {
-                'cfgOptionForFilePath': 'armor_filepath',
-                'label': "Armor"
-            }
-
-        if config.has_option('Parser', 'items_filepath'):
-            itemsDocs['/items/misc'] = {
-                'cfgOptionForFilePath': 'items_filepath',
-                'label': "Misc"
-            }
-
-        if len(itemsDocs) < 1:
-            log.warn("Looked for Item documents, but didn't find any. See config/README.md to configure rules docs.")
-            return None
-
-        return itemsDocs
-
-    def get_character_docs():
-        character_docs = {}
-        if config.has_option('Parser', 'new_player_walkthrough_filepath'):
-            character_docs['/newplayer'] = {
-                'cfgOptionForFilePath': 'new_player_walkthrough_filepath',
-                'label': "New Players",
-                'navList': (
-                    '/rules/overview',
-                    '/races',
-                    '/classes',
-                    '/files'
-                )
-            }
-
-        if config.has_option('Parser', 'races_filepath'):
-            character_docs['/races'] = {
-                'cfgOptionForFilePath': 'races_filepath',
-                'label': "Races"
-            }
-
-        if config.has_option('Parser', 'classes_filepath'):
-            character_docs['/classes'] = {
-                'cfgOptionForFilePath': 'classes_filepath',
-                'label': "Classes"
-            }
-
-        if config.has_option('Parser', 'feats_filepath'):
-            character_docs['/feats'] = {
-                'cfgOptionForFilePath': 'feats_filepath',
-                'label': "Feats"
-            }
-
-        if config.has_option('Parser', 'skills_filepath'):
-            character_docs['/skills'] = {
-                'cfgOptionForFilePath': 'skills_filepath',
-                'label': "Skills"
-            }
-
-        if config.has_option('Parser', 'engineer_filepath'):
-            character_docs['/rules/engineers'] = {
-                'cfgOptionForFilePath': 'engineer_filepath',
-                'label': "Engineer Processes"
-            }
-
-        if len(character_docs) < 1:
-            log.warn("Looked for Character documents, but didn't find any. See config/README.md to configure rules docs.")
-            return None
-
-        return character_docs
-
-    def create_routes_dict(rules_tuples_list, items_tuples_list, chars_tuples_list):
-        routesDict = {
-            '/': {
-                'cfgOptionForFilePath': None,
-                'label': "Home",
-                'navbar': ( '/newplayer', '/rules/', '/gm/' )
-            },
-            '/rules/': {
-                'cfgOptionForFilePath': None,
-                'label': "Rules",
-                'navbar': ( '/newplayer', '/gm/' ),
-                'navList': (
-                    '/rules/glossary',
-                    '/rules/combat',
-                    '/rules/levelup',
-                    '/rules/conditions',
-                    '/rules/cloaking',
-                    '/rules/engineers'
-                )
-            },
-            '/items/': {
-                'cfgOptionForFilePath': None,
-                'label': "Items",
-                'navbar': ( '/newplayer', '/rules/', '/gm/' )
-            },
-            '/gm/': {
-                'cfgOptionForFilePath': None,
-                'label': "For GMs",
-                'navbar': ( '/rules/', '/gm/' ),
-                'navList': (
-                    '/gm/designhowto',
-                    '/gm/monsterweaponshowto',
-                    '/gm/monsterarmorhowto'
-                )
-            },
-            '/gm/designhowto': {
-                'templateToRender': 'creation_manuals/design_how_to.html',
-                'label': "Designing Campaigns",
-                'navbar': ( '/', ),
-                'navList': None
-            },
-            '/gm/monsterweaponshowto': {
-                'templateToRender': 'creation_manuals/monster_weapon_how_to.html',
-                'label': "Designing Enemy Weapons",
-                'navbar': ( '/', ),
-                'navList': None
-            },
-            '/gm/monsterarmorhowto': {
-                'templateToRender': 'creation_manuals/monster_armor_how_to.html',
-                'label': "Designing Enemy Armor",
-                'navbar': ( '/', ),
-                'navList': None
-            },
-            '/files': {
-                'templateToRender': 'utility/game/files.html',
-                'label': "Printable Sheets",
-                'navbar': ( '/', ),
-                'navList': None,
-            }
-
-        }
-
-        routesDict.update(rules_tuples_list)
-        routesDict.update(items_tuples_list)
-        routesDict.update(chars_tuples_list)
-
-        if len(routesDict) < 3:
-            log.warn("Looked for documents, but didn't find any. See config/README.md to configure rules docs.")
-
-        return routesDict
-
-    allRoutes = create_routes_dict(get_rules_docs(), get_character_docs(), get_items_docs());
-
-    def generate_navbar_options_for_page(navbar):
-        navResults = []
-
-        for route in navbar:
-            navResults.append( (allRoutes[route]['label'], route) )
-
-        return navResults
-
-    def generate_navLists_for_page(navbar):
-        listResults = []
-        i = 0
-
-        for route in navbar:
-            listResults.append([])
-
-            for endpoint in allRoutes[route]['navList']:
-                listResults[i].append( (allRoutes[endpoint]['label'], endpoint) )
-
-            i += 1
-
-        return listResults
 
     """handles the display of the main page for the site. """
     @app.route('/') #tells flask what url to trigger this behavior for. In this case, the main page of the site.
@@ -350,8 +100,8 @@ def create_app():
         pc = None   #player character defaults to None if user isn't logged in.
 
         if config.has_section('Parser'):
-            navOptions = generate_navbar_options_for_page(allRoutes['/']['navbar'])
-            navLists = generate_navLists_for_page(allRoutes['/']['navbar'])
+            navOptions = generate_navbar_options_for_page(allRoutes['/']['navbar'], allRoutes)
+            navLists = generate_navLists_for_page(allRoutes['/']['navbar'], allRoutes)
         else:
             print "Config file has no [Parser] section; Cannot load rules documents."
             print "Have you tried running the generate_config.py helper script?"
