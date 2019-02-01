@@ -30,7 +30,7 @@
         
         //$("#saveCharacterButton").click(saveCharacter);
 
-        $("#newSkillButton").click(getNewSkillId);
+        $("#newSkillButton").click(addNewSkillSpace);
         $("#updateSkillsButton").click(updateAllSkills);
 
         console.log("done initializing character javascript.");
@@ -295,34 +295,36 @@
         $("#skills_pane").fadeIn();
     }
 
-    function getNewSkillId(){
-        var pk_id = parseInt($("#newSkillButton").attr("character_id"));
-        $.post("/skills/new/" + pk_id, AddNewSkillSpace);
-    }
-
-    function AddNewSkillSpace(data){
-        //note to self, we need an asynch call to the server to find out what our next pk_id is.
+    function addNewSkillSpace(){
         var nameDiv = document.createElement("div");
         nameDiv.className = "col-lg-4";
         var nameInput = document.createElement("input");
         nameInput.type = "text";
+        nameInput.className = "skillNames";
         nameInput.value = "newSkill";
+        nameInput.name = "newName"
         nameDiv.appendChild(nameInput);
         var numberDiv = $("<div>", {"class":"col-lg-4"});
-        var numberInput = $("<input>",{"type":"text", "value":0,});
+        var numberInput = $("<input>",{"type":"text", "value":0, "class":"skillPoints", "name":"newnumber"});
         numberDiv.append(numberInput);
         var buttonDiv = $("<div>", {"class":"col-lg-4"});
         var delButton = $("<input>", {"class":"btn btn-danger", "type":"button", "value":"Delete Skill"});
+        //I should add a hidden field to the JQuery object that acts as an ID number within the context 
+        // of the UI. Then use that number for hiding after a delete, sorting, etc. 
+        // The pk_id of the skill itself (in the context of the db) should be separate
+        // it's hard to look this up on the bus.
         buttonDiv.append(delButton);
         $("#skillDiv").append(nameDiv, numberDiv, buttonDiv);
     }
 
     function updateAllSkills(){
         $(".skillNames").each(updateASkill);
+        console.log("All skills updated");
     }
 
     function updateASkill(){
         var name = $(this).attr("name");
+        console.log("updating " + name + " skill.");
         var id = parseInt(name.replace("Label",""));
         var skillName = $(this).val();
         var skillPointsString = $("#" + id + "number").val();
@@ -331,7 +333,7 @@
         var payload = {"pk_id":id, "skillName":skillName, "skillPoints":skillPoints};
         $.ajax({
             type:"POST",
-            url:"/skills/modify/" + id,
+            url:"/skill/" + id,
             data:payload,
             asynch: true,
             success: function(){

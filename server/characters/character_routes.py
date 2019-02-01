@@ -1,6 +1,7 @@
 import characters
 import characters_common
 import feats
+import json
 import skills
 import pdb
 from ..security import security
@@ -162,6 +163,18 @@ def make_character_feat_mapping():
     feats.insert_character_feat_map(mapping)
     flash("Gave feat to character successfully!")
     return redirect("/modifycharacter/%s" % mapping['character_id'])
+
+@character_blueprint.route("/character_skills/<int:character_pk_id>", methods=['GET'])
+def character_skills_endpoint(character_pk_id):
+    if not security.check_auth(session):
+        flash("You must be logged in to do that.")
+        return redirect("/")
+    my_character = characters.get_character(character_pk_id)
+    if not owns_character(my_character, session):
+        flash("You don't own that character")
+        return redirect("/character/mine")
+    my_characters_skills = skills.get_characters_skills(my_character['pk_id'])
+    return json.dumps(my_characters_skills, indent=4, sort_keys=True, default=str)
 
 @character_blueprint.route("/skill/<int:pk_id>", methods=['GET','POST', 'PUT', 'DELETE'])
 def skill_REST(pk_id):
