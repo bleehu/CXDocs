@@ -12,7 +12,7 @@ def initialize_skills(newlog):
 """ Gets the skill with given pk_id, or returns none if such a skill doesn't exist."""
 def get_skill(pk_id):
     try:
-        sani_pk_id = int(pk_id)
+        int(pk_id)
     except:
         return None
     connection = characters_common.db_connection()
@@ -47,7 +47,9 @@ def get_characters_skills(character_pk_id):
         return None
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at FROM skills WHERE fk_owner_id = %s;" % char_pk_id_int)
+    myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
+    	FROM skills WHERE fk_owner_id = %s AND deleted_at IS NULL;" \
+    	% char_pk_id_int)
     lines = myCursor.fetchall()
     characters_skills = []
     for line in lines:
@@ -100,6 +102,8 @@ def delete_skill(pk_id):
     connection = characters_common.db_connection()
     myCursor = connection.cursor()
     myCursor.execute("UPDATE skills SET deleted_at = now() WHERE pk_id = %s;" % sani_pk_id)
+    myCursor.close()
+    connection.commit()
     return sani_pk_id
 
 """ Called asynchronously to create a new skill for later editing. Returns None if there's an error, otherwise
@@ -115,7 +119,8 @@ def get_newest_skill(character_pk_id):
     myCursor.execute("SELECT max(pk_id) FROM skills;")
     new_pk_id = int(myCursor.fetchone()[0])
     new_pk_id = new_pk_id + 1
-    myCursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skillname, points, created_at) VALUES (%s, %s, 'new skill', 0, now());" % (new_pk_id, sani_pk_id))
+    myCursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skillname, points, created_at) \
+    	VALUES (%s, %s, 'new skill', 0, now());" % (new_pk_id, sani_pk_id))
     myCursor.close()
     connection.commit()
     return new_pk_id

@@ -194,24 +194,25 @@ def skill_REST(pk_id):
 
 def create_skill(pk_id):
     #check if the integer they sent was a character that exists
-    character = characters.get_character(sani_character_pk_id)
+    character = characters.get_character(pk_id)
     if character is None:
         flash("That Character doesn't seem to exist.")
-        log.warn("%s attempted to give a skill to a character that doesn't exist. Character id %s." % (session['username'], pk_id))
+        log.warn("%s attempted to give a skill to a character that doesn't exist. \
+            Character id %s." % (session['username'], pk_id))
         return redirect("/characters/mine")
     #check if the integer they sent was a character that they own
     user_id = security.get_user_pkid(session)
     if not owns_character(character, session):
         return redirect("/")
     #looks good. make a new skill and send its ID back to 'em.
-    new_skill_pk_id = skills.get_newest_skill(sani_character_pk_id)
-    return "%s" % new_skill_pk_id
+    new_skill_pk_id = skills.get_newest_skill(pk_id)
+    return str(new_skill_pk_id)
 
 """ The pk_id here is for the skill that you wish to delete. Note that is a different
     convention from the creation of a skill above. """
 def delete_skill(pk_id):
     #check if the integer they sent was a skill that exists
-    skill = skills.get_skill(sani_skill_pk_id)
+    skill = skills.get_skill(pk_id)
     if skill is None:
         flash("That skill doesn't seem to exist")
         log.warn("%s attempted to delete a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
@@ -226,14 +227,14 @@ def delete_skill(pk_id):
     if not owns_character(character, session):
         return redirect("/")
     #looks good. delete that skill.
-    skills.delete_skill(sani_skill_pk_id)
-    return redirect("/modifycharacter/%s" % character['pk_id'])
+    skills.delete_skill(pk_id)
+    return "200 OK"
 
 
 """ pk_id here is the pk_id of the skill to update. """
 def update_skill(pk_id):
     #check if the integer they sent was a skill that exists
-    skill = skills.get_skill(sani_skill_pk_id)
+    skill = skills.get_skill(pk_id)
     if skill is None:
         flash("That skill doesn't seem to exist")
         log.warn("%s attempted to modify a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
@@ -250,7 +251,7 @@ def update_skill(pk_id):
     new_skill_name = request.form['skillName']
     new_skill_points = int(request.form['skillPoints'])
     #we can ommit the owner here; update_skill() doesn't use it.
-    newskill = {'pk_id':sani_skill_pk_id, 'name':new_skill_name, 'points':new_skill_points}
+    newskill = {'pk_id':pk_id, 'name':new_skill_name, 'points':new_skill_points}
     result = skills.update_skill(newskill)
     if result is None:
         log.warn("There was an error updating skill with pk_id %s" % pk_id)
