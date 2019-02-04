@@ -5,7 +5,7 @@ import docs_parser #our custom plaintext parser for reading CX rules straight fr
 
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
 from characters.character_routes import character_blueprint, initialize_characters
-from navigation.nav_dict import initialize_nav, create_routes_dict, generate_navbar_options_for_page, generate_navLists_for_page
+from navigation import nav_dict as nav  # Module created by AK to allow dynamic front-end navigation
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our
 #main web app. It's how we respond to HTTP requests, etc.
@@ -51,10 +51,16 @@ def create_app():
     #these two lines activate our character creator and enemy creator "plugins."
     app.register_blueprint(enemy_blueprint)
     app.register_blueprint(character_blueprint)
+
     #both flask and werkzeug (what flask is built on) output their information to a log called "log." by declaring it here,
+    global log
     #we can use python's logging library to easily put more helpful information into the server log to help make our admin's
     #lives much easier.
-    global log
+    local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
+    log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
+    logging.basicConfig(filename=log_filename, level=logging.INFO)
+    log = logging.getLogger("cxDocs:")
+
     #whos_on is a list of tuples with displaynames and last-action timestamps that we use to show who's currently using this
     #web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
     global whos_on
@@ -63,9 +69,15 @@ def create_app():
     config = ConfigParser.RawConfigParser()
     config.read('config/cxDocs.cfg')
 
-    # Create the routes dictionary for generating/referencing endpoints and labels for navigation
-    initialize_nav(config)
-    allRoutes = create_routes_dict();
+    # Create the routes dictionary so we can use the nav module
+    if config.has_section('Parser'):
+        nav.create_dict(config.options('Parser'))
+    else:
+        print "Config file has no [Parser] section; Cannot load rules documents."
+        print "Have you tried running the generate_config.py helper script?"
+        print "See config/README.md for more help configuring your parser."
+        log.warn("Parser Section not configured; cannot load rules documents on index page.")
+        log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
 
     """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
      to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
@@ -87,7 +99,7 @@ def create_app():
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
             return render_template("utility/site/parser.html", elements = tokens, \
-              navOptions = generate_navbar_options_for_page(allRoutes['/']['navbar'], allRoutes))
+                navOptions = nav.generate_navbar_options_for_page('/'))
         else:
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
@@ -99,24 +111,14 @@ def create_app():
         session['X-CSRF'] = "foxtrot"   #set a session token. This helps prevent session takeover hacks.
         pc = None   #player character defaults to None if user isn't logged in.
 
-        if config.has_section('Parser'):
-            navOptions = generate_navbar_options_for_page(allRoutes['/']['navbar'], allRoutes)
-            navLists = generate_navLists_for_page(allRoutes['/']['navbar'], allRoutes)
-        else:
-            print "Config file has no [Parser] section; Cannot load rules documents."
-            print "Have you tried running the generate_config.py helper script?"
-            print "See config/README.md for more help configuring your parser."
-            log.warn("Parser Section not configured; cannot load rules documents on index page.")
-            log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
-
         if 'character' in session.keys():   #if player is logged in and has picked a character, we load that character from the session string
             pc = characters.get_character(session['character'])
         gb = guestbook.get_guestbook()
         return render_template('home.html', \
             session = session, \
             character = pc, \
-            navOptions = navOptions, \
-            navLists = navLists, \
+            navOptions = nav.generate_navbar_options_for_page('/'), \
+            navLists = nav.generate_nav_lists_for_page('/'), \
             guestbook = gb) #the flask method render_template() shows a jinja template
         #jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
         #dynamically.
@@ -133,8 +135,8 @@ def create_app():
     def basics(topic):
       endpoint = '/' + topic
 
-      if endpoint in allRoutes:
-        return parser_page(allRoutes[endpoint]['cfgOptionForFilePath'])
+      if nav.page_has_filepath(endpoint) == True:
+        return parser_page(nav.get_filepath_for_endpoint(endpoint))
       else:
         abort(404)
 
@@ -142,8 +144,8 @@ def create_app():
     def rules(topic):
       endpoint = '/rules/' + topic
 
-      if endpoint in allRoutes:
-        return parser_page(allRoutes[endpoint]['cfgOptionForFilePath'])
+      if nav.page_has_filepath(endpoint) == True:
+        return parser_page(nav.get_filepath_for_endpoint(endpoint))
       else:
         abort(404)
 
@@ -151,8 +153,8 @@ def create_app():
     def items(category):
       endpoint = '/items/' + category
 
-      if endpoint in allRoutes:
-        return parser_page(allRoutes[endpoint]['cfgOptionForFilePath'])
+      if nav.page_has_filepath(endpoint) == True:
+        return parser_page(nav.get_filepath_for_endpoint(endpoint))
       else:
         abort(404)
 
@@ -270,11 +272,6 @@ def create_app():
         seconds_out = config.get('WhosHere', 'Seconds_out')
     guestbook.initialize(seconds_away, seconds_out)
 
-    local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
-    log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
-    logging.basicConfig(filename=log_filename, level=logging.INFO)
-    global log
-    log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
     cxExceptions.initialize(log)
