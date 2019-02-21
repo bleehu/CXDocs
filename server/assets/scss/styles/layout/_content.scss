@@ -1,13 +1,42 @@
 // BOOTSTRAP CLASSES
-
-.list-group:before {
-  content: "";
-  border: solid 100px;
-  border-color: $holobeam transparent;
-  border-top: 0;
+.content {
+  margin-left: 68px;
 }
 
-.list-group-item {
+.row {
+  flex-wrap: nowrap;
+
+  & > div {
+    flex: 0 1 20%;
+  }
+
+  // Bootstrap's row class has negative margins for some reason that always get in the way,
+    // so I'm negating them here
+  margin-left: 0;
+  margin-right: 0;
+}
+
+// OUR CLASSES
+// Use .holo-list-group in conjunction with Bootstrap's .list-group
+.holo-list-group {
+  margin-top: -15px;
+}
+
+.holo-list-group:before {
+  content: "";
+  border: solid 96px;
+  border-color: $holobeam transparent;
+  border-top: 0;
+
+  transform: rotateX(50deg);
+}
+
+// Use .holo-list-group-item in conjunction with Bootstrap's .list-group-item
+.holo-list-group-item {
   background: $holomenu;
   color: $dark;
+}
+
+.holo-list-group-item:first-child {
+  margin-top: -18px;
 }

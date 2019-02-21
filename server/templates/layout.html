@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <title>{% block title %}CX{% endblock %} - Compound X</title>
-  <!-- Bootstrap uses popper to control the extending and hiding of dropdown menus -->
+
+  {# Bootstrap uses popper to control the extending and hiding of dropdown menus #}
   <script type="text/javascript" src="../static/popper.min.js"></script>
 
   <link rel="stylesheet" type="text/css" href="../static/styles.css">
 
   <script src="../static/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="../static/bootstrap.min.js"></script>
 
   {% block head %}{% endblock %}
 </head>
@@ -17,15 +18,20 @@
 
   {% include './layout/header.html' %}
 
-  {% include './layout/nav/navbar.html' %}
+  <div class="container">
 
-  <div class="container content">
     {% include './utility/site/flash_message.html' %}
 
-    {% block content %}{% endblock %}
+    {% include './layout/nav/navbar.html' %}
+
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
   </div>
 
   {% include './layout/footer.html' %}
 
+  <script type="text/javascript" src="../static/bootstrap.min.js"></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

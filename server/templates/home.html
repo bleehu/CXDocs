@@ -3,6 +3,10 @@
 
 {% block title %}Home{% endblock %}
 
+{% if navOptions != None %}
+{% block nav %}{% endblock %}
+{% endif %}
+
 {% block content %}
 <div class="row justify-content-between">
 
@@ -14,6 +18,7 @@
   </div>
   {% endfor %}
 
+  <div></div>
 
   {# MEMBERS SECTION #}
   {% if 'username' in session %}
