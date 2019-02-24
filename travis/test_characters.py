@@ -39,6 +39,6 @@ def test_character_database(client):
         assert testerson is not None
         assert testerson['name'] == 'Testerson'
 
-        skills = sorted(skills.get_characters_skills(72))
-        assert skills[0]['name'] is 'athletics'
-        assert skills[0]['points'] == 12
+        testyskills = sorted(skills.get_characters_skills(72))
+        assert testyskills[0]['name'] == 'athletics'
+        assert testyskills[0]['points'] == 12
