@@ -1,7 +1,7 @@
 import pytest #pytest helps us create the testbench and clean up afterwards
 from flask import session
 from ..server import app as cxApp 
-from ..server.characters import characters, characters_common 
+from ..server.characters import characters, characters_common, skills
 import ConfigParser
 
 #the pytest fixtures are a way that the pytest tools keep track of encapsulated
@@ -25,15 +25,20 @@ def client(app):
 def test_character_database(client):
     """Tests the selection of monsters """
     with client as c:
+        new_config = ConfigParser.RawConfigParser()
+        new_config.read('config/cxDocs.cfg')
+        characters_common.set_config(new_config)
         with c.session_transaction() as session:
             session['username'] = 'Travis'
             session['displayname'] = 'travis_test'
             session['role'] = 'GM'
             session['X-CSRF'] = 'foxtrot'
-            new_config = ConfigParser.RawConfigParser()
-            new_config.read('config/cxDocs.cfg')
-            characters_common.set_config(new_config)
-            testerson = characters.get_character(72)
-            #the default enemy database should contain an enemy called an Antlion Grub.
-            assert testerson is not None
-            
+
+        testerson = characters.get_character(72)
+        #the default enemy database should contain an enemy called an Antlion Grub.
+        assert testerson is not None
+        assert testerson['name'] == 'Testerson'
+
+        skills = sorted(skills.get_characters_skills(72))
+        assert skills[0]['name'] is 'athletics'
+        assert skills[0]['points'] == 12
