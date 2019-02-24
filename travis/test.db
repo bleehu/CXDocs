@@ -1013,8 +1013,8 @@ COPY public.monsters_weapons (pk_id, damage, capacity, description, name, author
 --
 
 COPY public.skills (pk_id, fk_owner_id, skillname, points, private, created_at, deleted_at) FROM stdin;
-1	72	fishing	10	f	2018-01-02 18:45:00.00		\N
-2	72	athletics	12	f	2018-01-02 15:55:00.00	\N
+5	72	fishing	10	f	\N	\N
+6	72	athletics	12	f	\N	\N
 \.
 
 
