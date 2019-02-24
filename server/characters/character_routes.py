@@ -86,6 +86,7 @@ def update_character(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to update your character.")
         return redirect("/")
+    user_id = security.get_user_pkid(session)
     new_character = characters.validate_character(request.form, user_id)
     if not new_character:
         flash("Something is wrong with your character; we couldn't update it.")
@@ -116,7 +117,7 @@ def char_select():
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    character_blob = character.get_characters()
+    character_blob = characters.get_characters()
     select_pk = int(request.form['pk'])
     for player_character in character_blob['characters']:
         if player_character.pk == select_pk:
