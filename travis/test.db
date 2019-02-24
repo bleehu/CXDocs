@@ -585,8 +585,8 @@ ALTER TABLE public.users OWNER TO postgres;
 --
 
 COPY public.characters (pk_id, name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, level, shock, will, reflex, description, race, class, fk_owner_id, money, created_at, deleted_at, move_speed, carry_ability, skill_gain) FROM stdin;
+72	Testerson	100	100	6	6	6	6	6	6	6	1	12	12	12	Testerson is a good character for testing.	Human	Soldier	1	0	2018-09-08 22:37:17.953561	2018-09-08 22:39:20.477069	6	6	6
 \.
-
 
 --
 -- Data for Name: feats; Type: TABLE DATA; Schema: public; Owner: bleehu
