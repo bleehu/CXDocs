@@ -26,11 +26,10 @@
   {# Not sure how many of these are needed. For now, they are at most only for members. #}
   <div>
     {% set miscLinks = [
-      ['NPC Generator', 'npcgen'],
-      ['Files', 'files'],
-      ['Game Logs', 'gamelogs'],
-      ['Missions', 'missions'],
-      ['Mission Files', 'missionfiles']
+      ['NPC Generator', '/npcgen'],
+      ['Files', '/files'],
+      ['Game Logs', '/gamelogs'],
+      ['Mission Files', '/missionfiles']
     ] %}
 
     {{ list.holoListOfLinks(miscLinks) }}
@@ -44,10 +43,10 @@
 
       <div class="card-body">
         <div class="btn-group-vertical">
-          <a class="btn btn-primary" href="monster">Bestiary</a>
-          <a class="btn btn-success" href="monsterabilities"> Enemy Abilities </a>
-          <a class="btn btn-warning" href="monsterarmor">Enemy Armor</a>
-          <a class="btn btn-danger" href="monsterweapons">Enemy Weapons</a>
+          <a class="btn btn-primary" href="/monster">Bestiary</a>
+          <a class="btn btn-success" href="/monsterabilities"> Enemy Abilities </a>
+          <a class="btn btn-warning" href="/monsterarmor">Enemy Armor</a>
+          <a class="btn btn-danger" href="/monsterweapons">Enemy Weapons</a>
         </div>
       </div>
     </div>
@@ -57,11 +56,11 @@
 
       <div class="card-body">
         <div class="btn-group-vertical">
-          <a class="btn btn-primary" href="monstereditor">Enemy Editor</a>
-          <a class="btn btn-success" href="monsterabilityeditor">Enemy Ability Editor</a>
-          <a class="btn btn-warning" href="monsterarmoreditor">Enemy Armor Editor</a>
-          <a class="btn btn-danger" href="monsterweaponeditor"> Enemy Weapon Editor </a>
-          <a class="btn btn-primary" href="monsterstats"> Enemy Database Metadata </a>
+          <a class="btn btn-primary" href="/monstereditor">Enemy Editor</a>
+          <a class="btn btn-success" href="/monsterabilityeditor">Enemy Ability Editor</a>
+          <a class="btn btn-warning" href="/monsterarmoreditor">Enemy Armor Editor</a>
+          <a class="btn btn-danger" href="/monsterweaponeditor"> Enemy Weapon Editor </a>
+          <a class="btn btn-primary" href="/monsterstats"> Enemy Database Metadata </a>
         </div>
       </div>
     </div>
@@ -71,9 +70,9 @@
     <h5>Available Help Pages:</h5>
 
     {% set helpLinks = [
-      ['How to: General Design', 'designhowto'],
-      ['How to: Enemy Weapons', 'monsterweaponshowto'],
-      ['How to: Enemy Armor', 'monsterarmorhowto']
+      ['How to: General Design', '/gm/designhowto'],
+      ['How to: Enemy Weapons', '/gm/monsterweaponshowto'],
+      ['How to: Enemy Armor', '/gm/monsterarmorhowto']
     ]%}
 
     {{ list.holoListOfLinks(helpLinks) }}
