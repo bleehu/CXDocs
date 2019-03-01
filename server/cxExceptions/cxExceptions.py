@@ -107,23 +107,4 @@ class RateLimitExceededException(CXException):
         #we don't tell an attacker how many attempts they can get away with in what timeframe.
         flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % self.action)
 
-class ConfigOptionMissingException(CXException):
-    LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started \
-        with login configured. Missing the %s parameter."
-    ADVICE = """If you'd like to enable login, you'll need to set up your postgres user database 
-    then run: $python start.py -u databaseUsername -p databasePassword 
-    Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."""
-
-    def __init__(self, missingOption):
-        self.message = self.LOG_MESSAGE % missingOption
-
-    def printToConsole(self):
-        print(self.message)
-        print(self.ADVICE)
-
-    def log(self):
-        log.warn(self.message)
-        log.info(self.ADVICE)
-
-    def flash(self):
-        flash("Sorry, It looks like the admin hasn't set the login database up yet. Check logs?")
+# exceptions having specifically to do with configuration are in the appConfig.py file

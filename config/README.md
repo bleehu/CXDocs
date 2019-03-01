@@ -7,18 +7,24 @@ will be required.
 
 ## Auth Section
 
-The auth section should be completely filled out by the gen_config.py script. If
-not, you can set it manually. See below for an example. The auth section should
-point to the SQL server that has the usernames and passwords set up. PostgreSQL
-is free and works fine if you'd like to build one yourself. *Make sure not to 
-commit any passwords or secrets in code!*
+The essentials of the auth section should be completely filled out by the 
+gen_config.py script. If not, you can set it manually. See below for an example. 
+The auth section should point to the SQL server that has the usernames and 
+passwords set up. PostgreSQL is free and works fine if you'd like to build one 
+yourself. *Make sure not to commit any passwords or secrets in code!*
 
 ```
-[auth]
+[Auth]
 db_name = mydb
 port = 5432
 host = localhost
 ```
+
+max_tries: an integer positing how many tries someone can get wrong in max_tries_minutes before the app locks them out.
+
+max_tries_minutes: an integer establishing how many minutes that someone will have max_tries to sign in with the correct username and password before the app locks them out.
+
+The default is 3 tries in 30 minutes.
 
 ## Enemies Section
 
@@ -74,14 +80,14 @@ cloaking_filepath: (option) absolute filepath to the cloaking rules file
 
 new_player_walkthrough_filepath: (optional) absolute filepath to the new player walkthrough rule page
 
-Engineer_filepath: (optional) absolute filepath to the Engineer Processes.txt plaintext document from the compound_x repo
+engineer_filepath: (optional) absolute filepath to the Engineer Processes.txt plaintext document from the compound_x repo
 
-Medic_filepath: (optional) absolute filepath to the Medic Procedures.txt plaintext document from the compound_x repo
+medic_filepath: (optional) absolute filepath to the Medic Procedures.txt plaintext document from the compound_x repo
 
 
 
 ## WhosHere Section
 
-Seconds_away: Don't forget to capitalize the S! This is how many seconds the 'Who's Here' feature should wait before marking someone as being 'away'
+seconds_away: Don't forget to capitalize the S! This is how many seconds the 'Who's Here' feature should wait before marking someone as being 'away'
 
-Seconds_out: The number of seconds before the Who's Here function should forget someone had logged in.
+seconds_out: The number of seconds before the Who's Here function should forget someone had logged in.
