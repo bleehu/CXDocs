@@ -14,35 +14,35 @@ class User:
 
 class AuthServer:
 
-    def __init__(self, config, log):
-        if 'username' in config:
-            self.db_user = config['username']
+    def __init__(self, config_map, log):
+        if 'username' in config_map:
+            self.db_user = config_map['username']
         else:
             raise cxExceptions.ConfigOptionMissingException("login database username")
-        if 'password' in config:
-            self.db_pass = config['password']
+        if 'password' in config_map:
+            self.db_pass = config_map['password']
         else:
             raise cxExceptions.ConfigOptionMissingException("login database password")
-        if 'name' in config:
-            self.db_name = config['name']
+        if 'name' in config_map:
+            self.db_name = config_map['name']
         else:
             raise cxExceptions.ConfigOptionMissingException("name of login database")
-        if 'host' in config:
-            self.db_address = config['host']
+        if 'host' in config_map:
+            self.db_address = config_map['host']
         else:
             #psychopg2 and most mysql drivers default to localhost.
             self.db_address = "localhost"
-        if 'port' in config:
-            self.db_port = config['port']
+        if 'port' in config_map:
+            self.db_port = config_map['port']
         else:
             #psychopg2 defaults to port 5432
             self.db_port = 5432
-        if 'max_tries' in config:
-            self.max_tries = int(config['max_tries'])
+        if 'max_tries' in config_map:
+            self.max_tries = int(config_map['max_tries'])
         else:
             self.max_tries = 3
-        if 'max_tries_minutes' in config:
-            self.max_tries_minutes = int(config['max_tries_minutes'])
+        if 'max_tries_minutes' in config_map:
+            self.max_tries_minutes = int(config_map['max_tries_minutes'])
         else:
             self.max_tries_minutes = 30
         self.log = log
