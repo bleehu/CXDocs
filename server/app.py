@@ -59,12 +59,17 @@ def create_app():
     log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
     logging.basicConfig(filename=log_filename, level=logging.INFO)
     log = logging.getLogger("cxDocs:")
+    cxExceptions.initialize(log)
 
     #whos_on is a list of tuples with displaynames and last-action timestamps that we use to show who's currently using this
     #web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
     global whos_on
 
-    app.cxConfig = appConfig.appConfig.get_app_config("config/cxDocs.cfg", log)
+    try:
+        app.cxConfig = appConfig.appConfig.get_app_config("config/cxDocs.cfg", log)
+    except cxExceptions.CXException as cxe:
+        cxe.provideFeedback()
+        exit(1)
 
     """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
      to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
@@ -261,7 +266,6 @@ def create_app():
 
     initialize_enemies(app.cxConfig, log)
     initialize_characters(app.cxConfig, log)
-    cxExceptions.initialize(log)
     (username, password, host) = get_env_vars()
     app.config['username'] = username
     app.config['password'] = password

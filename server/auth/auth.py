@@ -1,4 +1,3 @@
-from ..appConfig.appConfig import ConfigOptionMissingException
 from ..cxExceptions import cxExceptions
 from ..security.security import sql_escape
 import psycopg2

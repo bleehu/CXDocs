@@ -1,4 +1,4 @@
-from ..cxExceptions.cxExceptions import CXException
+from ..cxExceptions.cxExceptions import ConfigFileMissingException
 import ConfigParser
 from ..navigation import nav_dict as nav  # Module created by AK to allow dynamic front-end navigation
 import os
@@ -51,39 +51,3 @@ class app_config_object:
             if self.has_option("Auth", "max_tries_minutes"):
                 returnMe['max_tries_minutes'] = self.get("Auth", "max_tries_minutes")
         return returnMe
-
-class ConfigFileMissingException(CXException):
-    LOG_MESSAGE = "ERROR!: The config file is missing! Run $python \
-        generate_config.py ?"
-
-    def __init__(self):
-        self.message = self.LOG_MESSAGE
-
-    def log(self):
-        log.warn(LOG_MESSAGE)
-
-    def printToConsole(self):
-        print(self.message)
-
-    # we inherit the flash method being a pass; we can't flash if we don't have the config to boot the app.
-
-class ConfigOptionMissingException(CXException):
-    LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started \
-        with login configured. Missing the %s parameter."
-    ADVICE = """If you'd like to enable login, you'll need to set up your postgres user database 
-    then run: $python start.py -u databaseUsername -p databasePassword 
-    Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."""
-
-    def __init__(self, missingOption):
-        self.message = self.LOG_MESSAGE % missingOption
-
-    def printToConsole(self):
-        print(self.message)
-        print(self.ADVICE)
-
-    def log(self):
-        log.warn(self.message)
-        log.info(self.ADVICE)
-
-    def flash(self):
-        flash("Sorry, It looks like the admin hasn't set the login database up yet. Check logs?")
