@@ -107,14 +107,9 @@ def create_app():
     @app.route('/') #tells flask what url to trigger this behavior for. In this case, the main page of the site.
     def hello():            #tells flask what method to use when you hit a particular route. Same as regular python function definition.
         session['X-CSRF'] = "foxtrot"   #set a session token. This helps prevent session takeover hacks.
-        pc = None   #player character defaults to None if user isn't logged in.
-
-        if 'character' in session.keys():   #if player is logged in and has picked a character, we load that character from the session string
-            pc = app.character_db.get_character(session['character'])
         gb = guestbook.get_guestbook()
         return render_template('home.html', \
             session = session, \
-            character = pc, \
             navOptions = nav.generate_navbar_options_for_page('/'), \
             navLists = nav.generate_nav_lists_for_page('/'), \
             guestbook = gb) #the flask method render_template() shows a jinja template
@@ -294,13 +289,13 @@ def create_app():
 def auth_config_seam(unpw_tuple, config):
     returnMe = {"username":unpw_tuple[0],
         "password":unpw_tuple[1]}
-    if config.has_section("auth"):
-        if config.has_option("auth", "port"):
-            returnMe['port'] = config.get('auth', 'port')
-        if config.has_option("auth", "db_name"):
-            returnMe['name'] = config.get('auth', 'db_name')
-        if config.has_option("auth", "host"):
-            returnMe['host'] = config.get('auth', 'host')
+    if config.has_section("Auth"):
+        if config.has_option("Auth", "port"):
+            returnMe['port'] = config.get('Auth', 'port')
+        if config.has_option("Auth", "db_name"):
+            returnMe['db_name'] = config.get('Auth', 'db_name')
+        if config.has_option("Auth", "host"):
+            returnMe['host'] = config.get('Auth', 'host')
     return returnMe
 
 if __name__ == "__main__":

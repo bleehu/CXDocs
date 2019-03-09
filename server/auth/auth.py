@@ -1,10 +1,10 @@
 from ..cxExceptions import cxExceptions
 from ..security.security import sql_escape
-import psycopg2
+from ..database import database
 
 class User:
 
-    def __init__(self, params_tuple): 
+    def __init__(self, params_tuple):
         self.pk_id = int(params_tuple[0])
         self.username = params_tuple[1]
         self.displayname = params_tuple[2]
@@ -15,28 +15,14 @@ class User:
 class AuthServer:
 
     def __init__(self, config, log):
-        if 'username' in config:
-            self.db_user = config['username']
-        else:
+        if 'username' not in config:
             raise cxExceptions.ConfigOptionMissingException("login database username")
-        if 'password' in config:
-            self.db_pass = config['password']
-        else:
+        if 'password' not in config:
             raise cxExceptions.ConfigOptionMissingException("login database password")
-        if 'name' in config:
-            self.db_name = config['name']
-        else:
+        if 'db_name' not in config:
             raise cxExceptions.ConfigOptionMissingException("name of login database")
-        if 'host' in config:
-            self.db_address = config['host']
-        else:
-            #psychopg2 and most mysql drivers default to localhost.
-            self.db_address = "localhost"
-        if 'port' in config:
-            self.db_port = config['port']
-        else:
-            #psychopg2 defaults to port 5432
-            self.db_port = 5432
+        if 'db_host' not in config:
+            config['db_host'] = "localhost"
         if 'max_tries' in config:
             self.max_tries = int(config['max_tries'])
         else:
@@ -45,6 +31,7 @@ class AuthServer:
             self.max_tries_minutes = int(config['max_tries_minutes'])
         else:
             self.max_tries_minutes = 30
+        self.my_db = database.cx_database(config)
         self.log = log
 
     def login(self, username, password, request):
@@ -56,7 +43,7 @@ class AuthServer:
             raise cxExceptions.RateLimitExceededException(saniUser, actionString, 3, 30, request.remote_addr)
         queryString = "SELECT pk_id, username, displayname, realname, password, role  \
             FROM users WHERE username LIKE '%s';" % saniUser
-        results = self.fetchall(queryString)
+        results = self.my_db.fetch_all(queryString)
         for result in results:
             if password == result[4]:
                 self.log.info('logged in: %s. Password matches.' % saniUser )
@@ -65,34 +52,20 @@ class AuthServer:
         userPassTuple = (username, password)
         raise cxExceptions.NoUserFoundException(userPassTuple, request)
 
-
     def logout(self, session):
         self.log.info("%s logged out." % session['username'])
         session.clear()
 
     def logRateLimitedAction(self, username, password, ipAddress):
-        myCursor = self.getCursor()
-        myCursor.execute("INSERT INTO login_audit_log (username, password, ip_address) \
-            VALUES ('%s', '%s', '%s');" % (username, password, ipAddress))
-        myCursor.connection.commit()
+        insertString = "INSERT INTO login_audit_log (username, password, ip_address) \
+            VALUES ('%s', '%s', '%s');" % (username, password, ipAddress)
+        self.my_db.update(insertString)
 
     def overRateLimit(self, username, password, ipAddress):
         #check the number of attempts in the last half hour
-        logins = self.fetchall("SELECT * FROM login_audit_log \
+        logins = self.my_db.fetch_all("SELECT * FROM login_audit_log \
             WHERE age(log_time) < '%s minutes' AND \
             ip_address LIKE '%s' AND \
             'username' LIKE '%s';" % \
             (self.max_tries_minutes, ipAddress, username))
         return len(logins) > self.max_tries
-
-    def fetchall(self, searchString):
-        myCursor = self.getCursor()
-        myCursor.execute(searchString)
-        returnMe = myCursor.fetchall()
-        return returnMe
-
-    def getCursor(self):
-        connection = psycopg2.connect("dbname=%s user=%s password=%s host=%s port=%s" % \
-            (self.db_name, self.db_user, self.db_pass, self.db_address, self.db_port))
-        myCursor = connection.cursor()
-        return myCursor

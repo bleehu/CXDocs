@@ -37,35 +37,34 @@ class cx_character:
         self.owner_id = int(owner_id) 
 
     def __init__(self, db_tuple):
-        self.name = line[0]
-        self.maxHealth = int(line[1])
-        self.maxNanites = int(line[2])
+        self.name = db_tuple[0]
+        self.maxHealth = int(db_tuple[1])
+        self.maxNanites = int(db_tuple[2])
         self.primaryStats = {}
-        self.primaryStats['Strength'] = int(line[3])
-        self.primaryStats['Perception'] = int(line[4])
-        self.primaryStats['Fortitude'] = int(line[5])
-        self.primaryStats['Charisma'] = int(line[6])
-        self.primaryStats['Intelligence'] = int(line[7])
-        self.primaryStats['Dexterity'] = int(line[8])
-        self.primaryStats['Luck'] = int(line[9])
-        self.level = int(line[10])
+        self.primaryStats['Strength'] = int(db_tuple[3])
+        self.primaryStats['Perception'] = int(db_tuple[4])
+        self.primaryStats['Fortitude'] = int(db_tuple[5])
+        self.primaryStats['Charisma'] = int(db_tuple[6])
+        self.primaryStats['Intelligence'] = int(db_tuple[7])
+        self.primaryStats['Dexterity'] = int(db_tuple[8])
+        self.primaryStats['Luck'] = int(db_tuple[9])
+        self.level = int(db_tuple[10])
         self.saves = {}
-        self.saves['Shock'] = int(line[11])
-        self.saves['Will'] = int(line[12])
-        self.saves['Reflex'] = int(line[13])
-        self.saves['Awareness'] = int(line[14])
-        self.description = line[15]
-        self.species = line[16]
-        self.cxClass = line[17]
-        self.owner_id = int(line[18])
-        self.money = int(line[19])
-        self.created_at = line[20]
-        self.pk_id = int(line[21])
+        self.saves['Shock'] = int(db_tuple[11])
+        self.saves['Will'] = int(db_tuple[12])
+        self.saves['Reflex'] = int(db_tuple[13])
+        self.saves['Awareness'] = int(db_tuple[14])
+        self.description = db_tuple[15]
+        self.species = db_tuple[16]
+        self.cxClass = db_tuple[17]
+        self.owner_id = int(db_tuple[18])
+        self.money = int(db_tuple[19])
+        self.created_at = db_tuple[20]
+        self.pk_id = int(db_tuple[21])
         self.secondaryStats = {}
-        self.secondaryStats['Carry Ability'] = int(line[22])
-        self.secondaryStats['Move Speed'] = int(line[23])
-        self.secondaryStats['Skill Gain'] = int(line[24])
-        return newCharacter
+        self.secondaryStats['Carry Ability'] = int(db_tuple[22])
+        self.secondaryStats['Move Speed'] = int(db_tuple[23])
+        self.secondaryStats['Skill Gain'] = int(db_tuple[24])
 
     def db_string():
         insert_string = "(name, health, nanites, \

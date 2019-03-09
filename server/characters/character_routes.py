@@ -12,7 +12,7 @@ character_blueprint = Blueprint('character_blueprint', __name__, template_folder
 global log
 
 def initialize_characters(config, newlog):
-    app.character_db = character_database.character_database(config)
+    character_blueprint.character_db = character_database.character_database(config)
     skills.initialize_skills(newlog)
     global log
     log = newlog
@@ -25,7 +25,7 @@ def make_new_character():
         flash("You must be signed in to make a new character!")
         return redirect("/")
     users_pk_id = security.get_user_pkid(session)
-    new_character = app.character_db.create_blank_character(users_pk_id)
+    new_character = character_blueprint.character_db.create_blank_character(users_pk_id)
     new_character_id = new_character.pk_id
     #go to edit new character
     return redirect("/modifycharacter/%s" % new_character_id)
@@ -45,8 +45,8 @@ def show_my_characters():
     users_pk_id = security.get_user_pkid(session)
     my_characters = None
     try:
-        my_characters = app.character_db.get_users_characters(users_pk_id)
-    except cxException as e:
+        my_characters = character_blueprint.character_db.get_users_characters(users_pk_id)
+    except cxExceptions.CXException as e:
         e.provideFeedback()
         return redirect("/")
     if (len(my_characters) < 1):
@@ -65,7 +65,7 @@ def show_character(pk_id):
         return redirect("/")
     try:
         pc = characters.get_character(pk_id)
-    except cxException as e:
+    except cxExceptions.CXException as e:
         e.provideFeedback()
         return redirect("/")
     return render_template('characters/characterviewer.html', session=session, pc=pc)
@@ -85,7 +85,7 @@ def REST_character(pk_id):
             return create_character()
         elif request.method == 'DELETE':
             return delete_character(pk_id)
-    except cxException as e:
+    except cxExceptions.CXException as e:
         e.provideFeedback()
         return redirect("/")
 
@@ -93,7 +93,7 @@ def REST_character(pk_id):
 class is getting much more play than another. """
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
-    pcs = app.character_db.get_characters()
+    pcs = character_blueprint.character_db.get_characters()
     return render_template("characters/player_characters.html", pcs = pcs)
 
 """ Use the character creation page to update an existing character. """
@@ -104,7 +104,7 @@ def char_modify(pk_id):
         flash("You must be logged in to do that.")
         return redirect("/")
     #check to make sure the character exists
-    my_character = app.character_db.get_character(pk_id)
+    my_character = character_blueprint.character_db.get_character_by_id(pk_id)
     if my_character is None:
         flash("You cannot update a character that isn't yours!")
         return redirect("/")
@@ -182,7 +182,7 @@ def delete_skill():
         flash("That skill doesn't seem to exist")
         log.warn("%s attempted to delete a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
         return redirect("/characters/mine")
-    character = app.character_db.get_character(skill['fk_owner_id'])
+    character = character_blueprint.character_db.get_character(skill['fk_owner_id'])
     if character is None:
         flash("That Character doesn't seem to exist.")
         log.warn("%s attempted to delete a skill to a character that doesn't exist. Character id %s." % (session['username'], pk_id))
@@ -218,7 +218,7 @@ def update_skill(pk_id):
         flash("That skill doesn't seem to exist")
         log.warn("%s attempted to modify a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
         return redirect("/characters/mine")
-    character = app.character_db.get_character(skill['fk_owner_id'])
+    character = character_blueprint.character_db.get_character(skill['fk_owner_id'])
     if character is None:
         flash("That Character doesn't seem to exist.")
         log.warn("%s attempted to modify a skill belonging to a character that \
@@ -258,11 +258,11 @@ def update_character(pk_id, request):
 
 def delete_character(pk_id):
     user_id = security.get_user_pkid(session)
-    deleted_character = app.character_db.get_character(pk_id_int)
+    deleted_character = character_blueprint.character_db.get_character(pk_id_int)
     if user_id != deleted_character.owner_id:
         #todo: we should log this 
         flash("you cannot delete a character that's not yours!")
         return redirect("/show/character")
-    app.character_db.delete_character(pk_id_int)
+    character_blueprint.character_db.delete_character(pk_id_int)
     flash("Deleted Character successfully.")
     return redirect("/character/mine")

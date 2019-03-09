@@ -15,7 +15,7 @@ class cx_database:
         return self.db.fetchall_from_db_query(queryString)
 
     def fetch_first(self, queryString):
-        return self.db.fetchall_from_db_query(queryString)
+        return self.db.fetchall_from_db_query(queryString)[0]
 
     def update(self, updateString):
         return self.db.update(updateString)
@@ -36,7 +36,7 @@ class psql_database:
 
     def fetchall_from_db_query(self, query):
         """Run a query on the character database and return all of the results."""
-        connection = db_connection(self)
+        connection = self.db_connection()
         myCursor = connection.cursor()
         myCursor.execute(query)
         returnMe = myCursor.fetchall()
@@ -46,12 +46,12 @@ class psql_database:
 
     def fetch_first_from_db_query(self, query):
         """Run a query on the character database and return the first of the results"""
-        all_rows = fetchall_from_db_query(query)
+        all_rows = self.fetchall_from_db_query(query)
         return all_rows[0]
 
     def update(self, updateString):
         """Run and commit a query on the character database"""
-        connection = db_connection(self)
+        connection = self.db_connection()
         myCursor = connection.cursor()
         myCursor.execute(updateString)
         myCursor.close()

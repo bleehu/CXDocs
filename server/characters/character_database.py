@@ -16,10 +16,9 @@ class character_database(database.cx_database):
             for option in config.options('Characters'):
                 config_map[option] = config.get('Characters', option)
         else:
-            raise ConfigOptionMissingException("Characters config section")
-        if not config.has_option('Characters', 'username') or 
-            not config.has_option('Characters', 'password'):
-            raise ConfigOptionMissingException("Characters database username and password")
+            raise cxExceptions.ConfigOptionMissingException("Characters config section")
+        if not config.has_option('Characters', 'username') or not config.has_option('Characters', 'password'):
+            raise cxExceptions.ConfigOptionMissingException("Characters database username and password")
         self.my_db = database.cx_database(config_map)
 
     def get_characters(self):
@@ -32,7 +31,7 @@ class character_database(database.cx_database):
         characters = []
         results = self.my_db.fetch_all(queryString)
         for line in results:
-            newCharacter = cx_character(line)
+            newCharacter = character.cx_character(line)
             characters.append(newCharacter)
         return characters
 
@@ -65,28 +64,26 @@ class character_database(database.cx_database):
         sani_pk_id = int(pk_id)
         queryString = "SELECT name, health, nanites, \
             strength, perception, fortitude, charisma, intelligence, dexterity,\
-            luck, level, shock, will, reflex, description, race, class, fk_owner_id, \
+            luck, level, shock, will, reflex, awareness, description, race, class, fk_owner_id, \
             money, created_at, pk_id, carry_ability, move_speed, skill_gain\
             FROM characters \
             WHERE pk_id = %s;" % pk_id
-        self.my_db.fetch_first(queryString)
-        if len(lines) > 0:
-            line = lines[0]
-            this_character = cx_character(line)
-            return this_character
+        db_tuple = self.my_db.fetch_first(queryString)
+        this_character = character.cx_character(db_tuple)
+        return this_character
 
     def get_users_characters(self, user_pk_id):
         user_id = int(user_pk_id)
-        these_characters = None
+        these_characters = []
         queryString = "SELECT c.name, c.health, c.nanites, \
             c.strength, c.perception, c.fortitude, c.charisma, c.intelligence, \
-            c.dexterity, c.luck, c.level, c.shock, c.will, c.reflex, c.description, \
+            c.dexterity, c.luck, c.level, c.shock, c.will, c.reflex, c.awareness, c.description, \
             c.race, c.class, c.fk_owner_id, c.money, c.created_at, c.pk_id, \
             c.carry_ability, c.move_speed, c.skill_gain\
-            FROM characters AS c, WHERE c.fk_owner_id = %s;" % user_id
-        lines = self.my_db.fetch_all()
+            FROM characters AS c WHERE c.fk_owner_id = %s;" % user_id
+        lines = self.my_db.fetch_all(queryString)
         for line in lines:
-            these_characters.append(cx_character(line))
+            these_characters.append(character.cx_character(line))
         return these_characters
 
     def get_users_newest_character(self, user_pk_id):
@@ -95,7 +92,7 @@ class character_database(database.cx_database):
             ORDER BY c.pk_id DESC;" % int(user_pk_id)
         all_pk_ids = self.my_db.fetch_all(queryString)
         new_pk_id = all_pk_ids[0][0]
-        new_character = get_character(new_pk_id)
+        new_character = self.get_character_by_id(new_pk_id)
         return new_character
 
     def update_character(self, character):
