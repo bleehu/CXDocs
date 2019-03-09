@@ -108,11 +108,9 @@ class RateLimitExceededException(CXException):
         flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % self.action)
 
 class ConfigOptionMissingException(CXException):
-    LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started \
-        with login configured. Missing the %s parameter."
-    ADVICE = """If you'd like to enable login, you'll need to set up your postgres user database 
-    then run: $python start.py -u databaseUsername -p databasePassword 
-    Use $python start.py -h for more help. And check cxDocs.log for more helpful error messages."""
+    LOG_MESSAGE = "ERROR!: Someone is trying to use a feature that requires the database, but cxDocs wasn't started with login configured. Missing the %s parameter."
+    ADVICE = """If you'd like to enable login, bestiary, and character creator features,
+read the readme.md for instructions on setting up the config file and posgres databases."""
 
     def __init__(self, missingOption):
         self.message = self.LOG_MESSAGE % missingOption
@@ -127,3 +125,16 @@ class ConfigOptionMissingException(CXException):
 
     def flash(self):
         flash("Sorry, It looks like the admin hasn't set the login database up yet. Check logs?")
+
+class driverNotSupportedException(CXException):
+
+    LOG_MESSAGE = "Error! Attempted to create database object with unsupported driver! Use 'psql' instead!"
+
+    def __init__(self):
+        self.message = self.LOG_MESSAGE
+
+    def printToConsole(self):
+        print(self.message)
+
+    def log(self):
+        log.warn(self.message)

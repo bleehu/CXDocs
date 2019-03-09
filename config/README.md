@@ -14,11 +14,25 @@ is free and works fine if you'd like to build one yourself. *Make sure not to
 commit any passwords or secrets in code!*
 
 ```
-[auth]
+[Auth]
 db_name = mydb
 port = 5432
 host = localhost
 ```
+
+## Characters Section
+
+```
+[Characters]
+username = characterSearcher
+port = 5432
+db_host = 54.54.54.111
+db_name = character_db
+password = aReallyStrongPassword
+```
+
+The Characters Section defines the connection to the database that contains all
+of your characters from the character creator. 
 
 ## Enemies Section
 

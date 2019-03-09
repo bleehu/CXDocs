@@ -1,9 +1,9 @@
-import characters
-import characters_common
+import character
+import character_database
 import feats
 import skills
-import pdb
 from ..security import security
+from ..cxExceptions import cxExceptions
 import pdb
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 
@@ -12,7 +12,7 @@ character_blueprint = Blueprint('character_blueprint', __name__, template_folder
 global log
 
 def initialize_characters(config, newlog):
-    characters_common.set_config(config)
+    app.character_db = character_database.character_database(config)
     skills.initialize_skills(newlog)
     global log
     log = newlog
@@ -24,134 +24,90 @@ def make_new_character():
     if not security.check_auth(session):
         flash("You must be signed in to make a new character!")
         return redirect("/")
-    #get user's pk_id
     users_pk_id = security.get_user_pkid(session)
-    #Create a new character
-    characters.create_blank_character(users_pk_id)
-    #get newest character
-    new_character = characters.get_users_newest_character(session)
-    new_character_id = new_character['pk_id']
+    new_character = app.character_db.create_blank_character(users_pk_id)
+    new_character_id = new_character.pk_id
     #go to edit new character
     return redirect("/modifycharacter/%s" % new_character_id)
 
-""" Show the character management page """
+""" Attempt to show the user all of their characters.
+    if the user isn't logged in, then we reroute them to the index page.
+    if there's an error loading their characters, we provide feedback of the 
+        error and reroute to the index page
+    if the user doesn't have any characters, we reroute them to the character
+        creation page
+    if the user has characters and is logged in, we show the characters page. """
 @character_blueprint.route("/character/mine")
 def show_my_characters():
     if not security.check_auth(session):
         flash("You must be signed in to see your characters.")
         return redirect("/")
-    my_characters = characters.get_users_characters(session)
+    users_pk_id = security.get_user_pkid(session)
+    my_characters = None
+    try:
+        my_characters = app.character_db.get_users_characters(users_pk_id)
+    except cxException as e:
+        e.provideFeedback()
+        return redirect("/")
     if (len(my_characters) < 1):
         flash("You don't have any characters yet. Would you like to make one?")
         return redirect("/character/new")
     return render_template("characters/character_select.html", characters=my_characters)
 
-@character_blueprint.route("/showcharacter/<pk_id>")
+"""Attempt to show the character with the passed id.
+    if the user is not logged in, reroutes to index
+    if the user does not own the character...?
+    if there is a cxError, provides feedback and routes to index."""
+@character_blueprint.route("/showcharacter/<int:pk_id>")
 def show_character(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    pc = characters.get_character(pk_id)
-    if 'character' in session.keys():
+    try:
         pc = characters.get_character(pk_id)
+    except cxException as e:
+        e.provideFeedback()
+        return redirect("/")
     return render_template('characters/characterviewer.html', session=session, pc=pc)
 
 """ Delete Character endpoint  """
-@character_blueprint.route("/character/modify/<pk_id>", methods=['DELETE'])
-def delete_character(pk_id):
+@character_blueprint.route("/character/modify/<int:pk_id>", methods=['GET', 'POST', 'PUT', 'DELETE'])
+def REST_character(pk_id):
     if not security.check_auth(session):
         flash("You must be logged in to delete a character!")
         return redirect("/")
-    pk_id_int = -1
     try:
-        pk_id_int = int(pk_id)
-    except:
-        flash("That's not a character id, stupid.")
+        if request.method == "GET":
+            return get_character(pk_id)
+        elif request.method == "POST":
+            return update_character(pk_id, request)
+        elif request.method == "PUT":
+            return create_character()
+        elif request.method == 'DELETE':
+            return delete_character(pk_id)
+    except cxException as e:
+        e.provideFeedback()
         return redirect("/")
-    user_id = security.get_user_pkid(session)
-    deleted_character = characters.get_character(pk_id_int)
-    if user_id != deleted_character['owner']:
-        flash("you cannot delete a character that's not yours!")
-        return redirect("/show/character")
-    characters.delete_character(pk_id_int)
-    flash("Deleted Character successfully.")
-    return redirect("/character/mine")
-
-""" Endpoint for updating an existing character. Attempting to emulate a
-RESTful API endpoint where the route is the same to add new, update existing,
-delete existing or view existing character. """
-@character_blueprint.route("/character/modify/<pk_id>", methods=['POST'])
-def update_character(pk_id):
-    if not security.check_auth(session):
-        flash("You must be logged in to update your character.")
-        return redirect("/")
-    pk_id_int = -1
-    try:
-        pk_id_int = int(pk_id)
-    except:
-        flash("That's not a primary key!")
-        return redirect("/")
-    user_id = security.get_user_pkid(session)
-    new_character = characters.validate_character(request.form, user_id)
-    if not new_character:
-        flash("Something is wrong with your character; we couldn't update it.")
-        return redirect("/modified_character")
-    modified_character = characters.get_character(pk_id_int)
-    if user_id != modified_character['owner']:
-        flash("You cannot modify a character that's not yours!")
-        return redirect("/show/character")
-    characters.update_character(new_character,pk_id_int)
-    flash("Successfully updated character.")
-    return redirect("/modifycharacter/%s" % pk_id)
 
 """ Show all player characters for community and display metadata to see if one
 class is getting much more play than another. """
-#show all of the player characters. For game designers to get a feel for the distribution.
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
-    #SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
-    pcs = characters.get_characters()
+    pcs = app.character_db.get_characters()
     return render_template("characters/player_characters.html", pcs = pcs)
 
-""" If a User has more than one character, then they should be able to select
-one character that they are using at a time. Dynamic pages will be able to do
-things like display only weapons and armor that character can use. """
-
-#API endpoint to select a character
-@character_blueprint.route("/select/character", methods=['POST'])
-def char_select():
-    if not security.check_auth(session):
-        flash("You must be logged in to do that.")
-        return redirect("/")
-    character_blob = character.get_characters()
-    select_pk = int(request.form['pk'])
-    for player_character in character_blob['characters']:
-        if player_character.pk == select_pk:
-            session['character'] = str(player_character)
-    return redirect("/show/character")
-
 """ Use the character creation page to update an existing character. """
-@character_blueprint.route("/modifycharacter/<pk>")
-def char_modify(pk):
+@character_blueprint.route("/modifycharacter/<int:pk_id>")
+def char_modify(pk_id):
     #check to make sure the user is logged in.
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    pk_id_int = -1
-    #check to make sure the pk_id the user sent is actually an integer
-    try:
-        pk_id_int = int(pk)
-    except:
-        flash("That's not a character id, stupid.")
-        log.error("User %s attempted to update a character using malicious id: %s" % (session['username'], pk))
-        return redirect("/")
     #check to make sure the character exists
-    my_character = characters.get_character(pk_id_int)
+    my_character = app.character_db.get_character(pk_id)
     if my_character is None:
         flash("You cannot update a character that isn't yours!")
         return redirect("/")
-    my_character['feats'] = feats.get_characters_feats(my_character['pk_id'])
-    my_character['skills'] = skills.get_characters_skills(my_character['pk_id'])
     user_id = security.get_user_pkid(session)
     all_feats = feats.get_feats()
     #check to make sure the user updating the character actually owns that character.
@@ -226,7 +182,7 @@ def delete_skill():
         flash("That skill doesn't seem to exist")
         log.warn("%s attempted to delete a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
         return redirect("/characters/mine")
-    character = characters.get_character(skill['fk_owner_id'])
+    character = app.character_db.get_character(skill['fk_owner_id'])
     if character is None:
         flash("That Character doesn't seem to exist.")
         log.warn("%s attempted to delete a skill to a character that doesn't exist. Character id %s." % (session['username'], pk_id))
@@ -262,7 +218,7 @@ def update_skill(pk_id):
         flash("That skill doesn't seem to exist")
         log.warn("%s attempted to modify a skill that doesn't exist. skill id: %s" % (session['username'], pk_id))
         return redirect("/characters/mine")
-    character = characters.get_character(skill['fk_owner_id'])
+    character = app.character_db.get_character(skill['fk_owner_id'])
     if character is None:
         flash("That Character doesn't seem to exist.")
         log.warn("%s attempted to modify a skill belonging to a character that \
@@ -285,3 +241,28 @@ def update_skill(pk_id):
         log.warn("There was an error updating skill with pk_id %s" % pk_id)
         flash("there was an error updating the skill")
     return redirect("/modifycharacter/%s" % character['pk_id'])
+
+def update_character(pk_id, request):
+    user_id = security.get_user_pkid(session)
+    new_character = cx_character(request.form, user_id)
+    if not new_character:
+        flash("Something is wrong with your character; we couldn't update it.")
+        return redirect("/modified_character")
+    modified_character = characters.get_character(pk_id_int)
+    if user_id != modified_character['owner']:
+        flash("You cannot modify a character that's not yours!")
+        return redirect("/show/character")
+    characters.update_character(new_character,pk_id_int)
+    flash("Successfully updated character.")
+    return redirect("/modifycharacter/%s" % pk_id)
+
+def delete_character(pk_id):
+    user_id = security.get_user_pkid(session)
+    deleted_character = app.character_db.get_character(pk_id_int)
+    if user_id != deleted_character.owner_id:
+        #todo: we should log this 
+        flash("you cannot delete a character that's not yours!")
+        return redirect("/show/character")
+    app.character_db.delete_character(pk_id_int)
+    flash("Deleted Character successfully.")
+    return redirect("/character/mine")

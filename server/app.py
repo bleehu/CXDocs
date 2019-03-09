@@ -16,8 +16,6 @@ import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb  #Python Debuger is what I use to fix borked code. It should not be called in production EVER!
 #but it's very helpful when being run locally.
-
-import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets us store things in databases
 import os   #we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
@@ -112,7 +110,7 @@ def create_app():
         pc = None   #player character defaults to None if user isn't logged in.
 
         if 'character' in session.keys():   #if player is logged in and has picked a character, we load that character from the session string
-            pc = characters.get_character(session['character'])
+            pc = app.character_db.get_character(session['character'])
         gb = guestbook.get_guestbook()
         return render_template('home.html', \
             session = session, \
