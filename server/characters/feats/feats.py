@@ -1,6 +1,31 @@
-import characters_common
+import feats_database
 import pdb
-import psycopg2
+
+class Feat:
+    """A Character's feat."""
+
+    Select_predicate = "SELECT \
+        pk_id, \
+        feat, \
+        prerequisites,\
+        description, \
+        author, \
+        created_at, \
+        private, \
+        nanite_cost \
+        FROM feats"
+
+    def __init__(self, line):
+        self.pk_id = int(line[0])
+        self.name = line[1]
+        self.title = line[1]
+        prereqs = parse_prereq_list(line[2])
+        self.prerequisites = prereqs
+        self.description = line[3]
+        self.author = line[4]
+        self.created_at = line[5]
+        self.private = line[6]
+        self.nanite_cost = int(line[7])
 
 def get_feats():
     """Return a list of feats from the database."""
@@ -78,32 +103,6 @@ def insert_character_feat_map(mapping):
     myCursor.execute("INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring)
     myCursor.close()
     connection.commit()
-
-class Feat:
-    """A Character's feat."""
-
-    Select_predicate = "SELECT \
-        pk_id, \
-        feat, \
-        prerequisites,\
-        description, \
-        author, \
-        created_at, \
-        private, \
-        nanite_cost \
-        FROM feats"
-
-    def __init__(self, line):
-        self.pk_id = int(line[0])
-        self.name = line[1]
-        self.title = line[1]
-        prereqs = parse_prereq_list(line[2])
-        self.prerequisites = prereqs
-        self.description = line[3]
-        self.author = line[4]
-        self.created_at = line[5]
-        self.private = line[6]
-        self.nanite_cost = int(line[7])
 
 
 def parse_prereq_list(prereq_string):

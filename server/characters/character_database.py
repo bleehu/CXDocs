@@ -2,13 +2,15 @@ from ..database import database
 import character
 from ..cxExceptions import cxExceptions
 
+import feats, skills
+
 """This Module contains methods used by many of the character code files. It is
     not intended for standalone use.
     """
 
 class character_database(database.cx_database):
 
-    def __init__(self, config):
+    def __init__(self, config, log):
         config_map = {"port":5432, 
             "db_host":"localhost", 
             "db_name":"mydb"}
@@ -20,6 +22,9 @@ class character_database(database.cx_database):
         if not config.has_option('Characters', 'username') or not config.has_option('Characters', 'password'):
             raise cxExceptions.ConfigOptionMissingException("Characters database username and password")
         self.my_db = database.cx_database(config_map)
+        self.log = log
+        self.feats_db = feats.feats_database(config, log)
+        self.skills_db = skills.skills_database(config, log)
 
     def get_characters(self):
         queryString = "SELECT name, health, nanites, \

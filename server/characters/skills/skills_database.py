@@ -1,34 +1,19 @@
-import characters_common
-import psycopg2
-from ..security import security
-import pdb
+from ....database import database
 
-global log
+class skills_database:
 
-def initialize_skills(newlog):
-    global log
-    log = newlog
+    def __init__(self, config_map, log):
+        self.my_db = database.cx_database(config_map)
+        self.log = log
+
 
 """ Gets the skill with given pk_id, or returns none if such a skill doesn't exist."""
-def get_skill(pk_id):
-    try:
-        sani_pk_id = int(pk_id)
-    except:
-        return None
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    try:
-        myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
-            FROM skills WHERE pk_id = %s AND deleted_at IS NULL;" % pk_id)
-    except Exception as e:
-        errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database." % pk_id
-        print errmsg
-        print str(e)
-        log.error(errmsg)
-        log.error(str(e))
-        return None
-    line = myCursor.fetchone()
-    skill = parse_line_to_skill(line)
+def get_skill_by_id(self, pk_id):
+    int(pk_id)
+    queryString = "SELECT skillname, points, pk_id, fk_owner_id, created_at \
+            FROM skills WHERE pk_id = %s AND deleted_at IS NULL;" % pk_id
+    db_tuple = self.my_db.fetch_first(queryString)
+    
     return skill
 
 
