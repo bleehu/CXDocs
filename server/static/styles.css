@@ -160,8 +160,8 @@ a {
   background-color: transparent;
 }
 a:hover {
-  color: #1d7097;
-  text-decoration: underline;
+  color: inherit;
+  text-decoration: none;
 }
 
 a:not([href]):not([tabindex]) {
@@ -2718,11 +2718,11 @@ fieldset:disabled a.btn {
   color: #2A9FD6;
 }
 .btn-link:hover {
-  color: #1d7097;
-  text-decoration: underline;
+  color: inherit;
+  text-decoration: none;
 }
 .btn-link:focus, .btn-link.focus {
-  text-decoration: underline;
+  text-decoration: none;
   box-shadow: none;
 }
 .btn-link:disabled, .btn-link.disabled {
@@ -4345,7 +4345,7 @@ input[type=button].btn-block {
 }
 .page-link:hover {
   z-index: 2;
-  color: #1d7097;
+  color: inherit;
   text-decoration: none;
   background-color: #e9ecef;
   border-color: #dee2e6;
@@ -9489,16 +9489,42 @@ body {
   background: radial-gradient(circle at 0px 0px, white, white 10px, #ffee22 30px, #ffffee 60px, #ffcc00 76px, #ffffff 85px, transparent 200px, transparent), url("../../../../static/images/cx_bg1.png");
 }
 
-.list-group:before {
-  content: "";
-  border: solid 100px;
-  border-color: rgba(100, 200, 255, 0.25) transparent;
-  border-top: 0;
+.page-header {
+  color: springgreen;
 }
 
-.list-group-item {
+.content {
+  margin-left: 68px;
+}
+
+.row {
+  flex-wrap: nowrap;
+  margin-left: 0;
+  margin-right: 0;
+}
+.row > div {
+  flex: 0 1 20%;
+}
+
+.holo-list-group {
+  margin-top: -15px;
+}
+
+.holo-list-group:before {
+  content: "";
+  border: solid 96px;
+  border-color: rgba(100, 200, 255, 0.25) transparent;
+  border-top: 0;
+  transform: rotateX(50deg);
+}
+
+.holo-list-group-item {
   background: rgba(100, 200, 255, 0.75);
   color: #222222;
+}
+
+.holo-list-group-item:first-child {
+  margin-top: -18px;
 }
 
 footer {
@@ -9509,7 +9535,7 @@ footer {
   background: #000;
   border: solid 2px #C0C0C0;
   border-radius: 15px;
-  margin: 0.5rem 0.5rem 0 0.5rem;
+  margin: 0.5rem 0 0 0;
   padding: 0;
 }
 
@@ -9527,16 +9553,20 @@ footer {
   width: 100%;
   align-content: space-around;
 }
+.navbar-nav > * {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
 .navbar-nav > *:first-child {
-  margin-left: 1rem;
-  margin-right: auto;
+  margin-left: 0;
 }
 .navbar-nav > *:last-child {
-  margin-left: auto;
-  margin-right: 1rem;
+  margin-right: 0;
 }
 
 .nav-item {
+  white-space: nowrap;
   background-color: #e9ecef;
   border-radius: 10px;
   margin: 0.25rem auto;
@@ -9549,10 +9579,12 @@ footer {
   border-right: solid 0.5rem black;
   border-left: solid 0.5rem black;
   border-radius: 15px;
+  padding: 0 0.5rem;
 }
 
 .nav-form-input {
   display: inline-block;
+  width: 35%;
   border: 2px solid #e9ecef;
   border-radius: 10px;
   margin: 0.25rem 0.5rem;

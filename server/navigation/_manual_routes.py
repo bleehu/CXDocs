@@ -11,12 +11,13 @@ def get_manual_routes():
 
         '/': {
             'label': "Home",
-            'navbar': ( '/newplayer', '/rules/', '/gm/' ),
-            'filepath_option': None
+            'navbar': ( '/rules/overview', '/rules/', '/gm/' ),
+            'filepath_option': None,
+            'nav_list': None
         },
         '/rules/': {
             'label': "Rules",
-            'navbar': ( '/newplayer', '/gm/' ),
+            'navbar': ( '/newplayer', '/rules/glossary', '/rules/combat', '/items/' ),
             'filepath_option': None,
             'nav_list': (
                 '/rules/glossary',
@@ -30,7 +31,18 @@ def get_manual_routes():
         '/items/': {
             'label': "Items",
             'navbar': ( '/newplayer', '/rules/', '/gm/' ),
-            'filepath_option': None
+            'filepath_option': None,
+            'nav_list': (
+                '/items/meleeweapons',
+                '/items/pistols',
+                '/items/smgs',
+                '/items/carbines',
+                '/items/longrifles',
+                '/items/machineguns',
+                '/items/weaponattachments',
+                '/items/armor',
+                '/items/misc'
+            )
         },
         '/gm/': {
             'label': "For GMs",

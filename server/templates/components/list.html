@@ -1,6 +1,6 @@
-{% macro listItemLink(hrefLink, text) -%}
+{% macro holoListItemLink(hrefLink, text) -%}
 
-<li class="list-group-item"><a href="{{ hrefLink }}">{{ text }}</a></li>
+<li class="list-group-item holo-list-group-item"><a href="{{ hrefLink }}">{{ text }}</a></li>
 
 {%- endmacro %}
 
@@ -8,10 +8,14 @@
 
 {% macro holoListOfLinks(links) -%}
 
-<ul class="list-group">
+{% if links|length > 0 %}
+<ul class="list-group holo-list-group">
 {% for item in links %}
-  {{ listItemLink(item[1], item[0]) }}
+
+  {{ holoListItemLink(item[1], item[0]) }}
+
 {% endfor %}
 </ul>
+{% endif %}
 
 {%- endmacro %}
