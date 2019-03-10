@@ -1,15 +1,15 @@
 import characters
 import ConfigParser
-import csv #sometimes we save or read stuff in .csv format. This helps with that a lot.
 #these imports are for python files we wrote ourselves.
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
 
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
 from characters.character_routes import character_blueprint, initialize_characters
+from navigation import nav_dict as nav  # Module created by AK to allow dynamic front-end navigation
 
 #flask is a python webserver built on Werkzeug. This is what is in charge of our
 #main web app. It's how we respond to HTTP requests, etc.
-from flask import Flask, render_template, make_response, request, redirect, session, escape, flash
+from flask import Flask, render_template, make_response, request, redirect, session, escape, flash, abort
 
 import guestbook #our custom guestbook for showing who all is on at once.
 import json #sometimes we load or save things in json. This helps with that.
@@ -51,38 +51,33 @@ def create_app():
     #these two lines activate our character creator and enemy creator "plugins."
     app.register_blueprint(enemy_blueprint)
     app.register_blueprint(character_blueprint)
+
     #both flask and werkzeug (what flask is built on) output their information to a log called "log." by declaring it here,
+    global log
     #we can use python's logging library to easily put more helpful information into the server log to help make our admin's
     #lives much easier.
-    global log
+    local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
+    log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
+    logging.basicConfig(filename=log_filename, level=logging.INFO)
+    log = logging.getLogger("cxDocs:")
+
     #whos_on is a list of tuples with displaynames and last-action timestamps that we use to show who's currently using this
     #web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
     global whos_on
 
-    """depricated. """
-    def get_levels():
-        levels = []
-        with open('docs/levels.csv', 'r') as csvfile:
-            csv_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-            for line in csv_reader:
-                levels.append(line)
-        return levels
+    global config
+    config = ConfigParser.RawConfigParser()
+    config.read('config/cxDocs.cfg')
 
-    """ depricated. Used to show dungeons that were actively being run."""
-    def get_missions():
-        connection = psycopg2.connect("dbname=mydb user=searcher password=allDatSQL")
-        myCursor = connection.cursor()
-        myCursor.execute("SELECT * FROM missions ORDER BY level;")
-        missions = []
-        results = myCursor.fetchall()
-        for miss in results:
-            pk = int(miss[0])
-            name = miss[1]
-            description = miss[2]
-            level = int(miss[3])
-            new_mission = Mission(pk, name, level, description)
-            missions.append(new_mission)
-        return missions
+    # Create the routes dictionary so we can use the nav module
+    if config.has_section('Parser'):
+        nav.create_dict(config.options('Parser'))
+    else:
+        print "Config file has no [Parser] section; Cannot load rules documents."
+        print "Have you tried running the generate_config.py helper script?"
+        print "See config/README.md for more help configuring your parser."
+        log.warn("Parser Section not configured; cannot load rules documents on index page.")
+        log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
 
     """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
      to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
@@ -93,9 +88,10 @@ def create_app():
 
      Returns the flask template of the rules page requested if configured correctly. If it detects an error, flashes
      an error message and redirects to the home page. """
-    def parser_page(config_option):
-        if config.has_section('Parser') and config.has_option('Parser', config_option):
-            rule_filepath = config.get('Parser', config_option)
+    def parser_page(page):
+        if nav.page_exists(page) and nav.page_has_filepath(page):
+            rule_filepath = config.get('Parser', nav.get_filepath_for_endpoint(page))
+
             if not os.path.isfile(rule_filepath):
                 log.error("Rule document missing: %s." % rule_filepath)
                 log.error("Maybe check to see if cxDocs.cfg is configured correctly?")
@@ -103,137 +99,27 @@ def create_app():
                 return redirect("/")
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
-            return render_template("utility/site/parser.html", elements = tokens)
+            return render_template("utility/site/parser.html", elements = tokens, \
+                navOptions = nav.generate_navbar_options_for_page(page))
         else:
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
             return redirect("/")
 
-    """ reads the config document to build a list of names of rules documents and their filepath.
-
-    returns a list of tuples, where the first field is the name of the document and the second is the
-        filepath to the document. Assumed to be the rules for the game Compound X from github.bleehu/Compound_X"""
-    def get_rules_docs():
-            rulesDocs = []
-            if config.has_option('Parser', 'basic_rules_filepath'):
-                rulesDocs.append(('Basic Rules','/docs/basic'))
-
-            if config.has_option('Parser', 'combat_rules_filepath'):
-                rulesDocs.append(('Combat Rules','/docs/combat'))
-
-            if config.has_option('Parser', 'damage_types_filepath'):
-                rulesDocs.append(('Damage Types and Armors','/docs/damagetypes'))
-
-            if config.has_option('Parser', 'conditions_filepath'):
-                rulesDocs.append(('Conditions','/docs/conditions'))
-
-            if config.has_option('Parser', 'level_up_filepath'):
-                rulesDocs.append(('Level Up Rules', '/docs/levelup'))
-
-            if config.has_option('Parser', 'cloaking_rules_filepath'):
-                rulesDocs.append(('Cloaking Rules','/docs/cloaking'))
-
-            if config.has_option('Parser', 'glossary_filepath'):
-                rulesDocs.append(('Glossary of Terms','/docs/glossary'))
-
-            if len(rulesDocs) < 1:
-                log.warn("Looked for Rules documents, but didn't find any. See config/README.md to configure rules docs.")
-                return None
-            return rulesDocs
-
-    def get_items_docs():
-        itemsDocs = []
-        if config.has_option('Parser', 'melee_weapons_filepath'):
-            itemsDocs.append(('Melee Weapons','/docs/meleeWeapons'))
-
-        if config.has_option('Parser', 'pistols_filepath'):
-            itemsDocs.append(('Pistols','/docs/pistols'))
-
-        if config.has_option('Parser', 'smgs_filepath'):
-            itemsDocs.append(('Submachine Guns','/docs/smgs'))
-
-        if config.has_option('Parser', 'carbines_filepath'):
-            itemsDocs.append(('Carbines and Assault Rifles','/docs/carbines'))
-
-        if config.has_option('Parser', 'long_rifles_filepath'):
-            itemsDocs.append(('Long Rifles and DMRs','/docs/longRifles'))
-
-        if config.has_option('Parser', 'machineguns_filepath'):
-            itemsDocs.append(('Machine Guns and Rocket Launchers','/docs/machineguns'))
-
-        if config.has_option('Parser', 'explosives_filepath'):
-            itemsDocs.append(('Explosives', '/docs/explosives'))
-
-        if config.has_option('Parser', 'weapon_attachments_filepath'):
-            itemsDocs.append(('Weapon Attachments','/docs/weaponAttachments'))
-
-        if config.has_option('Parser', 'armor_filepath'):
-            itemsDocs.append(('Armor','/docs/armor'))
-
-        if config.has_option('Parser', 'items_filepath'):
-            itemsDocs.append(('Items','/docs/items'))
-
-        if len(itemsDocs) < 1:
-            log.warn("Looked for Item documents, but didn't find any. See config/README.md to configure rules docs.")
-            return None
-        return itemsDocs
-
-    def get_character_docs():
-        character_docs = []
-        if config.has_option('Parser', 'new_player_walkthrough_filepath'):
-            character_docs.append(('New Player Walkthrough','/docs/newplayer'))
-
-        if config.has_option('Parser', 'races_filepath'):
-            character_docs.append(('Races','/docs/races'))
-
-        if config.has_option('Parser', 'classes_filepath'):
-            character_docs.append(('Classes','/docs/classes'))
-
-        if config.has_option('Parser', 'feats_filepath'):
-            character_docs.append(('Feats','/docs/feats'))
-
-        if config.has_option('Parser', 'skills_filepath'):
-            character_docs.append(('Skill','/docs/skills'))
-
-        if config.has_option('Parser', 'Engineer_filepath'):
-            character_docs.append(('Engineer Processes','/docs/engineers'))
-
-        if config.has_option('Parser', 'Medic_filepath'):
-            character_docs.append(('Medic Procedures','/docs/medics'))
-        if len(character_docs) < 1:
-            log.warn("Looked for Character documents, but didn't find any. See config/README.md to configure rules docs.")
-            return None
-        return character_docs
-
     """handles the display of the main page for the site. """
-    @app.route("/") #tells flask what url to trigger this behavior for. In this case, the main page of the site.
+    @app.route('/') #tells flask what url to trigger this behavior for. In this case, the main page of the site.
     def hello():            #tells flask what method to use when you hit a particular route. Same as regular python function definition.
         session['X-CSRF'] = "foxtrot"   #set a session token. This helps prevent session takeover hacks.
         pc = None   #player character defaults to None if user isn't logged in.
-        docs = None
-        rulesDocs = None
-        itemsDocs = None
-        character_docs = None
-        if config.has_section('Parser'):
-            rulesDocs = get_rules_docs()
-            itemsDocs =  get_items_docs()
-            character_docs = get_character_docs()
-        else:
-            print "Config file has no [Parser] section; Cannot load rules documents."
-            print "Have you tried running the generate_config.py helper script?"
-            print "See config/README.md for more help configuring your parser."
-            log.warn("Parser Section not configured; cannot load rules documents on index page.")
-            log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
 
         if 'character' in session.keys():   #if player is logged in and has picked a character, we load that character from the session string
             pc = characters.get_character(session['character'])
         gb = guestbook.get_guestbook()
         return render_template('home.html', \
-            session=session, \
-            character=pc, \
-            rulesDocs=rulesDocs, \
-            itemsDocs= itemsDocs, \
-            character_docs=character_docs, \
+            session = session, \
+            character = pc, \
+            navOptions = nav.generate_navbar_options_for_page('/'), \
+            navLists = nav.generate_nav_lists_for_page('/'), \
             guestbook = gb) #the flask method render_template() shows a jinja template
         #jinja templates are kept in the /templates/ directory. Save them as .html files, but secretly, they use jinja to generate web pages
         #dynamically.
@@ -245,105 +131,27 @@ def create_app():
         gbook = json.dumps(guestbook.get_guestbook())
         return gbook
 
-    #begin parser pages
+    # General route structure and method for displaying rules and related data/info
+    @app.route('/rules/')
+    @app.route('/gm/')
+    @app.route('/items/')
+    @app.route('/<topic>')
+    @app.route('/<topic>/<subtopic>')
+    def rules_pages(topic=None, subtopic=None):
+        endpoint = '/' + (topic or request.path[1:])
 
-    @app.route("/docs/classes")
-    def docs_classes():
-        return parser_page('classes_filepath')
+        if subtopic != None:
+            endpoint += '/' + subtopic
 
-    @app.route("/docs/races")
-    def docs_races():
-        return parser_page('races_filepath')
-
-    @app.route("/docs/items")
-    def docs_items():
-        return parser_page('items_filepath')
-
-    @app.route("/docs/feats")
-    def docs_feats():
-        return parser_page('feats_filepath')
-
-    @app.route("/docs/levelup")
-    def docs_levelup():
-        return parser_page('level_up_filepath')
-
-    @app.route("/docs/meleeWeapons")
-    def docs_melee():
-        return parser_page('melee_weapons_filepath')
-
-    @app.route("/docs/pistols")
-    def docs_pistols():
-        return parser_page('pistols_filepath')
-
-    @app.route("/docs/smgs")
-    def docs_smgs():
-        return parser_page('smgs_filepath')
-
-    @app.route("/docs/carbines")
-    def docs_carbines():
-        return parser_page('carbines_filepath')
-
-    @app.route("/docs/longRifles")
-    def docs_long_rifles():
-        return parser_page('long_rifles_filepath')
-
-    @app.route("/docs/machineguns")
-    def docs_machineguns():
-        return parser_page('machineguns_filepath')
-
-    @app.route("/docs/explosives")
-    def docs_explosives():
-        return parser_page('explosives_filepath')
-
-    @app.route("/docs/weaponAttachments")
-    def docs_wep_attachments():
-        return parser_page('weapon_attachments_filepath')
-
-    @app.route("/docs/armor")
-    def docs_armor():
-        return parser_page('armor_filepath')
-
-    @app.route("/docs/skills")
-    def docs_skills():
-        return parser_page('skills_filepath')
-
-    @app.route("/docs/basic")
-    def docs_basic():
-        return parser_page('basic_rules_filepath')
-
-    @app.route("/docs/medics")
-    def docs_medics():
-        return parser_page('Medic_filepath')
-
-    @app.route("/docs/engineers")
-    def docs_engineers():
-        return parser_page('Engineer_filepath')
-
-    @app.route("/docs/combat")
-    def docs_combat():
-        return parser_page('combat_rules_filepath')
-
-    @app.route("/docs/conditions")
-    def docs_conditions():
-        return parser_page('conditions_filepath')
-
-    @app.route("/docs/damagetypes")
-    def docs_damage():
-        return parser_page('damage_types_filepath')
-
-    @app.route("/docs/cloaking")
-    def docs_cloaking():
-        return parser_page('cloaking_rules_filepath')
-
-    @app.route("/docs/glossary")
-    def docs_glossary():
-        return parser_page('glossary_filepath')
-
-    @app.route("/docs/newplayer")
-    def docs_new_walkthrough():
-        return parser_page('new_player_walkthrough_filepath')
-
-    #End parser pages
+        # Checks route for appropriate template to use: parser, unique, home, or error if doesn't exist
+        if nav.page_has_filepath(endpoint) == True:
+            return parser_page(endpoint)
+        elif nav.page_has_template(endpoint) == True:
+            return render_template(nav.get_template_for_endpoint(endpoint), navOptions = nav.generate_navbar_options_for_page(endpoint))
+        elif nav.page_exists(endpoint) == True:
+            return render_template('home.html', navOptions = nav.generate_navbar_options_for_page(endpoint))
+        else:
+            abort(404)
 
     @app.route("/docs/trees")
     def docs_skill_trees():
@@ -418,18 +226,6 @@ def create_app():
     def gamelogs():
         return render_template("gamelogs.html")
 
-    @app.route("/designhowto")
-    def show_design_howto():
-        return render_template("creation_manuals/design_how_to.html")
-
-    @app.route("/monsterweaponshowto")
-    def show_monster_weapons_howto():
-        return render_template("creation_manuals/monster_weapon_how_to.html")
-
-    @app.route("/monsterarmorhowto")
-    def show_monster_armor_howto():
-        return render_template("creation_manuals/monster_armor_how_to.html")
-
     """ set generic handlers for common errors."""
     @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python.
     def borked_it(error):
@@ -449,10 +245,6 @@ def create_app():
 
     host = "localhost" #default to local only when running.
 
-    global config
-    config = ConfigParser.RawConfigParser()
-    config.read('config/cxDocs.cfg')
-
     seconds_away = 60
     seconds_out = 3600
     if config.has_option('WhosHere', 'Seconds_away'):
@@ -461,11 +253,6 @@ def create_app():
         seconds_out = config.get('WhosHere', 'Seconds_out')
     guestbook.initialize(seconds_away, seconds_out)
 
-    local_dir = os.path.dirname(__file__) #get local directory, so we know where we are saving files.
-    log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
-    logging.basicConfig(filename=log_filename, level=logging.INFO)
-    global log
-    log = logging.getLogger("cxDocs:")
     initialize_enemies(config, log)
     initialize_characters(config, log)
     cxExceptions.initialize(log)

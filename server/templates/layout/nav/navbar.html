@@ -1,4 +1,6 @@
-<nav class="navbar navbar-expand-lg">
+{% import './components/nav.html' as nav %}
+
+<nav class="navbar navbar-expand-sm">
   <a href="/" class="navbar-brand">CX</a>
 
   <button class="navbar-toggler" type="button"
@@ -8,46 +10,32 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse navbar-screen carousel slide"
-    id="navbarMain" data-wrap="false" data-interval="false"
-  >
-    <div class="carousel-inner" role="listbox">
+  <div class="collapse navbar-collapse navbar-screen" id="navbarMain">
+    <div class="carousel slide w-100" id="navbarCarousel" data-wrap="false" data-interval="false">
+      <div class="carousel-inner" role="listbox">
+        {% if navOptions != undefined %}
+        <div class="carousel-item active">
 
-      <div class="carousel-item active">
-        <ul class="navbar-nav w-100">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Getting Started</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">The Game</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Report Issues</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Game Feedback</a>
-          </li>
+          {{ nav.navbarList(navOptions) }}
 
-          {% if 'username' in session %}
+        </div>
+        {% endif %}
 
-          {% include './users/login/logout_button.html' %}
+        <div class="carousel-item">
+          <ul class="navbar-nav" id="loginNav">
+            <li>
+              <a class="nav-item nav-link" href="#navbarCarousel" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span> Back
+              </a>
+            </li>
 
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="#navbarMain" data-slide="next"
-              aria-controls="loginNav" aria-expanded="false" aria-label="Toggle Login"
-            >
-              Login <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </a>
-          </li>
-          {% endif %}
+            {% include './users/login/login_form.html' %}
 
-        </ul>
-
-      </div>
-
-      <div class="carousel-item">
-        {% include './users/login/login_form.html' %}
+            <li>
+              <a class="nav-item nav-link" href="#">Register</a>
+            </li>
+          </ul>
+        </div>
 
       </div>
 
