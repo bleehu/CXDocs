@@ -1,67 +1,67 @@
 # CXDocs
-Compound X rules displayed as web pages. Written in Python 2.7, served with Flask and bootstraped with bootswatch.
+
+Compound X rules displayed as web pages. Written in Python 2.7, served with 
+Flask and bootstraped with bootswatch.
 
 # set up
+
 ## Python module instalation
-### On Ubuntu 16.04
+
+### Python module instalation on Ubuntu 16.04
+
 1) $sudo apt-get install python
 2) $sudo apt-get install build-essentials
 2) $sudo apt-get install python-pip
 4) $pip install --upgrade pip
-1) $git clone https://github.com/bleehu/CXDocs.git
-2) $sudo pip install flask
-3) $sudo pip install pipenv
-4) $pipenv install -r travis/requirements.txt
+5) $git clone https://github.com/bleehu/CXDocs.git
+6) $sudo pip install flask
+7) $sudo pip install pipenv
+8) $pipenv install -r travis/requirements.txt
+9) make sure `$flask --version` gives a version > 1.0.1
 
-### On Windows
+### Python module instalation on Windows
+
 1) Install Python https://www.python.org/
 2) Add Python and Python Scripts to Path https://stackoverflow.com/questions/21372637/installing-python-2-7-on-windows-8
 3) Use pip to install flask and psycopg2 (it was added to command prompt with python scripts)
-4) resolve local host and open port 5000 ???
+4) make sure `>flask --version` gives a version > 1.0.1
+5) resolve local host and open port 5000 ???
 
 ### Helpful hints on windows
+
 1) Use the windows Command Prompt
 2) cd is change directory, dir is list contents of a directory
 3) use cd /d G:\ to change to g drive if need be
 
+## Running the CXDocs Application
+
+### Running the CXDocs Application on Ubuntu
 
 to test navigate to the root directory and, use:
 
-`$export FLASK_APP=sever/app.py` or on Windows: `$set FLASK_APP=server/app.py`
-
-`$export FLASK_ENV=development` or on Windows: `$set FLASK_ENV=development`
-
+`$export FLASK_APP=sever/app.py` 
+`$export FLASK_ENV=development` 
 `$flask run` will start the application. 
+
+When the application is running, you should be able to open a browser like 
+Chrome or Firefox and go to `localhost:5000` to see the application running.
+
+### Running the CXDocs Application on Windows
+
+`$set FLASK_APP=server/app.py`
+`$set FLASK_ENV=development`
+`$flask run` will start the application. 
+
+When the application is running, you should be able to open a browser like 
+Chrome or Firefox and go to `localhost:5000` to see the application running.
+
+## A common error on both platforms during testing
 
 At this stage, if you get an error along the lines of "Failed to find application 
 in module "CX_Docs_Local.server.app".", it is possible that you need to update 
 Flask, as factories were added in 1.0. You can check your flask version by 
 opening a python terminal (`$python`), then `$import flask` and `$flask.__version__`. 
 Use `$pip install --upgrade Flask` (outside the python terminal) to update. 
-
-In order to use the database to do things like login, you'll also need to set
-the [auth] config settings. See the /config/Readme.md for more info. You'll also
-need to set `$export FLASK_PASS=blah` and `$export FLASK_USER=blah`, but instead
-of "blah", substitute the actual username and password for logging into the auth
-server.
-
-then in a web browser, go to localhost:5000/levelup
-
-For sharing dev over LAN (for one house), use:
-
-`$python start.py -i local.ip.goes.here`
-
-to find your local ip address on linux, use ifconfig in a terminal.
-
-to find your local ip address on windows, use ipconfig in bash.
-
-For WWW use:
-
-CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are
-still some improvements that should be made in order to keep it safe. Feel free
-to contact bleehu@uw.edu for information about how to stand up your own public
-instance of CX Docs.
-
 
 ## Setting up configs
 
@@ -74,11 +74,19 @@ Generating a config is as easy as running
 That should write a file in /config/cxDocs.cfg which will have useful options
 set which are detailed in /config/Readme.md
 
+## Using the database
+
+In order to use the database to do things like login, you'll also need to set
+the [auth] config settings. See the /config/Readme.md for more info. You'll also
+need to set `$export FLASK_PASS=blah` and `$export FLASK_USER=blah`, but instead
+of "blah", substitute the actual username and password for logging into the auth
+server.
+
 ## Setting up postgres database for login, bestiary, and character creation
 
 you will need Postgres 9.5.x or 10.x
 
-### On Ubuntu 16.04
+### Installing Postgres On Ubuntu 16.04
 
 Postgres should be already installed. To check, try typing into the console:
 
@@ -94,7 +102,7 @@ and
 
 `sudo apt-get install postgresql-client-9.5`
 
-### On Windows
+### Installing Postgres On Windows
 
 Windows doesn't come with postgres standard. It's almost like they didn't expect
 you to run a webserver off of your office box.
@@ -174,7 +182,34 @@ There shouldn't be any errors. If you log into the database using
 you should be able to run SQL queries to look at all of the information on the
 database. For example, `\dt` should list the available tables.
 
-## Install Sass and Compile into CSS
+## Opening up your CXDocs instance so others can use it
+
+#LAN (for one house)
+
+If you're running CXDocs on your laptop and you're connected to the LAN wireless
+router in your house, then you can simply use this command.
+
+`$flask run --host=0.0.0.0`
+
+You likely won't be able to have CXDocs accessable to the global internet from
+the laptop in your house due to your router's dynamic IP address and default
+firewall rules. In order for another machine in your house to log into your
+instance of CXDocs, they will have to open Chrome or Firefox and type in your
+local ip address, colon, then the port number 5000 like so:
+`x.x.x.x:5000`.
+
+to find your local ip address on *linux*, use *ifconfig* in a terminal.
+
+to find your local ip address on *windows*, use *ipconfig* in bash.
+
+## Setting CXDocs loose on the world
+
+CXDocs is being tested on an AWS instance behind an NGinX SSL proxy. There are
+still some improvements that should be made in order to keep it safe. Feel free
+to contact silverstrike91@hotmail.com for information about how to stand up your 
+own public instance of CX Docs.
+
+## (frontend dev) Install Sass and Compile into CSS
 
 NOTE: You will only need to install Sass if you're going to make front-end style changes.
 (Without Sass, you can still use Bootstrap classes and our classes in HTML, but you won't be able to manipulate them or make your own.
