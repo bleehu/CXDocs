@@ -86,9 +86,10 @@ def create_app():
 
      Returns the flask template of the rules page requested if configured correctly. If it detects an error, flashes
      an error message and redirects to the home page. """
-    def parser_page(config_option):
-        if config.has_section('Parser') and config.has_option('Parser', config_option):
-            rule_filepath = config.get('Parser', config_option)
+    def parser_page(page):
+        if nav.page_exists(page) and nav.page_has_filepath(page):
+            rule_filepath = config.get('Parser', nav.get_filepath_for_endpoint(page))
+
             if not os.path.isfile(rule_filepath):
                 log.error("Rule document missing: %s." % rule_filepath)
                 log.error("Maybe check to see if cxDocs.cfg is configured correctly?")
@@ -97,7 +98,7 @@ def create_app():
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
             return render_template("utility/site/parser.html", elements = tokens, \
-                navOptions = nav.generate_navbar_options_for_page('/'))
+                navOptions = nav.generate_navbar_options_for_page(page))
         else:
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
@@ -123,35 +124,27 @@ def create_app():
         gbook = json.dumps(guestbook.get_guestbook())
         return gbook
 
-    #begin parser pages
+    # General route structure and method for displaying rules and related data/info
+    @app.route('/rules/')
+    @app.route('/gm/')
+    @app.route('/items/')
     @app.route('/<topic>')
-    def basics(topic):
-      endpoint = '/' + topic
+    @app.route('/<topic>/<subtopic>')
+    def rules_pages(topic=None, subtopic=None):
+        endpoint = '/' + (topic or request.path[1:])
 
-      if nav.page_has_filepath(endpoint) == True:
-        return parser_page(nav.get_filepath_for_endpoint(endpoint))
-      else:
-        abort(404)
+        if subtopic != None:
+            endpoint += '/' + subtopic
 
-    @app.route('/rules/<topic>')
-    def rules(topic):
-      endpoint = '/rules/' + topic
-
-      if nav.page_has_filepath(endpoint) == True:
-        return parser_page(nav.get_filepath_for_endpoint(endpoint))
-      else:
-        abort(404)
-
-    @app.route('/items/<category>')
-    def items(category):
-      endpoint = '/items/' + category
-
-      if nav.page_has_filepath(endpoint) == True:
-        return parser_page(nav.get_filepath_for_endpoint(endpoint))
-      else:
-        abort(404)
-
-    #End parser pages
+        # Checks route for appropriate template to use: parser, unique, home, or error if doesn't exist
+        if nav.page_has_filepath(endpoint) == True:
+            return parser_page(endpoint)
+        elif nav.page_has_template(endpoint) == True:
+            return render_template(nav.get_template_for_endpoint(endpoint), navOptions = nav.generate_navbar_options_for_page(endpoint))
+        elif nav.page_exists(endpoint) == True:
+            return render_template('home.html', navOptions = nav.generate_navbar_options_for_page(endpoint))
+        else:
+            abort(404)
 
     @app.route("/docs/trees")
     def docs_skill_trees():
@@ -225,18 +218,6 @@ def create_app():
     @app.route("/gamelogs")
     def gamelogs():
         return render_template("gamelogs.html")
-
-    @app.route("/gm/designhowto")
-    def show_design_howto():
-        return render_template("creation_manuals/design_how_to.html")
-
-    @app.route("/gm/monsterweaponshowto")
-    def show_monster_weapons_howto():
-        return render_template("creation_manuals/monster_weapon_how_to.html")
-
-    @app.route("/gm/monsterarmorhowto")
-    def show_monster_armor_howto():
-        return render_template("creation_manuals/monster_armor_how_to.html")
 
     """ set generic handlers for common errors."""
     @app.errorhandler(500) #an HTTP 500 is given when there's a server error, for instance if  there's a Nonetype error in python.

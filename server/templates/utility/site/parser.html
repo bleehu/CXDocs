@@ -25,8 +25,8 @@
       </div>
     </div>
 
-    <div class="col-lg-10"> <!-- main column -->
-      <div class="row">
+    <div class="flex-fill"> <!-- main column -->
+      <div>
       {% for element in elements %}
         {% if element['type'] == 'ul' or element['type'] == 'ol' %}
         <{{ element['type'] }}>

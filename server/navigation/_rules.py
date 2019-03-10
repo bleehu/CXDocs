@@ -30,7 +30,8 @@ def _generate_routes_dict_from_options(options_list, path_dict, category):
             route_dict[path_dict[path][1]] = {
                 'label': path_dict[path][0],
                 'filepath_option': path,
-                'navbar': path_dict[path][2]
+                'navbar': path_dict[path][2],
+                'nav_list': None if len(path_dict[path]) <= 3 else path_dict[path][3]
             }
 
             dict_length -= 1

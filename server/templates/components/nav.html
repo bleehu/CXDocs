@@ -1,6 +1,6 @@
 {% macro navItem(title, hrefLink) -%}
 
-<li class="nav-item"><a class="nav-link" href="{{ hrefLink }}">{{ title }}</a></li>
+<li><a class="nav-item nav-link" href="{{ hrefLink }}">{{ title }}</a></li>
 
 {%- endmacro %}
 
@@ -20,16 +20,15 @@
   {% include './users/login/logout_button.html' %}
 
 {% else %}
-
-  <li class="nav-item">
-    <a class="nav-link" href="#navbarCarousel" data-slide="next"
+  <li>
+    <a class="nav-item nav-link" href="#navbarCarousel" data-slide="next"
       aria-controls="loginNav" aria-expanded="false" aria-label="Toggle Login"
     >
       Login <span class="carousel-control-next-icon" aria-hidden="true"></span>
     </a>
   </li>
-
 {% endif %}
+
 </ul>
 
 {%- endmacro %}
