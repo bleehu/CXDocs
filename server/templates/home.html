@@ -1,38 +1,25 @@
-{%extends "layout.html"%}
+{% extends 'layout.html' %}
 {% import './components/list.html' as list %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="row justify-content-between">
+<div class="row justify-content-between w-100">
 
   {% for navList in navLists %}
   <div>
 
-    {{ list.holoListOfLinks(navList)}}
+    {{ list.holoListOfLinks(navList) }}
 
   </div>
   {% endfor %}
 
+  {% if 'username' not in session %}
   <div></div>
+  {% endif %}
 
   {# MEMBERS SECTION #}
   {% if 'username' in session %}
-
-  {# Not sure how many of these are needed. For now, they are at most only for members. #}
-  <div>
-    {% set miscLinks = [
-      ['NPC Generator', '/npcgen'],
-      ['Files', '/files'],
-      ['Game Logs', '/gamelogs'],
-      ['Mission Files', '/missionfiles']
-    ] %}
-
-    {{ list.holoListOfLinks(miscLinks) }}
-
-  </div>
-
-  {# TODO: make only available to admins #}
   <div class="col-lg-3 col-md-3 col-sm-4">
     <div class="card border-secondary">
       <div class="card-header">Enemy Component Browser</div>
@@ -61,20 +48,6 @@
       </div>
     </div>
   </div>
-
-  <div class="col-lg-3 col-md-3 col-sm-4">
-    <h5>Available Help Pages:</h5>
-
-    {% set helpLinks = [
-      ['How to: General Design', '/gm/designhowto'],
-      ['How to: Enemy Weapons', '/gm/monsterweaponshowto'],
-      ['How to: Enemy Armor', '/gm/monsterarmorhowto']
-    ]%}
-
-    {{ list.holoListOfLinks(helpLinks) }}
-
-  </div>
-
   {% endif %}
   {# END MEMBERS SECTION #}
 

@@ -2,6 +2,7 @@
 # (Having to manage this is why the module is broken down into these files.)
 
 _rules_navbar = ('/rules/overview', '/rules/', '/rules/checks', '/rules/glossary')
+_rules_nav_list = ('/rules/checks', '/rules/combat', '/rules/conditions', '/rules/cloaking', '/rules/glossary')
 
 def get_dict():
     return {
@@ -10,7 +11,7 @@ def get_dict():
             'navbar': _rules_navbar,
             'template_to_render': 'home.html',
             'filepath_option': None,
-            'nav_list': None
+            'nav_list': _rules_nav_list
         }
     }
 
@@ -27,21 +28,25 @@ def get_filepath_dict():
         'combat_rules_filepath': (
             "Combat",
             '/rules/combat',
-            _rules_navbar
+            _rules_navbar,
+            _rules_nav_list
         ),
         'conditions_filepath': (
             "Ailments",
             '/rules/conditions',
-            _rules_navbar
+            _rules_navbar,
+            _rules_nav_list
         ),
         'cloaking_filepath': (
             "Cloaking",
             '/rules/cloaking',
-            _rules_navbar
+            _rules_navbar,
+            _rules_nav_list
         ),
         'glossary_filepath': (
             "Glossary",
             '/rules/glossary',
-            _rules_navbar
+            _rules_navbar,
+            _rules_nav_list
         )
     }

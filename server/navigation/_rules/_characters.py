@@ -2,6 +2,7 @@
 # (Having to manage this is why the module is broken down into these files.)
 
 _characters_navbar = ('/rules/overview', '/rules/', '/races', '/classes', '/rules/glossary')
+_characters_nav_list = ('/races', '/classes', '/skills', '/feats', '/rules/engineers', '/rules/levelup')
 
 def get_filepath_dict():
     return {
@@ -16,31 +17,37 @@ def get_filepath_dict():
         'races_filepath': (
             "Races",
             '/races',
-            _characters_navbar
+            _characters_navbar,
+            _characters_nav_list
         ),
         'classes_filepath': (
             "Classes",
             '/classes',
-            _characters_navbar
+            _characters_navbar,
+            _characters_nav_list
         ),
         'skills_filepath': (
             "Skills",
             '/skills',
-            _characters_navbar
+            _characters_navbar,
+            _characters_nav_list
         ),
         'feats_filepath': (
             "Feats",
             '/feats',
-            _characters_navbar
+            _characters_navbar,
+            _characters_nav_list
         ),
         'engineer_filepath': (
             "Engineer Processes",
             '/rules/engineers',
-            _characters_navbar
+            _characters_navbar,
+            _characters_nav_list
         ),
         'level_up_filepath': (
             "Leveling Up",
             '/rules/levelup',
-            _characters_navbar
+            _characters_navbar,
+            _characters_nav_list
         )
     }

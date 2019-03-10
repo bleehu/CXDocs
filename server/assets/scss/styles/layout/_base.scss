@@ -8,3 +8,7 @@ body {
     radial-gradient(circle at 0px 0px, white, white 10px, #ffee22 30px, #ffffee 60px, #ffcc00 76px, #ffffff 85px, transparent 200px, transparent),
     url('../../../../static/images/cx_bg1.png');
 }
+
+img {
+  max-width: 100%;
+}

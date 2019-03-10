@@ -14,11 +14,12 @@ def get_filepath_dict():
             "New to RPGs?",
             '/newplayer',
             ('/rules/overview', '/races', '/classes', '/files'),
-            ('/rules/combat', '/files', '/rules/glossary')
+            ('/rules/checks', '/rules/combat', '/files', '/rules/glossary')
         ),
         'basic_rules_filepath': (
             "Getting Started",
             '/rules/overview',
-            ('/newplayer', '/races', '/classes', '/rules/glossary')
+            ('/newplayer', '/races', '/classes', '/rules/glossary'),
+            ('/rules/checks', '/rules/combat', '/files', '/rules/glossary')
         )
     }

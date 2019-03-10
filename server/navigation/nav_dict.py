@@ -54,6 +54,7 @@ def get_template_for_page(path):
     return _nav_dict[path]['template_to_render']
 
 ### Generators ###
+# Converts values from a path's navbar as a list of label-path paired tuples and returns the list
 def generate_navbar_options_for_page(path):
     nav_results = []
 
@@ -62,16 +63,24 @@ def generate_navbar_options_for_page(path):
 
     return nav_results
 
+# Converts values from a path's nav_list as a list of label-path paired tuples and returns the list
+def generate_links_from_nav_list(path):
+    list_result = []
+
+    if _nav_dict[path]['nav_list'] != None:
+        for item in _nav_dict[path]['nav_list']:
+            list_result.append( (_nav_dict[item]['label'], item) )
+
+    return list_result
+
+# Converts values from a path's navbar as a list of lists of label-path paired tuples and returns the list of lists
 def generate_nav_lists_for_page(path):
     list_results = []
     i = 0
 
     for route in _nav_dict[path]['navbar']:
-        list_results.append([])
-
         if 'nav_list' in _nav_dict[route] and _nav_dict[route]['nav_list'] != None:
-            for item in _nav_dict[route]['nav_list']:
-                list_results[i].append( (_nav_dict[item]['label'], item) )
+            list_results.append(generate_links_from_nav_list(route))
 
         i += 1
 
