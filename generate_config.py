@@ -6,7 +6,7 @@ if not os.path.exists('config'):
     os.mkdir('config')
 config = ConfigParser.RawConfigParser()
 
-config.add_section('auth')
+config.add_section('Auth')
 config.add_section('Enemies')
 config.add_section('Characters')
 config.add_section('WhosHere')
@@ -50,18 +50,19 @@ response = raw_input("\n")
 answer = response.strip()
 if answer.lower() == 'y':
 	response = raw_input("What is the hostname? Default is localhost.")
-	config.set('auth', 'host', response.strip())
+	config.set('Auth', 'db_host', response.strip())
 	response = raw_input("What is the port number? Default is 5432.")
-	config.set('auth', 'port', response.strip())
+	config.set('Auth', 'port', response.strip())
 	response = raw_input("What is the name of the database? Default is mydb.")
-	config.set('auth', 'db_name', response.strip())
+	config.set('Auth', 'db_name', response.strip())
 	print "\nSucessfully configured auth database.\n"
 else:
-	config.set('auth', 'db_name', 'unknown')
-	config.set('auth', 'port', '5432')
-	config.set('auth', 'host', 'localhost')
+	config.set('Auth', 'db_name', 'unknown')
+	config.set('Auth', 'port', '5432')
+	config.set('Auth', 'db_host', 'localhost')
 
 print "You may need to set enemies_psql_pass and characters_psql_pass manually."
+print "Check out the /config/readme.md for more detail"
 
 with open('config/cxDocs.cfg', 'wb') as configfile:
     config.write(configfile)
