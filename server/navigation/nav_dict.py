@@ -21,6 +21,7 @@ def create_dict(options_list):
     else:
         print("Error: _nav_dict not created.")
 
+### Validators ###
 def page_exists(endpoint):
     if endpoint in _nav_dict:
         return True
@@ -36,9 +37,23 @@ def page_has_filepath(endpoint):
     else:
         return False
 
+def page_has_template(endpoint):
+    if (page_exists(endpoint)
+        and 'template_to_render' in _nav_dict[endpoint]
+        and _nav_dict[endpoint]['template_to_render'] != None
+    ):
+        return True
+    else:
+        return False
+
+### Getters ###
 def get_filepath_for_endpoint(endpoint):
     return _nav_dict[endpoint]['filepath_option']
 
+def get_template_for_endpoint(endpoint):
+    return _nav_dict[endpoint]['template_to_render']
+
+### Generators ###
 def generate_navbar_options_for_page(endpoint):
     nav_results = []
 
@@ -54,7 +69,7 @@ def generate_nav_lists_for_page(endpoint):
     for route in _nav_dict[endpoint]['navbar']:
         list_results.append([])
 
-        if 'nav_list' in _nav_dict[route]:
+        if 'nav_list' in _nav_dict[route] and _nav_dict[route]['nav_list'] != None:
             for item in _nav_dict[route]['nav_list']:
                 list_results[i].append( (_nav_dict[item]['label'], item) )
 
