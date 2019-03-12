@@ -6,10 +6,10 @@ databases inherit from. Ideally, this becomes the adapter for our use of the
 psql driver, so if you wanted to switch to MySQL, this would be the only
 file you would need to update."""
 
-class cx_database:
+class CXDatabase:
 
     def __init__(self, config):
-        self.db = psql_database(config)
+        self.db = PsqlDatabase(config)
         
     def fetch_all(self, queryString):
         return self.db.fetchall_from_db_query(queryString)
@@ -20,7 +20,7 @@ class cx_database:
     def update(self, updateString):
         return self.db.update(updateString)
 
-class psql_database:
+class PsqlDatabase():
 
     def __init__(self, config):
         self.port = config['port']

@@ -2,7 +2,7 @@ import character_database
 from ..security import security
 import pdb
 
-class cx_character:
+class CXCharacter:
 
     def __init__(self, form, owner_id):
         self.name = security.sql_escape(form['name'])

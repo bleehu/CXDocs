@@ -1,11 +1,25 @@
 from ....database import database
 
-class feats_database(cx_database):
+class feats_database():
+    
+    Select_predicate = "SELECT \
+        pk_id, \
+        feat, \
+        prerequisites,\
+        description, \
+        author, \
+        created_at, \
+        private, \
+        nanite_cost \
+        FROM feats"
+
+    def __init__(self, characterDBConfig):
+        self.my_db = database.CXDatabase(characterDBConfig)
 
 def get_feats():
     """Return a list of feats from the database."""
-    query_string = "%s WHERE deleted_at IS NULL;" % Feat.Select_predicate
-    results = characters_common.fetchall_from_db_query(query_string)
+    query_string = "%s WHERE deleted_at IS NULL;" % self.Select_predicate
+    results = self.my_db.fetchall_from_db_query(query_string)
     feats = []
     for line in results:
         newFeat = Feat(line)
@@ -13,8 +27,8 @@ def get_feats():
     return feats
 
 def get_feat_by_id(pk_id):
-    query_string = "%s WHERE pk_id=%s;" % (Feat.Select_predicate, pk_id)
-    first_database_row = characters_common.fetch_first_from_db_query(query_string)
+    query_string = "%s WHERE pk_id=%s;" % (self.Select_predicate, pk_id)
+    first_database_row = self.my_db.fetch_first_from_db_query(query_string)
     my_feat = Feat(first_database_row)
     return my_feat
 
@@ -31,9 +45,7 @@ def update_feat(newFeat):
         newFeat['created_at'],
         newFeat['private'],
         newFeat['nanite_cost'])
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("UPDATE feats SET\
+    updateString = "UPDATE feats SET\
         (feat, \
         prerequisites,\
         description, \
@@ -41,9 +53,8 @@ def update_feat(newFeat):
         created_at, \
         private, \
         nanite_cost) = %s \
-        WHERE pk_id=%s;" % ( featstring,pk_id))
-    myCursor.close()
-    connection.commit()
+        WHERE pk_id=%s;" % ( featstring,pk_id)
+    self.my_db.update(updateString)
 
 def get_characters_feats(character_pk_id):
     char_pk_id_int = int(character_pk_id)
@@ -51,7 +62,7 @@ def get_characters_feats(character_pk_id):
         f.created_at, f.private, f.nanite_cost\
         FROM feats_map AS map, feats AS f \
         WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int
-    lines = characters_common.fetchall_from_db_query(query_string)
+    lines = self.my_db.fetchall_from_db_query(query_string)
     characters_feats = []
     for line in lines:
         new_feat = Feat(line)
@@ -72,9 +83,6 @@ def validate_character_feat_map(form):
     return {'character_id': character_id, 'feat_id': feat_id}
 
 def insert_character_feat_map(mapping):
-    connection = characters_common.db_connection()
-    myCursor = connection.cursor()
     mapstring = (mapping['character_id'], mapping['feat_id'])
-    myCursor.execute("INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring)
-    myCursor.close()
-    connection.commit()
+    updateString = "INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring
+    self.my_db.update(updateString)

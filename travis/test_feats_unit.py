@@ -1,5 +1,5 @@
 import pytest
-from ..server.characters.feats import Feat
+from ..server.characters.feats.feats import Feat
 
 
 def test_feat_class():

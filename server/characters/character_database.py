@@ -2,13 +2,14 @@ from ..database import database
 import character
 from ..cxExceptions import cxExceptions
 
-import feats, skills
+import feats
+import skills
 
 """This Module contains methods used by many of the character code files. It is
     not intended for standalone use.
     """
 
-class character_database(database.cx_database):
+class CharacterDatabase(database.CXDatabase):
 
     def __init__(self, config, log):
         config_map = {"port":5432, 
@@ -18,13 +19,13 @@ class character_database(database.cx_database):
             for option in config.options('Characters'):
                 config_map[option] = config.get('Characters', option)
         else:
-            raise cxExceptions.ConfigOptionMissingException("Characters config section")
+            raise cxExceptions.ConfigOptionMissingError("Characters config section")
         if not config.has_option('Characters', 'username') or not config.has_option('Characters', 'password'):
-            raise cxExceptions.ConfigOptionMissingException("Characters database username and password")
-        self.my_db = database.cx_database(config_map)
+            raise cxExceptions.ConfigOptionMissingError("Characters database username and password")
+        self.my_db = database.CXDatabase(config_map)
         self.log = log
-        self.feats_db = feats.feats_database(config, log)
-        self.skills_db = skills.skills_database(config, log)
+        self.feats_db = feats.FeatsDatabase(config, log)
+        self.skills_db = skills.SkillsDatabase(config, log)
 
     def get_characters(self):
         queryString = "SELECT name, health, nanites, \
@@ -36,7 +37,7 @@ class character_database(database.cx_database):
         characters = []
         results = self.my_db.fetch_all(queryString)
         for line in results:
-            newCharacter = character.cx_character(line)
+            newCharacter = character.CXCharacter(line)
             characters.append(newCharacter)
         return characters
 
@@ -74,7 +75,7 @@ class character_database(database.cx_database):
             FROM characters \
             WHERE pk_id = %s;" % pk_id
         db_tuple = self.my_db.fetch_first(queryString)
-        this_character = character.cx_character(db_tuple)
+        this_character = character.CXCharacter(db_tuple)
         return this_character
 
     def get_users_characters(self, user_pk_id):
@@ -88,7 +89,7 @@ class character_database(database.cx_database):
             FROM characters AS c WHERE c.fk_owner_id = %s;" % user_id
         lines = self.my_db.fetch_all(queryString)
         for line in lines:
-            these_characters.append(character.cx_character(line))
+            these_characters.append(character.CXCharacter(line))
         return these_characters
 
     def get_users_newest_character(self, user_pk_id):
@@ -111,7 +112,7 @@ class character_database(database.cx_database):
                 % flat_tuple
             self.my_db.update(updateString)
         else:
-            raise cxException()
+            raise cxException.InvalidObjectError("character")
 
     """ Add a delete timestamp to the deleted_at  column of the character postgres table.  
     pk_id is assumed to have been sanitized in the route (character_routes.py) and the 

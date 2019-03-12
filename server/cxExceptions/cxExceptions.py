@@ -8,11 +8,11 @@ def initialize(newlog):
     global log
     log = newlog
 
-""" Our custom exception interface. We should never throw a raw CXException, 
+""" Our custom exception interface. We should never throw a raw CXError, 
     rather, we use this to provide common methods for providing error handling
     feedback appropriately to the logs, to the user and to the a junior admin
     who is learning how to set up cxdocs."""
-class CXException(Exception):
+class CXError(Exception):
 
     def provideFeedback(self):
         self.log()
@@ -28,7 +28,7 @@ class CXException(Exception):
     def flash(self):
         pass
 
-class NoMatchFoundException(CXException):
+class NoMatchFoundError(CXError):
     LOG_MESSAGE = "%s failed to find a match for object %s with id %s"
 
     def __init__(self, user, expectedType, missingID):
@@ -46,7 +46,7 @@ class NoMatchFoundException(CXException):
     def flash(self):
         flash("I couldn't find that %s in order to do that." % this.expectedType)
 
-class NoUserFoundException(CXException):
+class NoUserFoundException(CXError):
     LOG_MESSAGE = "%s failed to log in with password %s. user_agent:%s, remoteIP:%s"
 
     def __init__(self, userPassTuple, request):
@@ -65,7 +65,7 @@ class NoUserFoundException(CXException):
     def flash(self):
         flash("Sorry, I didn't find a user with that name and password.")
 
-class PermissionViolationException(CXException):
+class PermissionViolationError(CXError):
     LOG_MESSAGE = "%s attempted an action that they didn't have permission to perform. \n \
         \tAction: %s\n\
         user:%s, user_agent:%s, remoteIP: %s"
@@ -86,7 +86,7 @@ class PermissionViolationException(CXException):
     def flash(self):
         flash("Sorry, it looks like you don't have permission to do that.")
 
-class RateLimitExceededException(CXException):
+class RateLimitExceededError(CXError):
     LOG_MESSAGE = "User %s exceded %s tries to %s in %s minutes. IP: %s"
 
     def __init__(self, username, action, acts, interval, ipAddress):
@@ -107,7 +107,7 @@ class RateLimitExceededException(CXException):
         #we don't tell an attacker how many attempts they can get away with in what timeframe.
         flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % self.action)
 
-class ConfigOptionMissingException(CXException):
+class ConfigOptionMissingError(CXError):
     LOG_MESSAGE = "ERROR!: Someone is trying to use a feature that requires the database, but cxDocs wasn't started with login configured. Missing the %s parameter."
     ADVICE = """If you'd like to enable login, bestiary, and character creator features,
 read the readme.md for instructions on setting up the config file and posgres databases."""
@@ -126,7 +126,23 @@ read the readme.md for instructions on setting up the config file and posgres da
     def flash(self):
         flash("Sorry, It looks like the admin hasn't set the login database up yet. Check logs?")
 
-class driverNotSupportedException(CXException):
+class InvalidObjectError(CXError):
+
+    LOG_MESSAGE = "Someone attepmted to upload an invalid %s"
+
+    def __init__(self, objectName):
+        self.LOG_MESSAGE = LOG_MESSAGE % objectName
+
+    def printToConsole(self):
+        print(self.LOG_MESSAGE)
+
+    def log(self):
+        log.warn(self.LOG_MESSAGE)
+
+    def flash(self):
+        flash("There was something wrong with the %s that you tried to upload." % objectName)
+
+class DriverNotSupportedError(CXError):
 
     LOG_MESSAGE = "Error! Attempted to create database object with unsupported driver! Use 'psql' instead!"
 

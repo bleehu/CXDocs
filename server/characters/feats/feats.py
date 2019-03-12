@@ -4,17 +4,6 @@ import pdb
 class Feat:
     """A Character's feat."""
 
-    Select_predicate = "SELECT \
-        pk_id, \
-        feat, \
-        prerequisites,\
-        description, \
-        author, \
-        created_at, \
-        private, \
-        nanite_cost \
-        FROM feats"
-
     def __init__(self, line):
         self.pk_id = int(line[0])
         self.name = line[1]

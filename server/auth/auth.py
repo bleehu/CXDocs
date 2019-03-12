@@ -16,11 +16,11 @@ class AuthServer:
 
     def __init__(self, config, log):
         if 'username' not in config:
-            raise cxExceptions.ConfigOptionMissingException("login database username")
+            raise cxExceptions.ConfigOptionMissingError("login database username")
         if 'password' not in config:
-            raise cxExceptions.ConfigOptionMissingException("login database password")
+            raise cxExceptions.ConfigOptionMissingError("login database password")
         if 'db_name' not in config:
-            raise cxExceptions.ConfigOptionMissingException("name of login database")
+            raise cxExceptions.ConfigOptionMissingError("name of login database")
         if 'db_host' not in config:
             config['db_host'] = "localhost"
         if 'max_tries' in config:
@@ -31,7 +31,7 @@ class AuthServer:
             self.max_tries_minutes = int(config['max_tries_minutes'])
         else:
             self.max_tries_minutes = 30
-        self.my_db = database.cx_database(config)
+        self.my_db = database.CXDatabase(config)
         self.log = log
 
     def login(self, username, password, request):
@@ -40,7 +40,7 @@ class AuthServer:
         self.logRateLimitedAction(saniUser, saniPass, request.remote_addr)
         if self.overRateLimit(saniUser, saniPass, request.remote_addr):
             actionString = "login(%s, %s)" % (saniUser, saniPass)
-            raise cxExceptions.RateLimitExceededException(saniUser, actionString, 3, 30, request.remote_addr)
+            raise cxExceptions.RateLimitExceededError(saniUser, actionString, 3, 30, request.remote_addr)
         queryString = "SELECT pk_id, username, displayname, realname, password, role  \
             FROM users WHERE username LIKE '%s';" % saniUser
         results = self.my_db.fetch_all(queryString)
@@ -50,7 +50,7 @@ class AuthServer:
                 newUser = User(result)
                 return newUser
         userPassTuple = (username, password)
-        raise cxExceptions.NoUserFoundException(userPassTuple, request)
+        raise cxExceptions.NoUserFoundError(userPassTuple, request)
 
     def logout(self, session):
         self.log.info("%s logged out." % session['username'])

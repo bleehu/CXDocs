@@ -186,7 +186,7 @@ def create_app():
             return resp
         try:
             user = app.authServer.login(uname, passwerd, request)
-        except cxExceptions.CXException as exception:
+        except cxExceptions.CXError as exception:
             exception.provideFeedback()
             return redirect("/")
         session['username'] = user.username
