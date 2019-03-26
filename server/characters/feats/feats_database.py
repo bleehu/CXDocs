@@ -1,4 +1,4 @@
-from ....database import database
+from ...database import database
 
 class feats_database():
     
