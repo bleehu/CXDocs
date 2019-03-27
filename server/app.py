@@ -1,8 +1,7 @@
 import characters
-import ConfigParser
 #these imports are for python files we wrote ourselves.
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
-
+import appConfig.appConfig
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
 from characters.character_routes import character_blueprint, initialize_characters
 from navigation import nav_dict as nav  # Module created by AK to allow dynamic front-end navigation
@@ -60,24 +59,17 @@ def create_app():
     log_filename = os.path.join(local_dir,"cxDocs.log") #save a log of web traffic in case something goes wrong.
     logging.basicConfig(filename=log_filename, level=logging.INFO)
     log = logging.getLogger("cxDocs:")
+    cxExceptions.initialize(log)
 
     #whos_on is a list of tuples with displaynames and last-action timestamps that we use to show who's currently using this
     #web application. This helps for things like making sure we don't take the app down for maintainence while someone is working.
     global whos_on
 
-    global config
-    config = ConfigParser.RawConfigParser()
-    config.read('config/cxDocs.cfg')
-
-    # Create the routes dictionary so we can use the nav module
-    if config.has_section('Parser'):
-        nav.create_dict(config.options('Parser'))
-    else:
-        print "Config file has no [Parser] section; Cannot load rules documents."
-        print "Have you tried running the generate_config.py helper script?"
-        print "See config/README.md for more help configuring your parser."
-        log.warn("Parser Section not configured; cannot load rules documents on index page.")
-        log.warn("Maybe run the generate_config.py helper script? Maybe read config/README.md for help configuring parser?")
+    try:
+        app.cxConfig = appConfig.appConfig.get_app_config("config/cxDocs.cfg", log)
+    except cxExceptions.CXException as cxe:
+        cxe.provideFeedback()
+        exit(1)
 
     """ CXDoc's main function is to display the rules of Compound X. This helper method uses our plain text parser
      to show rules documents in a way that is easy to read. Since its reading text, we can configure the app to read
@@ -90,7 +82,7 @@ def create_app():
      an error message and redirects to the home page. """
     def parser_page(page):
         if nav.page_exists(page) and nav.page_has_filepath(page):
-            rule_filepath = config.get('Parser', nav.get_filepath_for_page(page))
+            rule_filepath = app.cxConfig.get('Parser', nav.get_filepath_for_page(page))
 
             if not os.path.isfile(rule_filepath):
                 log.error("Rule document missing: %s." % rule_filepath)
@@ -252,44 +244,27 @@ def create_app():
 
     seconds_away = 60
     seconds_out = 3600
-    if config.has_option('WhosHere', 'Seconds_away'):
-        seconds_away = config.get('WhosHere', 'Seconds_away')
-    if config.has_option('WhosHere', 'Seconds_out'):
-        seconds_out = config.get('WhosHere', 'Seconds_out')
+    if app.cxConfig.has_option('WhosHere', 'Seconds_away'):
+        seconds_away = app.cxConfig.get('WhosHere', 'Seconds_away')
+    if app.cxConfig.has_option('WhosHere', 'Seconds_out'):
+        seconds_out = app.cxConfig.get('WhosHere', 'Seconds_out')
     guestbook.initialize(seconds_away, seconds_out)
 
-    initialize_enemies(config, log)
-    initialize_characters(config, log)
-    cxExceptions.initialize(log)
+    initialize_enemies(app.cxConfig, log)
+    initialize_characters(app.cxConfig, log)
     (username, password, host) = get_env_vars()
     app.config['username'] = username
     app.config['password'] = password
     app.config['ip_address'] = host
 
     security.initialize(username, password, log)
-    authConfigMap = auth_config_seam((username, password),config)
-    app.authServer = AuthServer(authConfigMap, log)
+    uname_pw_tuple = (username, password)
+    auth_config_map = app.cxConfig.auth_config_map(uname_pw_tuple)
+    app.authServer = AuthServer(auth_config_map, log)
 
     app.secret_key = '$En3K9lEj8GK!*v9VtqJ' #todo: generate this dynamically
 
     return app
-
-"""This is ugly code.
-
-    In a subsequent cleaning pull, I'm going to abstract and DRY out our
-    configuration process so that we only rely on the 3rd party ConfigParser
-    in one file. This pull is only for eliminating None returns..."""
-def auth_config_seam(unpw_tuple, config):
-    returnMe = {"username":unpw_tuple[0],
-        "password":unpw_tuple[1]}
-    if config.has_section("auth"):
-        if config.has_option("auth", "port"):
-            returnMe['port'] = config.get('auth', 'port')
-        if config.has_option("auth", "db_name"):
-            returnMe['name'] = config.get('auth', 'db_name')
-        if config.has_option("auth", "host"):
-            returnMe['host'] = config.get('auth', 'host')
-    return returnMe
 
 if __name__ == "__main__":
 

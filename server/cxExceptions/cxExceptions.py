@@ -107,6 +107,21 @@ class RateLimitExceededException(CXException):
         #we don't tell an attacker how many attempts they can get away with in what timeframe.
         flash("You have exceeded the number of attempts to %s. Please wait a wile and try again." % self.action)
 
+class ConfigFileMissingException(CXException):
+    LOG_MESSAGE = "ERROR!: The config file is missing! Run $python \
+        generate_config.py ?"
+
+    def __init__(self):
+        self.message = self.LOG_MESSAGE
+
+    def log(self):
+        log.warn(self.LOG_MESSAGE)
+
+    def printToConsole(self):
+        print(self.message)
+
+    # we inherit the flash method being a pass; we can't flash if we don't have the config to boot the app.
+
 class ConfigOptionMissingException(CXException):
     LOG_MESSAGE = "ERROR!: Someone is trying to log in, but cxDocs wasn't started \
         with login configured. Missing the %s parameter."
