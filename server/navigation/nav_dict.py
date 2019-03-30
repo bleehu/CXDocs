@@ -57,9 +57,12 @@ def get_template_for_page(path):
 def generate_navbar_options_for_page(path):
     nav_results = []
 
-    for route in _nav_dict[path]['navbar']:
-        nav_results.append( (_nav_dict[route]['label'], route) )
-
+    for route in _nav_dict[endpoint]['navbar']:
+        if route in _nav_dict:
+            nav_results.append( (_nav_dict[route]['label'], route) )
+        else:
+            print(sorted(_nav_dict.keys()))
+            raise Exception("Endpoint not found in navigation dictionary! %s" % route)
     return nav_results
 
 def generate_nav_lists_for_page(path):

@@ -11,18 +11,15 @@ from navigation import nav_dict as nav  # Module created by AK to allow dynamic 
 from flask import Flask, render_template, make_response, request, redirect, session, escape, flash, abort
 
 import guestbook #our custom guestbook for showing who all is on at once.
-import json #sometimes we load or save things in json. This helps with that.
 from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb  #Python Debuger is what I use to fix borked code. It should not be called in production EVER!
 #but it's very helpful when being run locally.
 
-import psycopg2 #psycopg2 lets us make posgres SQL calls from python. That lets us store things in databases
 import os   #we need os to read and write files as well as to make our filepaths relative.
 import logging #When we aren't running locally, we need the server to log what's happening so we can see any
 #intrusions or help debug why it's breaking if it does so. This module handles that beautifully.
 from auth.auth import AuthServer
 from security import security #our custom code that handles common security tasks like SQL sanitization
-import xml.etree.ElementTree #Sometimes we write or read things in XML. This does that well.
 from werkzeug.utils import secure_filename
 from cxExceptions import cxExceptions
 
@@ -205,6 +202,12 @@ def create_app():
         form = request.form
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
             app.authServer.logout(session)
+        else:
+            mismatchString = "CSRF token mismatch. form: %s session: %s" % (form['X-CSRF'], session['X-CSRF'])
+            print(mismatchString)
+            log.warn(mismatchString)
+        log.debug("Session at route level after logout: %s" % session.keys())
+        log.debug("type of session: %s" % type(session))
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])

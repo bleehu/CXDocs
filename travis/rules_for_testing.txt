@@ -1,0 +1,628 @@
+==============================
+Basic Rules
+==============================
+	
+	Welcome to Compound X! The game of squad tactics, space exploration and 
+exciting role playing! On behalf of the develpment team, thanks for playing and
+have fun!
+
+==============================
+Premise
+==============================
+
+	The specific time and place of your adventures is up to your Game Master 
+(often called a GM for short), but all of them take place far in the future 
+where humans have left earth on their faster-than-light spaceships to explore 
+dangerous new worlds fraught with friends and foes and all manner of robots and 
+aliens! 
+
+	Will you be the dashing hero? Or perhaps the evil villain plotting galactic 
+domination? Or maybe a mercenary who's somewhere in between? The choice is
+yours and your legend will be told as you play the game!
+ 
+==============================
+The Primary Game Mechanic
+==============================
+
+	You may now be thinking to yourself; "Self-person, we sure can't wait to go
+gallivanting through the galaxy doing fantastic things and seeing the beautiful
+galaxies! But how would we do that?" Well, yourself doesn't have the answer yet,
+but good news! You just found it!
+
+	In Compound X, most things you will do will be accompanied by a 'roll'. That 
+translates to rolling the dice. Rolling the dice is our way of factoring in
+the human (or not human) tendency to do things in a way which isn't perfect.
+When you roll high, you do very well. When you roll low, you goof up. But hold 
+your horses, or kangaroo or what have you. This is a strategy RPG, not a gambling game.
+Each roll will have numbers which you will add to or subtract from the one you 
+get from the dice. This represents how good or bad your particular character is
+at doing whatever it is you are attempting to do. What to add when is discussed
+in detail below. 
+
+	Now, there will be two kinds of rolls your character will be making. 
+A skill roll, and a combat roll. Skill rolls use two ten-sided die, to represent 
+a d100, which in turn represents a percentage. One die is designated as the tens 
+place, and the other die as the ones place. However, in combat, you will use one d10, 
+which is reflected in a single number system.  Most dice sets come with two
+D10s, one with a zero after the number on the face, the other without that zero.
+In that case, obviously you add the numbers on the face of the dice together to
+find out what you rolled. If your dice came from different sets, you must pick
+which dice represents the tens place before you roll. i.e. if one die rolls a
+40 and the other rolls a 6, you rolled 46%. Alternatively, if you have an orange
+die which represents your ten's place and a purple die which represents your one's
+place, and you roll an orange 3 and a purple 9 then you rolled 39%.
+
+	It's important to note that you don't have to roll for everything. Your 
+character probably knows how to do mundane things like brush their teeth, open 
+an unlocked door, and tie their shoes. It's okay to just do these things, even 
+in combat.
+
+Rolling with Advantage:
+	Sometimes circumstances or the occasional feat may prompt you to make a roll 
+with Advantage or Disadvantage. In such cases you make the roll twice. With 
+Advantage you take the better roll, while with Disadvantage you take the worse 
+roll. Advantage and Disadvantage do not stack with themselves. If you would have 
+both Advantage and Disadvantage on the same roll, then they cancel each other, 
+and you just roll once.
+
+Rolling the Average:
+	There are certain circumstances and feats which allow for Rolling the Average.
+This must be announced before the die are cast. Critical fails or Critical successes
+are ignored when Rolling the Average. To do this, roll percentile dice twice, add
+the two numbers together, and divide by 2. The resulting number is your roll. 
+
+==============================
+Role Playing and Combat
+==============================
+
+	Compound X has two main 'modes' if you will: Combat, and Not in Combat. 
+While in combat, the rules are a little more specific so as to support strategy 
+and planning. During combat, each player takes their turn in a particular order, 
+and while you can still make up what you want to do, most actions fall into 
+pre-existing categories that take a specific amount of time and typically do a 
+specified amount of damage. More detail on that in the "Combat" section of Basic 
+Rules.
+
+	Out of combat, turns are a little more fluid. Usually players take their turn 
+describing what they want to do when each player gets an idea of what to do. If 
+two players have an idea at the same time, please be courteous and take turns. 
+It's much easier for the GM to listen to one player at a time. In addition to 
+taking turns, please also be polite and share the spotlight. You ALL are the 
+main heroes or villains of this story. Make sure everyone gets a chance to do 
+the one-liner they want, or to have their moment of glory.
+
+	Either in combat or out, play usually follows this loop:
+
+1.	The GM describes the environment and the situation. Usually the DM will ask "What do you want to do?"
+2.	The player describes what they want to do
+3. 	The GM checks if that's even a possible thing that can be done. (skip this step if that's obvious)
+4.	The GM says what kind of roll is needed to see if the player succeeds, if any roll is necessary.
+5.	The player rolls the dice and adds the numbers as described below.
+6. 	The GM checks the total against the DC and narrates what happens*
+7.	Then the next player begins their turn.
+
+*The DC stands for "the Difficulty Challenge", a number that
+typically only the GM knows which represents how hard a typical task
+is. Then the GM narrates how the action goes depending on if the 
+player succeeds or fails and by how much.
+
+==============================
+Your Character
+==============================
+
+	In Compound X, you control one particular person. This person is your avatar
+in the game world. You decide what they say, how they react and what they do
+just by telling your Game Master at the appropriate time. But before you can
+jump right in and start playing, you need to create a character! This is often
+one of the most fun parts of the game!
+
+	Making a character is a slightly involved process that can take a new player 
+up to two hours to fully flesh out. There are several parts of characters which
+are detailed below, but let's list them here briefly before we get into the 
+nitty-gritty of it.
+
+	If you want some extra guidance after reading through the sections below, 
+see the 00_New_Player_Walkthrough.txt document in CharacterCreation. Following 
+its steps will give you a customized, relatively low-complexity character that 
+will help you learn to play the rest of Compound X.
+
+Primary Stats:
+	These decide what raw characteristics make up your character, and are 
+factored into most other decisions you make both in game and for the rest of 
+character creation. Choosing your stats is a very good way to start making a 
+character.
+
+Secondary Stats:
+	These stats are derived from your primary stats and determine things like
+how fast your character moves and how quickly they learn new skills. When making
+a new character, you'll calculate these after picking Primary Stats.
+
+Stat and Combat Modifiers:
+	These numbers are calculated from your stats, and are often added to dice
+rolls to show how your character's physical and mental abilities affect how well 
+they perform different tasks.
+
+Species/Race:
+	Is your character a robot? What about a human? Or maybe the catlike aliens 
+known as Tundari? Different species and races get small bonuses to different 
+aspects of combat and are liked or disliked by different people in the galaxy 
+accordingly.
+
+Class: 
+	Think of this like your job. Are you a sniper, waiting for the perfect shot? 
+Or are you a pilot who can thread a needle with your starfighter? Or maybe 
+you're a veteran soldier, who's seen it all. Classes define what armor and 
+weapons your character can use in combat, as well as certain special abilities 
+which might help solve puzzles or get you better discounts at stores. Your class 
+also determines how much money you start with to buy equipment and how many 
+Nanites you can use at once.
+
+Nanites:
+	The evolution of technology brought about the ability to design and control 
+microscopic machines. Such a powerful advancement assists in all forms of life 
+in the Compound X universe. Nanites are used to activate powerful abilities such 
+as sprinting extremely fast, aiming incredibly well, infusing bullets with 
+electrical energy, and more.
+
+Skills: 
+	Each character learns things while going through life. Maybe your time in 
+the military taught you how to navigate using the stars or maybe your time 
+working at a mechanic's shop made you good at repairing things? Or maybe you're 
+one of those people who is just naturally good at hacking computers. Picking 
+these numbers will represent that in the game world.
+
+Equipment:
+	Your equipment is made up of your character's weapon, armor and 
+miscellaneous items. You'll get money to buy them with at the start of the game 
+and you'll earn more money as you go about your adventures.
+
+Feats: 
+	Your character will gain special perks as you level up. This could range 
+from reloading really fast, to having more health to being able to do a fast 
+combat roll under fire. Tackle these when your character advances to level 3.
+
+==============================
+Primary Stats and Secondary Stats
+==============================
+
+===== Primary Stats =====
+
+Strength (STR):
+	How strong are you? This stat determines how big of a gun you can carry and
+how hard you can punch or hit with strength melee weapons. It might also allow 
+you to solve puzzles with the brute force approach.
+
+	If you have 1 Strength, you are exceptionally weak and your max movement per
+2 actions is 2m (unless your Dex is 1) and you cannot wear armor that offers more 
+than 50% coverage.
+
+Perception (PER): 
+	Your ability to see, hear, smell and sense the world around you, as well as
+to interpret what those sensations indicate. Perception affects your weapon 
+accuracy and ability to cut through the chaos of battle to stay oriented. A high
+perception makes you harder to sneak up on. 
+
+	If you have 1 Perception, you are partially blind, only have 1 eye, or
+something similar. You cannot use the Investigation or Spotting skills and you have a 
+-20 malus to Insight skill rolls. 
+
+Fortitude (FORT): 
+	How tough are you? Fortitude determines your maximum health, how hard you 
+are to knock off of your feet, and contributes to your saving throws.
+
+	Your Maximum Health = 50 + 10 * FORT
+
+	If you have 1 Fortitude, you are exceptionally frail. You can't inflict lethal 
+unarmed damage and your unarmed damage is halved. Also, when you deal melee damage, 
+you inflict half of the damage on yourself.
+
+Charisma (CHA): 
+	How good are you at communicating with those around you? Charisma affects a 
+number of interpersonal skills like haggling and diplomacy. It also contributes 
+to how hard it is to dominate your will.
+
+	If you have 1 Charisma, you are profoundly unlikable and bad at influencing
+and working with others. You cannot assist or be assisted when making skill
+checks. 
+
+	Furthermore, despite being unlikable, you still have the same psychological 
+need that all sentient life has, to be social and to be accepted. At least once 
+between every other encounter, you must socialize with another sentient 
+character. Doing so requires a charisma check of DC 60. If the character that
+you socialize is happy and willing to spend time with you, you may have 
+advantage on the roll. If the character does not acquiesce to socialize with you,
+they are immune to the penalty. If they do acquiesce and you fail, you both must
+pay the penalty. The penalty for failing to socialize is to feel isolated and
+Lonely. Please see "Lonely" in the conditions list in "01_02_Conditions.txt"
+
+	If you have 6 or more Charisma you gain the feat "Will to Survive". The feat 
+scales depending on how many points you have in Charisma. Or, if you have 9 or 
+more Charisma, you get to choose between taking feat "Will to Survive" or feat 
+"Positional Mastermind". 
+
+Intelligence (INT): 
+	How smart are you? Intelligence determines how quickly you acquire new 
+skills when you level up and how proficient you are at using some of those 
+skills.
+
+	If you have 1 Intelligence, let's just say, you aren't particularly smart. 
+You cannot attempt to use any skill that you do not have Proficiency in (see the 
+"RP / Using Skills" section).
+
+	If you have 9 or more Intelligence you are exceptionally gifted and gain 
+additional feats at certain levels; for more information, please see the 
+"LEVELING-UP TABLE" below.
+
+Dexterity (DEX): 
+	How nimble are you? Dexterity determines your maximum move speed in combat, 
+as well as how much damage you do with finesse melee weapons like knives. 
+Dexterity also contributes to skill checks for doing things with a character's 
+body like climbing, jumping, or dancing.
+
+	If you have 1 Dexterity, you are especially clumsy or suffer from a 
+debilitating illness which affects your ability to move swiftly and precisely. 
+You cannot learn any skills that use Dexterity as the contributing stat (for 
+example, Sleight of Hand).
+
+Luck (LUCK): 
+	Some people are just lucky! A GM will often have you roll luck to see if a 
+door was left unlocked or if you just happened to duck to pick up a coin off the 
+ground right when an assassin is trying to shoot you in the head. Luck also has 
+a significant effect on what loot you find in dungeons and your chance to roll a 
+critical hit.
+
+	If you have 6 Luck or more, you gain feat "Lucky". The feat scales depending
+on how many points you have in Luck.	
+
+	If you have 1 Luck, it goes without saying, you are very unlucky. At the 
+start of a combat encounter, roll a d10 and receive a penalty from the Black Cat 
+table, below.		
+
+===== BLACK CAT TABLE =====	
++-------+---------------------------------------------------------------------------------------+
+| Roll  | Effect                                                                                | 
++-------+---------------------------------------------------------------------------------------+
+| 1-2   | Your primary weapon malfunctions/breaks and you cannot use it until DC 60 repaired    |
++-------+---------------------------------------------------------------------------------------+
+| 3-4   | You cannot critically hit or critically succeed (in any form) in this encounter       |
++-------+---------------------------------------------------------------------------------------+
+| 5-6   | You trip and hurt yourself, take 15 damage and lose three actions from your 1st turn  |
++-------+---------------------------------------------------------------------------------------+
+| 7-8   | Mental breakdown, roll DC 75 Will save or gain status effect 'Fear' of enemies        |
++-------+---------------------------------------------------------------------------------------+
+| 9-10  | Nothing bad happens... this time                                                      |
++-------+---------------------------------------------------------------------------------------+
+
+===== Secondary Stats =====	
+
+	Your Character's Secondary stats are each equal to one of your Primary 
+Stats, but no single Primary Stat can be used for two of your Secondary Stats.
+
+Movement Speed:
+	Your Movement Speed is how fast your character can move every two Actions in
+combat, measured in meters. Use (Movement Speed)/2 for one Action and drop the 
+remainder. For more detail on movement in combat, see the "Movement and 
+Sprinting" topic in the Combat Rules. Your Movment Speed is either equal to your
+Strength or your Dexterity.
+
+Carry Ability:
+	Your Character's Carry Ability is how much heavy equipment they can lug
+around before it starts to slow them down. Each point in Carry Ability negates
+1 meter per Action of movement penalty from weapons, armor or other items. If 
+you have 6 Carry Ability and 6m of movement speed penalties, you end up with no 
+movement speed penalties and can move your full Movement Speed for every Two
+Actions. Your Carry Ability is either equal to your Strength or your Fortitude.
+
+Skill Point Gain:
+	Your Character's Skill Point Gain determines how many skill points you gain 
+every level. Every time you level up, you gain skill points equal to double your 
+"Skill Point Gain". Your Skill Point Gain should be equal to either your 
+Intelligence or your Charisma.
+
+== Secondary Stat Assignment Examples ==
+	Charisma and Intelligence are associated with Skill Point Gain. If you have 
+5 Charisma and 6 Intelligence, you would have 6 Skill Point Gain.
+
+	Let's now assume you have 6 Strength, 3 Dexterity, and 4 Fortitude. You 
+could have 3 Movement Speed (from your Dexterity) and 4 Carry Ability (from your 
+Fortitude). Now, Strength is much higher than both of those, but Strength can't 
+determine both Movement Speed and Carry Ability so you have to decide whether 
+you want:
+
+* 3 Movement Speed and 6 Carry Ability, or 
+* 6 Movement Speed and 4 Carry Ability 
+
+===== Stat Modifiers =====
+
+	Usually you can tell a lot about a character just by their Primary Stats. 
+For instance, a character with 9 strength and 3 intelligence is usually either a 
+brutish bully or a tough but lovable teddy bear of a person. Where a character 
+with 10 intelligence and 2 charisma is probably a brilliant nerd who might be 
+shy or just have a terrible stutter.
+
+	But your raw Primary Stat is rarely used in calculations during the game. To
+get the math to work out better, we usually use what is called a 'Stat Modifier'.
+Stat Modifiers are used very often. They are calculated by one of the two 
+equivalent equations below (use whichever looks easier to you):
+
+* Stat Modifier = (4 * Stat) - 20 
+* Stat Modifier = (Stat - 5) * 4
+
+	For instance, if you were trying to lift something heavy, your GM may tell 
+you to roll a 'Strength Check' and add your 'Strength Modifier'. To do this, you 
+would roll two 10-sided dice as explained in the Primary Game Mechanic above, 
+and add your Strength Modifier to that. Let's say that you rolled a 71, and your 
+Strength Primary Stat is a very beefy 8. Then your Strength Modifier would be:
+
+	(8 - 5) * 4 = 3 * 4 = 12
+
+	and the score of your roll would be 
+
+	71 + 12 = 83
+
+	That's a really high roll! But that may or may not be enough to lift the 
+object depending on how heavy it is.
+
+
+
+===== Nanites =====
+
+	Although not a primary or secondary stat per se, The maximum number of 
+Nanites you can use at a given time is determined by your character class and an 
+associated primary stat. Your class may tell you its "Class Primary Attribute" 
+is Strength. In that case, Strength * 10 is your maximum Nanites. 
+
+More generally:
+	Your Maximum Nanites = (Your Class's Primary Attribute) * 10
+Some class feats and other abilities can increase the number of Nanites you can 
+hold and use at a given time. Also, Unlike Health, Nanites regenerate during 
+combat at a rate of 3 Nanites per turn. 
+
+==============================
+Saving Throws
+==============================
+
+	Saving Throws are used in dire or critical situations to defend against very 
+negative effects.
+
+- Will: defend against a mind affect (Ex: throw off hopelessness after crashing in an escape pod)
+- Shock: maintain composure after serious damage (Ex: stay conscious after being shot by a high caliber round)
+- Reflex: React quickly to an event (Ex: dodge falling debris, fire at an enemy if they leap from one piece of cover to another)
+- Awareness: Keep apprised of your surroundings (Ex: realizing someone has walked up behind you)
+
+The equations to calculate your bonuses to Saving Throws are as follows:
+
+- Will: 2*(Cha + Int - 6) Rational: Normally wisdom would be applied, so Will in Compound X is descried as your internal voice motivating you to endure a mental hardship.
+- Shock: 2*(Fort + Int - 6) Rational: You need to recognize that you are in shock, and resist its physical effects.
+- Reflex: 2*(Per + Dex - 6) Rational: In order to react quickly to an event you need to be able to see it coming.
+- Awareness: 2*(Per + Luc - 6) Rational: Line of sight and concentration are integral parts to being able to detect anomalies in the area.  
+
+==============================
+Feats
+==============================
+
+	As your character levels up and gets better at what they do, they develop
+certain talents and abilities that help them differentiate themselves from their
+peers. These special tallents and abilities are called "Feats". See the 
+"Leveling Up Rules" table to see how many feats you get at which levels. Unless 
+otherwise specified, you cannot take a feat more than once.
+
+	There are five kinds of feats, detailed below;
+
+* Passive Feats
+* Active Feats
+* Weapon Expertise Feats
+* Stat Feats
+* Class Feats
+
+Passive Feats:
+
+	When you take a feat, you may take a passive feat. Passive Feats are used 
+freely with no limit unless otherwise stated. They often give bonuses to skills
+or to rolls for certain actions.
+
+Active Feats:
+
+	When you take a feat, you may decide to take an Active Feat. An Active Feat
+gives your character the option of taking certain actions that they otherwise
+couldn't, usually in combat. Active feats cost a certain amount of Nanites to
+execute, and if your character doesn't have enough nanites, then they can't take
+that action until they get some more. 
+
+Weapon Expertise Feats:
+	
+	When you take a feat, you may decide to take a Weapon Expertise Feat. Weapon
+Expertise Feats are a special kind of passive feat, that get better as you 
+increase your skill with a particular kind of weapon group. 
+
+	These feats represent dedicated training with a particular class of weapon, 
+and offer bonuses based on the relevant Weapons skill (Weapon skills are listed 
+in "06_Skills.txt"). Each feat offers a set of bonuses related to using that type of 
+weapon (and only that type of weapon), and each bonus requires the character to have 
+a number of points in the relevant Weapon skill. A character with 0 points in 
+Weapons - Pistols would gain only one benefit, while a character with 60 points 
+would benefit from them all. The feats are formatted as a list of "X: Benefit", 
+where X is the number of points required in the corresponding Weapon skill to 
+gain the benefit.
+	
+	Weapon Expertise feats require proficiency with the weapon type, but otherwise 
+have no prerequisites. Note that as all characters are proficient with Unarmed 
+Strike, Melee Expertise effectively has no prerequisite.
+
+Primary Stat Feats:
+	
+	Stat Feats are special and cannot be taken when you get a feat like Active,
+Passive, or Weapon Expertise Feats. Instead, they are immediately unlocked when 
+you fulfill their stat requirement. 
+
+Class Feats:
+
+	On certain levels, you will unlock a Class Feat instead of a Regular Feat.
+You cannot take a Class Feat when you get a regular Feat, nor can you forego 
+your Class Feat in favor of an Active or Passive feat. You can only unlock one
+Class Feat at a time. Class Feats are listed in the Classes document under the
+appropriate class. 
+
+==============================
+Healing Injuries
+==============================
+
+	Ouch! you've just been shot! You'd better call for a Doctor or apply a med 
+kit before you bleed out! "But how do I use a med kit? Or if I'm a Doctor, how 
+do I stabilize and heal an ally?" I'm glad you asked. The rules are as follows:
+The Medicine DC is equal to the damage dealt. On a failed skill check, no healing 
+occurs. On a success, heal an amount equal to Medicine skill + DC surplus.
+
+	For example, a Player Character is dealt 70 damage. Their Doctor has 25 
+skill in medicine. Medic rolls an 86 (after adding their Medicine Skill), so they 
+heal 25+(86-70) for 41 health healed.
+
+	Individual wounds are healed individually. 3x 20-damage wounds need three 
+rolls of 21 or higher before they are fully healed.
+
+	For example, a Player Character takes 70 damage. Medic has 25 skill. Medic 
+rolls an 86 (with Medicine Skill), so they heal 25+(86-70) for 41 Health. Now 
+the Character still has a 29 damage deficit (70-41), so the medic would need to 
+roll over a DC of 29 to heal the remaining 29 damage. (The Doctor Cannot overheal 
+a wound unless otherwise stated).
+
+	Doctors need not use a medic-kit so long as the have their medicine bag (or 
+equivalent) on their person. If they do not have their medicine bag with them 
+when they are trying to heal a teammate, they can make the attempt at a +20 DC.
+
+Using a medic-kit:
+
+	Medic-kit, non-medic user: works as if you are a medic with skill 30.
+
+	Medic-kit, medic user: Works as normal, but add 30 to amount healed.
+
+==============================
+Resting
+==============================
+
+Short Rest:
+	Taking about an hour, characters can take a Short Rest to rest and recoup 
+which will restore all the character's Nanites.
+
+Long Rest:
+	Taking about eight hours, characters need to rest after a long day of 
+adventuring. If you choose to stay up all night, you won't be at your best for 
+the next day. Restores all of a character's Nanites.
+
+==============================
+RP / Using Skills
+==============================
+
+	The GM may ask you to roll a certain skill to see if your character can do 
+something. This may be something like, "Roll Sleight of Hand to see if you can
+pick the lock on that door," or it might look like, "Roll Medicine to see if 
+you can patch up the gaping wound in your chest spewing blood." Anytime you 
+need to Pass a Skill check, there will be a DC (Difficulty Check) you have to 
+exceed in order to successfully pass the check. You must roll over the DC to
+succeed at a check. The DC does not need to be given out by the GM, but if
+a DC seems too high, you have the right to grumble (but seriously, ask your GM if 
+something seems too difficult. There is usually a reason why tying your shoe 
+takes a DC of 70% on that particular day, etc). After you have rolled, please
+apply any and all relevant skills and Stat Modifiers to a roll, as instructed by your GM.
+When rolling Investigation for example, you will likely add your PER Stat Bonus.
+
+	Critical successes occur when your roll on a skill check lands inside your
+Critical range (aka your critical chance). For skill checks, the base critical range
+is 10, meaning that a roll greater than 90 is a Critical success. Your Luck modifier is
+added to your Critical range, increasing or decreasing your critical chance. For example,
+if you have a Luck modifier of 12, your Critical range would be 22, and rolls greater
+than 78 would result in a Critical success. Rolls that land in the upper half of your
+Critical range result in an Extra-Critical success; with a Luck modifier of 12, rolls
+greater than 89 would result in an Extra-Critical success. If your Luck modifier is
+less than -8, you cannot roll Extra-Critical successes, but rolls of exactly 100 result
+in Critical successes.
+
+	In general, if you roll a Critical success on a skill check, add 10 to your
+total roll. For an Extra-Critical, add 20. In addition, some abilities and feats may
+trigger additional effects when you roll a Critical.
+
+	If you roll a 1, you Critically fail a skill check, meaning that you cannot
+succeed at the check, regardless of your total roll after adding skills and Stat
+Modifiers. Your GM may also choose to enact additional penalties to the failed check.
+	
+	At any time out of combat, you may decide to use one of your skills. If you 
+are not pressured by imminent or immediate danger, you may "take a 100%" to take as
+much time with a task as needed to roll exactly 100 on a skill check, then apply points
+from relevant skills and Stat Bonuses. Some checks cannot be passed in this way. Under
+normal circumstances for example, you will not be able to pass an Athletics check to
+kick down the blast doors of a ship, no matter how much time you take to try.
+
+When rushed by a time constraint or danger, you can "take a 50%" to take
+slightly more time than a 1-action, in-combat check on a task to roll exactly 50 on
+a skill check, then apply any skill points and Stat Bonuses.
+
+	If you want to use a skill in combat, see the "Combat: Actions" subsection.
+	
+	In many cases, a character can attempt a skill check whether or not they
+have invested in learning the skill; however, your GM may decide otherwise, apply
+penalties to your roll, raise the DC, ask you to justify why your character can
+attempt the roll, or make any other judgement they deem appropriate. 
+
+	When leveling up you may gain up to 6 points in any one skill.
+	
+	Characters are considered to be Proficient with certain skills, based on
+their class and background. When a character is Proficient in a skill, each skill 
+point they spend in that skill upon leveling up increases that skill by two 
+instead of one.
+
+	Defenders win ties for opposing rolls.
+
+==============================
+Player Weapon Customization
+==============================
+
+	Almost all weapons come with pieces that can be added or swapped out for 
+more specialized or more expensive pieces that make the weapon more effective.
+These special parts are called "Weapon Attachments." You can purchase weapon
+attachments at the start of the game when building your characater, or in most
+of the trade stations and gun shops in large towns. When you buy an attachment
+from a shop, they can put the attachment on for no extra cost. While at a gun
+shop or kiosk, you can apply upgrades and attachments yourself as well. When 
+applying upgrades or customizations at a kiosk or shop, no roll is required.
+
+	Alternatively, you can attempt to add or remove a weapon attachment in the
+field. Doing so will require a skill check of DC 60 with the weapon skill that
+matches your weapon type. If you succeed, you manage to make the adjustment
+in just Two Actions. Otherwise it takes Four Actions. 
+
+	There are 8 types of attachments. They are listed below. Unless otherwise
+specified, Your weapon cannot hold more than one of each. There are some weapons
+that specify that they can't take certain attachments. Any weapon that doesn't
+specify as much is assumed to be able to receive any of the listed attachements
+except for Total Conversions. Total Conversions are usually only for one 
+specific class or type of gun. Their descriptions indicate which they go on.
+
+* Optics
+* Lights
+* Lower Rails
+* Barrels
+* Muzzles
+* Slings
+* Ammo
+* Total Conversions
+
+== Ammo ==
+
+    Only extended, magpull, and Drum mags apply to unconventional weapons 
+(weapons other than bullet-firing.) Total mag price should be calculated by 
+taking multipliers for extended mags first, then multipliers for special effect, 
+then magazine accessories like magpulls. Multipliers are multiplied together but 
+they do not multiply the constant.
+
+    For example, extended mag + poison bullet magazine magazine cost is 
+(1.3x * 2x + 50) = (2.6x+50)
+
+== Total Conversions ==
+
+    Total conversions only work with the specified weapon. You may only utilize 
+one weapon conversion at a time. HOWEVER, for conversions relying on switching 
+out a receiver, you may carry (at max) one additional receiver in order to swap 
+kits on the go. You must pass 2 Weapons use / knowledge [Weapons] checks in 
+order to successfully convert your weapon on the go. DC 60. Failure on one check 
+instantly jams the weapon on first shot. Failure on both checks requires an 
+additional check.
