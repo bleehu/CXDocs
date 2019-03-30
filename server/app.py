@@ -11,7 +11,6 @@ from navigation import nav_dict as nav  # Module created by AK to allow dynamic 
 from flask import Flask, render_template, make_response, request, redirect, session, escape, flash, abort
 
 import guestbook #our custom guestbook for showing who all is on at once.
-from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb  #Python Debuger is what I use to fix borked code. It should not be called in production EVER!
 #but it's very helpful when being run locally.
 
@@ -154,15 +153,6 @@ def create_app():
     @app.route("/files")
     def show_files():
         return render_template("utility/game/files.html")
-
-    @app.route("/missions")
-    def show_missions():
-        missions = get_missions()
-        return render_template("missions/missions.html", missions = missions)
-
-    @app.route("/missionfiles")
-    def show_mission_files():
-        return render_template("missions/mission_files.html")
 
     """ the /login route expects the POST request from the login form in the repo/templates/index.html file. It expects
         strings from the "uname" and "password" fields.
