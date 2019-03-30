@@ -42,7 +42,6 @@ def test_login(client):
         assert session['displayname'] == "travis_test"
         assert session['role'] == "GM"
         #we need to visit the home page long enough to reset our CSRF token.
-        pdb.set_trace()
         response = client.get("/")
         response = client.post("/logout", data={"X-CSRF":"foxtrot"}, follow_redirects=True)
         print "response code %s" % response.status_code
