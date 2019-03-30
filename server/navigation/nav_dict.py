@@ -54,7 +54,7 @@ def get_template_for_page(path):
     return _nav_dict[path]['template_to_render']
 
 ### Generators ###
-def generate_navbar_options_for_page(path):
+def generate_navbar_options_for_page(endpoint):
     nav_results = []
 
     for route in _nav_dict[endpoint]['navbar']:
