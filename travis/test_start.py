@@ -43,8 +43,15 @@ def test_login(client):
         assert session['role'] == "GM"
         #we need to visit the home page long enough to reset our CSRF token.
         response = client.get("/")
+
+        #debugging serverside. Should remove this.
+        print "session keys before logout: %s" % sorted(session.keys())
+
         response = client.post("/logout", data={"X-CSRF":"foxtrot"}, follow_redirects=True)
-        print "response code %s" % response.status_code
+        #debugging serverside testing
+        print "logout response code %s" % response.status_code
+        print "session keys after logout: %s" % sorted(session.keys())
+
         assert 'username' not in session
         assert 'displayname' not in session
         assert 'role' not in session
