@@ -150,11 +150,7 @@ def create_app():
         else:
             abort(404)
 
-    @app.route("/docs/trees")
-    def docs_skill_trees():
-        return render_template("skills/skilltrees.html")
-
-    @app.route("/files")
+    @app.route('/files')
     def show_files():
         return render_template("utility/game/files.html")
 

@@ -2,7 +2,7 @@
 # (Having to manage this is why the module is broken down into these files.)
 
 _rules_navbar = ('/rules/overview', '/rules/', '/rules/checks', '/rules/glossary')
-_rules_nav_list = ('/rules/checks', '/rules/combat', '/rules/conditions', '/rules/cloaking', '/rules/glossary')
+_rules_nav_list = ('/rules/checks', '/rules/combat', '/rules/conditions', '/rules/cloaking', '/rules/skill-trees', '/rules/glossary')
 
 def get_dict():
     return {
@@ -10,6 +10,13 @@ def get_dict():
             'label': "Rolling Checks",
             'navbar': _rules_navbar,
             'template_to_render': 'home.html',
+            'filepath_option': None,
+            'nav_list': _rules_nav_list
+        },
+        '/rules/skill-trees': {
+            'label': "Skill Trees",
+            'navbar': _rules_navbar,
+            'template_to_render': 'skills/skilltrees.html',
             'filepath_option': None,
             'nav_list': _rules_nav_list
         }
