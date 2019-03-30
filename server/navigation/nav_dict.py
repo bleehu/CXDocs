@@ -1,4 +1,4 @@
-import _manual_routes, _rules
+import _routes_aggregator
 
 _nav_dict = {}  # ONLY ACCESS IN THIS MODULE
 
@@ -6,14 +6,14 @@ def create_dict(options_list):
     length_before_docs = 0
 
     if len(_nav_dict) == 0:
-        _nav_dict.update(_manual_routes.get_manual_routes())
+        _nav_dict.update(_routes_aggregator.get_all_dicts())
         length_before_docs = len(_nav_dict)
 
     if len(_nav_dict) > 0:
-        rules_dict = _rules.generate_all_routes_dict(options_list)
+        doc_paths = _routes_aggregator.generate_doc_paths_dict_from_cfg_options(options_list)
 
-        if rules_dict != None and len(rules_dict) > 0:
-            _nav_dict.update(rules_dict)
+        if doc_paths != None and len(doc_paths) > 0:
+            _nav_dict.update(doc_paths)
 
         if len(_nav_dict) == length_before_docs:
             print("Looked for documents, but didn't find any. See config/README.md to configure rules docs.")
@@ -22,39 +22,39 @@ def create_dict(options_list):
         print("Error: _nav_dict not created.")
 
 ### Validators ###
-def page_exists(endpoint):
-    if endpoint in _nav_dict:
+def page_exists(path):
+    if path in _nav_dict:
         return True
     else:
         return False
 
-def page_has_filepath(endpoint):
-    if (page_exists(endpoint)
-        and 'filepath_option' in _nav_dict[endpoint]
-        and _nav_dict[endpoint]['filepath_option'] != None
+def page_has_filepath(path):
+    if (page_exists(path)
+        and 'filepath_option' in _nav_dict[path]
+        and _nav_dict[path]['filepath_option'] != None
     ):
         return True
     else:
         return False
 
-def page_has_template(endpoint):
-    if (page_exists(endpoint)
-        and 'template_to_render' in _nav_dict[endpoint]
-        and _nav_dict[endpoint]['template_to_render'] != None
+def page_has_template(path):
+    if (page_exists(path)
+        and 'template_to_render' in _nav_dict[path]
+        and _nav_dict[path]['template_to_render'] != None
     ):
         return True
     else:
         return False
 
 ### Getters ###
-def get_filepath_for_endpoint(endpoint):
-    return _nav_dict[endpoint]['filepath_option']
+def get_filepath_for_page(path):
+    return _nav_dict[path]['filepath_option']
 
-def get_template_for_endpoint(endpoint):
-    return _nav_dict[endpoint]['template_to_render']
+def get_template_for_page(path):
+    return _nav_dict[path]['template_to_render']
 
 ### Generators ###
-def generate_navbar_options_for_page(endpoint):
+def generate_navbar_options_for_page(path):
     nav_results = []
 
     for route in _nav_dict[endpoint]['navbar']:
@@ -65,11 +65,11 @@ def generate_navbar_options_for_page(endpoint):
             raise Exception("Endpoint not found in navigation dictionary! %s" % route)
     return nav_results
 
-def generate_nav_lists_for_page(endpoint):
+def generate_nav_lists_for_page(path):
     list_results = []
     i = 0
 
-    for route in _nav_dict[endpoint]['navbar']:
+    for route in _nav_dict[path]['navbar']:
         list_results.append([])
 
         if 'nav_list' in _nav_dict[route] and _nav_dict[route]['nav_list'] != None:

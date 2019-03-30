@@ -1,6 +1,9 @@
 # Need to manually create a dictionary to link the config filepaths to routes with labels and nav lists we want associated with each other.
 # (Having to manage this is why the module is broken down into these files.)
-def get_path_dict():
+
+_characters_navbar = ('/rules/overview', '/rules/', '/races', '/classes', '/rules/glossary')
+
+def get_filepath_dict():
     return {
         # Paths should match options in the Parser section of the config file
         # Each path key must have a tuple containing values IN THE FOLLOWING ORDER:
@@ -10,34 +13,34 @@ def get_path_dict():
 
             # (optional) 4th value: a nav_list tuple, listing the options that would appear under its navbar label (usually to very specific pages)
 
-        'new_player_walkthrough_filepath': (
-            "New Players",
-            '/newplayer',
-            ('/rules/overview', '/races', '/classes', '/files')
-        ),
         'races_filepath': (
             "Races",
             '/races',
-            ('/rules/overview', '/classes', '/skills')
+            _characters_navbar
         ),
         'classes_filepath': (
             "Classes",
             '/classes',
-            ('/rules/overview', '/races', '/skills')
+            _characters_navbar
         ),
         'skills_filepath': (
             "Skills",
             '/skills',
-            ('/rules/overview', '/races', '/classes', '/feats')
+            _characters_navbar
         ),
         'feats_filepath': (
             "Feats",
             '/feats',
-            ('/rules/overview', '/races', '/classes', '/skills')
+            _characters_navbar
         ),
         'engineer_filepath': (
             "Engineer Processes",
             '/rules/engineers',
-            ('/rules/overview', '/races', '/classes', '/skills')
+            _characters_navbar
+        ),
+        'level_up_filepath': (
+            "Leveling Up",
+            '/rules/levelup',
+            _characters_navbar
         )
     }

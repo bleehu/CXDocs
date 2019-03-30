@@ -79,7 +79,8 @@ def create_app():
      an error message and redirects to the home page. """
     def parser_page(page):
         if nav.page_exists(page) and nav.page_has_filepath(page):
-            rule_filepath = app.cxConfig.get('Parser', nav.get_filepath_for_endpoint(page))
+            rule_filepath = app.cxConfig.get('Parser', nav.get_filepath_for_page(page))
+
             if not os.path.isfile(rule_filepath):
                 log.error("Rule document missing: %s." % rule_filepath)
                 log.error("Maybe check to see if cxDocs.cfg is configured correctly?")
@@ -121,8 +122,9 @@ def create_app():
 
     # General route structure and method for displaying rules and related data/info
     @app.route('/rules/')
-    @app.route('/gm/')
+    @app.route('/weapons/')
     @app.route('/items/')
+    @app.route('/gm/')
     @app.route('/<topic>')
     @app.route('/<topic>/<subtopic>')
     def rules_pages(topic=None, subtopic=None):
@@ -135,9 +137,13 @@ def create_app():
         if nav.page_has_filepath(endpoint) == True:
             return parser_page(endpoint)
         elif nav.page_has_template(endpoint) == True:
-            return render_template(nav.get_template_for_endpoint(endpoint), navOptions = nav.generate_navbar_options_for_page(endpoint))
+            return render_template(nav.get_template_for_page(endpoint), \
+                navOptions = nav.generate_navbar_options_for_page(endpoint), \
+                navLists = nav.generate_nav_lists_for_page(endpoint))
         elif nav.page_exists(endpoint) == True:
-            return render_template('home.html', navOptions = nav.generate_navbar_options_for_page(endpoint))
+            return render_template('home.html', \
+                navOptions = nav.generate_navbar_options_for_page(endpoint), \
+                navLists = nav.generate_nav_lists_for_page(endpoint))
         else:
             abort(404)
 

@@ -1,6 +1,20 @@
 # Need to manually create a dictionary to link the config filepaths to routes with labels and nav lists we want associated with each other.
 # (Having to manage this is why the module is broken down into these files.)
-def get_path_dict():
+
+_rules_navbar = ('/rules/overview', '/rules/', '/rules/checks', '/rules/glossary')
+
+def get_dict():
+    return {
+        '/rules/checks': {
+            'label': "Rolling Checks",
+            'navbar': _rules_navbar,
+            'template_to_render': 'home.html',
+            'filepath_option': None,
+            'nav_list': None
+        }
+    }
+
+def get_filepath_dict():
     return {
         # Paths should match options in the Parser section of the config file
         # Each path key must have a tuple containing values IN THE FOLLOWING ORDER:
@@ -10,34 +24,24 @@ def get_path_dict():
 
             # (optional) 4th value: a nav_list tuple, listing the options that would appear under its navbar label (usually to very specific pages)
 
-        'basic_rules_filepath': (
-            "Overview",
-            '/rules/overview',
-            ('/races', '/classes', '/files')
-        ),
         'combat_rules_filepath': (
             "Combat",
             '/rules/combat',
-            ('/rules/overview', '/classes', '/skills')
+            _rules_navbar
         ),
         'conditions_filepath': (
             "Ailments",
             '/rules/conditions',
-            ('/rules/overview', '/races', '/skills')
-        ),
-        'level_up_filepath': (
-            "Leveling Up",
-            '/rules/levelup',
-            ('/rules/overview', '/races', '/classes', '/feats')
+            _rules_navbar
         ),
         'cloaking_filepath': (
             "Cloaking",
             '/rules/cloaking',
-            ('/rules/overview', '/races', '/classes', '/skills')
+            _rules_navbar
         ),
         'glossary_filepath': (
             "Glossary",
             '/rules/glossary',
-            ('/rules/overview', '/races', '/classes', '/skills')
+            _rules_navbar
         )
     }

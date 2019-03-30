@@ -1,6 +1,9 @@
 # Need to manually create a dictionary to link the config filepaths to routes with labels and nav lists we want associated with each other.
 # (Having to manage this is why the module is broken down into these files.)
-def get_path_dict():
+
+_items_navbar = ('/rules/overview', '/rules/', '/weapons/', '/items/misc')
+
+def get_filepath_dict():
     return {
         # Paths should match options in the Parser section of the config file
         # Each path key must have a tuple containing values IN THE FOLLOWING ORDER:
@@ -12,47 +15,47 @@ def get_path_dict():
 
         'melee_weapons_filepath': (
             "Melee Weapons",
-            '/items/meleeweapons',
-            ('/rules/overview')
+            '/weapons/melee',
+            _items_navbar
         ),
         'pistols_filepath': (
             "Pistols",
-            '/items/pistols',
-            ('/rules/overview')
+            '/weapons/pistols',
+            _items_navbar
         ),
         'smgs_filepath': (
             "SMGs",
-            '/items/smgs',
-            ('/rules/overview')
+            '/weapons/smgs',
+            _items_navbar
         ),
         'carbines_filepath': (
             "Carbines",
-            '/items/carbines',
-            ('/rules/overview')
+            '/weapons/carbines',
+            _items_navbar
         ),
         'long_rifles_filepath': (
             "Long Rifles",
-            '/items/longrifles',
-            ('/rules/overview')
+            '/weapons/longrifles',
+            _items_navbar
         ),
         'machineguns_filepath': (
             "Heavy Guns",
-            '/items/machineguns',
-            ('/rules/overview')
+            '/weapons/machineguns',
+            _items_navbar
         ),
         'weapon_attachments_filepath': (
             "Weapon Attachments",
-            '/items/weaponattachments',
-            ('/rules/overview')
+            '/weapons/attachments',
+            _items_navbar
         ),
         'armor_filepath': (
             "Armor",
-            '/items/armor',
-            ('/rules/overview')
+            '/weapons/armor',
+            _items_navbar
         ),
         'items_filepath': (
-            "Misc",
-            'items/misc',
-            ('/rules/overview')
+            "Items",
+            '/items/misc',
+            _items_navbar
         )
     }
