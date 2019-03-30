@@ -155,15 +155,6 @@ def create_app():
     def show_files():
         return render_template("utility/game/files.html")
 
-    @app.route("/missions")
-    def show_missions():
-        missions = get_missions()
-        return render_template("missions/missions.html", missions = missions)
-
-    @app.route("/missionfiles")
-    def show_mission_files():
-        return render_template("missions/mission_files.html")
-
     """ the /login route expects the POST request from the login form in the repo/templates/index.html file. It expects
         strings from the "uname" and "password" fields.
 
