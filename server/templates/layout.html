@@ -24,8 +24,15 @@
 
     {% include './layout/nav/navbar.html' %}
 
-    <div class="content">
-      {% block content %}{% endblock %}
+    <div class="d-flex flex-row justify-content-between">
+      {% if sideNav and sideNav|length > 0 %}
+      {% include './layout/nav/side_nav.html' %}
+      {% endif %}
+
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
+
     </div>
   </div>
 

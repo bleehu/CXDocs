@@ -9489,12 +9489,18 @@ body {
   background: radial-gradient(circle at 0px 0px, white, white 10px, #ffee22 30px, #ffffee 60px, #ffcc00 76px, #ffffff 85px, transparent 200px, transparent), url("../../../../static/images/cx_bg1.png");
 }
 
+img {
+  max-width: 100%;
+}
+
 .page-header {
   color: springgreen;
 }
 
 .content {
-  margin-left: 68px;
+  margin-left: 2rem;
+  display: inline-flex;
+  flex: auto;
 }
 
 .row {
@@ -9525,6 +9531,11 @@ body {
 
 .holo-list-group-item:first-child {
   margin-top: -18px;
+}
+
+.side-bar {
+  flex: initial;
+  max-width: 20%;
 }
 
 footer {

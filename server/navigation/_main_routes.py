@@ -1,5 +1,5 @@
-# Gives the initial piece of the dictionary where we have to manually enter routes and endpoints
-def get_manual_routes():
+# Gives the initial piece of the dictionary where we have to manually enter paths
+def get_dict():
     return {
         # Each dictionary key is a string for a route the user can go to
         # Each key's value is a dictionary for route information:
@@ -12,41 +12,25 @@ def get_manual_routes():
         '/': {
             'label': "Home",
             'navbar': ( '/rules/overview', '/rules/', '/gm/' ),
+            'template_to_render': 'home.html',
             'filepath_option': None,
             'nav_list': None
         },
         '/rules/': {
             'label': "Rules",
-            'navbar': ( '/newplayer', '/rules/glossary', '/rules/combat', '/items/' ),
+            'navbar': ( '/newplayer', '/rules/combat', '/weapons/', '/rules/glossary', ),
+            'template_to_render': 'home.html',
             'filepath_option': None,
             'nav_list': (
                 '/rules/glossary',
                 '/rules/combat',
-                '/rules/levelup',
                 '/rules/conditions',
-                '/rules/cloaking',
-                '/rules/engineers'
-            )
-        },
-        '/items/': {
-            'label': "Items",
-            'navbar': ( '/newplayer', '/rules/', '/gm/' ),
-            'filepath_option': None,
-            'nav_list': (
-                '/items/meleeweapons',
-                '/items/pistols',
-                '/items/smgs',
-                '/items/carbines',
-                '/items/longrifles',
-                '/items/machineguns',
-                '/items/weaponattachments',
-                '/items/armor',
-                '/items/misc'
+                '/rules/cloaking'
             )
         },
         '/gm/': {
             'label': "For GMs",
-            'navbar': ( '/rules/', '/gm/' ),
+            'navbar': ( '/rules/', '/rules/glossary', '/gm/' ),
             'filepath_option': None,
             'nav_list': (
                 '/gm/designhowto',
@@ -54,27 +38,25 @@ def get_manual_routes():
                 '/gm/monsterarmorhowto'
             )
         },
-        '/gm/designhowto': {
-            'label': "Designing Campaigns",
-            'navbar': ( '/', ),
-            'template_to_render': 'creation_manuals/design_how_to.html',
-            'nav_list': None
-        },
-        '/gm/monsterweaponshowto': {
-            'label': "Designing Enemy Weapons",
-            'navbar': ( '/', ),
-            'template_to_render': 'creation_manuals/monster_weapon_how_to.html',
-            'nav_list': None
-        },
-        '/gm/monsterarmorhowto': {
-            'label': "Designing Enemy Armor",
-            'navbar': ( '/', ),
-            'template_to_render': 'creation_manuals/monster_armor_how_to.html',
-            'nav_list': None
+        '/weapons/': {
+            'label': "Weapons",
+            'navbar': ( '/newplayer', '/rules/', '/items/misc' ),
+            'template_to_render': 'home.html',
+            'filepath_option': None,
+            'nav_list': (
+                '/weapons/melee',
+                '/weapons/pistols',
+                '/weapons/smgs',
+                '/weapons/carbines',
+                '/weapons/longrifles',
+                '/weapons/machineguns',
+                '/weapons/attachments',
+                '/weapons/armor'
+            )
         },
         '/files': {
             'label': "Printable Sheets",
-            'navbar': ( '/', ),
+            'navbar': ('/rules/overview', '/races', '/classes', '/files'),
             'template_to_render': 'utility/game/files.html',
             'nav_list': None
         }
