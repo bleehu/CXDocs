@@ -11,7 +11,6 @@ from navigation import nav_dict as nav  # Module created by AK to allow dynamic 
 from flask import Flask, render_template, make_response, request, redirect, session, escape, flash, abort
 
 import guestbook #our custom guestbook for showing who all is on at once.
-from mission import Mission #Mission is a custom data typ that we made to organize mission info on the backend.
 import pdb  #Python Debuger is what I use to fix borked code. It should not be called in production EVER!
 #but it's very helpful when being run locally.
 
