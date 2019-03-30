@@ -196,6 +196,8 @@ def create_app():
         form = request.form
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
             app.authServer.logout(session)
+        else:
+            print("CSRF token mismatch. form: %s session: %s" % (form['X-CSRF'], session['X-CSRF']))
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])
