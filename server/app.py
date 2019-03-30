@@ -200,6 +200,8 @@ def create_app():
             mismatchString = "CSRF token mismatch. form: %s session: %s" % (form['X-CSRF'], session['X-CSRF'])
             print(mismatchString)
             log.warn(mismatchString)
+        log.debug("Session at route level after logout: %s" % session.keys())
+        log.debug("type of session: %s" % type(session))
         return redirect("/")
 
     @app.route("/npcgen", methods=['GET'])

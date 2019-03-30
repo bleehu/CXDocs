@@ -44,6 +44,10 @@ def test_login(client):
         #we need to visit the home page long enough to reset our CSRF token.
         response = client.get("/")
         response = client.post("/logout", data={"X-CSRF":"foxtrot"}, follow_redirects=True)
+
+        #debugging
+        print "type of session in test: %s" % type(session)
+
         assert 'username' not in session
         assert 'displayname' not in session
         assert 'role' not in session

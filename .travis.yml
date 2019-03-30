@@ -12,5 +12,4 @@ before_script:
   - pwd
   - cp travis/config_test.cfg config/cxDocs.cfg
 script:
-  - flask --version
   - pytest
