@@ -1,0 +1,10 @@
+{% extends './layout/side_bar.html' %}
+{% import './components/list.html' as list %}
+
+{% block side %}
+<div class="side-nav">
+
+  {{ list.holoListOfLinks(sideNav) }}
+
+</div>
+{% endblock %}

@@ -88,7 +88,8 @@ def create_app():
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
             return render_template("utility/site/parser.html", elements = tokens, \
-                navOptions = nav.generate_navbar_options_for_page(page))
+                navOptions = nav.generate_navbar_options_for_page(page), \
+                sideNav = nav.generate_links_from_nav_list(page))
         else:
             log.error("Missing config/cxDocs.cfg section Parser or missing option %s in that section." % config_option)
             flash("That feature isn't configured.")
@@ -136,8 +137,11 @@ def create_app():
         if nav.page_has_filepath(endpoint) == True:
             return parser_page(endpoint)
         elif nav.page_has_template(endpoint) == True:
-            return render_template(nav.get_template_for_page(endpoint), \
+            template_to_use = nav.get_template_for_page(endpoint)
+
+            return render_template(template_to_use, \
                 navOptions = nav.generate_navbar_options_for_page(endpoint), \
+                sideNav = nav.generate_links_from_nav_list(endpoint) if template_to_use != 'home.html' else None, \
                 navLists = nav.generate_nav_lists_for_page(endpoint))
         elif nav.page_exists(endpoint) == True:
             return render_template('home.html', \
@@ -199,10 +203,6 @@ def create_app():
         log.debug("Session at route level after logout: %s" % session.keys())
         log.debug("type of session: %s" % type(session))
         return redirect("/")
-
-    @app.route("/npcgen", methods=['GET'])
-    def npcgen():
-        return render_template("utility/game/npcgen.html")
 
     """Most legitimate web scrapers check a text file in /robots.txt to see
         where they should be allowed to look. This is how google, bing and bindu

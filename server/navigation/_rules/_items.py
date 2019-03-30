@@ -2,6 +2,17 @@
 # (Having to manage this is why the module is broken down into these files.)
 
 _items_navbar = ('/rules/overview', '/rules/', '/weapons/', '/items/misc')
+_items_nav_list = (
+    '/weapons/melee',
+    '/weapons/pistols',
+    '/weapons/smgs',
+    '/weapons/carbines',
+    '/weapons/longrifles',
+    '/weapons/machineguns',
+    '/weapons/attachments',
+    '/weapons/armor',
+    '/items/misc'
+)
 
 def get_filepath_dict():
     return {
@@ -16,46 +27,55 @@ def get_filepath_dict():
         'melee_weapons_filepath': (
             "Melee Weapons",
             '/weapons/melee',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'pistols_filepath': (
             "Pistols",
             '/weapons/pistols',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'smgs_filepath': (
             "SMGs",
             '/weapons/smgs',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'carbines_filepath': (
             "Carbines",
             '/weapons/carbines',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'long_rifles_filepath': (
             "Long Rifles",
             '/weapons/longrifles',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'machineguns_filepath': (
             "Heavy Guns",
             '/weapons/machineguns',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'weapon_attachments_filepath': (
             "Weapon Attachments",
             '/weapons/attachments',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'armor_filepath': (
             "Armor",
             '/weapons/armor',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         ),
         'items_filepath': (
             "Items",
             '/items/misc',
-            _items_navbar
+            _items_navbar,
+            _items_nav_list
         )
     }
