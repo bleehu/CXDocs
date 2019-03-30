@@ -109,26 +109,8 @@ class is getting much more play than another. """
 #show all of the player characters. For game designers to get a feel for the distribution.
 @character_blueprint.route("/playercharacters")
 def show_player_characters():
-    #SELECT name, level, race, class, users.displayname FROM characters JOIN users ON characters.owner_fk = users.pk ORDER BY displayname, level, name;
     pcs = characters.get_characters()
     return render_template("characters/player_characters.html", pcs = pcs)
-
-""" If a User has more than one character, then they should be able to select
-one character that they are using at a time. Dynamic pages will be able to do
-things like display only weapons and armor that character can use. """
-
-#API endpoint to select a character
-@character_blueprint.route("/select/character", methods=['POST'])
-def char_select():
-    if not security.check_auth(session):
-        flash("You must be logged in to do that.")
-        return redirect("/")
-    character_blob = character.get_characters()
-    select_pk = int(request.form['pk'])
-    for player_character in character_blob['characters']:
-        if player_character.pk == select_pk:
-            session['character'] = str(player_character)
-    return redirect("/show/character")
 
 """ Use the character creation page to update an existing character. """
 @character_blueprint.route("/modifycharacter/<pk>")
