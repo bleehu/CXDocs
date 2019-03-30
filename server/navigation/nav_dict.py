@@ -61,7 +61,7 @@ def generate_navbar_options_for_page(endpoint):
         if route in _nav_dict:
             nav_results.append( (_nav_dict[route]['label'], route) )
         else:
-            raise Error("Endpoint not found in navigation dictionary! %s" % route)
+            raise Exception("Endpoint not found in navigation dictionary! %s" % route)
     return nav_results
 
 def generate_nav_lists_for_page(endpoint):
