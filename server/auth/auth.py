@@ -68,7 +68,9 @@ class AuthServer:
 
     def logout(self, session):
         self.log.info("%s logged out." % session['username'])
+        self.log.debug("before clear: %s" % sorted(session.keys()))
         session.clear()
+        self.log.debug("after clear: %s" % sorted(session.keys()))
 
     def logRateLimitedAction(self, username, password, ipAddress):
         myCursor = self.getCursor()
