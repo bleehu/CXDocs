@@ -33,6 +33,9 @@ class app_config_object:
     def has_option(self, section, option):
         return self.raw_parser.has_option(section, option)
 
+    def options(self, section):
+        return self.raw_parser.options(section)
+
     def get(self, section, option):
         return self.raw_parser.get(section, option)
 

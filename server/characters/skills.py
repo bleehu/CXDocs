@@ -1,7 +1,6 @@
-import characters_common
+import character_database
 import psycopg2
 from ..security import security
-import pdb
 
 global log
 

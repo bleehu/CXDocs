@@ -1,5 +1,4 @@
-import characters_common
-import pdb
+import character_database
 import psycopg2
 
 def get_feats():
