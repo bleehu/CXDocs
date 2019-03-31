@@ -2,7 +2,7 @@
 # (Having to manage this is why the module is broken down into these files.)
 
 _characters_navbar = ('/rules/overview', '/rules/', '/races', '/classes', '/rules/glossary')
-_characters_nav_list = ('/races', '/classes', '/skills', '/feats', '/rules/engineers', '/rules/levelup')
+_characters_nav_list = ('/races', '/classes', '/skills', '/feats', '/rules/levelup', '/rules/skill-trees', '/rules/engineers')
 
 def get_filepath_dict():
     return {
