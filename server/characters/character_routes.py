@@ -1,10 +1,8 @@
 import characters
 import characters_common
-import feats
+from feats.feats_database import Feats_Database
 import skills
-import pdb
 from ..security import security
-import pdb
 from flask import Blueprint, render_template, request, redirect, session, escape, flash
 
 character_blueprint = Blueprint('character_blueprint', __name__, template_folder='templates')
@@ -16,6 +14,9 @@ def initialize_characters(config, newlog):
     skills.initialize_skills(newlog)
     global log
     log = newlog
+    character_db_config = get_db_map_from_config(config)
+
+    character_blueprint.feats_db = Feats_Database(character_db_config, log)
 
 """ Load the web form to create a new character. """
 #the character creation API endpoint
@@ -132,10 +133,10 @@ def char_modify(pk):
     if my_character is None:
         flash("You cannot update a character that isn't yours!")
         return redirect("/")
-    my_character['feats'] = feats.get_characters_feats(my_character['pk_id'])
+    my_character['feats'] = character_blueprint.feats_db.get_characters_feats(my_character['pk_id'])
     my_character['skills'] = skills.get_characters_skills(my_character['pk_id'])
     user_id = security.get_user_pkid(session)
-    all_feats = feats.get_feats()
+    all_feats = character_blueprint.feats_db.get_feats()
     #check to make sure the user updating the character actually owns that character.
     if my_character['owner'] != user_id:
         flash("You cannot modify a character that isn't yours!")
@@ -149,11 +150,11 @@ def make_character_feat_mapping():
     if not security.check_auth(session):
         flash("You must be logged in to do that.")
         return redirect("/")
-    mapping = feats.validate_character_feat_map(request.form)
+    mapping = character_blueprint.feats_db.validate_character_feat_map(request.form)
     if not mapping:
         flash("New feat assignment failed. Could not give feat to character.")
         return redirect("/")
-    feats.insert_character_feat_map(mapping)
+    character_blueprint.feats_db.insert_character_feat_map(mapping)
     flash("Gave feat to character successfully!")
     return redirect("/modifycharacter/%s" % mapping['character_id'])
 
@@ -267,3 +268,21 @@ def update_skill(pk_id):
         log.warn("There was an error updating skill with pk_id %s" % pk_id)
         flash("there was an error updating the skill")
     return redirect("/modifycharacter/%s" % character['pk_id'])
+
+def get_db_map_from_config(config):
+    db_config_map = {}
+    if config.has_option("Characters", "db_name"):
+        db_config_map['db_name'] = config.get("Characters", "db_name")
+    if config.has_option("Characters", "db_host"):
+        db_config_map['db_host'] = config.get("Characters", "db_host")
+    else:
+        db_config_map['db_host'] = "localhost"
+    if config.has_option("Characters", "port"):
+        db_config_map['port'] = config.get("Characters", "port")
+    else:
+        db_config_map['port'] = 5432
+    if config.has_option("Characters", "username"):
+        db_config_map['username'] = config.get("Characters", "username")
+    if config.has_option("Characters", "password"):
+        db_config_map['password'] = config.get("Characters", "password")
+    return db_config_map
