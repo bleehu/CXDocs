@@ -1,8 +1,10 @@
+from ...cxExceptions import cxExceptions
 from ...database import database
 from feats import Feat
 
 class Feats_Database:
     
+    #we use this select predicate to select all of the 
     Select_predicate = "SELECT \
         pk_id, \
         feat, \
@@ -17,11 +19,17 @@ class Feats_Database:
     def __init__(self, characterDBConfig, newLog):
         self.my_db = database.CXDatabase(characterDBConfig)
         self.log = newLog
+        #now check to make sure it's turned on.
+        #try:
+        self.get_feats()
+        #except Exception as e:
+        #    raise cxExceptions.DatabaseAccessException("feats", e.message)
+
 
     def get_feats(self):
         """Return a list of feats from the database."""
         query_string = "%s WHERE deleted_at IS NULL;" % self.Select_predicate
-        results = self.my_db.fetchall_from_db_query(query_string)
+        results = self.my_db.fetch_all(query_string)
         feats = []
         for line in results:
             newFeat = Feat(line)
@@ -30,7 +38,7 @@ class Feats_Database:
 
     def get_feat_by_id(self, pk_id):
         query_string = "%s WHERE pk_id=%s;" % (self.Select_predicate, pk_id)
-        first_database_row = self.my_db.fetch_first_from_db_query(query_string)
+        first_database_row = self.my_db.fetch_first(query_string)
         my_feat = Feat(first_database_row)
         return my_feat
 
@@ -64,7 +72,7 @@ class Feats_Database:
             f.created_at, f.private, f.nanite_cost\
             FROM feats_map AS map, feats AS f \
             WHERE map.fk_character_id = %s AND map.fk_feat_id = f.pk_id" % char_pk_id_int
-        lines = self.my_db.fetchall_from_db_query(query_string)
+        lines = self.my_db.fetch_all(query_string)
         characters_feats = []
         for line in lines:
             new_feat = Feat(line)

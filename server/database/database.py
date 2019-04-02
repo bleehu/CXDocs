@@ -1,4 +1,5 @@
 import psycopg2
+import pdb
 from ..cxExceptions import cxExceptions
 
 """This module creates a generic database that the enemy database and character 
@@ -30,8 +31,8 @@ class PsqlDatabase():
         self.host = config['db_host']
 
     def db_connection(self):
-        connection = psycopg2.connect("dbname=%s user=%s password=%s host=localhost" % \
-            (self.name, self.username, self.password))
+        connection = psycopg2.connect("dbname=%s user=%s password=%s host=%s" % \
+            (self.name, self.username, self.password, self.host))
         return connection
 
     def fetchall_from_db_query(self, query):

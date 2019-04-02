@@ -142,3 +142,28 @@ class ConfigOptionMissingException(CXException):
 
     def flash(self):
         flash("Sorry, It looks like the admin hasn't set the login database up yet. Check logs?")
+
+"""When one of our database access assumptions aren't met, such as when database
+access configs aren't set, or postgres isn't available, we'll trigger this exception
+to help speed up debugging for the user, the admin and the developer. """
+class DatabaseAccessException(CXException):
+
+    LOG_MESSAGE = "ERROR! Failed to access a database (%s), message: %s"
+    ADVICE = "It looks like the application's database may have been misconfigured. Please contact an administrator."
+
+    def __init__(self, db_name, db_error_message):
+        self.db_error_message = db_error_message
+        self.message = self.LOG_MESSAGE % (db_name, db_error_message)
+        self.db_name = db_name
+
+    def printToConsole(self):
+        print(self.message)
+        print("You may want to change the configurations for this database: %s" % self.db_name)
+
+    def log(self):
+        log.error(self.message)
+
+    def flash(self):
+        flash(self.ADVICE)
+
+
