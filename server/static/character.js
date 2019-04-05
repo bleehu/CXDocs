@@ -1,5 +1,3 @@
-
-//This file uses AJAX to reach out to the github API to retrieve and display news on recent development.
 (function(){
     $(document).ready(initialize)
 
@@ -32,8 +30,9 @@
         
         //$("#saveCharacterButton").click(saveCharacter);
 
-        $("#newSkillButton").click(getNewSkillId);
+        $("#newSkillButton").click(addNewSkill);
         $("#updateSkillsButton").click(updateAllSkills);
+        refreshSkills();
 
         console.log("done initializing character javascript.");
     }
@@ -297,24 +296,45 @@
         $("#skills_pane").fadeIn();
     }
 
-    function getNewSkillId(){
-        var pk_id = parseInt($("#newSkillButton").attr("character_id"));
-        $.post("/skills/new/" + pk_id, AddNewSkillSpace);
+    function addNewSkill(){
+        var character_pk_id = parseInt($("#pk_id").val());
+        var payload = {"name":"newSkill", "points": "0"};
+        $.ajax({
+            type:"POST",
+            url:"/skill/" + character_pk_id,
+            data:payload
+        });
+        refreshSkills();
     }
 
-    function AddNewSkillSpace(data){
-        //note to self, we need an asynch call to the server to find out what our next pk_id is.
+    function appendSkill(skill){
         var nameDiv = document.createElement("div");
         nameDiv.className = "col-lg-4";
         var nameInput = document.createElement("input");
         nameInput.type = "text";
-        nameInput.value = "newSkill";
+        nameInput.className = "skillNames";
+        nameInput.value = skill["name"];
+        nameInput.name = skill["pk_id"] + "SkillName";
+        nameInput.id = skill["pk_id"] + "SkillName";
         nameDiv.appendChild(nameInput);
         var numberDiv = $("<div>", {"class":"col-lg-4"});
-        var numberInput = $("<input>",{"type":"text", "value":0,});
+        var numberInput = $("<input>",{"type":"text", 
+            "value":skill["points"], 
+            "class":"skillPoints", 
+            "name":skill["pk_id"] + "SkillNumber", 
+            "id":skill["pk_id"] + "SkillNumber"});
         numberDiv.append(numberInput);
         var buttonDiv = $("<div>", {"class":"col-lg-4"});
-        var delButton = $("<input>", {"class":"btn btn-danger", "type":"button", "value":"Delete Skill"});
+        var delButton = $("<input>", {"class":"btn btn-danger", 
+            "type":"button", 
+            "value":"Delete Skill",
+            "name":skill["pk_id"] + "deleteSkill",
+            "id":skill["pk_id"] + "deleteSkill"});
+        delButton.click(deleteASkill);
+        //I should add a hidden field to the JQuery object that acts as an ID number within the context 
+        // of the UI. Then use that number for hiding after a delete, sorting, etc. 
+        // The pk_id of the skill itself (in the context of the db) should be separate
+        // it's hard to look this up on the bus.
         buttonDiv.append(delButton);
         $("#skillDiv").append(nameDiv, numberDiv, buttonDiv);
     }
@@ -325,22 +345,49 @@
 
     function updateASkill(){
         var name = $(this).attr("name");
-        var id = parseInt(name.replace("Label",""));
+        var id = parseInt(name.replace("SkillName",""));
         var skillName = $(this).val();
-        var skillPointsString = $("#" + id + "number").val();
-        skillPointsString = skillPointsString.replace("number", "");
+        var skillPointsString = $("#" + id + "SkillNumber").val();
+        skillPointsString = skillPointsString.replace("SkillNumber", "");
         var skillPoints = parseInt(skillPointsString);
         var payload = {"pk_id":id, "skillName":skillName, "skillPoints":skillPoints};
         $.ajax({
-            type:"POST",
-            url:"/skills/modify/" + id,
+            type:"PUT",
+            url:"/skill/" + id,
             data:payload,
-            asynch: true,
-            success: function(){
-                console.log("updated skill pk_id:" + id);
-            }
+            asynch: true
         });
+    }
 
+    function deleteASkill(){
+        var name = $(this).attr("name");
+        var id = parseInt(name.replace("deleteSkill",""));
+        $.ajax({
+            type:"DELETE",
+            url:"/skill/" + id,
+            asynch: true,
+            success: refreshSkills
+        });
+    }
+
+    function refreshSkills(){
+        var character_pk_id = parseInt($("#pk_id").val());
+        $.ajax({
+            type:"GET",
+            url:"/character_skills/" + character_pk_id,
+            asynch: true,
+            success: refreshedSkills,
+            fail: function(){console.log("Failed to get character's skills.")}
+        });
+    }
+
+    function refreshedSkills(data){
+        var skillDiv = $("#skillDiv");
+        $("#skillDiv").empty();
+        var skillsList = $.parseJSON(data);
+        skillsList.forEach(function(skill){
+            appendSkill(skill);
+        });
     }
 
 })();
