@@ -1,3 +1,18 @@
+// PLACEHOLDER CLASS
+%navbar-hz-skeleton {
+  width: 100%;
+
+  flex-direction: row;
+  align-content: space-around;
+
+  & > * {
+    display: flex;
+    justify-content: center;
+
+    margin: 0 auto;
+  }
+}
+
 // BOOTSTRAP CLASSES
 .navbar {
   background: $black;
@@ -21,15 +36,7 @@
 }
 
 .navbar-nav {
-  width: 100%;
-  align-content: space-around;
-
-  & > * {
-    display: flex;
-    justify-content: center;
-
-    margin: 0 auto;
-  }
+  @extend %navbar-hz-skeleton;
 
   & > *:first-child {
     margin-left: 0;
@@ -61,4 +68,19 @@
   border-radius: $std-b-radius;
 
   padding: 0 0.5rem;
+}
+
+.subnavbar {
+  @extend %navbar-hz-skeleton;
+
+  flex-direction: column;
+
+  & > ul {
+    flex-direction: row;
+    justify-content: space-between;
+
+    & > li {
+      flex: 1 1 0;
+    }
+  }
 }

@@ -4,25 +4,19 @@
 
 {% block content %}
 <div class="container">
-  <div class="page-header">
-    <h1>{{ elements[0]['content'] }}</h1>
-  </div>
-
-  <div class="row">
-    <div class="col-lg-2">
-      <div class="list-group table-of-contents">
+  <div class="">
+    <div class="subnavbar">
+      <ul>
       {% for element in elements %}
-        {% if element['type'] == 'h1' %}
-        <a class="list-group-item text-primary" href="#{{ element['id'] }}">{{ element['content'] }}</a>
+        {% if ( element['type'] == 'h1'
+          or element['type'] == 'h2'
+          or element['type'] == 'h3' ) %}
 
-        {% elif element['type'] == 'h2' %}
-        <a class="list-group-item text-info" href="#{{element['id']}}">{{element['content']}}</a>
+        <li class="px-1"><a class="text-primary" href="#{{ element['id'] }}">{{ element['content']|truncate(15, True) }}</a></li>
 
-        {% elif element['type'] == 'h3' %}
-        <a class="list-group-item text-white" href="#{{element['id']}}">{{element['content']}}</a>
         {% endif %}
       {% endfor %}
-      </div>
+      </ul>
     </div>
 
     <div class="flex-fill"> <!-- main column -->
