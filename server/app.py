@@ -168,13 +168,6 @@ def create_app():
         form = request.form
         uname = escape(form['uname'])
         passwerd = escape(form['password'])
-        if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
-            session.pop('X-CSRF', None)
-        else:
-            resp = make_response(render_template("errors/501.html"), 403)
-            log.error("An attacker removed their CSRF token! uname:%s, pass:%s, user_agent:%s, remoteIP:%s" \
-                % (uname, passwerd, request.user_agent.string, request.remote_addr))
-            return resp
         try:
             user = app.authServer.login(uname, passwerd, request)
         except cxExceptions.CXException as exception:
