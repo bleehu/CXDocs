@@ -6,7 +6,7 @@ databases inherit from. Ideally, this becomes the adapter for our use of the
 psql driver, so if you wanted to switch to MySQL, this would be the only
 file you would need to update."""
 
-class CXDatabase:
+class CXDatabase(object):
 
     def __init__(self, config):
         self.db = PsqlDatabase(config)
