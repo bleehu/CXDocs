@@ -111,14 +111,12 @@ To download Postgres, go here: https://www.postgresql.org/download/windows/
 
 Not really sure how to set the database up after that, but we'll work on it!
 
-Likely on Windows, you'll want to use the (PGAdmin III GUI)[https://www.pgadmin.org/download/]
-to work with the database rather than the Command Line Interface that the penguins
-using linux will use.
+Likely on Windows, you'll want to use the PGAdmin IV GUI, which conveniently comes 
+with the standard postgres installer,to work with the database rather than the 
+Command Line Interface that the penguinsusing linux will use.
 
-There should be documentation on how to use pgAdmin3 to restore a database
-(in this direction.)[https://www.pgadmin.org/docs/pgadmin3/1.22/restore.html]
-but most of our devs use linux, and we haven't figured out how to do this on
-Windows for sure yet.
+There should be documentation on how to use pgAdmin4 to restore a database
+(in this direction.)[https://www.pgadmin.org/docs/pgadmin4/dev/backup_and_restore.html]
 
 ### To initialize the database (Linux/Ubuntu)
 
