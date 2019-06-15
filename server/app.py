@@ -186,9 +186,9 @@ def create_app():
         if 'X-CSRF' in form.keys() and form['X-CSRF'] == session['X-CSRF']:
             app.authServer.logout(session)
         else:
-            mismatchString = "CSRF token mismatch. form: %s session: %s" % (form['X-CSRF'], session['X-CSRF'])
-            print(mismatchString)
-            log.warn(mismatchString)
+            mismatch_string = "CSRF token mismatch. form: %s session: %s" % (form['X-CSRF'], session['X-CSRF'])
+            print(mismatch_string)
+            log.warn(mismatch_string)
         log.debug("Session at route level after logout: %s" % session.keys())
         log.debug("type of session: %s" % type(session))
         return redirect("/")

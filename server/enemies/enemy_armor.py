@@ -7,12 +7,12 @@ import enemies_common
 def get_monster_armor_all():
     monster_armor = []
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id, name, description, coverage, type, author, \
+    my_cursor = connection.cursor()
+    my_cursor.execute("SELECT pk_id, name, description, coverage, type, author, \
         ap_level, armor_points, mags, cost, hardpoints, move_penalty \
         FROM monsters_armors \
         WHERE deleted_at IS NULL ORDER BY name;")
-    results = myCursor.fetchall()
+    results = my_cursor.fetchall()
     for line in results:
         suit = {}
         suit['pk_id'] = line[0]
@@ -33,8 +33,8 @@ def get_monster_armor_all():
 def get_monsters_armor(monster_id):
     monster_armor = []
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT a.pk_id, name, coverage, description, a.author, \
+    my_cursor = connection.cursor()
+    my_cursor.execute("SELECT a.pk_id, name, coverage, description, a.author, \
         a.type, a.ap_level, a.armor_points, a.mags, a.cost, \
         a.hardpoints, a.move_penalty \
         FROM monsters_armors AS a, monsters_armor_map \
@@ -42,7 +42,7 @@ def get_monsters_armor(monster_id):
         AND monsters_armor_map.fk_monster_id = %s \
         AND monsters_armor_map.fk_armor_id = a.pk_id \
         ORDER BY name;" % monster_id)
-    results = myCursor.fetchall()
+    results = my_cursor.fetchall()
     for line in results:
         armor = {}
         armor['pk_id'] = line[0]
@@ -62,13 +62,13 @@ def get_monsters_armor(monster_id):
 
 def get_armors_monsters(armor_id):
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT monsters_armor_map.pk_id, name \
+    my_cursor = connection.cursor()
+    my_cursor.execute("SELECT monsters_armor_map.pk_id, name \
         FROM monsters, monsters_armor_map \
         WHERE monsters.deleted_at IS NULL \
         AND monsters_armor_map.fk_armor_id = %s \
         AND monsters_armor_map.fk_monster_id = monsters.pk_id;" % armor_id)
-    results = myCursor.fetchall()
+    results = my_cursor.fetchall()
     return results
 
 def validate_monster_armor(form, user):
@@ -109,18 +109,18 @@ def validate_monster_armor_map(form):
 
 def insert_monster_armor(armor):
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
+    my_cursor = connection.cursor()
     armorstring = (armor['name'], armor['coverage'], armor['type'], armor['description'], armor['author'], armor['ap_level'], armor['armor_points'], armor['mags'], armor['cost'], armor['hardpoints'], armor['move_penalty'])
-    myCursor.execute("INSERT INTO monsters_armors (name, coverage, type, description, author, ap_level, armor_points, mags, cost, hardpoints, move_penalty) VALUES (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s);" % armorstring)
-    myCursor.close()
+    my_cursor.execute("INSERT INTO monsters_armors (name, coverage, type, description, author, ap_level, armor_points, mags, cost, hardpoints, move_penalty) VALUES (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s);" % armorstring)
+    my_cursor.close()
     connection.commit()
 
 def insert_monster_armor_map(mapping):
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
+    my_cursor = connection.cursor()
     mapstring = (mapping['monster_id'], mapping['armor_id'])
-    myCursor.execute("INSERT INTO monsters_armor_map (fk_monster_id, fk_armor_id) VALUES (%s, %s)" % mapstring)
-    myCursor.close()
+    my_cursor.execute("INSERT INTO monsters_armor_map (fk_monster_id, fk_armor_id) VALUES (%s, %s)" % mapstring)
+    my_cursor.close()
     connection.commit()
 
 def delete_monster_armor_map(map_id):
@@ -132,17 +132,17 @@ def delete_monster_armor_map(map_id):
     if del_id < 1:
         return None
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("DELETE FROM monsters_armor_map WHERE pk_id = %s;" % del_id)
-    myCursor.close()
+    my_cursor = connection.cursor()
+    my_cursor.execute("DELETE FROM monsters_armor_map WHERE pk_id = %s;" % del_id)
+    my_cursor.close()
     connection.commit()
 
 def update_monster_armor(valid_armor, pk_id):
     primary_key = int(pk_id)
     if primary_key > 0:
         connection = enemies_common.db_connection()
-        myCursor = connection.cursor()
+        my_cursor = connection.cursor()
         armoString = (valid_armor['name'], valid_armor['coverage'], valid_armor['description'], valid_armor['author'], valid_armor['type'], valid_armor['ap_level'], valid_armor['armor_points'], valid_armor['mags'], valid_armor['cost'], valid_armor['hardpoints'], valid_armor['move_penalty'], pk_id)
-        myCursor.execute("UPDATE monsters_armors SET (name, coverage, description, author, type, ap_level, armor_points, mags, cost, hardpoints, move_penalty) = (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s) WHERE pk_id = %s" % armoString)
-        myCursor.close()
+        my_cursor.execute("UPDATE monsters_armors SET (name, coverage, description, author, type, ap_level, armor_points, mags, cost, hardpoints, move_penalty) = (E'%s', %s, E'%s', E'%s', E'%s', %s, %s, %s, %s, E'%s', %s) WHERE pk_id = %s" % armoString)
+        my_cursor.close()
         connection.commit()

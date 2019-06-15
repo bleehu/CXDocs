@@ -45,15 +45,15 @@ def get_user_pkid(session):
         return None
     username = session['username']
     connection = get_login_db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT pk_id FROM users WHERE username = '%s';" % username)
-    line = myCursor.fetchall()[0]
+    my_cursor = connection.cursor()
+    my_cursor.execute("SELECT pk_id FROM users WHERE username = '%s';" % username)
+    line = my_cursor.fetchall()[0]
     return int(line[0])
 
-def initialize(new_user, new_password, newLog):
+def initialize(new_user, new_password, new_log):
     global user_user
     user_user = new_user
     global user_password
     user_password = new_password
     global log
-    log = newLog
+    log = new_log
