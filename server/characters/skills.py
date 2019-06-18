@@ -16,9 +16,9 @@ def get_skill(pk_id):
     except:
         return None
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
+    my_cursor = connection.cursor()
     try:
-        myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
+        my_cursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
             FROM skills WHERE pk_id = %s AND deleted_at IS NULL;" % pk_id)
     except Exception as e:
         errmsg = "Error attempting to get skill with pk_id %s; Likely a permission error with skill database." % pk_id
@@ -27,7 +27,7 @@ def get_skill(pk_id):
         log.error(errmsg)
         log.error(str(e))
         return None
-    line = myCursor.fetchone()
+    line = my_cursor.fetchone()
     skill = parse_line_to_skill(line)
     return skill
 
@@ -46,11 +46,11 @@ def get_characters_skills(character_pk_id):
     except:
         return None
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
+    my_cursor = connection.cursor()
+    my_cursor.execute("SELECT skillname, points, pk_id, fk_owner_id, created_at \
     	FROM skills WHERE fk_owner_id = %s AND deleted_at IS NULL;" \
     	% char_pk_id_int)
-    lines = myCursor.fetchall()
+    lines = my_cursor.fetchall()
     characters_skills = []
     for line in lines:
         new_skill = parse_line_to_skill(line)
@@ -85,10 +85,10 @@ def update_skill(new_skill_map):
         return None
     #update
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
+    my_cursor = connection.cursor()
     skill_tuple = (saniname, sanipoints, sani_pk_id)
-    myCursor.execute("UPDATE skills SET (skillname, points) = (E'%s', %s) WHERE pk_id = %s;" % (skill_tuple))
-    myCursor.close()
+    my_cursor.execute("UPDATE skills SET (skillname, points) = (E'%s', %s) WHERE pk_id = %s;" % (skill_tuple))
+    my_cursor.close()
     connection.commit()
     return new_skill_map
 
@@ -100,9 +100,9 @@ def delete_skill(pk_id):
     except:
         return None
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("UPDATE skills SET deleted_at = now() WHERE pk_id = %s;" % sani_pk_id)
-    myCursor.close()
+    my_cursor = connection.cursor()
+    my_cursor.execute("UPDATE skills SET deleted_at = now() WHERE pk_id = %s;" % sani_pk_id)
+    my_cursor.close()
     connection.commit()
     return sani_pk_id
 
@@ -115,12 +115,12 @@ def get_newest_skill(character_pk_id):
     except:
         return None
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("SELECT max(pk_id) FROM skills;")
-    new_pk_id = int(myCursor.fetchone()[0])
+    my_cursor = connection.cursor()
+    my_cursor.execute("SELECT max(pk_id) FROM skills;")
+    new_pk_id = int(my_cursor.fetchone()[0])
     new_pk_id = new_pk_id + 1
-    myCursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skillname, points, created_at) \
+    my_cursor.execute("INSERT INTO skills (pk_id, fk_owner_id, skillname, points, created_at) \
     	VALUES (%s, %s, 'new skill', 0, now()) WHERE deleted_at IS NULL;" % (new_pk_id, sani_pk_id))
-    myCursor.close()
+    my_cursor.close()
     connection.commit()
     return new_pk_id

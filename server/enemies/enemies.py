@@ -120,7 +120,7 @@ def validate_monster(form, user):
 
 def insert_monster(monster):
     connection = enemies_common.db_connection()
-    myCursor = connection.cursor()
+    my_cursor = connection.cursor()
     monstring = (monster['name'], \
         monster['health'], \
         monster['nanites'], \
@@ -140,35 +140,35 @@ def insert_monster(monster):
         monster['description'], \
         monster['author'], \
         monster['private'])
-    myCursor.execute("INSERT INTO monsters (name, \
+    my_cursor.execute("INSERT INTO monsters (name, \
         health, nanites, \
         strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
         reflex, will, shock, awareness, level, role, description, author, private) \
         VALUES (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s', E'%s');" % monstring)
-    myCursor.close()
+    my_cursor.close()
     connection.commit()
     
 def update_monster(monster, pk_id):
     primary_key = int(pk_id)
     if primary_key > 0:
         connection = enemies_common.db_connection()
-        myCursor = connection.cursor()
+        my_cursor = connection.cursor()
         monstring = (monster['name'], monster['health'], monster['nanites'], \
             monster['strength'], monster['perception'], monster['dexterity'], monster['fortitude'], monster['charisma'], monster['intelligence'], monster['luck'], \
             monster['reflex'], monster['will'], monster['shock'], monster['awareness'], \
             monster['level'], monster['role'], monster['description'], monster['author'], monster['private'], pk_id)
-        myCursor.execute("UPDATE monsters SET (name, \
+        my_cursor.execute("UPDATE monsters SET (name, \
             health, nanites, strength, perception, dexterity, fortitude, charisma, intelligence, luck, \
             reflex, will, shock, awareness, level, role, description, author, private) = \
             (E'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s', E'%s', '%s', E'%s') WHERE pk_id=%s;" % monstring)
-        myCursor.close()
+        my_cursor.close()
         connection.commit()
 
 def update_monster_weapon(weapon, pk_id):
     primary_key = int(pk_id)
     if primary_key > 0:
         connection = enemies_common.db_connection()
-        myCursor = connection.cursor()
+        my_cursor = connection.cursor()
         wepstring = (weapon['name'], weapon['damage'], \
             weapon['mag'], weapon['description'], \
             weapon['author'], weapon['type'], \
@@ -179,7 +179,7 @@ def update_monster_weapon(weapon, pk_id):
             weapon['move_speed_penalty'], weapon['refmod'], \
             weapon['fire_rate'], weapon['cost'], \
             weapon['suppression_level'], pk_id)
-        myCursor.execute("UPDATE monsters_weapons \
+        my_cursor.execute("UPDATE monsters_weapons \
             SET (name, damage, capacity, description, \
             author, type, mag_cost, \
             r1, r2, r3, acc1, acc2, acc3, \
@@ -189,84 +189,5 @@ def update_monster_weapon(weapon, pk_id):
             (E'%s', %s, %s, E'%s', E'%s', E'%s', %s, %s, %s, \
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, E'%s') \
             WHERE pk_id = %s" % wepstring)
-        myCursor.close()
+        my_cursor.close()
         connection.commit()
-    
-""" 
-    sql commands for initializing monsters database for tracking the beastiary
-    CREATE SEQUENCE monsters_pk_seq NO CYCLE;    
-    CREATE TABLE monsters (
-        pk_id int primary key default nextval('monsters_pk_seq'),
-        name text NOT NULL,
-        health int NOT NULL CHECK (health > 0),
-        nanites int NOT NULL CHECK (nanites > 0),
-        strength int NOT NULL CHECK (strength > 0),
-        perception int NOT NULL CHECK (perception > 0),
-        fortitude int NOT NULL CHECK (fortitude > 0),
-        charisma int NOT NULL CHECK (charisma > 0),
-        intelligence int NOT NULL CHECK (intelligence > 0),
-        dexterity int NOT NULL CHECK (dexterity > 0),
-        luck int NOT NULL CHECK (luck > 0),
-        level int NOT NULL CHECK (level > -1),
-        shock int NOT NULL,
-        will int NOT NULL,
-        reflex int NOT NULL,
-        description text,
-        role text,
-        created_at timestamp NOT NULL DEFAULT now(),
-        author text
-    );
-    INSERT INTO monsters (name, health, nanites, strength, perception, fortitude, charisma, intelligence, dexterity, luck, shock, will, reflex, description, role, level) VALUES ('Pirate Breacher', 210, 70, 8,3,10,2,2,6,2,12,12,6, 'A 200lb 6 foot man holding a crude rusty shotgun walks with a heavy gait. His hair is greasy and wild, and should you get close enough, you smell that he clearly has not showered in days. He wears a gas mask over his face patched with duct tape, but the soft "cooh-pah" that it makes in time with his breathing clearly shows that it is functional.', 'Tank', 5);
-    CREATE TABLE monsters_abilities (
-        pk_id int primary key default nextval('monster_ability_pk_seq'),
-        name text NOT NULL,
-        type text NOT NULL,
-        description text NOT NULL,
-        created_at timestamp NOT NULL DEFAULT now(),
-        author text
-    );
-    INSERT INTO monsters_abilities (name, type, description) values ( 'Bulltrue', 'reaction', E'Once per round when an enemy moved into an area that the breacher can see which is within 3m and if the breacher has a round still in their shotgun and the weapon is drawn cher may interrupt their opponent\'s turn to fire at that enemy. The enemy then resumes their turn as normal.');
-    SELECT monsters.name, monsters_abilities.name FROM monsters, monsters_abilities, monster_ability_map WHERE monster_ability_map.fk_monster_id = monsters.pk_id AND monster_ability_map.fk_ability_id = monsters_abilities.pk_id;
-     CREATE TABLE monsters_armors(
-        pk_id int primary key default nextval('monster_armor_pk_seq'),
-        name text NOT NULL,
-        coverage int NOT NULL CHECK (coverage > -1) CHECK (coverage < 101),
-        damageReduction int NOT NULL CHECK (damageReduction > -1),
-        description TEXT,
-        type TEXT NOT NULL,
-        author text);
-    CREATE TABLE monsters_weapons(
-        pk_id int primary key default nextval('monster_weapon_pk_seq'),
-        name text NOT NULL,
-        range int NOT NULL CHECK (range > -1),
-        damage int NOT NULL CHECK (damage > -1),
-        accuracy int NOT NULL CHECK (accuracy > -101) CHECK (accuracy < 101),
-        capacity int NOT NULL CHECK (capacity > -1),
-        description text,
-        mag_cost int CHECK (mag_cost > -1),
-        created_at timestamp NOT NULL DEFAULT now(),
-        author text);
-    CREATE TABLE monsters_armor_map(
-        pk_id int primary key default nextval('monster_armor_map_pk_seq'),
-        fk_monster_id int references monsters(pk_id) ON DELETE CASCADE,
-        fk_monsters_armors int references monsters_armors(pk_id)) ON DELETE CASCADE;
-    CREATE TABLE monsters_weapon_map(
-        pk_id int primary key default nextval('monster_weapon_map_pk_seq'),
-        fk_monster_id int references monsters(pk_id) ON DELETE CASCADE,
-        fk_weapons_id int references monsters_weapons(pk_id)) ON DELETE CASCADE;
-    GRANT UPDATE on monster_ability_pk_seq TO searcher;
-    GRANT INSERT, UPDATE, DELETE ON monsters_armors TO searcher;
-    GRANT INSERT, UPDATE, DELETE ON monsters_armor_map TO searcher;
-    GRANT SELECT, INSERT, DELETE on monsters_abilities TO searcher;
-    GRANT UPDATE ON monster_armor_pk_seq TO searcher;
-    GRANT UPDATE ON monsters_ability_map TO searcher;
-    GRANT UPDATE ON monster_ability_map_pk_seq TO searcher;
-    GRANT UPDATE ON monster_armor_pk_seq TO searcher;
-    GRANT UPDATE ON monster_armor_map_pk_seq TO searcher;
-    GRANT INSERT, DELETE ON monsters_ability_map TO searcher;
-    ALTER TABLE monsters_ability_map DROP CONSTRAINT monsters_ability_map_fk_ability_id_fkey;
-    SELECT * FROM information_schema.key_column_usage WHERE position_in_unique_constraint is not null;
-ALTER TABLE monsters_ability_map ADD CONSTRAINT monsters_ability_map_fk_ability_id_fkey
-foreign key (fk_ability_id) references monsters_abilities(pk_id)
- on delete cascade;
-    """
