@@ -1,5 +1,13 @@
 {% import './components/nav.html' as nav %}
 
+{% if 'username' in session %}
+
+<div class="navbar-member">
+  {{ nav.navButtonForMembers('My Characters', '/character/mine') }}
+</div>
+
+{% endif %}
+
 <nav class="navbar navbar-expand-sm">
   <a href="/" class="navbar-brand">CX</a>
 

@@ -1,12 +1,12 @@
-{% macro navItem(title, hrefLink) -%}
+{% macro navItem(title, hrefLink) %}
 
 <li><a class="nav-item nav-link" href="{{ hrefLink }}">{{ title }}</a></li>
 
-{%- endmacro %}
+{% endmacro %}
 
 
 
-{% macro navbarList(options) -%}
+{% macro navbarList(options) %}
 
 <ul class="navbar-nav">
 {% for link in options %}
@@ -31,4 +31,12 @@
 
 </ul>
 
-{%- endmacro %}
+{% endmacro %}
+
+
+
+{% macro navButtonForMembers(title, link) %}
+<div>
+  <a class="nav-item nav-link" href="{{ link }}">{{ title }}</a>
+</div>
+{% endmacro %}
