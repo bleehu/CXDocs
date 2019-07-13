@@ -1,30 +1,21 @@
-
 //This file uses AJAX to reach out to the github API to retrieve and display news on recent development.
 (function(){
-    $(document).ready(initialize)
+  $(document).ready(initialize)
 
-    function initialize(){
-        console.log("Starting character select javascript.");
-        
-        $(".deleteButton").click(deleteCharacter); 
-        
-        //$("#saveCharacterButton").click(saveCharacter);
+  function initialize(){
+    $(".delete-button").click(deleteCharacter);
+  }
 
-        console.log("done initializing character select javascript.");
-    }
+  function deleteCharacter(){
+    var pk_id = $(this).attr("pk_id");
+    var url = '/character/modify/' + pk_id;
 
-    function deleteCharacter(){
-        var pk_id = $(this).attr("pk_id");
-        $.ajax({
-            url:'/character/modify/' + pk_id,
-            type:'DELETE',
-            success: function(result){
-                //notify of success
-                console.log("Deleted Character with pk_id " + pk_id);
-                location.reload();
-            }
-        });
-    }
-
-
+    $.ajax(url, {
+      method:'DELETE',
+      success: function(result){
+          console.log("Deleted character with pk_id " + result.id);
+          $("#" + result.id).remove();
+      }
+    });
+  }
 })();

@@ -6,7 +6,7 @@ import skills
 import pdb
 from ..security import security
 import pdb
-from flask import Blueprint, render_template, request, redirect, session, escape, flash
+from flask import Blueprint, render_template, request, redirect, session, escape, flash, jsonify
 
 character_blueprint = Blueprint('character_blueprint', __name__, template_folder='templates')
 
@@ -76,7 +76,7 @@ def delete_character(pk_id):
         return redirect("/show/character")
     characters.delete_character(pk_id_int)
     flash("Deleted Character successfully.")
-    return redirect("/character/mine")
+    return jsonify(success=True, id=pk_id_int)
 
 """ Endpoint for updating an existing character. Attempting to emulate a
 RESTful API endpoint where the route is the same to add new, update existing,
