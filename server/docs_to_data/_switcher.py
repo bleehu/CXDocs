@@ -1,36 +1,40 @@
 import re
 
-_re_str = r'('                                  # G0 START by creating group 0
-_re_str += r'^(  {4}|\t)'                       # Check for paragraphs (4 spaces or a tab) at start of line
+_re_str = r'('                                  # G0 START - Create group 0
+_re_str += r'^( {4}|\t)'                        # Check for paragraphs (4 spaces or a tab) at start of line
 _re_str += r'|^\s*('                            # G1 START - Check for other patterns at start of line that don't rely on whitespace
 _re_str += r'\={30}|\={5}|\={2}'                # Headings patterns (chapter, section, subsection) (repetitive equals: 30, 4, and 2)
 _re_str += r'|[\*-]\s'                          # Unordered List item
 _re_str += r'|\*{1,2}'                          # Footnotes (footnote or long_footnote)
 _re_str += r'|\+'                               # Table corner
+_re_str += r'|\|'                               # Table data row
 _re_str += r')'                                 # G1 END - Close group looking at start of line
 _re_str += r'|\s*((?<=\d)|(?<=\d\d))\.(?=\s)'   # Ordered List patterns (lookahead has strict rules; lists shouldn't go over 99 anyway)
 _re_str += r'|\:$|\:\s'                         # Colon patterns (topic and definition)
-_re_str += r')'                                 # G0 END by closing group 0
+_re_str += r')'                                 # G0 END - Close group 0
 
 TOKENS_REGEX = re.compile(_re_str)      # Regex pattern used exclusively for finding patterns which indicate what tokens need to be made
 
 T_SWITCHER = {
-    '==============================': 'chapter',
-    '=====': 'section',
-    '==': 'subsection',
-    ':': 'topic',
-    '    ': 'paragraph',
-    '\t': 'paragraph',
-    '* ': 'unordered_list',
-    '- ': 'unordered_list',
-    '*': 'footnote',
-    # '**': 'long_footnote',
-    '**': 'footnote',
-    ': ': 'definition_list',
-    '+-': 'table',
-    '.': 'ordered_list',
+    'PATTERN_TO_TYPE': {
+        '==============================': 'chapter',
+        '=====': 'section',
+        '==': 'subsection',
+        ':': 'topic',
+        '    ': 'paragraph',
+        '\t': 'paragraph',
+        '* ': 'unordered_list',
+        '- ': 'unordered_list',
+        '*': 'footnote',
+        # '**': 'long_footnote',
+        '**': 'footnote',
+        ': ': 'definition_list',
+        '+': 'table',
+        '|': 'table_row',
+        '.': 'ordered_list',
+    },
 
-    'TAGS': {
+    'TYPE_TO_TAG': {
         'chapter': 'h2',
         'section': 'h3',
         'subsection': 'h4',
@@ -41,141 +45,150 @@ T_SWITCHER = {
         # 'long_footnote': 'aside',
         'definition_list': 'dl',
         'table': 'table',
+        'table_row': 'tr',
+        'table_data': 'td',
         'ordered_list': 'ul'
+    },
+
+    'IS_TYPE_MULTILINE': {
+        'chapter': True,
+        'section': False,
+        'subsection': False,
+        'topic': False,
+        'paragraph': True,
+        'unordered_list': False,
+        'footnote': True,           # Assume true (because long can exist)
+        'definition_list': False,
+        'table': True,
+        'table_row': False,
+        'table_data': False,
+        'ordered_list': False
     }
 }
 
 class Token:
     _id_count = 0
-    # _special_chars = ('=', '*', '-', ':', '|', '+')  # Tuple for use in checking characters
 
-    def __init__(self, tag, content):
-        self.tag = tag
-        self.content = ''
+    def __init__(self, tkn_type, content=''):
+        # print('CREATE {}: {}'.format(tkn_type, content))
+        self.type = tkn_type
+        self.tag = T_SWITCHER['TYPE_TO_TAG'].get(tkn_type)
+        self.content = content
         self.children = []  # List of tokens
-        if tag == 'h2' or tag =='h3':
-            self.id = '#' + content.title().replace(' ', '') + str(_id_count)
-            _id_count += 1
-        self.incomplete = True  # self.new --> del self.new
+
+        if tkn_type == 'chapter' or tkn_type == 'section':
+            self.id = '#' + str(Token._id_count)
+            # print("ID'd: {}".format(self.id))
+            Token._id_count += 1
+
+        if T_SWITCHER['IS_TYPE_MULTILINE'].get(tkn_type):
+            print('{} is multiline'.format(self.type))
+            self.incomplete = True  # self.new --> del self.new
+
+        # print("SUCCESS!")
 
     def append_child(self, token):
         self.children.append(token)
 
-    # def create_token(self, tlist):
-    #     tnew = Token
-    #     tlist.append()
+    def close(self):
+        # print('CLOSE TOKEN')
+        if hasattr(self, 'incomplete'):
+            del self.incomplete
 
-    def complete_token(self):
-        del self.incomplete
-
+    # Add text to token,
     def add_content(self, text):
-        if self.content == '':
-            self.content += text
-        else:
-            self.content += ' ' + text
+        if not self.is_complete():
+            if self.content == '' or self.content[-1] == '-':   # (Checking for connecting punctuation (to be improved))
+                self.content += text
+            else:
+                self.content += ' ' + text
 
     def is_complete(self):
         return not hasattr(self, 'incomplete')
 
-def parse_line(line, tList):
-    line_processed = False
+    # Check content for adding to or completing token; return token (self)
+    def update(text_line):
+        self.add_content(text_line)
 
-    # First traverse tree till we're at an incomplete Token (if one exists) or empty list
-    if len(tList) > 0:
-        if tList[-1].is_complete():
-            print('traverse')
-            line_processed = parse_line(line, tList[-1].children)
+def create_token(tkn_type, content):
+    # Add content
+    new_token = Token(tkn_type, content)
 
-    # Proceed with processing line if it hasn't been yet
-    if not line_processed:
-        # try:
-        # Use regex to interpret what line will be used for
-        matches = re.search(TOKENS_REGEX, line)
-        # print('matches: ', matches)
+    # For definition item, add definition as child to term
+    if tkn_type == 'definition_list':
+        new_token.children.append(Token(tkn_type, extract_content_from_line(text_line.lstrip(), content + ': ')))
 
-        # Check if we're working with partial or complete Token (if complete, compare to tag)
+    print('NEW {}'.format(new_token.type))
+    return new_token
 
-        # If regex doesn't match, it's either content or a blank line (or something else)
-        if matches == None and len(tList) > 0:
-            if not tList[-1].is_complete():
-                if line.strip() != '':
-                    print('Add content (incomplete): ', line)
-                    tList[-1].add_content(line) # Add content to last Token if not finished
-                else:
-                    print('Finish token (blank): ', line)
-                    tList[-1].complete_token()  # Mark token as finished if blank line
+def extract_content_from_line(text, match, tkn_type):
+    if tkn_type == 'section' or tkn_type == 'subsection':
+        content_list = text.split(match, 2)
+    else:
+        content_list = text.split(match, 1)
 
-                line_processed = True   # Line is processed if we started with incomplete token
+    content_list.remove('')
+    # print('extract {}'.format(content_list))
 
-            print('no match, no processing')
-            # Blank or content line is not processed if token is already complete (need exception for multiple blank lines (end of function?))
+    if tkn_type == 'ordered_list':
+        content_list.pop(0)     # Pop number from ordered item
 
-        # We have a match (use switcher)
-        elif matches != None:
-            print('MATCH: ', matches.group(0))
-            token = T_SWITCHER.get(matches.group(0))
-            tag = T_SWITCHER['TAGS'].get(token)
+    return content_list[0].strip()
 
-            # if not tList[-1].is_complete()
+def update_table(table_token, content):
+    table_token.children.add_content(content)
+    return table_token;
 
+def process_line(token, text_line):
+    # Blank line means closing latest token or doing nothing
+    if len(text_line.lstrip()) == 0:
+        if token != None and not token.is_complete():
+            token.close()
+            return token
+        return None
 
-    return line_processed
+    # Proceed to processing text
 
-def _create_chapter(content):
-    return Token('h2', content)
+    # GET MATCH; DETERMINE TYPE
+    match = re.search(TOKENS_REGEX, text_line)
+    # print('MATCH::: {}'.format(match))
 
-def _create_section(t):
-    return t
+    if match != None:
+        match = match.group(0)
 
-def _create_subsection(t):
-    return t
+    if match == None:
+        # print('No match; token: {}'.format(token.type))
+        # No match means raw content; add it to latest token if allowed
+        if token != None and not token.is_complete():
+            print('Adding content... {}'.format(text_line.lstrip()))
+            token.add_content(text_line.lstrip())
+            return token
+        else:
+            return None     # Exit if latest token is complete and there's no match to process a new token
+    else:
+        # Get a type if there's a match
+        tkn_type = T_SWITCHER['PATTERN_TO_TYPE'].get(match)
+        # print('TYPE GOT: {}'.format(tkn_type))
 
-def _create_topic(t):
-    return t
+    # PARSE CONTENT
 
-def _create_paragraph(t):
-    return t
+    content = ''
 
-def _create_paragraph(t):
-    return t
+    if tkn_type == 'chapter' and token != None:
+        # Close latest token if matched as chapter and is open
+        if token.type == 'chapter' and not token.is_complete():
+            token.close()
+            return token
+    elif tkn_type != 'chapter' and tkn_type != 'table':
+        # Parse content based on type (new chapter and table tokens will not have content on creation (or between rows))
+        content = extract_content_from_line(text_line, match, tkn_type)
+        # print('Extracted: {}'.format(content))
 
-def _create_unordered_list(t):
-    return t
+    # USE CONTENT (CREATION or add to table)
+    # Update table if we're currently on one
+    if (tkn_type == 'table_row' or tkn_type == 'table') and token != None:
+        if token.type == 'table':
+            return update_table(token, content)
 
-def _create_unordered_list(t):
-    return t
-
-def _create_footnote(t):
-    return t
-
-def _create_long_footnote(t):
-    return t
-
-def _create_definition_list(t):
-    return t
-
-def _create_table(t):
-    return t
-
-def _create_ordered_list(t):
-    return t
-
-
-def get_creator(match):
-    _switcher = {
-        '==============================': _create_chapter,
-        '=====': _create_section,
-        '==': _create_subsection,
-        ':': _create_topic,
-        '    ': _create_paragraph,
-        '\t': _create_paragraph,
-        '* ': _create_unordered_list,
-        '- ': _create_unordered_list,
-        '*': _create_footnote,
-        '**': _create_long_footnote,
-        ': ': _create_definition_list,
-        '+': _create_table,
-        '.': _create_ordered_list
-    }
-
-    return _switcher.get(match)
+    # Last option: create a token
+    return create_token(tkn_type, content)

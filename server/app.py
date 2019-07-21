@@ -1,7 +1,7 @@
 import characters
 #these imports are for python files we wrote ourselves.
 import docs_parser #our custom plaintext parser for reading CX rules straight from the repo
-from dparser import doc_parser as parser
+from docs_to_data import doc_parser as parser
 import appConfig.appConfig
 from enemies.enemy_routes import enemy_blueprint, initialize_enemies
 from characters.character_routes import character_blueprint, initialize_characters
@@ -88,7 +88,10 @@ def create_app():
                 return redirect("/")
             #the cxdocs parser returns html-like list of tokens to display. This should be passed to the JINJA template below
             tokens = docs_parser.parse(rule_filepath)
-            parser.parse_file(rule_filepath)
+
+            # TESTING MINE #
+            print('TOKENS: {}'.format(len(parser.parse_file(rule_filepath))))
+
             return render_template("utility/site/parser.html", elements = tokens, \
                 navOptions = nav.generate_navbar_options_for_page(page), \
                 sideNav = nav.generate_links_from_nav_list(page))
