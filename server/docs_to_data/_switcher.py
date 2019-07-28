@@ -6,10 +6,10 @@ _re_str += r'|^\s*('                            # G1 START - Check for other pat
 _re_str += r'\={30}|\={5}|\={2}'                # Headings patterns (chapter, section, subsection)
 _re_str += r'|[\*-]\s'                          # Unordered List item
 _re_str += r'|\*{1,2}'                          # Footnotes (footnote or long_footnote)
-_re_str += r'|\+'                               # Table corner
+_re_str += r'|\+\-'                             # Table corner
 _re_str += r'|\|'                               # Table data row
 _re_str += r')'                                 # G1 END - Close group looking at start of line
-_re_str += r'|((?<=^\d)|(?<=^\d\d))\.(?=\s)'   # Ordered List patterns (lookbehind has strict rules; lists shouldn't go over 99 anyway)
+_re_str += r'|((?<=^\d)|(?<=^\d\d))\.(?=\s)'    # Ordered List patterns (lookbehind has strict rules; lists shouldn't go over 99 anyway)
 _re_str += r'|\:$|\:\s'                         # Colon patterns (topic and definition)
 _re_str += r')'                                 # G0 END - Close group 0
 
@@ -29,7 +29,7 @@ T_SWITCHER = {
         # '**': 'long_footnote',
         '**': 'footnote',
         ': ': 'definition_list',
-        '+': 'table',
+        '+-': 'table',
         '|': 'table_row',
         '.': 'ordered_list',
     },
@@ -99,18 +99,14 @@ class Token:
 
     # Add text to token,
     def add_content(self, text):
-        if not self.is_complete():
+        if self.is_not_complete():
             if self.content == '' or self.content[-1] == '-':   # (Checking for connecting punctuation (to be improved))
                 self.content += text
             else:
                 self.content += ' ' + text
 
-    def is_complete(self):
-        return not hasattr(self, 'incomplete')
-
-    # Check content for adding to or completing token; return token (self)
-    def update(text_line):
-        self.add_content(text_line)
+    def is_not_complete(self):
+        return hasattr(self, 'incomplete')
 
 def create_token(tkn_type, content):
     # Add content
@@ -143,32 +139,39 @@ def extract_content_from_line(text, match, tkn_type):
 
     return content_list[0].strip()
 
-def update_table(table_token, content):
-    table_token.children.add_content(content)
-    return table_token;
+def add_row_to_table_token(table_token, raw_text):
+    row_token = Token('table_row')
+
+    data_with_whitespace = raw_text[1:-1].split('|')
+
+    for raw_data in data_with_whitespace:
+        row_token.children.append(Token('table_data', raw_data.strip()))
+
+    table_token.children.append(row_token)
+
+    return table_token
 
 def process_line(token, text_line):
     # Blank line means closing latest token or doing nothing
     if len(text_line.lstrip()) == 0:
-        if token != None and not token.is_complete():
+        if token != None and token.is_not_complete():
             token.close()
             return token
         return None
 
-    # Proceed to processing text
+# MATCH PATTERN / DETERMINE TYPE
 
-    # GET MATCH; DETERMINE TYPE
     match = re.search(TOKENS_REGEX, text_line)
-    print('MATCH::: <{}>'.format(match))
 
     if match != None:
         match = match.group(0)
 
+    # print('MATCH::: <{}>'.format(match))
 
-    if match == None or (token != None and token.type == 'paragraph' and not token.is_complete()):
+    # No match or in the middle of a paragraph means raw content; add it to latest token if allowed
+    if match == None or (token != None and token.type == 'paragraph' and token.is_not_complete()):
         # print('No match; token: {}'.format(token.type))
-        # No match or in the middle of a paragraph means raw content; add it to latest token if allowed
-        if token != None and not token.is_complete():
+        if token != None and token.is_not_complete():
             print('Adding content... {}'.format(text_line.lstrip()))
             token.add_content(text_line.lstrip())
             return token
@@ -179,13 +182,21 @@ def process_line(token, text_line):
         tkn_type = T_SWITCHER['PATTERN_TO_TYPE'].get(match)
         # print('TYPE GOT: {}'.format(tkn_type))
 
-    # PARSE CONTENT
+    # Update table if we're currently on one (otherwise these actions will be skipped and a new table will be created)
+    if 'table' in tkn_type:
+        if token != None and token.type == 'table' and token.is_not_complete():
+            if tkn_type == 'table':
+                return token        # Leave if we're in between rows on a table
+            if tkn_type == 'table_row':
+                return add_row_to_table_token(token, text_line)
+
+# EXTRACT CONTENT
 
     content = ''
 
     if tkn_type == 'chapter' and token != None:
         # Close latest token if matched as chapter and is open
-        if token.type == 'chapter' and not token.is_complete():
+        if token.type == 'chapter' and token.is_not_complete():
             token.close()
             return token
     elif tkn_type != 'chapter' and tkn_type != 'table':
@@ -193,15 +204,11 @@ def process_line(token, text_line):
         content = extract_content_from_line(text_line, match, tkn_type)
         # print('Extracted: {}'.format(content))
 
-    # USE CONTENT (CREATION or add to table)
-    # Update table if we're currently on one
-    if (tkn_type == 'table_row' or tkn_type == 'table') and token != None:
-        if token.type == 'table':
-            return update_table(token, content)
+# USE CONTENT
 
     # Add list item if latest token is incomplete list group
     ul_or_ol = 'ordered_list'   # Conditional substring for both unordered and ordered lists ("_list" would also get definition lists)
-    if ul_or_ol in tkn_type and ul_or_ol in token.type and not token.is_complete():
+    if ul_or_ol in tkn_type and ul_or_ol in token.type and token.is_not_complete():
         token.children.append(Token('list_item', content))
         return token
 

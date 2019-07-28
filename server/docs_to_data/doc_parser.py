@@ -31,7 +31,7 @@ def parse_file(filepath):
                 curr_token = process_line(curr_token, curr_line)
 
                 # Append top headings to tokens list (for in-page jumping); others are children
-                if curr_token != None and curr_token.is_complete():
+                if curr_token != None and not hasattr(curr_token, 'incomplete'):
                     if curr_token.type == 'chapter' or curr_token.type == 'section':
                         tokens.append(curr_token)
                     else:
@@ -48,12 +48,12 @@ def parse_file(filepath):
     def print_tokens(tList, child=0):
         for el in tList:
             indent = [' '] * (child * 4)
-            print('{}TOKEN: {}; children: {}\n{}"{}"'.format(''.join(indent), el.tag, len(el.children), ''.join(indent), el.content))
+            print('{}TOKEN: {};\t\tlength: {};\t\tchildren: {}\n{}"{}"'.format(''.join(indent), el.type, len(el.content), len(el.children), ''.join(indent), el.content[:(90 - len(indent))]))
 
             if len(el.children) > 0:
                 print_tokens(el.children, child + 1)
 
-    print('\nPRINT TOKENS')
+    print('\n\n=============== PRINT TOKENS ===============')
     print_tokens(tokens)
 
     return tokens
