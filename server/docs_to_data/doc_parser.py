@@ -31,7 +31,7 @@ def parse_file(filepath):
                 curr_token = process_line(curr_token, curr_line)
 
                 # Append top headings to tokens list (for in-page jumping); others are children
-                if curr_token != None and not hasattr(curr_token, 'incomplete'):
+                if curr_token is not None and not hasattr(curr_token, 'incomplete'):
                     if curr_token.type == 'chapter' or curr_token.type == 'section':
                         tokens.append(curr_token)
                     else:
