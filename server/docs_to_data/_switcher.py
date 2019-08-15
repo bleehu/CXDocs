@@ -47,7 +47,6 @@ def create_token(tkn_type, content):
         if tkn_type == 'definition_list':
             new_token.children.append(Token(tkn_type, extract_content_from_line(text_line.lstrip(), content + ': ')))
 
-    print('NEW {}'.format(new_token.type))
     return new_token
 
 def extract_content_from_line(text, match, tkn_type):
@@ -60,8 +59,6 @@ def extract_content_from_line(text, match, tkn_type):
         content_list.pop(0)     # Pop number from ordered item
     else:
         content_list.remove('')
-
-    print('extract {}'.format(content_list))
 
     return content_list[0].strip()
 
@@ -92,13 +89,9 @@ def process_line(token, text_line):
     if match is not None:
         match = match.group(0)
 
-    # print('MATCH::: <{}>'.format(match))
-
     # No match or in the middle of a paragraph means raw content; add it to latest token if allowed
     if match is None or (token is not None and token.type == 'paragraph' and token.is_not_complete()):
-        # print('No match; token: {}'.format(token.type))
         if token is not None and token.is_not_complete():
-            print('Adding content... {}'.format(text_line.lstrip()))
             token.add_content(text_line.lstrip())
             return token
         else:
@@ -106,7 +99,6 @@ def process_line(token, text_line):
     else:
         # Get a type if there's a match
         tkn_type = PATTERN_TO_TYPE.get(match)
-        # print('TYPE GOT: {}'.format(tkn_type))
 
     # Update table if we're currently on one (otherwise these actions will be skipped and a new table will be created)
     if 'table' in tkn_type:
@@ -128,7 +120,6 @@ def process_line(token, text_line):
     elif tkn_type != 'chapter' and tkn_type != 'table':
         # Parse content based on type (new chapter and table tokens will not have content on creation (or between rows))
         content = extract_content_from_line(text_line, match, tkn_type)
-        # print('Extracted: {}'.format(content))
 
 # USE CONTENT
 

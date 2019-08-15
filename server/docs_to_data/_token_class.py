@@ -1,3 +1,5 @@
+import json
+
 class Token:
     TYPE_TO_TAG = {
         'chapter': 'h2',
@@ -44,7 +46,6 @@ class Token:
             Token._id_count += 1
 
         if self.IS_TYPE_MULTILINE.get(tkn_type):
-            print('{} is multiline'.format(self.type))
             self.incomplete = True
 
     def close(self):
@@ -54,10 +55,13 @@ class Token:
     def add_content(self, text):
         if self.is_not_complete():
             if self.content == '' \
-                or self.content.endswith('-'): # (Check for connecting punctuation (to be improved))
+            or self.content.endswith('-'): # (Check for connecting punctuation (to be improved))
                 self.content += text
             else:
                 self.content += ' ' + text
 
     def is_not_complete(self):
         return hasattr(self, 'incomplete')
+
+    def to_JSON(self):
+        return json.dumps(self, default = lambda o: o.__dict__)
