@@ -1,10 +1,8 @@
-import argparse #we use the argparse module for passing command-line arguments on startup.
-import pdb #the python debugger is helpful during development, but shouldn't be in production.
-import re #regular expressions
-import os #os handles files
+import os
 import json
 
-from _switcher import process_line
+from _line_parser import process_line
+from _token_class import reset_token_id_count
 
 def parse_file_to_json_string(filepath):
     if not os.path.isfile(filepath):
@@ -17,11 +15,11 @@ def parse_file_to_json_string(filepath):
         index = 0
         curr_token = None
 
-        lines = docfile.readlines() # creates list of strings, each line is an item
+        lines = docfile.readlines() # Creates list of strings, each line is an item
 
         while index < len(lines):
             try:
-                lines[index].encode('ascii') #check to make sure there are no illegal characters
+                lines[index].encode('ascii') # Check to make sure there are no illegal characters
                 curr_line = lines[index].rstrip()
                 curr_token = process_line(curr_token, curr_line)
 
@@ -39,6 +37,8 @@ def parse_file_to_json_string(filepath):
                     error_token = {'type':'error', 'content':'There was an error on line %s: %s' % (index, error.reason)}
 
             index += 1
+
+    reset_token_id_count()
 
     tokens_JSON_array = []
 

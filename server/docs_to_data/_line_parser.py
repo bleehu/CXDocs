@@ -34,8 +34,7 @@ PATTERN_TO_TYPE = {
     '.': 'ordered_list',
 }
 
-def create_token(tkn_type, content):
-    # Add content
+def _create_token(tkn_type, content):
     if tkn_type == 'ordered_list' or tkn_type == 'unordered_list':
         # List items will be children of a list group's token
         new_token = Token(tkn_type)
@@ -43,13 +42,13 @@ def create_token(tkn_type, content):
     else:
         new_token = Token(tkn_type, content)
 
-        # For definition item, add definition as child to term
+        # For definition item, add definition as child of term
         if tkn_type == 'definition_list':
-            new_token.children.append(Token(tkn_type, extract_content_from_line(text_line.lstrip(), content + ': ')))
+            new_token.children.append(Token(tkn_type, _extract_content_from_line(text_line.lstrip(), content + ': ')))
 
     return new_token
 
-def extract_content_from_line(text, match, tkn_type):
+def _extract_content_from_line(text, match, tkn_type):
     if tkn_type == 'section' or tkn_type == 'subsection':
         content_list = text.split(match, 2)
     else:
@@ -62,7 +61,7 @@ def extract_content_from_line(text, match, tkn_type):
 
     return content_list[0].strip()
 
-def add_row_to_table_token(table_token, raw_text):
+def _add_row_to_table_token(table_token, raw_text):
     row_token = Token('table_row')
 
     data_with_whitespace = raw_text.strip()[1:-1].split('|')
@@ -93,7 +92,12 @@ def process_line(token, text_line):
     if match is None or (token is not None and token.type == 'paragraph' and token.is_not_complete()):
         if token is not None and token.is_not_complete():
             token.add_content(text_line.lstrip())
+
+            if token.type == 'chapter':
+                token.generate_ID()
+
             return token
+
         else:
             return None     # Exit if latest token is complete and there's no match to process a new token
     else:
@@ -106,7 +110,7 @@ def process_line(token, text_line):
             if tkn_type == 'table':
                 return token        # Leave if we're in between rows on a table
             if tkn_type == 'table_row':
-                return add_row_to_table_token(token, text_line)
+                return _add_row_to_table_token(token, text_line)
 
 # EXTRACT CONTENT
 
@@ -119,7 +123,7 @@ def process_line(token, text_line):
             return token
     elif tkn_type != 'chapter' and tkn_type != 'table':
         # Parse content based on type (new chapter and table tokens will not have content on creation (or between rows))
-        content = extract_content_from_line(text_line, match, tkn_type)
+        content = _extract_content_from_line(text_line, match, tkn_type)
 
 # USE CONTENT
 
@@ -130,4 +134,4 @@ def process_line(token, text_line):
         return token
 
     # Last option: create a token
-    return create_token(tkn_type, content)
+    return _create_token(tkn_type, content)

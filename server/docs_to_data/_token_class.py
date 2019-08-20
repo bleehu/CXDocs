@@ -1,4 +1,9 @@
-import json
+try:
+    from urllib.parse import quote_plus # Look for Py3.0 version
+except ImportError:
+    from urllib import quote_plus   # Fall back to Py2.7 version
+
+from json import dumps
 
 class Token:
     TYPE_TO_TAG = {
@@ -41,12 +46,15 @@ class Token:
         self.content = content
         self.children = []  # List of tokens
 
-        if tkn_type == 'chapter' or tkn_type == 'section':
-            self.id = '#' + str(Token._id_count)
-            Token._id_count += 1
+        if tkn_type == 'section':
+            self.generate_ID()
 
         if self.IS_TYPE_MULTILINE.get(tkn_type):
             self.incomplete = True
+
+    def generate_ID(self):
+        self.id = '#{}_{}'.format(self._id_count, quote_plus(self.content))
+        Token._id_count += 1
 
     def close(self):
         if hasattr(self, 'incomplete'):
@@ -64,4 +72,7 @@ class Token:
         return hasattr(self, 'incomplete')
 
     def to_JSON(self):
-        return json.dumps(self, default = lambda o: o.__dict__)
+        return dumps(self, default = lambda o: o.__dict__)
+
+def reset_token_id_count():
+    Token._id_count = 0
