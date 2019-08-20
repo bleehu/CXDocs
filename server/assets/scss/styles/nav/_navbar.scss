@@ -82,5 +82,18 @@
     & > li {
       flex: 1 1 0;
     }
+
+.navbar-member {
+  display: inline-flex;
+  position: absolute;
+  top: 0.25rem;
+
+  margin-left: 0.5rem;
+
+  a {
+    color: $dark;
+    background-color: $orange;
+
+    margin-right: 0.25rem;
   }
 }

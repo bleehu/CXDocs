@@ -9611,6 +9611,17 @@ footer {
 .subnavbar > ul > li {
   flex: 1 1 0;
 }
+.navbar-member {
+  display: inline-flex;
+  position: absolute;
+  top: 0.25rem;
+  margin-left: 0.5rem;
+}
+.navbar-member a {
+  color: #222222;
+  background-color: #fd7e14;
+  margin-right: 0.25rem;
+}
 
 .nav-form-input {
   display: inline-block;

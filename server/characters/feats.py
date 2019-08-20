@@ -8,8 +8,8 @@ def get_feats():
     results = characters_common.fetchall_from_db_query(query_string)
     feats = []
     for line in results:
-        newFeat = Feat(line)
-        feats.append(newFeat)
+        new_feat = Feat(line)
+        feats.append(new_feat)
     return feats
 
 def get_feat_by_id(pk_id):
@@ -18,22 +18,22 @@ def get_feat_by_id(pk_id):
     my_feat = Feat(first_database_row)
     return my_feat
 
-def update_feat(newFeat):
-    pk_id = newFeat['pk_id']
-    prereqs = str(newFeat['prerequisites']).replace("'",'"')
+def update_feat(new_feat):
+    pk_id = new_feat['pk_id']
+    prereqs = str(new_feat['prerequisites']).replace("'",'"')
 
     featstring = "('%s', \
      '%s', '%s', '%s', '%s', '%s', '%s')" % \
-     (newFeat['feat'], \
+     (new_feat['feat'], \
         prereqs, \
-        newFeat['description'].replace("'", "\\47"),
-        newFeat['author'],
-        newFeat['created_at'],
-        newFeat['private'],
-        newFeat['nanite_cost'])
+        new_feat['description'].replace("'", "\\47"),
+        new_feat['author'],
+        new_feat['created_at'],
+        new_feat['private'],
+        new_feat['nanite_cost'])
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
-    myCursor.execute("UPDATE feats SET\
+    my_cursor = connection.cursor()
+    my_cursor.execute("UPDATE feats SET\
         (feat, \
         prerequisites,\
         description, \
@@ -42,7 +42,7 @@ def update_feat(newFeat):
         private, \
         nanite_cost) = %s \
         WHERE pk_id=%s;" % ( featstring,pk_id))
-    myCursor.close()
+    my_cursor.close()
     connection.commit()
 
 def get_characters_feats(character_pk_id):
@@ -73,10 +73,10 @@ def validate_character_feat_map(form):
 
 def insert_character_feat_map(mapping):
     connection = characters_common.db_connection()
-    myCursor = connection.cursor()
+    my_cursor = connection.cursor()
     mapstring = (mapping['character_id'], mapping['feat_id'])
-    myCursor.execute("INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring)
-    myCursor.close()
+    my_cursor.execute("INSERT INTO feats_map (fk_character_id, fk_feat_id) VALUES (%s, %s);" % mapstring)
+    my_cursor.close()
     connection.commit()
 
 class Feat:
