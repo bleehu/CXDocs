@@ -19,8 +19,14 @@ class Armor_Attachment:
         self.cloaking_dc = int(line[5])
         self.hardpoints = int(line[6])
 
+    def __repr__(self):
+        return_me = {"name":self.name, "shield_capacity":self.shield_capacity, 
+            "pk_id":self.pk_id, "recharge_rate": self.recharge_rate, 
+            "recharge_delay":self.recharge_delay, "cloaking_dc":self.cloaking_dc,
+            "hardpoints":self.hardpoints}
+        return return_me
 
-    def __str__():
+    def __str__(self):
         return "{name:%s}" % self.name
 
 
